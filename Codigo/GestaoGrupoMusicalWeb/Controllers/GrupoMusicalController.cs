@@ -34,7 +34,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public ActionResult Details(int id)
         {
             var grupoMusical = _grupoMusical.Get(id);
-            var grupoModel = _mapper.Map<Grupomusical>(grupoMusical);
+            var grupoModel = _mapper.Map<GrupoMusicalViewModel>(grupoMusical);
             return View(grupoModel);
         }
 
