@@ -9,10 +9,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Service
 {
-    internal class GrupoMusicalService : IGrupoMusical
+    public class GrupoMusicalService : IGrupoMusical
     {
 
         private readonly GrupoMusicalContext _context;
+
+        public GrupoMusicalService(GrupoMusicalContext context)
+        {
+            _context = context;
+        }
 
         /// <summary>
         /// Metodo usadoa para adicionar o Grupo Musical
