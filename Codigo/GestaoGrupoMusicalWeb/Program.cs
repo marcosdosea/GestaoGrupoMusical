@@ -1,3 +1,6 @@
+using Core;
+using Microsoft.EntityFrameworkCore;
+
 namespace GestaoGrupoMusicalWeb
 {
     public class Program
@@ -8,6 +11,11 @@ namespace GestaoGrupoMusicalWeb
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddDbContext<GrupoMusicalContext>(
+                options => options.UseMySQL(builder.Configuration.GetConnectionString("GrupoMusicalDatabase")));
+
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             var app = builder.Build();
 
