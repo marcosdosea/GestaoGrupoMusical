@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Core;
 using GestaoGrupoMusicalWeb.Models;
 
 namespace GestaoGrupoMusicalWeb.Mapper
@@ -7,7 +8,7 @@ namespace GestaoGrupoMusicalWeb.Mapper
     {
         public GrupoMusicalProfile()
         {
-            CreateMap<GrupoMusicalViewModel, GrupoMusicalProfile>().ReverseMap();
+            CreateMap<GrupoMusicalViewModel, Grupomusical>().ReverseMap();
         }
     }
 }
