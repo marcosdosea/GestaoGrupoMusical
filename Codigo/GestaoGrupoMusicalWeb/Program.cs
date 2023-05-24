@@ -1,5 +1,8 @@
 using Core;
 using Microsoft.EntityFrameworkCore;
+using Core.Service;
+using Service;
+
 
 namespace GestaoGrupoMusicalWeb
 {
@@ -15,8 +18,9 @@ namespace GestaoGrupoMusicalWeb
             builder.Services.AddDbContext<GrupoMusicalContext>(
                 options => options.UseMySQL(builder.Configuration.GetConnectionString("GrupoMusicalDatabase")));
 
-            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            builder.Services.AddTransient<IGrupoMusical, GrupoMusicalService>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
