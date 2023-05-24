@@ -15,7 +15,7 @@ using System.Runtime.ConstrainedExecution;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Mvc;
 
-namespace GestaoGrupoMusicalWeb.Controllers.Test
+namespace GestaoGrupoMusicalWeb.Controllers.Tests
 {
     [TestClass()]
     public class GrupoMusicalControllerTests
