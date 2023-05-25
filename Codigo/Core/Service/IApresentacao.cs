@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Core.Service
+﻿namespace Core.Service
 {
-    internal interface IApresentacao
+    public interface IApresentacao
     {
+        int Create(Apresentacao apresentacao);
+        void Edit(Apresentacao apresentacao);
+        void Delete(int id);
+        Apresentacao Get(int id);
+        IEnumerable<Apresentacao> GetAll();
     }
 }
