@@ -64,6 +64,9 @@
                 @Html.DisplayNameFor(model => model.Ativo)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.IdGrupoMusical)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.IdPapelGrupo)
             </th>
             <th>
@@ -127,15 +130,18 @@
                 @Html.DisplayFor(modelItem => item.Ativo)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.IdGrupoMusical)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.IdPapelGrupo)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.IdManequim)
             </td>
             <td>
-                    @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-                @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+                    @Html.ActionLink("Edit", "Edit", new {  id=item.Id }) |
+                @Html.ActionLink("Details", "Details", new {  id=item.Id  }) |
+                    @Html.ActionLink("Delete", "Delete", new {  id=item.Id  })
             </td>
         </tr>
 }
