@@ -67,6 +67,9 @@ namespace GestaoGrupoMusicalWeb.Models
 
         public sbyte Ativo { get; set; }
 
+        [Required]
+        public int IdGrupoMusical { get; set; }
+
         [Display(Name = "Papel no grupo")]
         public int IdPapelGrupo { get; set; }
 
