@@ -13,9 +13,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IEvento _evento;
         private readonly IMapper _mapper;
 
-        public EventoController(IEvento grupoMusical, IMapper mapper)
+        public EventoController(IEvento evento, IMapper mapper)
         {
-            _evento = grupoMusical;
+            _evento = evento;
             _mapper = mapper;
         }
 

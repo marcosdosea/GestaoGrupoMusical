@@ -25,8 +25,4 @@
     <ProjectReference Include="..\Service\Service.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Views\Evento\" />
-  </ItemGroup>
-
 </Project>

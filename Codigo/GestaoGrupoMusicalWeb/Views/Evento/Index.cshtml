@@ -1,0 +1,77 @@
+﻿@model IEnumerable<GestaoGrupoMusicalWeb.Models.EventoViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdGrupoMusical)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DataHoraInicio)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DataHoraFim)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Local)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Repertorio)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdColaboradorResponsavel)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdRegente)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdGrupoMusical)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DataHoraInicio)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DataHoraFim)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Local)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Repertorio)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdColaboradorResponsavel)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdRegente)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
