@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Core
 {
@@ -13,20 +16,23 @@ namespace Core
         {
         }
 
-        public virtual DbSet<Apresentacao> Apresentacaos { get; set; } = null!;
-        public virtual DbSet<Apresentacaopessoa> Apresentacaopessoas { get; set; } = null!;
         public virtual DbSet<Apresentacaotipoinstrumento> Apresentacaotipoinstrumentos { get; set; } = null!;
         public virtual DbSet<Ensaio> Ensaios { get; set; } = null!;
         public virtual DbSet<Ensaiopessoa> Ensaiopessoas { get; set; } = null!;
-        public virtual DbSet<Entregarfigurino> Entregarfigurinos { get; set; } = null!;
+        public virtual DbSet<Evento> Eventos { get; set; } = null!;
+        public virtual DbSet<Eventopessoa> Eventopessoas { get; set; } = null!;
         public virtual DbSet<Figurino> Figurinos { get; set; } = null!;
         public virtual DbSet<Figurinomanequim> Figurinomanequims { get; set; } = null!;
         public virtual DbSet<Grupomusical> Grupomusicals { get; set; } = null!;
         public virtual DbSet<Instrumentomusical> Instrumentomusicals { get; set; } = null!;
         public virtual DbSet<Manequim> Manequims { get; set; } = null!;
+        public virtual DbSet<Materialestudo> Materialestudos { get; set; } = null!;
+        public virtual DbSet<Movimentacaofigurino> Movimentacaofigurinos { get; set; } = null!;
         public virtual DbSet<Movimentacaoinstrumento> Movimentacaoinstrumentos { get; set; } = null!;
         public virtual DbSet<Papelgrupo> Papelgrupos { get; set; } = null!;
         public virtual DbSet<Pessoa> Pessoas { get; set; } = null!;
+        public virtual DbSet<Receitafinanceira> Receitafinanceiras { get; set; } = null!;
+        public virtual DbSet<Receitafinanceirapessoa> Receitafinanceirapessoas { get; set; } = null!;
         public virtual DbSet<Tipoinstrumento> Tipoinstrumentos { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -40,110 +46,6 @@ namespace Core
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Apresentacao>(entity =>
-            {
-                entity.ToTable("apresentacao");
-
-                entity.HasIndex(e => e.IdGrupoMusical, "fk_Ensaio_GrupoMusical1_idx");
-
-                entity.HasIndex(e => e.IdColaboradorResponsavel, "fk_Ensaio_Pessoa1_idx");
-
-                entity.HasIndex(e => e.IdRegente, "fk_Ensaio_Pessoa2_idx");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.DataHoraFim)
-                    .HasColumnType("datetime")
-                    .HasColumnName("dataHoraFim");
-
-                entity.Property(e => e.DataHoraInicio)
-                    .HasColumnType("datetime")
-                    .HasColumnName("dataHoraInicio");
-
-                entity.Property(e => e.IdColaboradorResponsavel).HasColumnName("idColaboradorResponsavel");
-
-                entity.Property(e => e.IdGrupoMusical).HasColumnName("idGrupoMusical");
-
-                entity.Property(e => e.IdRegente).HasColumnName("idRegente");
-
-                entity.Property(e => e.Local)
-                    .HasMaxLength(100)
-                    .HasColumnName("local");
-
-                entity.Property(e => e.Repertorio)
-                    .HasMaxLength(1000)
-                    .HasColumnName("repertorio");
-
-                entity.HasOne(d => d.IdColaboradorResponsavelNavigation)
-                    .WithMany(p => p.ApresentacaoIdColaboradorResponsavelNavigations)
-                    .HasForeignKey(d => d.IdColaboradorResponsavel)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_Ensaio_Pessoa10");
-
-                entity.HasOne(d => d.IdGrupoMusicalNavigation)
-                    .WithMany(p => p.Apresentacaos)
-                    .HasForeignKey(d => d.IdGrupoMusical)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_Ensaio_GrupoMusical10");
-
-                entity.HasOne(d => d.IdRegenteNavigation)
-                    .WithMany(p => p.ApresentacaoIdRegenteNavigations)
-                    .HasForeignKey(d => d.IdRegente)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_Ensaio_Pessoa20");
-            });
-
-            modelBuilder.Entity<Apresentacaopessoa>(entity =>
-            {
-                entity.HasKey(e => new { e.IdApresentacao, e.IdPessoa })
-                    .HasName("PRIMARY");
-
-                entity.ToTable("apresentacaopessoa");
-
-                entity.HasIndex(e => e.IdApresentacao, "fk_ApresentacaoPessoa_Apresentacao1_idx");
-
-                entity.HasIndex(e => e.IdPessoa, "fk_ApresentacaoPessoa_Pessoa1_idx");
-
-                entity.HasIndex(e => e.IdTipoInstrumento, "fk_ApresentacaoPessoa_TipoInstrumento1_idx");
-
-                entity.Property(e => e.IdApresentacao).HasColumnName("idApresentacao");
-
-                entity.Property(e => e.IdPessoa).HasColumnName("idPessoa");
-
-                entity.Property(e => e.IdTipoInstrumento).HasColumnName("idTipoInstrumento");
-
-                entity.Property(e => e.JustificativaAceita).HasColumnName("justificativaAceita");
-
-                entity.Property(e => e.JustificativaFalta)
-                    .HasMaxLength(200)
-                    .HasColumnName("justificativaFalta");
-
-                entity.Property(e => e.Presente).HasColumnName("presente");
-
-                entity.Property(e => e.Status)
-                    .HasColumnType("enum('INSCRITO','DEFERIDO','INDEFERIDO')")
-                    .HasColumnName("status")
-                    .HasDefaultValueSql("'INSCRITO'");
-
-                entity.HasOne(d => d.IdApresentacaoNavigation)
-                    .WithMany(p => p.Apresentacaopessoas)
-                    .HasForeignKey(d => d.IdApresentacao)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_ApresentacaoPessoa_Apresentacao1");
-
-                entity.HasOne(d => d.IdPessoaNavigation)
-                    .WithMany(p => p.Apresentacaopessoas)
-                    .HasForeignKey(d => d.IdPessoa)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_ApresentacaoPessoa_Pessoa1");
-
-                entity.HasOne(d => d.IdTipoInstrumentoNavigation)
-                    .WithMany(p => p.Apresentacaopessoas)
-                    .HasForeignKey(d => d.IdTipoInstrumento)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_ApresentacaoPessoa_TipoInstrumento1");
-            });
-
             modelBuilder.Entity<Apresentacaotipoinstrumento>(entity =>
             {
                 entity.HasKey(e => new { e.IdApresentacao, e.IdTipoInstrumento })
@@ -274,62 +176,108 @@ namespace Core
                     .HasConstraintName("fk_PessoaEnsaio_Pessoa1");
             });
 
-            modelBuilder.Entity<Entregarfigurino>(entity =>
+            modelBuilder.Entity<Evento>(entity =>
             {
-                entity.ToTable("entregarfigurino");
+                entity.ToTable("evento");
 
-                entity.HasIndex(e => e.IdFigurino, "fk_EntregarFigurino_Figurino1_idx");
+                entity.HasIndex(e => e.IdGrupoMusical, "fk_Ensaio_GrupoMusical1_idx");
 
-                entity.HasIndex(e => e.IdManequim, "fk_EntregarFigurino_Manequim1_idx");
+                entity.HasIndex(e => e.IdColaboradorResponsavel, "fk_Ensaio_Pessoa1_idx");
 
-                entity.HasIndex(e => e.IdAssociado, "fk_EntregarFigurino_Pessoa1_idx");
-
-                entity.HasIndex(e => e.IdColaborador, "fk_EntregarFigurino_Pessoa2_idx");
+                entity.HasIndex(e => e.IdRegente, "fk_Ensaio_Pessoa2_idx");
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.ConfirmacaoAssociado).HasColumnName("confirmacaoAssociado");
-
-                entity.Property(e => e.Data)
+                entity.Property(e => e.DataHoraFim)
                     .HasColumnType("datetime")
-                    .HasColumnName("data");
+                    .HasColumnName("dataHoraFim");
 
-                entity.Property(e => e.IdAssociado).HasColumnName("idAssociado");
+                entity.Property(e => e.DataHoraInicio)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dataHoraInicio");
 
-                entity.Property(e => e.IdColaborador).HasColumnName("idColaborador");
+                entity.Property(e => e.IdColaboradorResponsavel).HasColumnName("idColaboradorResponsavel");
 
-                entity.Property(e => e.IdFigurino).HasColumnName("idFigurino");
+                entity.Property(e => e.IdGrupoMusical).HasColumnName("idGrupoMusical");
 
-                entity.Property(e => e.IdManequim).HasColumnName("idManequim");
+                entity.Property(e => e.IdRegente).HasColumnName("idRegente");
+
+                entity.Property(e => e.Local)
+                    .HasMaxLength(100)
+                    .HasColumnName("local");
+
+                entity.Property(e => e.Repertorio)
+                    .HasMaxLength(1000)
+                    .HasColumnName("repertorio");
+
+                entity.HasOne(d => d.IdColaboradorResponsavelNavigation)
+                    .WithMany(p => p.EventoIdColaboradorResponsavelNavigations)
+                    .HasForeignKey(d => d.IdColaboradorResponsavel)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_Ensaio_Pessoa10");
+
+                entity.HasOne(d => d.IdGrupoMusicalNavigation)
+                    .WithMany(p => p.Eventos)
+                    .HasForeignKey(d => d.IdGrupoMusical)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_Ensaio_GrupoMusical10");
+
+                entity.HasOne(d => d.IdRegenteNavigation)
+                    .WithMany(p => p.EventoIdRegenteNavigations)
+                    .HasForeignKey(d => d.IdRegente)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_Ensaio_Pessoa20");
+            });
+
+            modelBuilder.Entity<Eventopessoa>(entity =>
+            {
+                entity.HasKey(e => new { e.IdEvento, e.IdPessoa })
+                    .HasName("PRIMARY");
+
+                entity.ToTable("eventopessoa");
+
+                entity.HasIndex(e => e.IdEvento, "fk_ApresentacaoPessoa_Apresentacao1_idx");
+
+                entity.HasIndex(e => e.IdPessoa, "fk_ApresentacaoPessoa_Pessoa1_idx");
+
+                entity.HasIndex(e => e.IdTipoInstrumento, "fk_ApresentacaoPessoa_TipoInstrumento1_idx");
+
+                entity.Property(e => e.IdEvento).HasColumnName("idEvento");
+
+                entity.Property(e => e.IdPessoa).HasColumnName("idPessoa");
+
+                entity.Property(e => e.IdTipoInstrumento).HasColumnName("idTipoInstrumento");
+
+                entity.Property(e => e.JustificativaAceita).HasColumnName("justificativaAceita");
+
+                entity.Property(e => e.JustificativaFalta)
+                    .HasMaxLength(200)
+                    .HasColumnName("justificativaFalta");
+
+                entity.Property(e => e.Presente).HasColumnName("presente");
 
                 entity.Property(e => e.Status)
-                    .HasColumnType("enum('DISPONIVEL','ENTREGUE','RECEBIDO','DANIFICADO','DEVOLVIDO')")
+                    .HasColumnType("enum('INSCRITO','DEFERIDO','INDEFERIDO')")
                     .HasColumnName("status")
-                    .HasDefaultValueSql("'DISPONIVEL'");
+                    .HasDefaultValueSql("'INSCRITO'");
 
-                entity.HasOne(d => d.IdAssociadoNavigation)
-                    .WithMany(p => p.EntregarfigurinoIdAssociadoNavigations)
-                    .HasForeignKey(d => d.IdAssociado)
+                entity.HasOne(d => d.IdEventoNavigation)
+                    .WithMany(p => p.Eventopessoas)
+                    .HasForeignKey(d => d.IdEvento)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_EntregarFigurino_Pessoa1");
+                    .HasConstraintName("fk_ApresentacaoPessoa_Apresentacao1");
 
-                entity.HasOne(d => d.IdColaboradorNavigation)
-                    .WithMany(p => p.EntregarfigurinoIdColaboradorNavigations)
-                    .HasForeignKey(d => d.IdColaborador)
+                entity.HasOne(d => d.IdPessoaNavigation)
+                    .WithMany(p => p.Eventopessoas)
+                    .HasForeignKey(d => d.IdPessoa)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_EntregarFigurino_Pessoa2");
+                    .HasConstraintName("fk_ApresentacaoPessoa_Pessoa1");
 
-                entity.HasOne(d => d.IdFigurinoNavigation)
-                    .WithMany(p => p.Entregarfigurinos)
-                    .HasForeignKey(d => d.IdFigurino)
+                entity.HasOne(d => d.IdTipoInstrumentoNavigation)
+                    .WithMany(p => p.Eventopessoas)
+                    .HasForeignKey(d => d.IdTipoInstrumento)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_EntregarFigurino_Figurino1");
-
-                entity.HasOne(d => d.IdManequimNavigation)
-                    .WithMany(p => p.Entregarfigurinos)
-                    .HasForeignKey(d => d.IdManequim)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_EntregarFigurino_Manequim1");
+                    .HasConstraintName("fk_ApresentacaoPessoa_TipoInstrumento1");
             });
 
             modelBuilder.Entity<Figurino>(entity =>
@@ -363,7 +311,7 @@ namespace Core
                     .WithMany(p => p.IdFigurinos)
                     .UsingEntity<Dictionary<string, object>>(
                         "Figurinoapresentacao",
-                        l => l.HasOne<Apresentacao>().WithMany().HasForeignKey("IdApresentacao").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("fk_FigurinoApresentacao_Apresentacao1"),
+                        l => l.HasOne<Evento>().WithMany().HasForeignKey("IdApresentacao").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("fk_FigurinoApresentacao_Apresentacao1"),
                         r => r.HasOne<Figurino>().WithMany().HasForeignKey("IdFigurino").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("fk_FigurinoApresentacao_Figurino1"),
                         j =>
                         {
@@ -544,6 +492,10 @@ namespace Core
 
                 entity.Property(e => e.IdTipoInstrumento).HasColumnName("idTipoInstrumento");
 
+                entity.Property(e => e.Patrimonio)
+                    .HasMaxLength(20)
+                    .HasColumnName("patrimonio");
+
                 entity.Property(e => e.Status)
                     .HasColumnType("enum('DISPONIVEL','EMPRESTADO','DANIFICADO')")
                     .HasColumnName("status")
@@ -575,6 +527,103 @@ namespace Core
                 entity.Property(e => e.Tamanho)
                     .HasMaxLength(2)
                     .HasColumnName("tamanho");
+            });
+
+            modelBuilder.Entity<Materialestudo>(entity =>
+            {
+                entity.ToTable("materialestudo");
+
+                entity.HasIndex(e => e.IdGrupoMusical, "fk_MaterialEstudo_GrupoMusical1_idx");
+
+                entity.HasIndex(e => e.IdColaborador, "fk_MaterialEstudo_Pessoa1_idx");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Data)
+                    .HasColumnType("datetime")
+                    .HasColumnName("data");
+
+                entity.Property(e => e.IdColaborador).HasColumnName("idColaborador");
+
+                entity.Property(e => e.IdGrupoMusical).HasColumnName("idGrupoMusical");
+
+                entity.Property(e => e.Link)
+                    .HasMaxLength(500)
+                    .HasColumnName("link");
+
+                entity.Property(e => e.Nome)
+                    .HasMaxLength(200)
+                    .HasColumnName("nome");
+
+                entity.HasOne(d => d.IdColaboradorNavigation)
+                    .WithMany(p => p.Materialestudos)
+                    .HasForeignKey(d => d.IdColaborador)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_MaterialEstudo_Pessoa1");
+
+                entity.HasOne(d => d.IdGrupoMusicalNavigation)
+                    .WithMany(p => p.Materialestudos)
+                    .HasForeignKey(d => d.IdGrupoMusical)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_MaterialEstudo_GrupoMusical1");
+            });
+
+            modelBuilder.Entity<Movimentacaofigurino>(entity =>
+            {
+                entity.ToTable("movimentacaofigurino");
+
+                entity.HasIndex(e => e.IdFigurino, "fk_EntregarFigurino_Figurino1_idx");
+
+                entity.HasIndex(e => e.IdManequim, "fk_EntregarFigurino_Manequim1_idx");
+
+                entity.HasIndex(e => e.IdAssociado, "fk_EntregarFigurino_Pessoa1_idx");
+
+                entity.HasIndex(e => e.IdColaborador, "fk_EntregarFigurino_Pessoa2_idx");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.ConfirmacaoRecebimento).HasColumnName("confirmacaoRecebimento");
+
+                entity.Property(e => e.Data)
+                    .HasColumnType("datetime")
+                    .HasColumnName("data");
+
+                entity.Property(e => e.IdAssociado).HasColumnName("idAssociado");
+
+                entity.Property(e => e.IdColaborador).HasColumnName("idColaborador");
+
+                entity.Property(e => e.IdFigurino).HasColumnName("idFigurino");
+
+                entity.Property(e => e.IdManequim).HasColumnName("idManequim");
+
+                entity.Property(e => e.Status)
+                    .HasColumnType("enum('DISPONIVEL','ENTREGUE','RECEBIDO','DANIFICADO','DEVOLVIDO')")
+                    .HasColumnName("status")
+                    .HasDefaultValueSql("'DISPONIVEL'");
+
+                entity.HasOne(d => d.IdAssociadoNavigation)
+                    .WithMany(p => p.MovimentacaofigurinoIdAssociadoNavigations)
+                    .HasForeignKey(d => d.IdAssociado)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_EntregarFigurino_Pessoa1");
+
+                entity.HasOne(d => d.IdColaboradorNavigation)
+                    .WithMany(p => p.MovimentacaofigurinoIdColaboradorNavigations)
+                    .HasForeignKey(d => d.IdColaborador)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_EntregarFigurino_Pessoa2");
+
+                entity.HasOne(d => d.IdFigurinoNavigation)
+                    .WithMany(p => p.Movimentacaofigurinos)
+                    .HasForeignKey(d => d.IdFigurino)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_EntregarFigurino_Figurino1");
+
+                entity.HasOne(d => d.IdManequimNavigation)
+                    .WithMany(p => p.Movimentacaofigurinos)
+                    .HasForeignKey(d => d.IdManequim)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_EntregarFigurino_Manequim1");
             });
 
             modelBuilder.Entity<Movimentacaoinstrumento>(entity =>
@@ -765,6 +814,88 @@ namespace Core
 
                             j.IndexerProperty<int>("IdTipoInstrumento").HasColumnName("idTipoInstrumento");
                         });
+            });
+
+            modelBuilder.Entity<Receitafinanceira>(entity =>
+            {
+                entity.ToTable("receitafinanceira");
+
+                entity.HasIndex(e => e.IdGrupoMusical, "fk_ReceitaFinanceira_GrupoMusical1_idx");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.DataFim)
+                    .HasColumnType("date")
+                    .HasColumnName("dataFim");
+
+                entity.Property(e => e.DataInicio)
+                    .HasColumnType("date")
+                    .HasColumnName("dataInicio");
+
+                entity.Property(e => e.Descricao)
+                    .HasMaxLength(100)
+                    .HasColumnName("descricao");
+
+                entity.Property(e => e.IdGrupoMusical).HasColumnName("idGrupoMusical");
+
+                entity.Property(e => e.Valor)
+                    .HasPrecision(10)
+                    .HasColumnName("valor");
+
+                entity.HasOne(d => d.IdGrupoMusicalNavigation)
+                    .WithMany(p => p.Receitafinanceiras)
+                    .HasForeignKey(d => d.IdGrupoMusical)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_ReceitaFinanceira_GrupoMusical1");
+            });
+
+            modelBuilder.Entity<Receitafinanceirapessoa>(entity =>
+            {
+                entity.HasKey(e => new { e.IdReceitaFinanceira, e.IdPessoa })
+                    .HasName("PRIMARY");
+
+                entity.ToTable("receitafinanceirapessoa");
+
+                entity.HasIndex(e => e.IdPessoa, "fk_ReceitaFinanceiraPessoa_Pessoa1_idx");
+
+                entity.HasIndex(e => e.IdReceitaFinanceira, "fk_ReceitaFinanceiraPessoa_ReceitaFinanceira1_idx");
+
+                entity.Property(e => e.IdReceitaFinanceira).HasColumnName("idReceitaFinanceira");
+
+                entity.Property(e => e.IdPessoa).HasColumnName("idPessoa");
+
+                entity.Property(e => e.DataPagamento)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dataPagamento");
+
+                entity.Property(e => e.Observacoes)
+                    .HasMaxLength(200)
+                    .HasColumnName("observacoes");
+
+                entity.Property(e => e.Status)
+                    .HasColumnType("enum('ABERTO','ENVIADO','PAGO','ISENTO')")
+                    .HasColumnName("status")
+                    .HasDefaultValueSql("'ABERTO'");
+
+                entity.Property(e => e.Valor)
+                    .HasPrecision(10)
+                    .HasColumnName("valor");
+
+                entity.Property(e => e.ValorPago)
+                    .HasPrecision(10)
+                    .HasColumnName("valorPago");
+
+                entity.HasOne(d => d.IdPessoaNavigation)
+                    .WithMany(p => p.Receitafinanceirapessoas)
+                    .HasForeignKey(d => d.IdPessoa)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_ReceitaFinanceiraPessoa_Pessoa1");
+
+                entity.HasOne(d => d.IdReceitaFinanceiraNavigation)
+                    .WithMany(p => p.Receitafinanceirapessoas)
+                    .HasForeignKey(d => d.IdReceitaFinanceira)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_ReceitaFinanceiraPessoa_ReceitaFinanceira1");
             });
 
             modelBuilder.Entity<Tipoinstrumento>(entity =>

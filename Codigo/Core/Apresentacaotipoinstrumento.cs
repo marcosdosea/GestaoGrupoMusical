@@ -10,7 +10,7 @@ namespace Core
         public int QuantidadePlanejada { get; set; }
         public int QuantidadeConfirmada { get; set; }
 
-        public virtual Apresentacao IdApresentacaoNavigation { get; set; } = null!;
+        public virtual Evento IdApresentacaoNavigation { get; set; } = null!;
         public virtual Tipoinstrumento IdTipoInstrumentoNavigation { get; set; } = null!;
     }
 }

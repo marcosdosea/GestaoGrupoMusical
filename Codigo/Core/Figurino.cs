@@ -7,9 +7,9 @@ namespace Core
     {
         public Figurino()
         {
-            Entregarfigurinos = new HashSet<Entregarfigurino>();
             Figurinomanequims = new HashSet<Figurinomanequim>();
-            IdApresentacaos = new HashSet<Apresentacao>();
+            Movimentacaofigurinos = new HashSet<Movimentacaofigurino>();
+            IdApresentacaos = new HashSet<Evento>();
             IdEnsaios = new HashSet<Ensaio>();
         }
 
@@ -19,10 +19,10 @@ namespace Core
         public int IdGrupoMusical { get; set; }
 
         public virtual Grupomusical IdGrupoMusicalNavigation { get; set; } = null!;
-        public virtual ICollection<Entregarfigurino> Entregarfigurinos { get; set; }
         public virtual ICollection<Figurinomanequim> Figurinomanequims { get; set; }
+        public virtual ICollection<Movimentacaofigurino> Movimentacaofigurinos { get; set; }
 
-        public virtual ICollection<Apresentacao> IdApresentacaos { get; set; }
+        public virtual ICollection<Evento> IdApresentacaos { get; set; }
         public virtual ICollection<Ensaio> IdEnsaios { get; set; }
     }
 }

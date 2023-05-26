@@ -7,8 +7,8 @@ namespace Core
     {
         public Manequim()
         {
-            Entregarfigurinos = new HashSet<Entregarfigurino>();
             Figurinomanequims = new HashSet<Figurinomanequim>();
+            Movimentacaofigurinos = new HashSet<Movimentacaofigurino>();
             Pessoas = new HashSet<Pessoa>();
         }
 
@@ -16,8 +16,8 @@ namespace Core
         public string Tamanho { get; set; } = null!;
         public string Descricao { get; set; } = null!;
 
-        public virtual ICollection<Entregarfigurino> Entregarfigurinos { get; set; }
         public virtual ICollection<Figurinomanequim> Figurinomanequims { get; set; }
+        public virtual ICollection<Movimentacaofigurino> Movimentacaofigurinos { get; set; }
         public virtual ICollection<Pessoa> Pessoas { get; set; }
     }
 }
