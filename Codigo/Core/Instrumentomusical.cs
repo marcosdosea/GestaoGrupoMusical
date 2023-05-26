@@ -11,6 +11,7 @@ namespace Core
         }
 
         public int Id { get; set; }
+        public string Patrimonio { get; set; } = null!;
         public DateTime DataAquisicao { get; set; }
         public string Status { get; set; } = null!;
         public int IdTipoInstrumento { get; set; }

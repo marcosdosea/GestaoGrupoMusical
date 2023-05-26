@@ -7,11 +7,13 @@ namespace Core
     {
         public Grupomusical()
         {
-            Apresentacaos = new HashSet<Apresentacao>();
             Ensaios = new HashSet<Ensaio>();
+            Eventos = new HashSet<Evento>();
             Figurinos = new HashSet<Figurino>();
             Instrumentomusicals = new HashSet<Instrumentomusical>();
+            Materialestudos = new HashSet<Materialestudo>();
             Pessoas = new HashSet<Pessoa>();
+            Receitafinanceiras = new HashSet<Receitafinanceira>();
         }
 
         public int Id { get; set; }
@@ -36,10 +38,12 @@ namespace Core
         public string? ChavePix { get; set; }
         public string? ChavePixtipo { get; set; }
 
-        public virtual ICollection<Apresentacao> Apresentacaos { get; set; }
         public virtual ICollection<Ensaio> Ensaios { get; set; }
+        public virtual ICollection<Evento> Eventos { get; set; }
         public virtual ICollection<Figurino> Figurinos { get; set; }
         public virtual ICollection<Instrumentomusical> Instrumentomusicals { get; set; }
+        public virtual ICollection<Materialestudo> Materialestudos { get; set; }
         public virtual ICollection<Pessoa> Pessoas { get; set; }
+        public virtual ICollection<Receitafinanceira> Receitafinanceiras { get; set; }
     }
 }
