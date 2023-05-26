@@ -21,6 +21,8 @@ namespace GestaoGrupoMusicalWeb
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             builder.Services.AddTransient<IGrupoMusical, GrupoMusicalService>();
+            builder.Services.AddTransient<IPessoaService, PessoaService>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
