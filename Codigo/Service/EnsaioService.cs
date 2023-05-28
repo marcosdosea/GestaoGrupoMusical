@@ -24,7 +24,7 @@ namespace Service
                 await _context.SaveChangesAsync();
                 return true;
             }
-            catch (Exception)
+            catch
             {
                 return false;
             }
@@ -42,7 +42,7 @@ namespace Service
                 await _context.SaveChangesAsync();
                 return true;
             }
-            catch (Exception)
+            catch
             {
                 return false;
             }
@@ -60,7 +60,7 @@ namespace Service
                 await _context.SaveChangesAsync();
                 return true;
             }
-            catch (Exception)
+            catch
             {
                 return false;
             }
