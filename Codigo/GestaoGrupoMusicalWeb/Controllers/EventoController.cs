@@ -58,7 +58,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public ActionResult Edit(int id)
         {
             var evento = _evento.Get(id);
-            var eventoModel = _mapper.Map<GrupoMusicalViewModel>(evento);
+            var eventoModel = _mapper.Map<EventoViewModel>(evento);
 
             return View(eventoModel);
         }
