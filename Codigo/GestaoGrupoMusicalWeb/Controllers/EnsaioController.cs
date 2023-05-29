@@ -21,7 +21,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public ActionResult Index()
         {
             var ensaios = _ensaio.GetAll();
-            return View(_mapper.Map<IAsyncEnumerable<EnsaioViewModel>>(ensaios));
+            return View(_mapper.Map<IEnumerable<EnsaioViewModel>>(ensaios));
         }
 
         // GET: EnsaioController/Details/5
