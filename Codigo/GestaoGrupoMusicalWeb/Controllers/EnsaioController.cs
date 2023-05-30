@@ -59,6 +59,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     return RedirectToAction(nameof(Index));
                 }
             }
+            ensaioModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
+            ensaioModel.ListaGrupoMusical = new SelectList(_grupoMusical.GetAll(), "Id", "Nome");
+
             return View(ensaioModel);
         }
 
@@ -66,7 +69,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> Edit(int id)
         {
             var ensaio = await _ensaio.Get(id);
-            return View(_mapper.Map<EnsaioViewModel>(ensaio));
+            EnsaioViewModel ensaioModel = _mapper.Map<EnsaioViewModel>(ensaio);
+
+            ensaioModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
+            ensaioModel.ListaGrupoMusical = new SelectList(_grupoMusical.GetAll(), "Id", "Nome");
+
+            return View(ensaioModel);
         }
 
         // POST: EnsaioController/Edit/5
@@ -81,6 +89,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     return RedirectToAction(nameof(Index));
                 }
             }
+            ensaioModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
+            ensaioModel.ListaGrupoMusical = new SelectList(_grupoMusical.GetAll(), "Id", "Nome");
+
             return View(ensaioModel);
         }
 

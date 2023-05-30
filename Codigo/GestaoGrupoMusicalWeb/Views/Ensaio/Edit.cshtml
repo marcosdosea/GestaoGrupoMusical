@@ -11,12 +11,15 @@
         <form asp-action="Edit">
             <div class="form-group">
                 <label asp-for="IdGrupoMusical" class="control-label"></label>
-                <input asp-for="IdGrupoMusical" class="form-control" />
+                <select asp-for="IdGrupoMusical" asp-items="@Model.ListaGrupoMusical" class="form-select">
+                    <option value=""></option>
+                </select>
                 <span asp-validation-for="IdGrupoMusical" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Tipo" class="control-label"></label>
-                <input asp-for="Tipo" class="form-control" />
+                <select asp-for="Tipo" class="form-select" asp-items="Html.GetEnumSelectList<Tipo>()">
+                </select>
                 <span asp-validation-for="Tipo" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -31,7 +34,17 @@
             </div>
             <div class="form-group">
                 <label asp-for="PresencaObrigatoria" class="control-label"></label>
-                <input asp-for="PresencaObrigatoria" class="form-control" />
+                <div class="d-flex justify-content-around">
+                    @{
+                        foreach (var item in Model.Obrigatorio)
+                        {
+                            <div>
+                                <label for="@item.Key">@item.Key</label>
+                                <input type="radio" value="@item.Value" asp-for="PresencaObrigatoria" id="@item.Key" />
+                            </div>
+                        }
+                    }
+                </div>
                 <span asp-validation-for="PresencaObrigatoria" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -46,12 +59,16 @@
             </div>
             <div class="form-group">
                 <label asp-for="IdColaboradorResponsavel" class="control-label"></label>
-                <input asp-for="IdColaboradorResponsavel" class="form-control" />
+                <select asp-for="IdColaboradorResponsavel" asp-items="@Model.ListaPessoa" class="form-select">
+                    <option value=""></option>
+                </select>
                 <span asp-validation-for="IdColaboradorResponsavel" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="IdRegente" class="control-label"></label>
-                <input asp-for="IdRegente" class="form-control" />
+                <select asp-for="IdRegente" asp-items="@Model.ListaPessoa" class="form-select">
+                    <option value=""></option>
+                </select>
                 <span asp-validation-for="IdRegente" class="text-danger"></span>
             </div>
             <div class="form-group">
