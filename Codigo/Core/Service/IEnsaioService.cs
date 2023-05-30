@@ -1,6 +1,6 @@
 ﻿namespace Core.Service
 {
-    public interface IEnsaio
+    public interface IEnsaioService
     {
         Task<bool> Create(Ensaio ensaio);
         Task<bool> Edit(Ensaio ensaio);
