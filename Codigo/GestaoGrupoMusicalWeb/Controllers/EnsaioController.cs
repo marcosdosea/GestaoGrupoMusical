@@ -34,7 +34,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: EnsaioController/Create
         public ActionResult Create()
         {
-            return View();
+            return View(new EnsaioViewModel());
         }
 
         // POST: EnsaioController/Create

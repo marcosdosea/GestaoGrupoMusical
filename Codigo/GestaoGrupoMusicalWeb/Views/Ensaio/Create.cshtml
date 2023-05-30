@@ -32,8 +32,17 @@
             </div>
             <div class="form-group">
                 <label asp-for="PresencaObrigatoria" class="control-label"></label>
-                <select asp-for="PresencaObrigatoria" class="form-select" asp-items="Html.GetEnumSelectList<Obrigatorio>()">
-                </select>
+                <div class="d-flex justify-content-around">
+                @{
+                    foreach (var item in Model.Obrigatorio)
+                    {
+                        <div>
+                            <label for="@item.Key">@item.Key</label>
+                            <input type="radio" value="@item.Value" asp-for="PresencaObrigatoria" id="@item.Key" />
+                        </div>
+                    }
+                }
+                </div>
                 <span asp-validation-for="PresencaObrigatoria" class="text-danger"></span>
             </div>
             <div class="form-group">
