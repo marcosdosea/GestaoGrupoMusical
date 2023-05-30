@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 
 namespace GestaoGrupoMusicalWeb.Models
 {
@@ -45,6 +46,9 @@ namespace GestaoGrupoMusicalWeb.Models
             { "Sim", true },
             { "Não", false }
         };
+
+        public SelectList? ListaPessoa { get; set; }
+        public SelectList? ListaGrupoMusical { get; set; }
     }
 
     public enum Tipo 

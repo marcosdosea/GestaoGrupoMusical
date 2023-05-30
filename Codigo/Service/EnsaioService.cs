@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Service
 {
-    public class EnsaioService : IEnsaio
+    public class EnsaioService : IEnsaioService
     {
         private readonly GrupoMusicalContext _context;
         public EnsaioService(GrupoMusicalContext context)

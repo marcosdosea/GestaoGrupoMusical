@@ -11,7 +11,9 @@
         <form asp-action="Create">
             <div class="form-group">
                 <label asp-for="IdGrupoMusical" class="control-label"></label>
-                <input asp-for="IdGrupoMusical" class="form-control" />
+                <select asp-for="IdGrupoMusical" asp-items="@Model.ListaGrupoMusical" class="form-select">
+                    <option value=""></option>
+                </select>
                 <span asp-validation-for="IdGrupoMusical" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -57,12 +59,16 @@
             </div>
             <div class="form-group">
                 <label asp-for="IdColaboradorResponsavel" class="control-label"></label>
-                <input asp-for="IdColaboradorResponsavel" class="form-control" />
+                <select asp-for="IdColaboradorResponsavel" asp-items="@Model.ListaPessoa" class="form-select">
+                    <option value=""></option>
+                </select>
                 <span asp-validation-for="IdColaboradorResponsavel" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="IdRegente" class="control-label"></label>
-                <input asp-for="IdRegente" class="form-control" />
+                <select asp-for="IdRegente" asp-items="@Model.ListaPessoa" class="form-select">
+                    <option value=""></option>
+                </select>
                 <span asp-validation-for="IdRegente" class="text-danger"></span>
             </div>
             <div class="form-group">

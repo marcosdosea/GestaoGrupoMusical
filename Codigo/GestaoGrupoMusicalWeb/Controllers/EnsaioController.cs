@@ -3,18 +3,23 @@ using Core;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
     public class EnsaioController : Controller
     {
-        private readonly IEnsaio _ensaio;
+        private readonly IEnsaioService _ensaio;
         private readonly IMapper _mapper;
+        private readonly IPessoaService _pessoa;
+        private readonly IGrupoMusical _grupoMusical;
 
-        public EnsaioController(IMapper mapper, IEnsaio ensaio)
+        public EnsaioController(IMapper mapper, IEnsaioService ensaio, IPessoaService pessoa, IGrupoMusical grupoMusical)
         {
             _ensaio = ensaio;
             _mapper = mapper;
+            _pessoa = pessoa;
+            _grupoMusical = grupoMusical;
         }
 
         // GET: EnsaioController
@@ -34,7 +39,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: EnsaioController/Create
         public ActionResult Create()
         {
-            return View(new EnsaioViewModel());
+            EnsaioViewModel ensaioModel = new();
+
+            ensaioModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
+            ensaioModel.ListaGrupoMusical = new SelectList(_grupoMusical.GetAll(), "Id", "Nome");
+
+            return View(ensaioModel);
         }
 
         // POST: EnsaioController/Create
