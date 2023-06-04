@@ -24,9 +24,4 @@
     <ProjectReference Include="..\Service\Service.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="wwwroot\lib\simple-sidebar\dist\js\" />
-    <Folder Include="wwwroot\lib\simple-sidebar\dist\css\" />
-  </ItemGroup>
-
 </Project>
