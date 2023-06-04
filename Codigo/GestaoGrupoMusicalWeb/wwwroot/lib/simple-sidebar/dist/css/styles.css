@@ -10831,7 +10831,6 @@ textarea.form-control-lg {
 #sidebar-wrapper {
   min-height: 100vh;
   margin-left: -15rem;
-  transition: margin 0.25s ease-out;
 }
 
 #sidebar-wrapper .sidebar-heading {
