@@ -61,7 +61,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public ActionResult Edit(int id)
         {
             var instrumentoMusical = _instrumentoMusical.Get(id);
-            var instrumentoMusicalModel = _mapper.Map<EventoViewModel>(instrumentoMusical);
+            var instrumentoMusicalModel = _mapper.Map<InstrumentoMusicalViewModel>(instrumentoMusical);
 
             return View(instrumentoMusicalModel);
         }
@@ -83,7 +83,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public ActionResult Delete(int id)
         {
             var instrumentoMusical = _instrumentoMusical.Get(id);
-            var instrumentoMusicalModel = _mapper.Map<EventoViewModel>(instrumentoMusical);
+            var instrumentoMusicalModel = _mapper.Map<InstrumentoMusicalViewModel>(instrumentoMusical);
             return View(instrumentoMusicalModel);
         }
 
