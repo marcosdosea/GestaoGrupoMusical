@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Core.Service
+﻿namespace Core.Service
 {
-    internal class IInstrumentoMusicalService
+    public interface IInstrumentoMusicalService
     {
+        int Create(Instrumentomusical instrumentoMusical);
+        void Edit(Instrumentomusical instrumentoMusical);
+        void Delete(int id);
+        Instrumentomusical Get(int id);
+        IEnumerable<Instrumentomusical> GetAll();
     }
 }
