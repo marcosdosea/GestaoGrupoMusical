@@ -1,6 +1,14 @@
-﻿namespace GestaoGrupoMusicalWeb.Mapper
+﻿using AutoMapper;
+using Core.DTO;
+using GestaoGrupoMusicalWeb.Models;
+
+namespace GestaoGrupoMusicalWeb.Mapper
 {
-    public class EventoProfileDTO
+    public class EventoProfileDTO : Profile
     {
+        public EventoProfileDTO()
+        {
+            CreateMap<EnsaioViewModelDTO, EnsaioDTO>().ReverseMap();
+        }
     }
 }
