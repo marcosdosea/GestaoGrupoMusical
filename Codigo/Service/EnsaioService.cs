@@ -1,4 +1,5 @@
 ﻿using Core;
+using Core.DTO;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
 
@@ -80,7 +81,20 @@ namespace Service
         /// <returns>Uma lista contendo todos os Ensaios</returns>
         public IAsyncEnumerable<Ensaio> GetAll()
         {
-            return  _context.Ensaios.AsNoTracking().AsAsyncEnumerable();
+            return _context.Ensaios.AsNoTracking().AsAsyncEnumerable();
+        }
+
+        public IAsyncEnumerable<EnsaioDTO> GetAllDTO()
+        {
+            var query = _context.Ensaios
+                .OrderBy(g => g.DataHoraInicio)
+                .Select(g =>
+                new EnsaioDTO
+                {
+                    Id = g.Id,
+                    Local = g.Local
+                });
+            return query.AsNoTracking().AsAsyncEnumerable();
         }
     }
 }
