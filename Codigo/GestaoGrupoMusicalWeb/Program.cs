@@ -23,6 +23,7 @@ namespace GestaoGrupoMusicalWeb
             builder.Services.AddTransient<IGrupoMusical, GrupoMusicalService>();
             builder.Services.AddTransient<IPessoaService, PessoaService>();
             builder.Services.AddTransient<IEvento, EventoService>();
+            builder.Services.AddScoped<IEnsaioService, EnsaioService>();
             builder.Services.AddTransient<IInstrumentoMusicalService, InstrumentoMusicalService>();
 
 

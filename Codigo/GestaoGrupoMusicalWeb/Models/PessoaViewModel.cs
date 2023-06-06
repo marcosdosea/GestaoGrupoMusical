@@ -54,6 +54,8 @@ namespace GestaoGrupoMusicalWeb.Models
         [Display(Name = "Telefone 2")]
         public string? Telefone2 { get; set; }
 
+        [Required(ErrorMessage = "O e-mail é obrigatório!")]
+        [Display(Name = "Email")]
         public string? Email { get; set; }
 
         [Display(Name = "Data de entrada")]
