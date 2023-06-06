@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Core
 {
-    public partial class Instrumentomusical
+    public partial class Instrumentomusical 
     {
         public Instrumentomusical()
         {
