@@ -8,7 +8,7 @@ namespace GestaoGrupoMusicalWeb.Mapper
     {
         public EventoProfileDTO()
         {
-            CreateMap<EnsaioViewModelDTO, EnsaioDTO>().ReverseMap();
+            CreateMap<EventoViewModelDTO, EventoDTO>().ReverseMap();
         }
     }
 }
