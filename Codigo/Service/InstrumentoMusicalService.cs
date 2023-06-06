@@ -28,7 +28,7 @@ namespace Service
 
         public void Delete(int id)
         {
-            var instrumentoMusical = _context.Eventos.Find(id);
+            var instrumentoMusical = _context.Instrumentomusicals.Find(id);
             _context.Remove(instrumentoMusical);
             _context.SaveChanges();
         }
