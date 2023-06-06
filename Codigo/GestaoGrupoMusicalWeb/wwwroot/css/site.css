@@ -7,3 +7,7 @@ html {
     font-size: 16px;
   }
 }
+
+.btn {
+    box-shadow: none !important;
+}
