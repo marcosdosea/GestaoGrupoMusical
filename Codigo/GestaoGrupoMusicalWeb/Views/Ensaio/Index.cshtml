@@ -1,0 +1,81 @@
+﻿@model IEnumerable<GestaoGrupoMusicalWeb.Models.EnsaioViewModel>
+
+@{
+    ViewData["Title"] = "Ensaios";
+}
+
+<p>
+    <a asp-action="Create">Novo Ensaio</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.IdGrupoMusical)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Tipo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DataHoraInicio)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DataHoraFim)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PresencaObrigatoria)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Local)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Repertorio)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdColaboradorResponsavel)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdRegente)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdGrupoMusical)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Tipo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DataHoraInicio)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DataHoraFim)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PresencaObrigatoria)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Local)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Repertorio)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdColaboradorResponsavel)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdRegente)
+            </td>
+            <td>
+                @Html.ActionLink("Editar", "Edit", new {  id=item.Id  }) |
+                @Html.ActionLink("Detalhes", "Details", new { id=item.Id  }) |
+                @Html.ActionLink("Deletar", "Delete", new {  id=item.Id  })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
