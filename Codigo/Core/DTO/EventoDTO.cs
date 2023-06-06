@@ -10,5 +10,6 @@ namespace Core.DTO
     {
         public int Id { get; set; }
         public string? Local { get; set; }
+        public DateTime DataHoraInicio { get; set; }
     }
 }

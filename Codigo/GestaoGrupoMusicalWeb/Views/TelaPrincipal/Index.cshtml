@@ -1,0 +1,67 @@
+﻿@model GestaoGrupoMusicalWeb.Models.TelaPrincipalViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<h3>Evento</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Data
+            </th>
+            <th>
+                Local
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Evento) {
+        <tr>
+            <td>
+                @item.DataHoraInicio
+            </td>
+            <td>
+                @item.Local
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+<h3>Ensaio</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Data
+            </th>
+            <th>
+                Local
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Ensaio)
+        {
+            <tr>
+                <td>
+                    @item.DataHoraInicio
+                </td>
+                <td>
+                    @item.Local
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

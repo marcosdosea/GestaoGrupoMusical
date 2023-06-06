@@ -1,5 +1,4 @@
-﻿using AspNetCore;
-using AutoMapper;
+﻿using AutoMapper;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +25,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
             var listaEnsaio = _ensaioService.GetAllDTO();
             var EnsaioViewDTO = _mapper.Map<List<EnsaioViewModelDTO>>(listaEnsaio);
 
-            var viewModel = new TelaPrincipalViewModel
+
+             var viewModel = new TelaPrincipalViewModel
             {
                 Ensaio = EnsaioViewDTO,
                 Evento = EventoViewDTO
@@ -35,5 +35,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             return View(viewModel);
         }
+
     }
 }
