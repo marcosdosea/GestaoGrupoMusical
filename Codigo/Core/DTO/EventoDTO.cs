@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Core.DTO
 {
-    internal class EventoDTO
+    public class EventoDTO
     {
         public int Id { get; set; }
         public string? Local { get; set; }
