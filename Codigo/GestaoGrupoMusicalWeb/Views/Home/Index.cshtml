@@ -2,7 +2,67 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<p>
+    <a role="button" class="btn btn-primary" asp-controller="Evento" asp-action="Create">Novo Evento</a>
+</p>
+
+<h5>Proximo evento</h5>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Data
+            </th>
+            <th>
+                Local
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Evento)
+        {
+            <tr>
+                <td>
+                    @item.DataHoraInicio
+                </td>
+                <td>
+                    @item.Local
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<p>
+    <a role="button" class="btn btn-primary" asp-controller="Ensaio" asp-action="Create">Novo Ensaio</a>
+</p>
+
+<h3>Ensaio</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Data
+            </th>
+            <th>
+                Local
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Ensaio)
+        {
+            <tr>
+                <td>
+                    @item.DataHoraInicio
+                </td>
+                <td>
+                    @item.Local
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
