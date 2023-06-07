@@ -1,4 +1,6 @@
-﻿namespace Core.Service
+﻿using Core.DTO;
+
+namespace Core.Service
 {
     public interface IEvento
     {
@@ -7,5 +9,6 @@
         void Delete(int id);
         Evento Get(int id);
         IEnumerable<Evento> GetAll();
+        IEnumerable<EventoDTO> GetAllDTO();
     }
 }
