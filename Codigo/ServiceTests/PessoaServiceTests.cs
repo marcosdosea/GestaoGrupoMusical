@@ -78,6 +78,7 @@ namespace Service.Tests
                         IdPapelGrupo = 1,
                         IdManequim = 1
                     },
+
                     new Pessoa {
                         Id = 3,
                         Cpf = "007.217.424-02",
@@ -101,7 +102,7 @@ namespace Service.Tests
                         IdPapelGrupo = 1,
                         IdManequim = 1
                     }
-            };
+                };
 
             _context.AddRange(pessoas);
             _context.SaveChanges();
