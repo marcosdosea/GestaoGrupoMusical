@@ -23,10 +23,11 @@ namespace Service
         /// </summary>
         /// <param name="pessoa">dados do novo associado</param>
         /// <returns>retorna o id referente a nova entidade criada</returns>
-        public int Create(Pessoa pessoa)
+        public async Task<int> Create(Pessoa pessoa)
         {
-            _context.Add(pessoa);
-            _context.SaveChanges();
+            await _context.Pessoas.AddAsync(pessoa);
+            await _context.SaveChangesAsync();
+
             return pessoa.Id;
         }
 
@@ -72,5 +73,6 @@ namespace Service
         {
             return _context.Pessoas.AsNoTracking();
         }
+
     }
 }
