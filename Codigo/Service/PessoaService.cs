@@ -74,5 +74,43 @@ namespace Service
             return _context.Pessoas.AsNoTracking();
         }
 
+        public async Task<bool> AddAdmGroup(Pessoa pessoa)
+        {
+            try
+            {
+                //faz uma consulta para tentar buscar a primeira pessoa com o cpf que foi digitado
+                var pessoaF = await _context.Pessoas.FirstOrDefaultAsync(p => p.Cpf == pessoa.Cpf);
+
+                if (pessoaF == null)
+                {
+                    Create(pessoa);
+                }
+                else
+                {
+                    //id para adm de grupo == 3
+                    pessoaF.IdPapelGrupo = 3;
+                    _context.Update(pessoaF);
+                }
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public IAsyncEnumerable<Pessoa> GetAllAdmGroup(int id)
+        {
+            var AdmGroupList = _context.Pessoas.Where(P => P.IdGrupoMusical == id && P.IdPapelGrupo == 3).ToListAsync();
+
+            return (IAsyncEnumerable<Pessoa>)AdmGroupList;
+        }
+
+        public Task<bool> RemoveAdmGroup(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
