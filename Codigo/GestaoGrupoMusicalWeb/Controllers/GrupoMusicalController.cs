@@ -26,8 +26,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public ActionResult Index()
         {
             var listaGrupoMusical = _grupoMusical.GetAllDTO();
-            var listaGrupoMusicalModelDTO = _mapper.Map<List<GrupoMusicalViewModelDTO>>(listaGrupoMusical);
-            return View(listaGrupoMusicalModelDTO);
+            return View(listaGrupoMusical);
         }
 
         // GET: GrupoMusicalController/Details/5
