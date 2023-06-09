@@ -123,5 +123,15 @@ namespace GestaoGrupoMusicalWeb.Controllers
             _pessoaService.Edit(pessoa);
             return RedirectToAction(nameof(Index));
         }
+
+        //Administradores do Grupo Musical\\
+
+        public ActionResult IndexAdmGroup(int id)
+        {
+            var listaPessoas = _pessoaService.GetAllAdmGroup(id);
+            var listaPessoasModel = _mapper.Map<List<PessoaViewModel>>(listaPessoas);
+
+            return View(listaPessoasModel);
+        }
     }
 }
