@@ -1,4 +1,5 @@
 ﻿using Core;
+using Core.DTO;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -100,10 +101,23 @@ namespace Service
                 return false;
             }
         }
-
-        public IAsyncEnumerable<Pessoa> GetAllAdmGroup(int id)
+        /// <summary>
+        /// Este metodo recebe o id de um grupo musical e retorna
+        /// um DTO de todos os adm daquele grupo
+        /// </summary>
+        /// <param name="id">id do grupo musical</param>
+        /// <returns>lista de DTO contendo todos os adm do grupo</returns>
+        public IAsyncEnumerable<AdministradorGrupoMusicalDTO> GetAllAdmGroup(int id)
         {
-            var AdmGroupList = _context.Pessoas.Where(P => P.IdGrupoMusical == id && P.IdPapelGrupo == 3);
+            var AdmGroupList = from pessoa in _context.Pessoas
+                               where pessoa.IdGrupoMusical == id && pessoa.IdPapelGrupo == 3
+                               select new AdministradorGrupoMusicalDTO
+                               {
+                                   Id = pessoa.Id,
+                                   Nome = pessoa.Nome,
+                                   Cpf = pessoa.Cpf,
+                                   Email = pessoa.Email
+                               };
 
             return AdmGroupList.AsAsyncEnumerable();
         }
