@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Core;
+using Core.DTO;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
 
@@ -48,17 +49,42 @@ namespace Service
         {
             _context.Update(grupomusical);
             _context.SaveChanges();
-           
-        }
 
+        }
+        /// <summary>
+        /// Pegar um Grupo Musical
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns> Retorna 1 grupo musical</returns>
         public Grupomusical Get(int id)
         {
             return _context.Grupomusicals.Find(id);
         }
 
+        /// <summary>
+        /// Pega todos os grupos musicais
+        /// </summary>
+        /// <returns>Uma lista de grupo musicais</returns>
         public IEnumerable<Grupomusical> GetAll()
         {
-          return _context.Grupomusicals.AsNoTracking();
+            return _context.Grupomusicals.AsNoTracking();
+        }
+        /// <summary>
+        /// DTO de grupo musicais
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public IEnumerable<GrupoMusicalDTO> GetAllDTO()
+        {
+            var query = _context.Grupomusicals
+                .OrderBy(g => g.Id)
+                .Select(g =>
+                    new GrupoMusicalDTO
+                    {
+                        Id = g.Id,
+                        Name = g.Nome
+                    }) ;
+            return query.AsNoTracking();
         }
     }
 }
