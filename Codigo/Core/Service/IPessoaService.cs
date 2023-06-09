@@ -13,5 +13,9 @@ namespace Core.Service
         void Delete(int id);
         Pessoa Get(int id);
         IEnumerable<Pessoa> GetAll();
+
+        Task<bool> AddAdmGroup(Pessoa pessoa);
+        IAsyncEnumerable<Pessoa> GetAllAdmGroup(int id);
+        Task<bool> RemoveAdmGroup(int id);
     }
 }
