@@ -6,7 +6,7 @@ namespace GestaoGrupoMusicalWeb.Mapper
 {
     public class GrupoMusicalProfileDTO : Profile
     {
-        GrupoMusicalProfileDTO()
+        public GrupoMusicalProfileDTO()
         {
             CreateMap<GrupoMusicalViewModelDTO, GrupoMusicalDTO>().ReverseMap();
         }
