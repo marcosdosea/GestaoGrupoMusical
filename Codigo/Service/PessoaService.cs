@@ -108,9 +108,25 @@ namespace Service
             return AdmGroupList.AsAsyncEnumerable();
         }
 
-        public Task<bool> RemoveAdmGroup(int id)
+        public async Task<bool> RemoveAdmGroup(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var pessoa = _context.Pessoas.Find(id);
+                pessoa.IdPapelGrupo = 1;
+
+                _context.Pessoas.Update(pessoa);
+
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+            
+
         }
     }
 }
