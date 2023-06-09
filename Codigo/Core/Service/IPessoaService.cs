@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Core.DTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,7 +16,7 @@ namespace Core.Service
         IEnumerable<Pessoa> GetAll();
 
         Task<bool> AddAdmGroup(Pessoa pessoa);
-        IAsyncEnumerable<Pessoa> GetAllAdmGroup(int id);
+        IAsyncEnumerable<AdministradorGrupoMusicalDTO> GetAllAdmGroup(int id);
         Task<bool> RemoveAdmGroup(int id);
     }
 }
