@@ -1,17 +1,15 @@
 ﻿@model IEnumerable<GestaoGrupoMusicalWeb.Models.GrupoMusicalViewModel>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Grupos Musicais";
 }
 
-<h1>Grupo Musical</h1>
-
-<p>
-    <a asp-action="Create">Novo Grupo Musical</a>
-</p>
+<div class="d-flex justify-content-between align-items-center">
+    <h5>@ViewData["Title"]</h5>
+    <a role="button" class="btn btn-primary" asp-controller="GrupoMusical" asp-action="Create">Novo Grupo Musical</a>
+</div>
 
 <div class="table-responsive">
-
     <table class="table">
         <thead>
             <tr>
@@ -145,7 +143,7 @@
                     <td>
                         @Html.ActionLink("Editar", "Edit", new {  id=item.Id }) |
                         @Html.ActionLink("Detalhes", "Details", new {  id=item.Id }) |
-                        @Html.ActionLink("Deletar", "Delete", new { id=item.Id })
+                        @Html.ActionLink("Excluir", "Delete", new { id=item.Id })
                     </td>
                 </tr>
             }
