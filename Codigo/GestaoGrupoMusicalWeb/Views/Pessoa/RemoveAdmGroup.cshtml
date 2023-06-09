@@ -1,0 +1,37 @@
+﻿@model GestaoGrupoMusicalWeb.Models.PessoaViewModel
+
+@{
+    ViewData["Title"] = "RemoveAdmGroup";
+}
+
+<h1>RemoveAdmGroup</h1>
+
+<h3>Are you sure you want to remove @Model.Nome?</h3>
+<div>
+    <h4>PessoaViewModel</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Id)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Id)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Nome)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Nome)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Cpf)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Cpf)
+        </dd>
+    </dl>
+    <form asp-action="RemoveAdmGroup">
+        <input type="submit" value="Remover" class="btn btn-danger" /> |
+        <a asp-action="Index">Back to List</a>
+    </form>
+</div>
