@@ -10,8 +10,9 @@ using Microsoft.EntityFrameworkCore;
 using Service;
 using NuGet.Frameworks;
 
-namespace ServiceTests
+namespace Service.Tests
 {
+    [TestClass]
     public class EventoServiceTests
     {
         private GrupoMusicalContext _context;
@@ -103,7 +104,7 @@ namespace ServiceTests
         {
             _evento.Delete(3);
             // Assert
-            Assert.AreEqual(3, _evento.GetAll().Count());
+            Assert.AreEqual(2, _evento.GetAll().Count());
             var evento = _evento.Get(3);
             Assert.AreEqual(null, evento);
         }
