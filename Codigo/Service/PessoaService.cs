@@ -103,9 +103,9 @@ namespace Service
 
         public IAsyncEnumerable<Pessoa> GetAllAdmGroup(int id)
         {
-            var AdmGroupList = _context.Pessoas.Where(P => P.IdGrupoMusical == id && P.IdPapelGrupo == 3).ToListAsync();
+            var AdmGroupList = _context.Pessoas.Where(P => P.IdGrupoMusical == id && P.IdPapelGrupo == 3);
 
-            return (IAsyncEnumerable<Pessoa>)AdmGroupList;
+            return AdmGroupList.AsAsyncEnumerable();
         }
 
         public Task<bool> RemoveAdmGroup(int id)
