@@ -26,8 +26,8 @@ namespace Service
         /// <returns>retorna o id referente a nova entidade criada</returns>
         public async Task<int> Create(Pessoa pessoa)
         {
-            await _context.Pessoas.AddAsync(pessoa);
-            await _context.SaveChangesAsync();
+            _context.Pessoas.Add(pessoa);
+            _context.SaveChanges();
 
             return pessoa.Id;
         }
@@ -80,10 +80,18 @@ namespace Service
             try
             {
                 //faz uma consulta para tentar buscar a primeira pessoa com o cpf que foi digitado
-                var pessoaF = await _context.Pessoas.FirstOrDefaultAsync(p => p.Cpf == pessoa.Cpf);
+                var pessoaF = _context.Pessoas.FirstOrDefault(p => p.Cpf == pessoa.Cpf);
 
                 if (pessoaF == null)
                 {
+                    pessoa.IdManequim = 1;
+                    pessoa.IdPapelGrupo = 3;
+                    pessoa.Ativo = 1;
+                    pessoa.Cep = "";
+                    pessoa.Estado = "";
+                    pessoa.IsentoPagamento = 1;
+                    pessoa.Telefone1 = "";
+
                     Create(pessoa);
                 }
                 else
@@ -92,7 +100,7 @@ namespace Service
                     pessoaF.IdPapelGrupo = 3;
                     _context.Update(pessoaF);
                 }
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
 
                 return true;
             }
@@ -131,7 +139,7 @@ namespace Service
 
                 _context.Pessoas.Update(pessoa);
 
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
 
                 return true;
             }
