@@ -25,5 +25,8 @@ namespace GestaoGrupoMusicalWeb.Models
         [StringLength(1)]
         public string? Sexo { get; set; }
 
+        [Required]
+        public string? IdGrupoMusical { get; set; }
+
     }
 }
