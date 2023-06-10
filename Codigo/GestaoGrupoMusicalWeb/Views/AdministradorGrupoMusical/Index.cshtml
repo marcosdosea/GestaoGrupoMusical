@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Administradores do Grupo";
+    ViewBag.IdGrupoMusical = ViewBag.IdGrupo;
 }
 
 <h1>@ViewBag.Nome</h1>
@@ -34,7 +35,7 @@
                 @Html.DisplayFor(modelItem => item.Cpf)
             </td>
             <td>
-                @Html.ActionLink("Remover", "Delete", new { id=item.Id }) |
+                @Html.ActionLink("Remover", "Delete", new { id=item.Id, nomeGrupo=ViewBag.Nome }) |
                 @Html.ActionLink("Notificar", "", new { /* id=item.PrimaryKey */ })
             </td>
         </tr>
