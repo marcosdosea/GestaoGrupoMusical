@@ -1,10 +1,10 @@
 ﻿@model GestaoGrupoMusicalWeb.Models.PessoaViewModel
 
 @{
-    ViewData["Title"] = "RemoveAdmGroup";
+    ViewData["Title"] = "Remover Administrador";
 }
 
-<h1>RemoveAdmGroup</h1>
+<h1>Remover Cargo de Administrador</h1>
 
 <h3>Are you sure you want to remove @Model.Nome?</h3>
 <div>
@@ -30,8 +30,11 @@
             @Html.DisplayFor(model => model.Cpf)
         </dd>
     </dl>
+
     <form asp-action="Delete">
+        <input type="hidden" name="idGrupoMusical" value="@ViewBag.idGrupoMusical" />
+        <input type="hidden" name="nomeGrupo" value="@ViewBag.nomeGrupo" />
         <input type="submit" value="Remover" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <a asp-action="Index" asp-route-id="@ViewBag.idGrupoMusical" asp-route-NomeGrupo="@ViewBag.nomeGrupo">Back to List</a>
     </form>
 </div>
