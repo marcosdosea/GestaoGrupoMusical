@@ -8,11 +8,6 @@ html {
   }
 }
 
-html {
-  position: relative;
-  min-height: 100%;
-}
-
-body {
-  margin-bottom: 60px;
+.btn {
+    box-shadow: none !important;
 }

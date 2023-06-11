@@ -1,14 +1,15 @@
 ﻿@model GestaoGrupoMusicalWeb.Models.GrupoMusicalViewModel
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = $"Deletar Grupo Musical {Model.Nome}";
+    ViewData["Name"] = $"{Model.Nome}";
 }
 
-<h1>Delete</h1>
+<h1>@ViewData["Title"]</h1>
 
-<h3>Are you sure you want to delete this?</h3>
+<h3>Tem certeza que quer deletar o Grupo Musical @ViewData["Name"]?</h3>
 <div>
-    <h4>GrupoMusicalViewModel</h4>
+
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -140,7 +141,7 @@
     </dl>
     
     <form asp-action="Delete">
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <input type="submit" value="Sim" class="btn btn-danger" /> |
+        <a asp-action="Index">Não</a>
     </form>
 </div>

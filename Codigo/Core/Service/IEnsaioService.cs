@@ -1,4 +1,6 @@
-﻿namespace Core.Service
+﻿using Core.DTO;
+
+namespace Core.Service
 {
     public interface IEnsaioService
     {
@@ -7,5 +9,6 @@
         Task<bool> Delete(int id);
         Task<Ensaio> Get(int id);
         IAsyncEnumerable<Ensaio> GetAll();
+        IAsyncEnumerable<EnsaioDTO> GetAllDTO();
     }
 }

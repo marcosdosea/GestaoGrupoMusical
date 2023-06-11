@@ -1,4 +1,5 @@
 ﻿using Core;
+using Core.DTO;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
 
@@ -54,6 +55,20 @@ namespace Service
         public IEnumerable<Evento> GetAll()
         {
             return _context.Eventos.AsNoTracking();
+        }
+
+        public IEnumerable<EventoDTO> GetAllDTO()
+        {
+            var query = _context.Eventos
+                .OrderBy(g => g.DataHoraInicio)
+                .Select(g =>
+                new EventoDTO
+                {
+                    DataHoraInicio = g.DataHoraInicio,
+                    Local = g.Local
+                });
+
+            return query.AsNoTracking();
         }
     }
 }
