@@ -62,7 +62,6 @@ namespace Service
             foreach (var instrumento in query)
             {
                 instrumento.Status = instrumento.EnumStatus.Single(s => s.Key == instrumento.Status).Value;
-                Console.WriteLine(instrumento.Status);
             }
 
             return query;
