@@ -12,5 +12,12 @@ namespace Core.DTO
         public string Status { get; set; } = string.Empty;
 
         public string NomeAssociado { get; set; } = string.Empty;
+
+        public Dictionary<string, string> EnumStatus { get; } = new()
+        {
+            { "DISPONIVEL", "Disponível" },
+            { "EMPRESTADO", "Emprestado" },
+            { "DANIFICADO" ,"Danificado" }
+        };
     }
 }

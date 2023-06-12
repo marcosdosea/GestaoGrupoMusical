@@ -37,7 +37,7 @@
                 @Html.DisplayFor(modelItem => item.NomeInstrumento)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Status)
+                @item.EnumStatus.Single(s => s.Key == item.Status).Value
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.NomeAssociado)
