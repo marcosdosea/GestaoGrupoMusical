@@ -10,6 +10,7 @@ namespace GestaoGrupoMusicalWeb.Models
         public int IdGrupoMusical { get; set; }
         [Required]
         public DateTime DataHoraInicio { get; set; }
+        [Required]
         public DateTime DataHoraFim { get; set; }
         public string? Local { get; set; }
         public string? Repertorio { get; set; }

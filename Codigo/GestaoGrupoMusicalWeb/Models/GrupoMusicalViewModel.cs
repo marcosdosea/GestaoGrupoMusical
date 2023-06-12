@@ -33,7 +33,7 @@ namespace GestaoGrupoMusicalWeb.Models
         [StringLength(100, MinimumLength = 5, ErrorMessage ="O campo Cidade de ter entre 5 a 100 caracteres")]
         public string? Cidade { get; set; }
         [Required(ErrorMessage ="O campo Estado é obrigatório")]
-        [Display(Name = "Cidade")]
+        [Display(Name = "Estado")]
         [StringLength(2, MinimumLength = 2)]
         public string Estado { get; set; } = null!;
         [Display(Name ="Pais")]
