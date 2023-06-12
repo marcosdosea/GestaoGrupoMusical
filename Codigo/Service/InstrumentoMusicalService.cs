@@ -46,20 +46,26 @@ namespace Service
 
         public async Task<IEnumerable<InstrumentoMusicalDTO>> GetAllDTO()
         {
-            var query = (from instrumento in _context.Instrumentomusicals
-                        join movimentacao in _context.Movimentacaoinstrumentos
-                        on instrumento.Id equals movimentacao.IdInstrumentoMusical into intMovi
-                        from instrumentoMovi in intMovi.DefaultIfEmpty()
-                        select new InstrumentoMusicalDTO
-                        {
-                            Id = instrumento.Id,
-                            Patrimonio = instrumento.Patrimonio,
-                            NomeInstrumento = instrumento.IdTipoInstrumentoNavigation.Nome,
-                            Status = instrumento.Status,
-                            NomeAssociado = instrumentoMovi.IdAssociadoNavigation.Nome
-                        }).AsNoTracking();
+            var query = await   (from instrumento in _context.Instrumentomusicals
+                                join movimentacao in _context.Movimentacaoinstrumentos
+                                on instrumento.Id equals movimentacao.IdInstrumentoMusical into intMovi
+                                from instrumentoMovi in intMovi.DefaultIfEmpty()
+                                select new InstrumentoMusicalDTO
+                                {
+                                    Id = instrumento.Id,
+                                    Patrimonio = instrumento.Patrimonio,
+                                    NomeInstrumento = instrumento.IdTipoInstrumentoNavigation.Nome,
+                                    Status = instrumento.Status,
+                                    NomeAssociado = instrumentoMovi.IdAssociadoNavigation.Nome
+                                }).AsNoTracking().ToListAsync();
 
-            return await query.ToListAsync();
+            foreach (var instrumento in query)
+            {
+                instrumento.Status = instrumento.EnumStatus.Single(s => s.Key == instrumento.Status).Value;
+                Console.WriteLine(instrumento.Status);
+            }
+
+            return query;
         }
     }
 }
