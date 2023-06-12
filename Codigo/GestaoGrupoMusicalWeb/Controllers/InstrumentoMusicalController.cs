@@ -2,7 +2,6 @@
 using Core;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GestaoGrupoMusicalWeb.Controllers
@@ -20,13 +19,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: InstrumentoMusicalController
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-
-            var listaInstrumentoMusical = _instrumentoMusical.GetAll();
-            var listaInstrumentoMusicalModel = _mapper.Map<List<InstrumentoMusicalViewModel>>(listaInstrumentoMusical);
-            return View(listaInstrumentoMusicalModel);
-
+            var listaInstrumentoMusical = await _instrumentoMusical.GetAllDTO();
+            return View(listaInstrumentoMusical);
         }
 
 
