@@ -1,12 +1,7 @@
 ﻿using Core;
+using Core.DTO;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Service
 {
@@ -47,6 +42,24 @@ namespace Service
         public IEnumerable<Instrumentomusical> GetAll()
         {
             return _context.Instrumentomusicals.AsNoTracking();
+        }
+
+        public async Task<IEnumerable<InstrumentoMusicalDTO>> GetAllDTO()
+        {
+            var query = (from instrumento in _context.Instrumentomusicals
+                        join movimentacao in _context.Movimentacaoinstrumentos
+                        on instrumento.Id equals movimentacao.IdInstrumentoMusical into intMovi
+                        from instrumentoMovi in intMovi.DefaultIfEmpty()
+                        select new InstrumentoMusicalDTO
+                        {
+                            Id = instrumento.Id,
+                            Patrimonio = instrumento.Patrimonio,
+                            NomeInstrumento = instrumento.IdTipoInstrumentoNavigation.Nome,
+                            Status = instrumento.Status,
+                            NomeAssociado = instrumentoMovi.IdAssociadoNavigation.Nome
+                        }).AsNoTracking();
+
+            return await query.ToListAsync();
         }
     }
 }
