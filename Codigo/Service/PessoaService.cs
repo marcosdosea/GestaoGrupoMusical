@@ -1,4 +1,5 @@
 ﻿using Core;
+using Core.DTO;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -23,10 +24,11 @@ namespace Service
         /// </summary>
         /// <param name="pessoa">dados do novo associado</param>
         /// <returns>retorna o id referente a nova entidade criada</returns>
-        public int Create(Pessoa pessoa)
+        public async Task<int> Create(Pessoa pessoa)
         {
-            _context.Add(pessoa);
+            _context.Pessoas.Add(pessoa);
             _context.SaveChanges();
+
             return pessoa.Id;
         }
 
@@ -71,6 +73,82 @@ namespace Service
         public IEnumerable<Pessoa> GetAll()
         {
             return _context.Pessoas.AsNoTracking();
+        }
+
+        public async Task<bool> AddAdmGroup(Pessoa pessoa)
+        {
+            try
+            {
+                //faz uma consulta para tentar buscar a primeira pessoa com o cpf que foi digitado
+                var pessoaF = _context.Pessoas.FirstOrDefault(p => p.Cpf == pessoa.Cpf);
+
+                if (pessoaF == null)
+                {
+                    pessoa.IdManequim = 1;
+                    pessoa.IdPapelGrupo = 3;
+                    pessoa.Ativo = 1;
+                    pessoa.Cep = "";
+                    pessoa.Estado = "";
+                    pessoa.IsentoPagamento = 1;
+                    pessoa.Telefone1 = "";
+
+                    Create(pessoa);
+                }
+                else
+                {
+                    //id para adm de grupo == 3
+                    pessoaF.IdPapelGrupo = 3;
+                    _context.Update(pessoaF);
+                }
+                _context.SaveChanges();
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        /// <summary>
+        /// Este metodo recebe o id de um grupo musical e retorna
+        /// um DTO de todos os adm daquele grupo
+        /// </summary>
+        /// <param name="id">id do grupo musical</param>
+        /// <returns>lista de DTO contendo todos os adm do grupo</returns>
+        public IAsyncEnumerable<AdministradorGrupoMusicalDTO> GetAllAdmGroup(int id)
+        {
+            var AdmGroupList = from pessoa in _context.Pessoas
+                               where pessoa.IdGrupoMusical == id && pessoa.IdPapelGrupo == 3
+                               select new AdministradorGrupoMusicalDTO
+                               {
+                                   Id = pessoa.Id,
+                                   Nome = pessoa.Nome,
+                                   Cpf = pessoa.Cpf,
+                                   Email = pessoa.Email
+                               };
+
+            return AdmGroupList.AsAsyncEnumerable();
+        }
+
+        public async Task<bool> RemoveAdmGroup(int id)
+        {
+            try
+            {
+                var pessoa = _context.Pessoas.Find(id);
+                pessoa.IdPapelGrupo = 1;
+
+                _context.Pessoas.Update(pessoa);
+
+                _context.SaveChanges();
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+            
+
         }
     }
 }

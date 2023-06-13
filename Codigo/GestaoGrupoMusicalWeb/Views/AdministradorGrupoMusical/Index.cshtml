@@ -1,0 +1,44 @@
+﻿@model IEnumerable<Core.DTO.AdministradorGrupoMusicalDTO>
+
+@{
+    ViewData["Title"] = "Administradores do Grupo";
+    ViewBag.IdGrupoMusical = ViewBag.IdGrupo;
+}
+
+<h1>@ViewBag.Nome</h1>
+
+<div>
+    @Html.Partial("Create", new GestaoGrupoMusicalWeb.Models.AdministradorGrupoMusicalViewModel())
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Nome)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Cpf)
+            </th>
+            <th>
+                Ações
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nome)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Cpf)
+            </td>
+            <td>
+                @Html.ActionLink("Remover", "Delete", new { id=item.Id, nomeGrupo=ViewBag.Nome }) |
+                @Html.ActionLink("Notificar", "", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
