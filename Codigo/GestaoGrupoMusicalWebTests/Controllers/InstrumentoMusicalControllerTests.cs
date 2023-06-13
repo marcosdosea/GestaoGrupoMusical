@@ -36,14 +36,15 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
         [TestMethod()]
         public void IndexTest()
         {
+            //Act
             var result = _controller.Index();
 
             // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             ViewResult viewResult = (ViewResult)result;
-            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(List<PessoaViewModel>));
+            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(List<InstrumentoMusicalViewModel>));
 
-            List<PessoaViewModel> lista = (List<PessoaViewModel>)viewResult.ViewData.Model;
+            List<InstrumentoMusicalViewModel> lista = (List<InstrumentoMusicalViewModel>)viewResult.ViewData.Model;
             Assert.AreEqual(3, lista.Count);
         }
 
@@ -58,12 +59,12 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
             ViewResult viewResult = (ViewResult)result;
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(InstrumentoMusicalViewModel));
             InstrumentoMusicalViewModel instrumentoMusicalView = (InstrumentoMusicalViewModel)viewResult.ViewData.Model;
-            Assert.AreEqual(1, instrumentoMusicalView.Id);
-            Assert.AreEqual("1", instrumentoMusicalView.Patrimonio);
-            Assert.AreEqual(DateTime.Parse("24/02/2013"), instrumentoMusicalView.DataAquisicao);
+            Assert.AreEqual(5, instrumentoMusicalView.Id);
+            Assert.AreEqual("5", instrumentoMusicalView.Patrimonio);
+            Assert.AreEqual(DateTime.Parse("08/02/2023"), instrumentoMusicalView.DataAquisicao);
             Assert.AreEqual("DISPONIVEL", instrumentoMusicalView.Status);
             Assert.AreEqual(0, instrumentoMusicalView.IdGrupoMusical);
-            Assert.AreEqual(0, instrumentoMusicalView.IdTipoInstrumento);
+            Assert.AreEqual(6, instrumentoMusicalView.IdTipoInstrumento);
         }
 
         [TestMethod()]
@@ -116,12 +117,12 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
             ViewResult viewResult = (ViewResult)result;
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(InstrumentoMusicalViewModel));
             InstrumentoMusicalViewModel instrumentoMusicalView = (InstrumentoMusicalViewModel)viewResult.ViewData.Model;
-            Assert.AreEqual(1, instrumentoMusicalView.Id);
-            Assert.AreEqual("1", instrumentoMusicalView.Patrimonio);
-            Assert.AreEqual(DateTime.Parse("24/02/2013"), instrumentoMusicalView.DataAquisicao);
+            Assert.AreEqual(5, instrumentoMusicalView.Id);
+            Assert.AreEqual("5", instrumentoMusicalView.Patrimonio);
+            Assert.AreEqual(DateTime.Parse("08/02/2023"), instrumentoMusicalView.DataAquisicao);
             Assert.AreEqual("DISPONIVEL", instrumentoMusicalView.Status);
+            Assert.AreEqual(6, instrumentoMusicalView.IdTipoInstrumento);
             Assert.AreEqual(0, instrumentoMusicalView.IdGrupoMusical);
-            Assert.AreEqual(0, instrumentoMusicalView.IdTipoInstrumento);
         }
 
         [TestMethod()]
@@ -144,15 +145,16 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
             // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             ViewResult viewResult = (ViewResult)result;
-            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(PessoaViewModel));
+            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(InstrumentoMusicalViewModel));
             InstrumentoMusicalViewModel instrumentoMusicalView = (InstrumentoMusicalViewModel)viewResult.ViewData.Model;
-            Assert.AreEqual(1, instrumentoMusicalView.Id);
-            Assert.AreEqual("1", instrumentoMusicalView.Patrimonio);
-            Assert.AreEqual(DateTime.Parse("24/02/2013"), instrumentoMusicalView.DataAquisicao);
+            Assert.AreEqual(5, instrumentoMusicalView.Id);
+            Assert.AreEqual("5", instrumentoMusicalView.Patrimonio);
+            Assert.AreEqual(DateTime.Parse("08/02/2023"), instrumentoMusicalView.DataAquisicao);
             Assert.AreEqual("DISPONIVEL", instrumentoMusicalView.Status);
+            Assert.AreEqual(6, instrumentoMusicalView.IdTipoInstrumento);
             Assert.AreEqual(0, instrumentoMusicalView.IdGrupoMusical);
-            Assert.AreEqual(0, instrumentoMusicalView.IdTipoInstrumento);
         }
+    
 
         [TestMethod()]
         public void Delete_post()
