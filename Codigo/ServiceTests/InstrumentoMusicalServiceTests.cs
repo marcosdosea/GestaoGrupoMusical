@@ -1,17 +1,13 @@
 ﻿using Core.Service;
 using Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Service;
 
-namespace ServiceTests
+namespace Service.Tests
 {
-    internal class InstrumentoMusicalServiceTests
+    [TestClass()]
+    public class InstrumentoMusicalServiceTests
     {
         private GrupoMusicalContext _context;
         private IInstrumentoMusicalService _instrumentoMusical;
