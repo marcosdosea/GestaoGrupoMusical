@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Core.DTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,10 +9,14 @@ namespace Core.Service
 {
     public interface IPessoaService
     {
-        int Create(Pessoa pessoa);
+        Task<int> Create(Pessoa pessoa);
         void Edit(Pessoa pessoa);
         void Delete(int id);
         Pessoa Get(int id);
         IEnumerable<Pessoa> GetAll();
+
+        Task<bool> AddAdmGroup(Pessoa pessoa);
+        IAsyncEnumerable<AdministradorGrupoMusicalDTO> GetAllAdmGroup(int id);
+        Task<bool> RemoveAdmGroup(int id);
     }
 }
