@@ -3,17 +3,20 @@ using Core;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
     public class InstrumentoMusicalController : Controller
     {
         private readonly IInstrumentoMusicalService _instrumentoMusical;
+        private readonly IPessoaService _pessoa;
         private readonly IMapper _mapper;
 
-        public InstrumentoMusicalController(IInstrumentoMusicalService instrumentoMusical, IMapper mapper)
+        public InstrumentoMusicalController(IInstrumentoMusicalService instrumentoMusical, IPessoaService pessoa, IMapper mapper)
         {
             _instrumentoMusical = instrumentoMusical;
+            _pessoa = pessoa;
             _mapper = mapper;
 
         }
@@ -90,6 +93,24 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             _instrumentoMusical.Delete(id);
             return RedirectToAction(nameof(Index));
+        }
+
+        public ActionResult Movimentar(int id)
+        {
+            MovimentacaoInstrumentoViewModel movimentacao = new();
+            var instrumento = _instrumentoMusical.Get(id);
+            movimentacao.Patrimonio = instrumento.Patrimonio;
+            movimentacao.NomeInstrumento = instrumento.IdTipoInstrumentoNavigation.Nome;
+            movimentacao.ListaAssociado = new SelectList(_pessoa.GetAll(), "Id", "Nome");
+            return View(movimentacao);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Movimentar(MovimentacaoInstrumentoViewModel movimentacao)
+        {
+            //movimentacao.ListaAssociado = new SelectList(_pessoa.GetAll(), "Id", "Nome");
+            return View(movimentacao);
         }
     }
 }
