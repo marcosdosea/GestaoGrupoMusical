@@ -107,10 +107,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Movimentar(MovimentacaoInstrumentoViewModel movimentacao)
+        public ActionResult Movimentar(MovimentacaoInstrumentoViewModel movimentacaoPost)
         {
             //movimentacao.ListaAssociado = new SelectList(_pessoa.GetAll(), "Id", "Nome");
-            return View(movimentacao);
+            return View(movimentacaoPost);
         }
     }
 }

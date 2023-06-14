@@ -18,12 +18,16 @@
     </div>
     <div class="form-group">
         <label asp-for="IdAssociado" class="control-label"></label>
-        <select asp-for="IdAssociado" asp-items="Model.ListaAssociado" class="form-select"></select>
+        <select asp-for="IdAssociado" asp-items="@Model.ListaAssociado" class="form-select">
+            <option value=""></option>
+        </select>
         <span asp-validation-for="IdAssociado" class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="IdColaborador" class="control-label"></label>
-        <select asp-for="IdColaborador" asp-items="Model.ListaAssociado" class="form-select"></select>
+        <select asp-for="IdColaborador" asp-items="@Model.ListaAssociado" class="form-select">
+            <option value=""></option>
+        </select>
         <span asp-validation-for="IdColaborador" class="text-danger"></span>
     </div>
     <div class="form-group">
@@ -51,3 +55,9 @@
         <input class="btn btn-primary fw-bold" type="submit" value="Adicionar" />
     </div>
 </form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
