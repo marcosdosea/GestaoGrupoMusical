@@ -10,6 +10,6 @@ namespace Core.Service
         Instrumentomusical Get(int id);
         IEnumerable<Instrumentomusical> GetAll();
         Task<IEnumerable<InstrumentoMusicalDTO>> GetAllDTO();
-        //IReadOnlyCollection
+        Task<string> GetNomeInstrumento(int id);
     }
 }

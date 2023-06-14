@@ -66,5 +66,14 @@ namespace Service
 
             return query;
         }
+
+        public async Task<string> GetNomeInstrumento(int id)
+        {
+            var query = await (from instrumento in _context.Instrumentomusicals
+                        where instrumento.Id == id
+                        select new { instrumento.IdTipoInstrumentoNavigation.Nome }).AsNoTracking().SingleOrDefaultAsync();
+
+            return query?.Nome ?? "";
+        }
     }
 }

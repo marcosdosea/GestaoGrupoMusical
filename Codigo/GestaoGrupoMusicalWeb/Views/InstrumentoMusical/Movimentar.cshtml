@@ -1,0 +1,53 @@
+﻿@model GestaoGrupoMusicalWeb.Models.MovimentacaoInstrumentoViewModel
+@{
+    ViewData["Title"] = "Movimentar Instrumento Musical";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<form asp-controller="InstrumentoMusical" asp-action="Movimentar">
+    <div class="form-group">
+        <label asp-for="Patrimonio" class="control-label"></label>
+        <input asp-for="Patrimonio" class="form-control" readonly />
+        <span asp-validation-for="Patrimonio" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="NomeInstrumento" class="control-label"></label>
+        <input asp-for="NomeInstrumento" class="form-control" readonly />
+        <span asp-validation-for="NomeInstrumento" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="IdAssociado" class="control-label"></label>
+        <select asp-for="IdAssociado" asp-items="Model.ListaAssociado" class="form-select"></select>
+        <span asp-validation-for="IdAssociado" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="IdColaborador" class="control-label"></label>
+        <select asp-for="IdColaborador" asp-items="Model.ListaAssociado" class="form-select"></select>
+        <span asp-validation-for="IdColaborador" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Movimentacao" class="control-label"></label>
+        <div class="d-flex justify-content-around">
+            @{
+                foreach (var item in Model.MovimentacaoEnum)
+                {
+                    <div>
+                        <label for="@item.Key">@item.Key</label>
+                        <input type="radio" value="@item.Value" asp-for="Movimentacao" id="@item.Key" />
+                    </div>
+                }
+            }
+        </div>
+        <span asp-validation-for="Movimentacao" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Data" class="control-label"></label>
+        <input asp-for="Data" value="@Model.Data.ToString("dd/mm/yyyy")" class="form-control" readonly />
+        <span asp-validation-for="Data" class="text-danger"></span>
+    </div>
+    <div>
+        <a class="btn btn-light fw-bold" asp-controller="InstrumentoMusical" asp-action="Index">Voltar</a>
+        <input class="btn btn-primary fw-bold" type="submit" value="Adicionar" />
+    </div>
+</form>

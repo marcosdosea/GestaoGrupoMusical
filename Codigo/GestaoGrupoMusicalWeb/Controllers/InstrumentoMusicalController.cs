@@ -95,12 +95,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public ActionResult Movimentar(int id)
+        public async Task<ActionResult> Movimentar(int id)
         {
             MovimentacaoInstrumentoViewModel movimentacao = new();
             var instrumento = _instrumentoMusical.Get(id);
             movimentacao.Patrimonio = instrumento.Patrimonio;
-            movimentacao.NomeInstrumento = instrumento.IdTipoInstrumentoNavigation.Nome;
+            movimentacao.NomeInstrumento = await _instrumentoMusical.GetNomeInstrumento(id);
             movimentacao.ListaAssociado = new SelectList(_pessoa.GetAll(), "Id", "Nome");
             return View(movimentacao);
         }
