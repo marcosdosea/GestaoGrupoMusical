@@ -20,8 +20,10 @@ namespace GestaoGrupoMusicalWeb.Models
 
         public DateTime Data { get; set; } = DateTime.Now;
 
+        public string DataString { get; set; } = DateTime.Now.ToString("dd/MM/yyyy");
+
         [Display(Name = "Movimentação")]
-        public string Movimentacao { get; set; } = string.Empty;
+        public string Movimentacao { get; set; } = "EMPRESTIMO";
 
 
 
