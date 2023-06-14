@@ -14,34 +14,33 @@ namespace Service
             _context = context;
         }
 
-        public int Create(Instrumentomusical instrumentoMusical)
+        public async Task<int> Create(Instrumentomusical instrumentoMusical)
         {
-            _context.Add(instrumentoMusical);
-            _context.SaveChanges();
+            await _context.AddAsync(instrumentoMusical);
+            await _context.SaveChangesAsync();
             return instrumentoMusical.Id;
         }
 
-        public void Delete(int id)
+        public async Task Delete(int id)
         {
-            var instrumentoMusical = _context.Instrumentomusicals.Find(id);
-            _context.Remove(instrumentoMusical);
-            _context.SaveChanges();
+            _context.Remove(await Get(id));
+            await _context.SaveChangesAsync();
         }
 
-        public void Edit(Instrumentomusical instrumentoMusical)
+        public async Task Edit(Instrumentomusical instrumentoMusical)
         {
             _context.Update(instrumentoMusical);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public Instrumentomusical Get(int id)
+        public async Task<Instrumentomusical> Get(int id)
         {
-            return _context.Instrumentomusicals.Find(id);
+            return await _context.Instrumentomusicals.FindAsync(id) ?? new Instrumentomusical();
         }
 
-        public IEnumerable<Instrumentomusical> GetAll()
+        public async Task<IEnumerable<Instrumentomusical>> GetAll()
         {
-            return _context.Instrumentomusicals.AsNoTracking();
+            return await _context.Instrumentomusicals.AsNoTracking().ToListAsync();
         }
 
         public async Task<IEnumerable<InstrumentoMusicalDTO>> GetAllDTO()
