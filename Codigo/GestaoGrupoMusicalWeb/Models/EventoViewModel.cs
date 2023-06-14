@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 
 namespace GestaoGrupoMusicalWeb.Models
 {
@@ -16,5 +17,10 @@ namespace GestaoGrupoMusicalWeb.Models
         public string? Repertorio { get; set; }
         public int IdColaboradorResponsavel { get; set; }
         public int IdRegente { get; set; }
+
+        public SelectList? ListaColaborador { get; set; }
+        public SelectList? ListaGrupoMusical { get; set; }
+
+        public SelectList? ListaRegente { get; set; }
     }
 }

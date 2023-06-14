@@ -26,6 +26,10 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
         public void Initialize()
         {
             var mokServer = new Mock<IEvento>();
+            var mokServicePessoa = new Mock<IPessoaService>();
+            var mokServiceGrupoMusical = new Mock<IGrupoMusical>();
+            
+
             IMapper mapper = new MapperConfiguration(cfg =>
                 cfg.AddProfile(new EventoProfile())).CreateMapper();
 
@@ -36,7 +40,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
             mokServer.Setup(service => service.Create(It.IsAny<Evento>()))
                 .Verifiable();
 
-            _controller = new EventoController(mokServer.Object, mapper);
+            _controller = new EventoController(mokServer.Object, mapper, mokServiceGrupoMusical.Object, mokServicePessoa.Object);
         }
 
         [TestMethod()]
