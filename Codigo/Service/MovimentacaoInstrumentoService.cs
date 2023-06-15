@@ -1,4 +1,5 @@
 ﻿using Core;
+using Core.DTO;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
 
@@ -43,6 +44,21 @@ namespace Service
                 await transaction.RollbackAsync();
                 return false;
             }
+        }
+
+        public async Task<IEnumerable<MovimentacaoInstrumentoDTO>> GetAll()
+        {
+            var query = (from movimentacao in _context.Movimentacaoinstrumentos
+                         select new MovimentacaoInstrumentoDTO
+                         {
+                             Cpf = movimentacao.IdAssociadoNavigation.Cpf,
+                             NomeAssociado = movimentacao.IdAssociadoNavigation.Nome,
+                             Data = movimentacao.Data,
+                             Movimentacao = movimentacao.TipoMovimento,
+                             Status = movimentacao.ConfirmacaoAssociado == 0 ? "Aguardando Confirmação" : "Confirmado"
+                         }).AsNoTracking().ToListAsync();
+
+            return await query;
         }
 
         public async Task<Movimentacaoinstrumento?> GetEmprestimoByIdInstrumento(int idInstrumento)

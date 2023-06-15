@@ -1,4 +1,6 @@
 ﻿
+using Core.DTO;
+
 namespace Core.Service
 {
     public interface IMovimentacaoInstrumentoService
@@ -6,5 +8,7 @@ namespace Core.Service
         Task<bool> Create(Movimentacaoinstrumento movimentacao);
 
         Task<Movimentacaoinstrumento?> GetEmprestimoByIdInstrumento(int idInstrumento);
+
+        Task<IEnumerable<MovimentacaoInstrumentoDTO>> GetAll();
     }
 }
