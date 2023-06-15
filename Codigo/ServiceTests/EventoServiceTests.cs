@@ -9,6 +9,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.EntityFrameworkCore;
 using Service;
 using NuGet.Frameworks;
+using Core.DTO;
 
 namespace Service.Tests
 {
@@ -157,6 +158,19 @@ namespace Service.Tests
             Assert.IsNotNull(listaEvento);
             Assert.AreEqual(3, listaEvento.Count());
             Assert.AreEqual(1, listaEvento.First().Id);
+        }
+        [TestMethod()]
+        public void GetAllDTO()
+        {
+            // Act
+            var listaEvento = _evento.GetAllDTO();
+
+            //Assert
+            Assert.IsInstanceOfType(listaEvento, typeof(IEnumerable<EventoDTO>));
+            Assert.IsNotNull (listaEvento);
+            Assert.AreEqual(3,listaEvento.Count());
+            Assert.AreEqual(0, listaEvento.First().Id);
+            
         }
 
     }
