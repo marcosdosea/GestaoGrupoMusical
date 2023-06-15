@@ -126,6 +126,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Movimentar(MovimentacaoInstrumentoViewModel movimentacaoPost)
         {
+            movimentacaoPost.ListaAssociado = new SelectList(_pessoa.GetAll(), "Id", "Nome");
+            movimentacaoPost.Movimentacoes = await _movimentacaoInstrumento.GetAll();
+
             try
             {
                 if (ModelState.IsValid)
@@ -140,15 +143,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     };
                     if (await _movimentacaoInstrumento.Create(movimentacao))
                     {
-                        return RedirectToAction(nameof(Index));
+                        return RedirectToAction(nameof(Movimentar));
                     }
                 }
-                movimentacaoPost.ListaAssociado = new SelectList(_pessoa.GetAll(), "Id", "Nome");
                 return View(movimentacaoPost);
             }
             catch
             {
-                movimentacaoPost.ListaAssociado = new SelectList(_pessoa.GetAll(), "Id", "Nome");
                 return View(movimentacaoPost);
             }
         }
