@@ -103,13 +103,21 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         public async Task<ActionResult> Movimentar(int id)
         {
-            MovimentacaoInstrumentoViewModel movimentacao = new();
+            MovimentacaoInstrumentoViewModel movimentacaoModel = new();
             var instrumento = await _instrumentoMusical.Get(id);
-            movimentacao.Patrimonio = instrumento.Patrimonio;
-            movimentacao.IdInstrumentoMusical = instrumento.Id;
-            movimentacao.NomeInstrumento = await _instrumentoMusical.GetNomeInstrumento(id);
-            movimentacao.ListaAssociado = new SelectList(_pessoa.GetAll(), "Id", "Nome");
-            return View(movimentacao);
+            var movimentacao = await _movimentacaoInstrumento.GetEmprestimoByIdInstrumento(id);
+
+            if(movimentacao != null)
+            {
+                movimentacaoModel.IdAssociado = movimentacao.IdAssociado;
+                movimentacaoModel.IdColaborador = movimentacao.IdColaborador;
+            }
+
+            movimentacaoModel.Patrimonio = instrumento.Patrimonio;
+            movimentacaoModel.IdInstrumentoMusical = instrumento.Id;
+            movimentacaoModel.NomeInstrumento = await _instrumentoMusical.GetNomeInstrumento(id);
+            movimentacaoModel.ListaAssociado = new SelectList(_pessoa.GetAll(), "Id", "Nome");
+            return View(movimentacaoModel);
         }
 
         [HttpPost]
@@ -130,7 +138,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     };
                     if (await _movimentacaoInstrumento.Create(movimentacao))
                     {
-                        return View();
+                        return RedirectToAction(nameof(Index));
                     }
                 }
                 movimentacaoPost.ListaAssociado = new SelectList(_pessoa.GetAll(), "Id", "Nome");
