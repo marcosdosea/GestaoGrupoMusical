@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.ConstrainedExecution;
 using System.Security.Cryptography;
+using Core.DTO;
 
 namespace Service.Tests
 {
@@ -250,6 +251,19 @@ namespace Service.Tests
             var listaGrupoMusical = _grupoMusical.GetAll();
             // Assert
             Assert.IsInstanceOfType(listaGrupoMusical, typeof(IEnumerable<Grupomusical>));
+            Assert.IsNotNull(listaGrupoMusical);
+            Assert.AreEqual(3, listaGrupoMusical.Count());
+            Assert.AreEqual(1, listaGrupoMusical.First().Id);
+        }
+
+        [TestMethod]
+        public void GetAllDTOTest()
+        {
+            // Act
+            var listaGrupoMusical = _grupoMusical.GetAllDTO();
+
+            // Assert
+            Assert.IsInstanceOfType(listaGrupoMusical, typeof(IEnumerable<GrupoMusicalDTO>));
             Assert.IsNotNull(listaGrupoMusical);
             Assert.AreEqual(3, listaGrupoMusical.Count());
             Assert.AreEqual(1, listaGrupoMusical.First().Id);
