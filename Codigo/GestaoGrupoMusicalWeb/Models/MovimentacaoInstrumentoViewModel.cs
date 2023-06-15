@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Core.DTO;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
 namespace GestaoGrupoMusicalWeb.Models
@@ -30,7 +31,7 @@ namespace GestaoGrupoMusicalWeb.Models
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public string Movimentacao { get; set; } = "EMPRESTIMO";
 
-
+        public IEnumerable<MovimentacaoInstrumentoDTO>? Movimentacoes { get; set; }
 
         public Dictionary<string, string> MovimentacaoEnum { get; } = new()
         {

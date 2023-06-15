@@ -114,6 +114,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 movimentacaoModel.Movimentacao = "DEVOLUCAO";
             }
 
+            movimentacaoModel.Movimentacoes = await _movimentacaoInstrumento.GetAll();
             movimentacaoModel.Patrimonio = instrumento.Patrimonio;
             movimentacaoModel.IdInstrumentoMusical = instrumento.Id;
             movimentacaoModel.NomeInstrumento = await _instrumentoMusical.GetNomeInstrumento(id);
