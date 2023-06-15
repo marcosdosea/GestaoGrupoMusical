@@ -44,5 +44,15 @@ namespace Service
                 return false;
             }
         }
+
+        public async Task<Movimentacaoinstrumento?> GetMovimentacaoByIdInstrumento(int idInstrumento)
+        {
+            var query = (from movimentacao in _context.Movimentacaoinstrumentos
+                        where movimentacao.IdInstrumentoMusical == idInstrumento
+                        where movimentacao.TipoMovimento == "EMPRESTIMO"
+                        select movimentacao).AsNoTracking().SingleOrDefaultAsync();
+
+            return await query;
+        }
     }
 }
