@@ -56,15 +56,15 @@ namespace Service
                                     NomeInstrumento = instrumento.IdTipoInstrumentoNavigation.Nome,
                                     Status = instrumento.Status,
                                     NomeAssociado = instrumentoMovi.IdAssociadoNavigation.Nome
-                                }).AsNoTracking().ToListAsync();
-
+                                }).AsNoTracking().Distinct().ToListAsync();
+    
             foreach (var instrumento in query)
             {
-                instrumento.Status = instrumento.EnumStatus.Single(s => s.Key == instrumento.Status).Value;
                 if (instrumento.Status == "DISPONIVEL")
                 {
                     instrumento.NomeAssociado = "";
                 }
+                instrumento.Status = instrumento.EnumStatus.Single(s => s.Key == instrumento.Status).Value;
             }
 
             return query;
