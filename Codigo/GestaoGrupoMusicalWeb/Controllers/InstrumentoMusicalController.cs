@@ -111,6 +111,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 movimentacaoModel.IdAssociado = movimentacao.IdAssociado;
                 movimentacaoModel.IdColaborador = movimentacao.IdColaborador;
+                movimentacaoModel.Movimentacao = "DEVOLUCAO";
             }
 
             movimentacaoModel.Patrimonio = instrumento.Patrimonio;

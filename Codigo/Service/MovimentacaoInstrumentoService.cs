@@ -50,7 +50,7 @@ namespace Service
             var query = (from movimentacao in _context.Movimentacaoinstrumentos
                         where movimentacao.IdInstrumentoMusical == idInstrumento
                         where movimentacao.TipoMovimento == "EMPRESTIMO"
-                        select movimentacao).AsNoTracking().SingleOrDefaultAsync();
+                        select movimentacao).AsNoTracking().FirstOrDefaultAsync();
 
             return await query;
         }
