@@ -5,6 +5,6 @@ namespace Core.Service
     {
         Task<bool> Create(Movimentacaoinstrumento movimentacao);
 
-        Task<Movimentacaoinstrumento?> GetMovimentacaoByIdInstrumento(int idInstrumento);
+        Task<Movimentacaoinstrumento?> GetEmprestimoByIdInstrumento(int idInstrumento);
     }
 }
