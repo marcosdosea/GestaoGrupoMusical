@@ -6,6 +6,7 @@
 <h1>@ViewData["Title"]</h1>
 
 <form asp-controller="InstrumentoMusical" asp-action="Movimentar">
+    <input asp-for="IdInstrumentoMusical" class="form-control" type="hidden" />
     <div class="form-group">
         <label asp-for="Patrimonio" class="control-label"></label>
         <input asp-for="Patrimonio" class="form-control" readonly />

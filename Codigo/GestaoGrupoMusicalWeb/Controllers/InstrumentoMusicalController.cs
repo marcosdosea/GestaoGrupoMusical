@@ -11,12 +11,18 @@ namespace GestaoGrupoMusicalWeb.Controllers
     {
         private readonly IInstrumentoMusicalService _instrumentoMusical;
         private readonly IPessoaService _pessoa;
+        private readonly IMovimentacaoInstrumentoService _movimentacaoInstrumento;
         private readonly IMapper _mapper;
 
-        public InstrumentoMusicalController(IInstrumentoMusicalService instrumentoMusical, IPessoaService pessoa, IMapper mapper)
+        public InstrumentoMusicalController(
+            IInstrumentoMusicalService instrumentoMusical, 
+            IPessoaService pessoa, 
+            IMovimentacaoInstrumentoService movimentacaoInstrumento, 
+            IMapper mapper)
         {
             _instrumentoMusical = instrumentoMusical;
             _pessoa = pessoa;
+            _movimentacaoInstrumento = movimentacaoInstrumento;
             _mapper = mapper;
 
         }
@@ -100,6 +106,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             MovimentacaoInstrumentoViewModel movimentacao = new();
             var instrumento = await _instrumentoMusical.Get(id);
             movimentacao.Patrimonio = instrumento.Patrimonio;
+            movimentacao.IdInstrumentoMusical = instrumento.Id;
             movimentacao.NomeInstrumento = await _instrumentoMusical.GetNomeInstrumento(id);
             movimentacao.ListaAssociado = new SelectList(_pessoa.GetAll(), "Id", "Nome");
             return View(movimentacao);
@@ -107,10 +114,33 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Movimentar(MovimentacaoInstrumentoViewModel movimentacaoPost)
+        public async Task<ActionResult> Movimentar(MovimentacaoInstrumentoViewModel movimentacaoPost)
         {
-            //movimentacao.ListaAssociado = new SelectList(_pessoa.GetAll(), "Id", "Nome");
-            return View(movimentacaoPost);
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var movimentacao = new Movimentacaoinstrumento
+                    {
+                        Data = movimentacaoPost.Data,
+                        IdInstrumentoMusical = movimentacaoPost.IdInstrumentoMusical,
+                        IdAssociado = movimentacaoPost.IdAssociado,
+                        IdColaborador = movimentacaoPost.IdColaborador,
+                        TipoMovimento = movimentacaoPost.Movimentacao
+                    };
+                    if (await _movimentacaoInstrumento.Create(movimentacao))
+                    {
+                        return View();
+                    }
+                }
+                movimentacaoPost.ListaAssociado = new SelectList(_pessoa.GetAll(), "Id", "Nome");
+                return View(movimentacaoPost);
+            }
+            catch
+            {
+                movimentacaoPost.ListaAssociado = new SelectList(_pessoa.GetAll(), "Id", "Nome");
+                return View(movimentacaoPost);
+            }
         }
     }
 }

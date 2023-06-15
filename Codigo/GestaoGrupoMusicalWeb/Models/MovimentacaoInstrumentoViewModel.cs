@@ -12,17 +12,22 @@ namespace GestaoGrupoMusicalWeb.Models
         public string NomeInstrumento { get; set; } = string.Empty;
 
         [Display(Name = "Associado")]
+        [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public int IdAssociado { get; set; }
 
-        [Display(Name = "Colaborador")]
         //TODO: Remover essa propriedade apos autenticacao
+        [Display(Name = "Colaborador")]
+        [Required (ErrorMessage = "O campo {0} é obrigatório")]
         public int IdColaborador { get; set; }
+
+        public int IdInstrumentoMusical { get; set; }
 
         public DateTime Data { get; set; } = DateTime.Now;
 
         public string DataString { get; set; } = DateTime.Now.ToString("dd/MM/yyyy");
 
         [Display(Name = "Movimentação")]
+        [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public string Movimentacao { get; set; } = "EMPRESTIMO";
 
 
