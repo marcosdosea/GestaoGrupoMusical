@@ -1,66 +1,63 @@
 ﻿@model GestaoGrupoMusicalWeb.Models.EventoViewModel
-
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Novo Evento";
 }
 
-<h1>Create</h1>
-
-<h4>EventoViewModel</h4>
+<h4>@ViewData["Title"]</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IdGrupoMusical" class="control-label"></label>
-                <input asp-for="IdGrupoMusical" class="form-control" />
+                <label asp-for="IdGrupoMusical" class="control-label">Grupo Musical</label>
+                <select asp-for="IdGrupoMusical" asp-items="@Model.ListaGrupoMusical" class="form-select">
+                    <option value=""></option>
+                </select>
                 <span asp-validation-for="IdGrupoMusical" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="DataHoraInicio" class="control-label"></label>
+                <label asp-for="DataHoraInicio" class="control-label">Data Hora Início</label>
                 <input asp-for="DataHoraInicio" class="form-control" />
                 <span asp-validation-for="DataHoraInicio" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="DataHoraFim" class="control-label"></label>
+                <label asp-for="DataHoraFim" class="control-label">Data Hora Fim</label>
                 <input asp-for="DataHoraFim" class="form-control" />
                 <span asp-validation-for="DataHoraFim" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Local" class="control-label"></label>
+                <label asp-for="Local" class="control-label">Local</label>
                 <input asp-for="Local" class="form-control" />
                 <span asp-validation-for="Local" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Repertorio" class="control-label"></label>
+                <label asp-for="Repertorio" class="control-label">Repertorio</label>
                 <input asp-for="Repertorio" class="form-control" />
                 <span asp-validation-for="Repertorio" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="IdColaboradorResponsavel" class="control-label"></label>
-                <input asp-for="IdColaboradorResponsavel" class="form-control" />
+                <label asp-for="IdColaboradorResponsavel" class="control-label">Colaborador Responsavel</label>
+                <select asp-for="IdColaboradorResponsavel" asp-items="@Model.ListaPessoa" class="form-select">
+                    <option value=""></option>
+                </select>
                 <span asp-validation-for="IdColaboradorResponsavel" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="IdRegente" class="control-label"></label>
-                <input asp-for="IdRegente" class="form-control" />
+                <label asp-for="IdRegente" class="control-label">Regente</label>
+                <select asp-for="IdRegente" asp-items="@Model.ListaPessoa" class="form-select">
+                    <option value=""></option>
+                </select>
                 <span asp-validation-for="IdRegente" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Salvar" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Voltar</a>
 </div>
 
 @section Scripts {

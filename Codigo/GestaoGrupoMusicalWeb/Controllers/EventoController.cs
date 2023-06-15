@@ -47,8 +47,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             EventoViewModel eventoModel = new EventoViewModel
             {
                 ListaGrupoMusical = new SelectList(_grupoMusical.GetAll(), "Id", "Nome"),
-                ListaRegente = new SelectList(_pessoa.GetAll(), "Id", "Nome"),
-                ListaColaborador = new SelectList(_pessoa.GetAll(), "Id", "Nome")
+                ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome")
             };
             return View(eventoModel);
         }
@@ -65,8 +64,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             }
             eventoModel.ListaGrupoMusical = new SelectList(_grupoMusical.GetAll(), "Id", "Nome");
-            eventoModel.ListaRegente = new SelectList(_pessoa.GetAll(), "Id", "Nome");
-            eventoModel.ListaColaborador = new SelectList(_pessoa.GetAll(), "Id", "Nome");
+            eventoModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
             return RedirectToAction(nameof(Index));
         }
 
@@ -76,9 +74,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             var evento = _evento.Get(id);
             var eventoModel = _mapper.Map<EventoViewModel>(evento);
             eventoModel.ListaGrupoMusical = new SelectList(_grupoMusical.GetAll(), "Id", "Nome");
-            eventoModel.ListaRegente = new SelectList(_pessoa.GetAll(), "Id", "Nome");
-            eventoModel.ListaColaborador = new SelectList(_pessoa.GetAll(), "Id", "Nome");
-
+            eventoModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome"); 
 
             return View(eventoModel);
         }
@@ -94,8 +90,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 _evento.Create(evento);
             }
             eventoModel.ListaGrupoMusical = new SelectList(_grupoMusical.GetAll(), "Id", "Nome");
-            eventoModel.ListaRegente = new SelectList(_pessoa.GetAll(), "Id", "Nome");
-            eventoModel.ListaColaborador = new SelectList(_pessoa.GetAll(), "Id", "Nome");
+            eventoModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome"); 
             return RedirectToAction(nameof(Index));
         }
 

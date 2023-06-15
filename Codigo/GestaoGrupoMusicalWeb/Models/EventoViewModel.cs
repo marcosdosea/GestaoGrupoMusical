@@ -18,9 +18,9 @@ namespace GestaoGrupoMusicalWeb.Models
         public int IdColaboradorResponsavel { get; set; }
         public int IdRegente { get; set; }
 
-        public SelectList? ListaColaborador { get; set; }
+        public SelectList? ListaPessoa { get; set; }
         public SelectList? ListaGrupoMusical { get; set; }
 
-        public SelectList? ListaRegente { get; set; }
+      
     }
 }
