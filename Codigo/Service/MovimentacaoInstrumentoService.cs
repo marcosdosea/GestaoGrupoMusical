@@ -67,18 +67,31 @@ namespace Service
 
         public async Task<IEnumerable<MovimentacaoInstrumentoDTO>> GetAll()
         {
-            var query = (from movimentacao in _context.Movimentacaoinstrumentos
-                         select new MovimentacaoInstrumentoDTO
-                         {
-                             Id = movimentacao.Id,
-                             Cpf = movimentacao.IdAssociadoNavigation.Cpf,
-                             NomeAssociado = movimentacao.IdAssociadoNavigation.Nome,
-                             Data = movimentacao.Data,
-                             Movimentacao = movimentacao.TipoMovimento,
-                             Status = movimentacao.ConfirmacaoAssociado == 0 ? "Aguardando Confirmação" : "Confirmado"
-                         }).AsNoTracking().ToListAsync();
+            var query = await   (from movimentacao in _context.Movimentacaoinstrumentos
+                                orderby movimentacao.Data descending
+                                select new MovimentacaoInstrumentoDTO
+                                {
+                                    Id = movimentacao.Id,
+                                    Cpf = movimentacao.IdAssociadoNavigation.Cpf,
+                                    NomeAssociado = movimentacao.IdAssociadoNavigation.Nome,
+                                    Data = movimentacao.Data,
+                                    Movimentacao = movimentacao.TipoMovimento,
+                                    Status = movimentacao.ConfirmacaoAssociado == 0 ? "Aguardando Confirmação" : "Confirmado"
+                                }).AsNoTracking().ToListAsync();
 
-            return await query;
+            foreach (var movimentacao in query)
+            {
+                if(movimentacao.Movimentacao == "DEVOLUCAO")
+                {
+                    movimentacao.Movimentacao = "Devolução";
+                }
+                else
+                {
+                    movimentacao.Movimentacao = "Empréstimo";
+                }
+            }
+
+            return query;
         }
 
         public async Task<Movimentacaoinstrumento?> GetEmprestimoByIdInstrumento(int idInstrumento)

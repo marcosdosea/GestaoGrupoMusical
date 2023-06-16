@@ -107,7 +107,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             var instrumento = await _instrumentoMusical.Get(id);
             var movimentacao = await _movimentacaoInstrumento.GetEmprestimoByIdInstrumento(id);
 
-            if(movimentacao != null)
+            if(movimentacao != null && instrumento.Status == "EMPRESTADO")
             {
                 movimentacaoModel.IdAssociado = movimentacao.IdAssociado;
                 movimentacaoModel.IdColaborador = movimentacao.IdColaborador;
