@@ -103,5 +103,16 @@ namespace Service.Tests
             Assert.AreEqual("Extra Grande", manequim.Descricao);
         }
 
+        [TestMethod]
+        public void GetTest()
+        {
+            // Act
+            var manequim = _manequim.Get(1);
+
+            // Arrange
+            Assert.AreEqual(1, manequim.Id);
+            Assert.AreEqual("P", manequim.Tamanho);
+            Assert.AreEqual("PEQUENO", manequim.Descricao);
+        }
     }
 }
