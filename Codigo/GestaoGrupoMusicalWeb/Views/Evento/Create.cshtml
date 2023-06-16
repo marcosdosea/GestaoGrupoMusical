@@ -9,41 +9,41 @@
     <div class="col-md-4">
         <form asp-action="Create">
             <div class="form-group">
-                <label asp-for="IdGrupoMusical" class="control-label">Grupo Musical</label>
+                <label asp-for="IdGrupoMusical" class="control-label"></label>
                 <select asp-for="IdGrupoMusical" asp-items="@Model.ListaGrupoMusical" class="form-select">
                     <option value=""></option>
                 </select>
                 <span asp-validation-for="IdGrupoMusical" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="DataHoraInicio" class="control-label">Data Hora Início</label>
+                <label asp-for="DataHoraInicio" class="control-label"></label>
                 <input asp-for="DataHoraInicio" class="form-control" />
                 <span asp-validation-for="DataHoraInicio" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="DataHoraFim" class="control-label">Data Hora Fim</label>
+                <label asp-for="DataHoraFim" class="control-label"></label>
                 <input asp-for="DataHoraFim" class="form-control" />
                 <span asp-validation-for="DataHoraFim" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Local" class="control-label">Local</label>
+                <label asp-for="Local" class="control-label"></label>
                 <input asp-for="Local" class="form-control" />
                 <span asp-validation-for="Local" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Repertorio" class="control-label">Repertorio</label>
+                <label asp-for="Repertorio" class="control-label"></label>
                 <input asp-for="Repertorio" class="form-control" />
                 <span asp-validation-for="Repertorio" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="IdColaboradorResponsavel" class="control-label">Colaborador Responsavel</label>
+                <label asp-for="IdColaboradorResponsavel" class="control-label"></label>
                 <select asp-for="IdColaboradorResponsavel" asp-items="@Model.ListaPessoa" class="form-select">
                     <option value=""></option>
                 </select>
                 <span asp-validation-for="IdColaboradorResponsavel" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="IdRegente" class="control-label">Regente</label>
+                <label asp-for="IdRegente" class="control-label"></label>
                 <select asp-for="IdRegente" asp-items="@Model.ListaPessoa" class="form-select">
                     <option value=""></option>
                 </select>
