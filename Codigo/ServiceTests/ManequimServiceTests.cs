@@ -77,7 +77,7 @@ namespace Service.Tests
         }
 
         [TestMethod]
-        public void Delete()
+        public void DeleteTest()
         {
             // Act
             _manequim.Delete(3);
@@ -86,6 +86,21 @@ namespace Service.Tests
             Assert.AreEqual(2, _manequim.GetAll().Count());
             var manequim = _manequim.Get(3);
             Assert.AreEqual(null, manequim);
+        }
+
+        [TestMethod]
+        public void EditTest()
+        {
+            // Act
+            var manequim = _manequim.Get(1);
+            manequim.Id = 1;
+            manequim.Tamanho = "EG";
+            manequim.Descricao = "Extra Grande";
+
+            // Assert
+            Assert.AreEqual(1, manequim.Id);
+            Assert.AreEqual("EG", manequim.Tamanho);
+            Assert.AreEqual("Extra Grande", manequim.Descricao);
         }
 
     }
