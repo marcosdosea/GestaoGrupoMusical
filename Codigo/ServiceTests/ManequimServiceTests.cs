@@ -114,5 +114,18 @@ namespace Service.Tests
             Assert.AreEqual("P", manequim.Tamanho);
             Assert.AreEqual("PEQUENO", manequim.Descricao);
         }
+
+        [TestMethod]
+        public void GetAllTest()
+        {
+            // Act
+            var listaManequim = _manequim.GetAll();
+
+            // Assert
+            Assert.IsInstanceOfType(listaManequim, typeof(IEnumerable<Manequim>));
+            Assert.IsNotNull(listaManequim);
+            Assert.AreEqual(3, listaManequim.Count());
+            Assert.AreEqual(1, listaManequim.First().Id);
+        }
     }
 }
