@@ -1,5 +1,4 @@
-﻿
-using Core.DTO;
+﻿using Core.DTO;
 
 namespace Core.Service
 {
@@ -10,5 +9,7 @@ namespace Core.Service
         Task<Movimentacaoinstrumento?> GetEmprestimoByIdInstrumento(int idInstrumento);
 
         Task<IEnumerable<MovimentacaoInstrumentoDTO>> GetAll();
+
+        Task<bool> Delete(int id);
     }
 }

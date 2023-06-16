@@ -153,5 +153,20 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 return View(movimentacaoPost);
             }
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeleteMovimentacao(int id)
+        {
+            try
+            {
+                await _movimentacaoInstrumento.Delete(id);
+                return RedirectToAction(nameof(Movimentar));
+            }
+            catch
+            {
+                return RedirectToAction(nameof(Movimentar));
+            }
+        }
     }
 }

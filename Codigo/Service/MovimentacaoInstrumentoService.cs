@@ -46,6 +46,25 @@ namespace Service
             }
         }
 
+        public async Task<bool> Delete(int id)
+        {
+            try
+            {
+                var movimentacao = await _context.Movimentacaoinstrumentos.FindAsync(id);
+                if (movimentacao != null)
+                {
+                    _context.Movimentacaoinstrumentos.Remove(movimentacao);
+                    await _context.SaveChangesAsync();
+                    return true;
+                }
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public async Task<IEnumerable<MovimentacaoInstrumentoDTO>> GetAll()
         {
             var query = (from movimentacao in _context.Movimentacaoinstrumentos
