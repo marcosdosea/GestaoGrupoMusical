@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Service;
 
-namespace ServiceTests
+namespace Service.Tests
 {
     [TestClass]
     public class ManequimServiceTests
@@ -55,6 +55,25 @@ namespace ServiceTests
             _context.SaveChanges();
 
             _manequim = new ManequimService(_context);
+        }
+
+        [TestMethod]
+        public void CreateTest()
+        {
+            // Act
+            _manequim.Create(new Manequim
+            {
+                Id = 4,
+                Tamanho = "EG",
+                Descricao = "Extra Grande"
+            });
+
+            // Assert
+            Assert.AreEqual(4, _manequim.GetAll().Count());
+            var manequim = _manequim.Get(4);
+            Assert.AreEqual(4, manequim.Id);
+            Assert.AreEqual("EG", manequim.Tamanho);
+            Assert.AreEqual("Extra Grande", manequim.Descricao);
         }
 
     }
