@@ -2,38 +2,43 @@
 using Core;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
     public class InstrumentoMusicalController : Controller
     {
         private readonly IInstrumentoMusicalService _instrumentoMusical;
+        private readonly IPessoaService _pessoa;
+        private readonly IMovimentacaoInstrumentoService _movimentacaoInstrumento;
         private readonly IMapper _mapper;
 
-        public InstrumentoMusicalController(IInstrumentoMusicalService instrumentoMusical, IMapper mapper)
+        public InstrumentoMusicalController(
+            IInstrumentoMusicalService instrumentoMusical, 
+            IPessoaService pessoa, 
+            IMovimentacaoInstrumentoService movimentacaoInstrumento, 
+            IMapper mapper)
         {
             _instrumentoMusical = instrumentoMusical;
+            _pessoa = pessoa;
+            _movimentacaoInstrumento = movimentacaoInstrumento;
             _mapper = mapper;
 
         }
 
         // GET: InstrumentoMusicalController
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-
-            var listaInstrumentoMusical = _instrumentoMusical.GetAll();
-            var listaInstrumentoMusicalModel = _mapper.Map<List<InstrumentoMusicalViewModel>>(listaInstrumentoMusical);
-            return View(listaInstrumentoMusicalModel);
-
+            var listaInstrumentoMusical = await _instrumentoMusical.GetAllDTO();
+            return View(listaInstrumentoMusical);
         }
 
 
         // GET: InstrumentoMusicalController/Details/5
-        public ActionResult Details(int id)
+        public async Task<ActionResult> Details(int id)
         {
-            var instrumentoMusical = _instrumentoMusical.Get(id);
+            var instrumentoMusical = await _instrumentoMusical.Get(id);
             var instrumentoMusicalModel = _mapper.Map<InstrumentoMusicalViewModel>(instrumentoMusical);
             return View(instrumentoMusicalModel);
         }
@@ -47,20 +52,20 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: InstrumentoMusicalController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(InstrumentoMusicalViewModel instrumentoMusicalViewModel)
+        public async Task<ActionResult> Create(InstrumentoMusicalViewModel instrumentoMusicalViewModel)
         {
             if (ModelState.IsValid)
             {
                 var instrumentoMusicalModel = _mapper.Map<Instrumentomusical>(instrumentoMusicalViewModel);
-                _instrumentoMusical.Create(instrumentoMusicalModel);
+                await _instrumentoMusical.Create(instrumentoMusicalModel);
             }
             return RedirectToAction(nameof(Index));
         }
 
         // GET: InstrumentoMusicalController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
-            var instrumentoMusical = _instrumentoMusical.Get(id);
+            var instrumentoMusical = await _instrumentoMusical.Get(id);
             var instrumentoMusicalModel = _mapper.Map<InstrumentoMusicalViewModel>(instrumentoMusical);
 
             return View(instrumentoMusicalModel);
@@ -69,20 +74,20 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: InstrumentoMusicalController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, InstrumentoMusicalViewModel instrumentoMusicalViewModel)
+        public async Task<ActionResult> Edit(int id, InstrumentoMusicalViewModel instrumentoMusicalViewModel)
         {
             if (ModelState.IsValid)
             {
                 var instrumentoMusical = _mapper.Map<Instrumentomusical>(instrumentoMusicalViewModel);
-                _instrumentoMusical.Edit(instrumentoMusical);
+                await _instrumentoMusical.Edit(instrumentoMusical);
             }
             return RedirectToAction(nameof(Index));
         }
 
         // GET: InstrumentoMusicalController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            var instrumentoMusical = _instrumentoMusical.Get(id);
+            var instrumentoMusical = await _instrumentoMusical.Get(id);
             var instrumentoMusicalModel = _mapper.Map<InstrumentoMusicalViewModel>(instrumentoMusical);
             return View(instrumentoMusicalModel);
         }
@@ -90,10 +95,78 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: InstrumentoMusicalController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, InstrumentoMusicalViewModel instrumentoMusicalViewModel)
+        public async Task<ActionResult> Delete(int id, InstrumentoMusicalViewModel instrumentoMusicalViewModel)
         {
-            _instrumentoMusical.Delete(id);
+            await _instrumentoMusical.Delete(id);
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<ActionResult> Movimentar(int id)
+        {
+            MovimentacaoInstrumentoViewModel movimentacaoModel = new();
+            var instrumento = await _instrumentoMusical.Get(id);
+            var movimentacao = await _movimentacaoInstrumento.GetEmprestimoByIdInstrumento(id);
+
+            if(movimentacao != null && instrumento.Status == "EMPRESTADO")
+            {
+                movimentacaoModel.IdAssociado = movimentacao.IdAssociado;
+                movimentacaoModel.IdColaborador = movimentacao.IdColaborador;
+                movimentacaoModel.Movimentacao = "DEVOLUCAO";
+            }
+
+            movimentacaoModel.Movimentacoes = await _movimentacaoInstrumento.GetAll();
+            movimentacaoModel.Patrimonio = instrumento.Patrimonio;
+            movimentacaoModel.IdInstrumentoMusical = instrumento.Id;
+            movimentacaoModel.NomeInstrumento = await _instrumentoMusical.GetNomeInstrumento(id);
+            movimentacaoModel.ListaAssociado = new SelectList(_pessoa.GetAll(), "Id", "Nome");
+            return View(movimentacaoModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Movimentar(MovimentacaoInstrumentoViewModel movimentacaoPost)
+        {
+            movimentacaoPost.ListaAssociado = new SelectList(_pessoa.GetAll(), "Id", "Nome");
+            movimentacaoPost.Movimentacoes = await _movimentacaoInstrumento.GetAll();
+
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var movimentacao = new Movimentacaoinstrumento
+                    {
+                        Data = movimentacaoPost.Data,
+                        IdInstrumentoMusical = movimentacaoPost.IdInstrumentoMusical,
+                        IdAssociado = movimentacaoPost.IdAssociado,
+                        IdColaborador = movimentacaoPost.IdColaborador,
+                        TipoMovimento = movimentacaoPost.Movimentacao
+                    };
+                    if (await _movimentacaoInstrumento.Create(movimentacao))
+                    {
+                        return RedirectToAction(nameof(Movimentar));
+                    }
+                }
+                return View(movimentacaoPost);
+            }
+            catch
+            {
+                return View(movimentacaoPost);
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeleteMovimentacao(int id)
+        {
+            try
+            {
+                await _movimentacaoInstrumento.Delete(id);
+                return RedirectToAction(nameof(Movimentar));
+            }
+            catch
+            {
+                return RedirectToAction(nameof(Movimentar));
+            }
         }
     }
 }
