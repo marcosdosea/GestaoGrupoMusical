@@ -25,25 +25,21 @@ namespace GestaoGrupoMusicalWeb.Models
         [StringLength(10)]
         public string? Cep { get; set; }
 
-        [Required(ErrorMessage = "O campo Rua é obrigatório.")]
         [StringLength(70)]
         public string? Rua { get; set; }
 
-        [Required(ErrorMessage = "O campo Bairro é obrigatório.")]
         [StringLength(70)]
         public string? Bairro { get; set; }
 
-        [Required(ErrorMessage = "O campo Cidade é obrigatório.")]
         [StringLength(70)]
         public string? Cidade { get; set; }
 
-        [Required(ErrorMessage = "O estado é um campo obrigatório.")]
+        [Required(ErrorMessage = "O campo Estado é obrigatório.")]
         [StringLength(2)]
         public string? Estado { get; set; }
 
         [Display(Name = "Data de nascimento")]
         [DataType(DataType.Date, ErrorMessage = "É necessário escolher uma data válida.")]
-        [Required(ErrorMessage = "O campo  Data de nascimento é obrigatório.")]
         public DateTime? DataNascimento { get; set; }
 
         [Required(ErrorMessage = "O campo telefone é obrigatório.")]
@@ -54,7 +50,7 @@ namespace GestaoGrupoMusicalWeb.Models
         [Display(Name = "Telefone 2")]
         public string? Telefone2 { get; set; }
 
-        [Required(ErrorMessage = "O e-mail é obrigatório!")]
+        [Required(ErrorMessage = "O e-mail é obrigatório.")]
         [Display(Name = "Email")]
         public string? Email { get; set; }
 
@@ -66,15 +62,17 @@ namespace GestaoGrupoMusicalWeb.Models
 
         [Display(Name = "Motivo da saída")]
         public string? MotivoSaida { get; set; }
-
+        [Required(ErrorMessage = "O campo Ativo é obrigatório.")]
+        [Display(Name = "Ativo")]
         public sbyte Ativo { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "O campo Grupo Musical é obrigatório.")]
+        [Display(Name = "Grupo Musical")]
         public int IdGrupoMusical { get; set; }
-
+        [Required(ErrorMessage = "O campo Papel no grupo é obrigatório.")]
         [Display(Name = "Papel no grupo")]
         public int IdPapelGrupo { get; set; }
-
+        [Required(ErrorMessage = "O campo Tamanho da roupa é obrigatório.")]
         [Display(Name = "Tamanho da roupa")]
         public int IdManequim { get; set; }
     }
