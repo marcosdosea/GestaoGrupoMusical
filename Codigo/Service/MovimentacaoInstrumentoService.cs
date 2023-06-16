@@ -51,6 +51,7 @@ namespace Service
             var query = (from movimentacao in _context.Movimentacaoinstrumentos
                          select new MovimentacaoInstrumentoDTO
                          {
+                             Id = movimentacao.Id,
                              Cpf = movimentacao.IdAssociadoNavigation.Cpf,
                              NomeAssociado = movimentacao.IdAssociadoNavigation.Nome,
                              Data = movimentacao.Data,

@@ -5,6 +5,8 @@ namespace Core.DTO
 {
     public class MovimentacaoInstrumentoDTO
     {
+        public int Id { get; set; }
+
         [Display (Name = "CPF")]
         public string Cpf { get; set; } = string.Empty;
 

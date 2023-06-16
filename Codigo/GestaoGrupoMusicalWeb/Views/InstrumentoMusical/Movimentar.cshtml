@@ -57,6 +57,8 @@
     </div>
 </form>
 
+<partial name="_TabelaMovimentacao" model="@Model.Movimentacoes">
+
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
