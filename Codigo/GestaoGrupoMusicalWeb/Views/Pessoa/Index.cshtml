@@ -1,13 +1,10 @@
 ﻿@model IEnumerable<GestaoGrupoMusicalWeb.Models.PessoaViewModel>
-
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Pessoas";
 }
 
-<h1>Index</h1>
-
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Nova Pessoa</a>
 </p>
 <table class="table">
     <thead>
@@ -21,24 +18,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Nome)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Sexo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Cep)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Rua)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Bairro)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Cidade)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Estado)
-            </th>
+          
             <th>
                 @Html.DisplayNameFor(model => model.DataNascimento)
             </th>
@@ -87,24 +67,7 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Nome)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Sexo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cep)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Rua)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Bairro)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cidade)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Estado)
-            </td>
+          
             <td>
                 @Html.DisplayFor(modelItem => item.DataNascimento)
             </td>
@@ -139,9 +102,9 @@
                 @Html.DisplayFor(modelItem => item.IdManequim)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new {  id=item.Id }) |
-                @Html.ActionLink("Details", "Details", new {  id=item.Id  }) |
-                @Html.ActionLink("Delete", "Delete", new {  id=item.Id  })
+                @Html.ActionLink("Editar", "Edit", new {  id=item.Id }) |
+                @Html.ActionLink("Detalhes", "Details", new {  id=item.Id  }) |
+                @Html.ActionLink("Deletar", "Delete", new {  id=item.Id  })
                 <!--If para mostrar botao apenas se o usuario nao é colaborador-->
                 @if (item.IdPapelGrupo != 2) {
                     @Html.ActionLink("Colaborador", "ChangeToCollaborator", new {  id=item.Id  })
