@@ -2,7 +2,7 @@
 
 namespace Core.Service
 {
-    public interface IEventoService
+    public interface IEvento
     {
         int Create(Evento evento);
         void Edit(Evento evento);

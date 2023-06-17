@@ -9,11 +9,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly IEventoService _evento;
+        private readonly IEvento _evento;
         private readonly IEnsaioService _ensaioService;
         private readonly IMapper _mapper;
 
-        public HomeController(ILogger<HomeController> logger, IEventoService evento, IEnsaioService ensaioService, IMapper mapper)
+        public HomeController(ILogger<HomeController> logger, IEvento evento, IEnsaioService ensaioService, IMapper mapper)
         {
             _logger = logger;
             _evento = evento;

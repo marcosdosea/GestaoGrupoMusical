@@ -17,7 +17,7 @@ namespace Service.Tests
     public class EventoServiceTests
     {
         private GrupoMusicalContext _context;
-        private IEventoService _evento;
+        private IEvento _evento;
         [TestInitialize]
         public void Initialize()
         {
