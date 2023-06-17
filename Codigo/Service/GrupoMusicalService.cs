@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Service
 {
-    public class GrupoMusicalService : IGrupoMusicalService
+    public class GrupoMusicalService : IGrupoMusical
     {
 
         private readonly GrupoMusicalContext _context;

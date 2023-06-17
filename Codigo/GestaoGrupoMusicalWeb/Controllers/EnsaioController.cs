@@ -12,9 +12,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IEnsaioService _ensaio;
         private readonly IMapper _mapper;
         private readonly IPessoaService _pessoa;
-        private readonly IGrupoMusicalService _grupoMusical;
+        private readonly IGrupoMusical _grupoMusical;
 
-        public EnsaioController(IMapper mapper, IEnsaioService ensaio, IPessoaService pessoa, IGrupoMusicalService grupoMusical)
+        public EnsaioController(IMapper mapper, IEnsaioService ensaio, IPessoaService pessoa, IGrupoMusical grupoMusical)
         {
             _ensaio = ensaio;
             _mapper = mapper;

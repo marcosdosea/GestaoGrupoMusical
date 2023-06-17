@@ -19,7 +19,7 @@ namespace Service.Tests
     {
 
         private GrupoMusicalContext _context;
-        private IGrupoMusicalService _grupoMusical;
+        private IGrupoMusical _grupoMusical;
         [TestInitialize]
         public void Initialize()
         {
