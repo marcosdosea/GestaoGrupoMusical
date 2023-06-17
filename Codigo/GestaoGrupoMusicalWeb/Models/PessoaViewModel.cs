@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 
 namespace GestaoGrupoMusicalWeb.Models
 {
@@ -77,5 +78,11 @@ namespace GestaoGrupoMusicalWeb.Models
 
         [Display(Name = "Tamanho da roupa")]
         public int IdManequim { get; set; }
+
+        public SelectList? ListaGrupoMusical { get; set; }
+        public SelectList? ListaPapelGrupo { get; set; }
+        public SelectList? ListaManequim { get; set; }
+
+
     }
 }

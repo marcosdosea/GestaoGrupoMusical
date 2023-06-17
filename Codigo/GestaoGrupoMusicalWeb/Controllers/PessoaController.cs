@@ -4,6 +4,7 @@ using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -11,11 +12,17 @@ namespace GestaoGrupoMusicalWeb.Controllers
     {
         private readonly IPessoaService _pessoaService;
         private readonly IMapper _mapper;
+        private readonly IGrupoMusicalService _grupoMusical;
+        private readonly IPapelGrupoService _papelGrupo;
+        private readonly IManequimService _manequim;
 
-        public PessoaController (IPessoaService pessoaService, IMapper mapper)
+        public PessoaController (IPessoaService pessoaService, IMapper mapper, IGrupoMusicalService grupoMusical, IPapelGrupoService papelgrupo, IManequimService manequim)
         {
             _pessoaService = pessoaService;
             _mapper = mapper;
+            _grupoMusical = grupoMusical;
+            _papelGrupo = papelgrupo;
+            _manequim = manequim;
         }
 
         // GET: PessoaController
@@ -39,7 +46,17 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: PessoaController/Create
         public ActionResult Create()
         {
-            return View();
+            PessoaViewModel pessoaViewModel = new PessoaViewModel();
+
+            IEnumerable<Papelgrupo> listaPapelGrupo = _papelGrupo.GetAll();
+            IEnumerable<Grupomusical> listaGrupoMusical = _grupoMusical.GetAll();
+            IEnumerable<Manequim> listaManequim = _manequim.GetAll();
+
+            pessoaViewModel.ListaGrupoMusical = new SelectList(listaGrupoMusical, "Id", "Nome", null);
+            pessoaViewModel.ListaPapelGrupo = new SelectList(listaPapelGrupo, "IdPapelGrupo", "Nome", null);
+            pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", null);
+
+            return View(pessoaViewModel);
         }
 
         // POST: PessoaController/Create
