@@ -4,10 +4,10 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Associados</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Novo Associado</a>
 </p>
 <table class="table">
     <thead>
@@ -139,9 +139,9 @@
                 @Html.DisplayFor(modelItem => item.IdManequim)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new {  id=item.Id }) |
-                @Html.ActionLink("Details", "Details", new {  id=item.Id  }) |
-                @Html.ActionLink("Delete", "Delete", new {  id=item.Id  })
+                @Html.ActionLink("Editar", "Edit", new {  id=item.Id }) |
+                @Html.ActionLink("Listar", "Details", new {  id=item.Id  }) |
+                @Html.ActionLink("Excluir", "Delete", new {  id=item.Id  })
                 <!--If para mostrar botao apenas se o usuario nao é colaborador-->
                 @if (item.IdPapelGrupo != 2) {
                     @Html.ActionLink("Colaborador", "ChangeToCollaborator", new {  id=item.Id  })
