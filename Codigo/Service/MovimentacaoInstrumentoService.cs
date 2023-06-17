@@ -24,20 +24,31 @@ namespace Service
                 await _context.AddAsync(movimentacao);
 
                 var instrumento = await _context.Instrumentomusicals.FindAsync(movimentacao.IdInstrumentoMusical);
-                if (instrumento == null)
+                if (instrumento != null && instrumento.Status != "DANIFICADO")
                 {
-                    await transaction.RollbackAsync();
-                    return false;
-                }
-                else
-                {
-                    instrumento.Status = movimentacao.TipoMovimento == "EMPRESTIMO" ? "EMPRESTADO" : "DISPONIVEL";
-                    _context.Instrumentomusicals.Update(instrumento);
+                    if(movimentacao.TipoMovimento == "EMPRESTIMO" && instrumento.Status == "DISPONIVEL")
+                    {
+                        instrumento.Status = "EMPRESTADO";
+                        _context.Instrumentomusicals.Update(instrumento);
 
-                    await _context.SaveChangesAsync();
-                    await transaction.CommitAsync();
-                    return true;
+                        await _context.SaveChangesAsync();
+                        await transaction.CommitAsync();
+                        return true;
+                    }
+                    else if(movimentacao.TipoMovimento == "DEVOLUCAO" && instrumento.Status == "EMPRESTADO")
+                    {
+                        instrumento.Status = "DISPONIVEL";
+                        _context.Instrumentomusicals.Update(instrumento);
+
+                        await _context.SaveChangesAsync();
+                        await transaction.CommitAsync();
+                        return true;
+                    }
                 }
+                
+                await transaction.RollbackAsync();
+                return false;
+                
             }
             catch 
             {
