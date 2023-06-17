@@ -78,6 +78,16 @@ namespace GestaoGrupoMusicalWeb.Controllers
             var pessoa = _pessoaService.Get(id);
             var pessoaViewModel = _mapper.Map<PessoaViewModel>(pessoa);
 
+            IEnumerable<Papelgrupo> listaPapelGrupo = _papelGrupo.GetAll();
+            IEnumerable<Grupomusical> listaGrupoMusical = _grupoMusical.GetAll();
+            IEnumerable<Manequim> listaManequim = _manequim.GetAll();
+
+            pessoaViewModel.ListaGrupoMusical = new SelectList(listaGrupoMusical, "Id", "Nome", pessoaViewModel.IdGrupoMusical);
+            pessoaViewModel.ListaPapelGrupo = new SelectList(listaPapelGrupo, "IdPapelGrupo", "Nome", pessoaViewModel.IdPapelGrupo);
+            pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", pessoaViewModel.IdManequim);
+
+
+
             return View(pessoaViewModel);
         }
 
