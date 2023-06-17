@@ -15,7 +15,7 @@ namespace Service.Tests
     public class ManequimServiceTests
     {
         private GrupoMusicalContext _context;
-        private IManequimService _manequim;
+        private IManequim _manequim;
 
         [TestInitialize]
         public void Initialize()

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Service
 {
-    public class PapelGrupoService : IPapelGrupoService
+    public class PapelGrupoService : IPapelGrupo
     {
         private readonly GrupoMusicalContext _context;
 

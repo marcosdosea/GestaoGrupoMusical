@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Service
 {
-    public class ManequimService : IManequimService
+    public class ManequimService : IManequim
     {
         private readonly GrupoMusicalContext _context;
 
