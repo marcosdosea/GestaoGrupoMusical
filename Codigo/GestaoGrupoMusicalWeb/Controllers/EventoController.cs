@@ -10,10 +10,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
     public class EventoController : Controller
     {
-        private readonly IEvento _evento;
+        private readonly IEventoService _evento;
         private readonly IMapper _mapper;
 
-        public EventoController(IEvento evento, IMapper mapper)
+        public EventoController(IEventoService evento, IMapper mapper)
         {
             _evento = evento;
             _mapper = mapper;
