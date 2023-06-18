@@ -127,6 +127,7 @@ namespace Service
                                 select new MovimentacaoInstrumentoDTO
                                 {
                                     Id = movimentacao.Id,
+                                    IdInstrumento = movimentacao.IdInstrumentoMusical,
                                     Cpf = movimentacao.IdAssociadoNavigation.Cpf,
                                     NomeAssociado = movimentacao.IdAssociadoNavigation.Nome,
                                     Data = movimentacao.Data,
