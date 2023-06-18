@@ -76,7 +76,7 @@ namespace Service
             }
         }
 
-        public async Task<IEnumerable<MovimentacaoInstrumentoDTO>> GetAll()
+        public async Task<IEnumerable<MovimentacaoInstrumentoDTO>> GetAllByIdInstrumento(int idInstrumento)
         {
             var query = await   (from movimentacao in _context.Movimentacaoinstrumentos
                                 orderby movimentacao.Data descending
