@@ -166,17 +166,23 @@ namespace Service
                 var movimentacao = await _context.Movimentacaoinstrumentos.FindAsync(id);
                 if (movimentacao != null)
                 {
+                    var instrumento = await _context.Instrumentomusicals.FindAsync(movimentacao.IdInstrumentoMusical);
                     var associado = await _context.Pessoas.FindAsync(movimentacao.IdAssociado);
                     string tipoMovimentacao = movimentacao.TipoMovimento == "DEVOLUCAO" ? "devolução" : "recebimento";
 
-                    if (associado != null)
+                    if (associado != null && instrumento != null)
                     {
+                        string? instrumentoNome = (await _context.Tipoinstrumentos.FindAsync(instrumento.IdTipoInstrumento))?.Nome;
+
                         EmailModel email = new()
                         {
                             Assunto = "Batalá - Devolução de instrumento",
                             Body = "<div style=\"text-align: center;\">\r\n    " +
-                                        "<h1>Devolução de instrumento</h1>\r\n    " +
-                                        $"<h2>Olá, {associado.Nome}, estamos aguardando a sua confirmação de {tipoMovimentacao}.</h2>\r\n"
+                                    "<h1>Devolução de instrumento</h1>\r\n    " +
+                                    $"<h2>Olá, {associado.Nome}, estamos aguardando a sua confirmação de {tipoMovimentacao}.</h2>\r\n" +
+                                    "<div style=\"font-size: large;\">\r\n        " +
+                                    $"<dt style=\"font-weight: 700;\">Instrumento:</dt><dd>{instrumentoNome}</dd>" +
+                                    $"<dt style=\"font-weight: 700;\">Data de Devolução:</dt><dd>{movimentacao.Data:dd/MM/yyyy}</dd>\n</div>"
                         };
 
                         email.To.Add(associado.Email);
