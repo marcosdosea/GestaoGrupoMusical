@@ -49,7 +49,7 @@
                             </a>
                         </form>
                         |
-                        <form id="@(item.Id + "_notificar")" asp-controller="InstrumentoMusical" asp-action="NotificarViaEmail" asp-route-Id="@item.Id" method="post">
+                        <form id="@(item.Id + "_notificar")" asp-controller="InstrumentoMusical" asp-action="NotificarViaEmail" asp-route-Id="@item.Id" asp-route-IdInstrumento="@item.IdInstrumento" method="post">
                             <a role="button" class="link-primary"
                                onclick="(() => {confirm('Deseja notificar a movimentação?') ? document.getElementById('@(item.Id + "_notificar")').submit() : null})()">
                                 Notificar

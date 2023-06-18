@@ -41,9 +41,9 @@ namespace Service
                         {
                             EmailModel email = new()
                             {
-                                Assunto = "Batalá - Emprestimo de instrumento",
+                                Assunto = "Batalá - Empréstimo de instrumento",
                                 Body = "<div style=\"text-align: center;\">\r\n    " +
-                                "<h1>Emprestimo de instrumento</h1>\r\n    " +
+                                "<h1>Empréstimo de instrumento</h1>\r\n    " +
                                 $"<h2>Olá, {associado.Nome}, estamos aguardando a sua confirmação de recebimento.</h2>\r\n" +
                                 "<div style=\"font-size: large;\">\r\n        " +
                                 $"<dt style=\"font-weight: 700;\">Instrumento:</dt><dd>{instrumentoNome}</dd>" +
@@ -169,7 +169,7 @@ namespace Service
                 {
                     var instrumento = await _context.Instrumentomusicals.FindAsync(movimentacao.IdInstrumentoMusical);
                     var associado = await _context.Pessoas.FindAsync(movimentacao.IdAssociado);
-                    string tipoMovimentacao = movimentacao.TipoMovimento == "DEVOLUCAO" ? "devolução" : "recebimento";
+                    string tipoMovimentacao = movimentacao.TipoMovimento == "DEVOLUCAO" ? "Devolução" : "Empréstimo";
 
                     if (associado != null && instrumento != null)
                     {
@@ -177,13 +177,13 @@ namespace Service
 
                         EmailModel email = new()
                         {
-                            Assunto = "Batalá - Devolução de instrumento",
+                            Assunto = $"Batalá - {tipoMovimentacao} de instrumento",
                             Body = "<div style=\"text-align: center;\">\r\n    " +
-                                    "<h1>Devolução de instrumento</h1>\r\n    " +
+                                    $"<h1>{tipoMovimentacao} de instrumento</h1>\r\n    " +
                                     $"<h2>Olá, {associado.Nome}, estamos aguardando a sua confirmação de {tipoMovimentacao}.</h2>\r\n" +
                                     "<div style=\"font-size: large;\">\r\n        " +
                                     $"<dt style=\"font-weight: 700;\">Instrumento:</dt><dd>{instrumentoNome}</dd>" +
-                                    $"<dt style=\"font-weight: 700;\">Data de Devolução:</dt><dd>{movimentacao.Data:dd/MM/yyyy}</dd>\n</div>"
+                                    $"<dt style=\"font-weight: 700;\">Data de {tipoMovimentacao}:</dt><dd>{movimentacao.Data:dd/MM/yyyy}</dd>\n</div>"
                         };
 
                         email.To.Add(associado.Email);
