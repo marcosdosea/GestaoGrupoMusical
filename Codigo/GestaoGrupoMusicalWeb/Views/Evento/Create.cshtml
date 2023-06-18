@@ -1,25 +1,18 @@
 ﻿@model GestaoGrupoMusicalWeb.Models.EventoViewModel
-
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Novo Evento";
 }
 
-<h1>Create</h1>
-
-<h4>EventoViewModel</h4>
+<h4>@ViewData["Title"]</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>
             <div class="form-group">
                 <label asp-for="IdGrupoMusical" class="control-label"></label>
-                <input asp-for="IdGrupoMusical" class="form-control" />
+                <select asp-for="IdGrupoMusical" asp-items="@Model.ListaGrupoMusical" class="form-select">
+                    <option value=""></option>
+                </select>
                 <span asp-validation-for="IdGrupoMusical" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -44,23 +37,27 @@
             </div>
             <div class="form-group">
                 <label asp-for="IdColaboradorResponsavel" class="control-label"></label>
-                <input asp-for="IdColaboradorResponsavel" class="form-control" />
+                <select asp-for="IdColaboradorResponsavel" asp-items="@Model.ListaPessoa" class="form-select">
+                    <option value=""></option>
+                </select>
                 <span asp-validation-for="IdColaboradorResponsavel" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="IdRegente" class="control-label"></label>
-                <input asp-for="IdRegente" class="form-control" />
+                <select asp-for="IdRegente" asp-items="@Model.ListaPessoa" class="form-select">
+                    <option value=""></option>
+                </select>
                 <span asp-validation-for="IdRegente" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Adicionar" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Voltar</a>
 </div>
 
 @section Scripts {
