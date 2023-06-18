@@ -4,6 +4,7 @@ using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -12,12 +13,17 @@ namespace GestaoGrupoMusicalWeb.Controllers
     {
         private readonly IEvento _evento;
         private readonly IMapper _mapper;
+        private readonly IGrupoMusical _grupoMusical;
+        private readonly IPessoaService _pessoa;
 
-        public EventoController(IEvento evento, IMapper mapper)
+
+        public EventoController(IEvento evento, IMapper mapper, IGrupoMusical grupoMusical, IPessoaService pessoa)
         {
             _evento = evento;
             _mapper = mapper;
-        }
+            _grupoMusical = grupoMusical;
+            _pessoa = pessoa;
+    }
 
         // GET: EventoController
         public ActionResult Index()
@@ -38,19 +44,27 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: EventoController/Create
         public ActionResult Create()
         {
-            return View();
+            EventoViewModel eventoModel = new EventoViewModel
+            {
+                ListaGrupoMusical = new SelectList(_grupoMusical.GetAll(), "Id", "Nome"),
+                ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome")
+            };
+            return View(eventoModel);
         }
 
         // POST: EventoController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(EventoViewModel eventoViewModel)
+        public ActionResult Create(EventoViewModel eventoModel)
         {
             if (ModelState.IsValid)
             {
-                var eventoModel = _mapper.Map<Evento>(eventoViewModel);
-                _evento.Create(eventoModel);
+                var evento = _mapper.Map<Evento>(eventoModel);
+                _evento.Create(evento);
+
             }
+            eventoModel.ListaGrupoMusical = new SelectList(_grupoMusical.GetAll(), "Id", "Nome");
+            eventoModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
             return RedirectToAction(nameof(Index));
         }
 
@@ -59,6 +73,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             var evento = _evento.Get(id);
             var eventoModel = _mapper.Map<EventoViewModel>(evento);
+            eventoModel.ListaGrupoMusical = new SelectList(_grupoMusical.GetAll(), "Id", "Nome");
+            eventoModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome"); 
 
             return View(eventoModel);
         }
@@ -66,13 +82,15 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: EventoController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, EventoViewModel eventoViewModel)
+        public ActionResult Edit(int id, EventoViewModel eventoModel)
         {
             if (ModelState.IsValid)
             {
-                var evento = _mapper.Map<Evento>(eventoViewModel);
-                _evento.Edit(evento);
+                var evento = _mapper.Map<Evento>(eventoModel);
+                _evento.Create(evento);
             }
+            eventoModel.ListaGrupoMusical = new SelectList(_grupoMusical.GetAll(), "Id", "Nome");
+            eventoModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome"); 
             return RedirectToAction(nameof(Index));
         }
 
