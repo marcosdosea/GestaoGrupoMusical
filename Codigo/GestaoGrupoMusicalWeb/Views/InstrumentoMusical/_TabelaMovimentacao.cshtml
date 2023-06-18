@@ -42,14 +42,19 @@
                         @item.Status
                     </td>
                     <td>
-                        <form id="@item.Id" asp-controller="InstrumentoMusical" asp-action="DeleteMovimentacao" asp-route-Id="@item.Id" method="post">
+                        <form id="@(item.Id + "_delete")" asp-controller="InstrumentoMusical" asp-action="DeleteMovimentacao" asp-route-Id="@item.Id" asp-route-IdInstrumento="2" method="post">
                             <a role="button" class="link-primary"
-                            onclick="(() => {confirm('Deseja excluir a movimentação?') ? document.getElementById('@item.Id').submit() : null})()">
+                               onclick="(() => {confirm('Deseja excluir a movimentação?') ? document.getElementById('@(item.Id + "_delete")').submit() : null})()">
                                 Excluir
                             </a>
                         </form>
                         |
-                        <a href="#">Notificar</a>
+                        <form id="@(item.Id + "_notificar")" asp-controller="InstrumentoMusical" asp-action="NotificarViaEmail" asp-route-Id="@item.Id" method="post">
+                            <a role="button" class="link-primary"
+                               onclick="(() => {confirm('Deseja notificar a movimentação?') ? document.getElementById('@(item.Id + "_notificar")').submit() : null})()">
+                                Notificar
+                            </a>
+                        </form>
                     </td>
                 </tr>
             }

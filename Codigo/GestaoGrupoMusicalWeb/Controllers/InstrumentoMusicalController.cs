@@ -161,16 +161,31 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteMovimentacao(int id)
+        public async Task<ActionResult> DeleteMovimentacao(int id, int IdInstrumento)
         {
             try
             {
                 await _movimentacaoInstrumento.Delete(id);
-                return RedirectToAction(nameof(Movimentar));
+                return RedirectToAction(nameof(Movimentar), new { id = IdInstrumento });
             }
             catch
             {
-                return RedirectToAction(nameof(Movimentar));
+                return RedirectToAction(nameof(Movimentar), new { id = IdInstrumento });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> NotificarViaEmail(int id, int IdInstrumento)
+        {
+            try
+            {
+                await _movimentacaoInstrumento.NotificarViaEmail(id);
+                return RedirectToAction(nameof(Movimentar), new { id = IdInstrumento });
+            }
+            catch
+            {
+                return RedirectToAction(nameof(Movimentar), new { id = IdInstrumento });
             }
         }
     }
