@@ -158,5 +158,41 @@ namespace Service
 
             return await query;
         }
+
+        public async Task<bool> NotificarViaEmail(int id)
+        {
+            try
+            {
+                var movimentacao = await _context.Movimentacaoinstrumentos.FindAsync(id);
+                if (movimentacao != null)
+                {
+                    var associado = await _context.Pessoas.FindAsync(movimentacao.IdAssociado);
+                    string tipoMovimentacao = movimentacao.TipoMovimento == "DEVOLUCAO" ? "devolução" : "recebimento";
+
+                    if (associado != null)
+                    {
+                        EmailModel email = new()
+                        {
+                            Assunto = "Batalá - Devolução de instrumento",
+                            Body = "<div style=\"text-align: center;\">\r\n    " +
+                                        "<h1>Devolução de instrumento</h1>\r\n    " +
+                                        $"<h2>Olá, {associado.Nome}, estamos aguardando a sua confirmação de {tipoMovimentacao}.</h2>\r\n"
+                        };
+
+                        email.To.Add(associado.Email);
+
+                        await EmailService.Enviar(email);
+
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }
