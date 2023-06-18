@@ -1,6 +1,7 @@
 ﻿using Core;
 using Core.DTO;
 using Core.Service;
+using Email;
 using Microsoft.EntityFrameworkCore;
 
 namespace Service
@@ -33,6 +34,27 @@ namespace Service
 
                         await _context.SaveChangesAsync();
                         await transaction.CommitAsync();
+
+                        var associado = await _context.Pessoas.FindAsync(movimentacao.IdAssociado);
+                        string? instrumentoNome = (await _context.Tipoinstrumentos.FindAsync(instrumento.IdTipoInstrumento))?.Nome;
+                        if (associado != null)
+                        {
+                            EmailModel email = new()
+                            {
+                                Assunto = "Batalá - Emprestimo de instrumento",
+                                Body = "<div style=\"text-align: center;\">\r\n    " +
+                                "<h1>Emprestimo de instrumento</h1>\r\n    " +
+                                $"<h2>Olá, {associado.Nome}, estamos aguardando a sua confirmação de recebimento.</h2>\r\n" +
+                                "<div style=\"font-size: large;\">\r\n        " +
+                                $"<dt style=\"font-weight: 700;\">Instrumento:</dt><dd>{instrumentoNome}</dd>" +
+                                $"<dt style=\"font-weight: 700;\">Data de Emprestimo:</dt><dd>{movimentacao.Data:dd/MM/yyyy}</dd>\n</div>"
+                            };
+
+                            email.To.Add(associado.Email);
+
+                            await EmailService.Enviar(email);
+                        }
+
                         return true;
                     }
                     else if(movimentacao.TipoMovimento == "DEVOLUCAO" && instrumento.Status == "EMPRESTADO")
@@ -42,6 +64,27 @@ namespace Service
 
                         await _context.SaveChangesAsync();
                         await transaction.CommitAsync();
+
+                        var associado = await _context.Pessoas.FindAsync(movimentacao.IdAssociado);
+                        string? instrumentoNome = (await _context.Tipoinstrumentos.FindAsync(instrumento.IdTipoInstrumento))?.Nome;
+                        if (associado != null)
+                        {
+                            EmailModel email = new()
+                            {
+                                Assunto = "Batalá - Devolução de instrumento",
+                                Body = "<div style=\"text-align: center;\">\r\n    " +
+                                "<h1>Devolução de instrumento</h1>\r\n    " +
+                                $"<h2>Olá, {associado.Nome}, estamos aguardando a sua confirmação de devolução.</h2>\r\n" +
+                                "<div style=\"font-size: large;\">\r\n        " +
+                                $"<dt style=\"font-weight: 700;\">Instrumento:</dt><dd>{instrumentoNome}</dd>" +
+                                $"<dt style=\"font-weight: 700;\">Data de Devolução:</dt><dd>{movimentacao.Data:dd/MM/yyyy}</dd>\n</div>"
+                            };
+
+                            email.To.Add(associado.Email);
+
+                            await EmailService.Enviar(email);
+                        }
+
                         return true;
                     }
                 }
