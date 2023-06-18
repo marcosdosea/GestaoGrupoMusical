@@ -63,9 +63,14 @@ namespace GestaoGrupoMusicalWeb.Models
 
         [Display(Name = "Motivo da saída")]
         public string? MotivoSaida { get; set; }
+
         [Required(ErrorMessage = "O campo Ativo é obrigatório.")]
         [Display(Name = "Ativo")]
         public sbyte Ativo { get; set; }
+
+        //[Required(ErrorMessage = "O campo isento de pagamento é obrigatório.")]
+        [Display(Name = "Isento de pagamento")]
+        public sbyte IsentoPagamento { get; set; }
 
         [Required(ErrorMessage = "O campo Grupo Musical é obrigatório.")]
         [Display(Name = "Grupo Musical")]
