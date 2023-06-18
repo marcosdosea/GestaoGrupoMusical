@@ -79,6 +79,7 @@ namespace Service
         public async Task<IEnumerable<MovimentacaoInstrumentoDTO>> GetAllByIdInstrumento(int idInstrumento)
         {
             var query = await   (from movimentacao in _context.Movimentacaoinstrumentos
+                                 where movimentacao.IdInstrumentoMusical == idInstrumento
                                 orderby movimentacao.Data descending
                                 select new MovimentacaoInstrumentoDTO
                                 {
