@@ -33,9 +33,9 @@ namespace Service
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Instrumentomusical> Get(int id)
+        public async Task<Instrumentomusical?> Get(int id)
         {
-            return await _context.Instrumentomusicals.FindAsync(id) ?? new Instrumentomusical();
+            return await _context.Instrumentomusicals.FindAsync(id);
         }
 
         public async Task<IEnumerable<Instrumentomusical>> GetAll()
