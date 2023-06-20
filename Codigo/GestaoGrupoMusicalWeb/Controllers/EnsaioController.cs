@@ -54,13 +54,15 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                var ensaioModel = _mapper.Map<Ensaio>(ensaioViewModel);
-                await _ensaio.Create(_mapper.Map<Ensaio>(ensaioModel));
+                if (await _ensaio.Create(_mapper.Map<Ensaio>(ensaioViewModel)))
+                {
+                    return RedirectToAction(nameof(Index));
+                }
             }
             ensaioViewModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
             ensaioViewModel.ListaGrupoMusical = new SelectList(_grupoMusical.GetAll(), "Id", "Nome");
 
-          return RedirectToAction(nameof(Index));
+            return View(ensaioViewModel);
         }
 
         // GET: EnsaioController/Edit/5
@@ -82,13 +84,15 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                var ensaioModel = _mapper.Map<Ensaio>(ensaioViewModel);
-                await _ensaio.Create(_mapper.Map<Ensaio>(ensaioModel));
+                if (await _ensaio.Edit(_mapper.Map<Ensaio>(ensaioViewModel)))
+                {
+                    return RedirectToAction(nameof(Index));
+                }
             }
             ensaioViewModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
             ensaioViewModel.ListaGrupoMusical = new SelectList(_grupoMusical.GetAll(), "Id", "Nome");
 
-            return RedirectToAction(nameof(Index));
+            return View(ensaioViewModel);
         }
 
         // GET: EnsaioController/Delete/5

@@ -93,7 +93,7 @@ namespace Service
                 {
                     DataHoraInicio = g.DataHoraInicio,
                     Local = g.Local
-                }).AsNoTracking().Distinct().ToListAsync();
+                }).AsNoTracking().ToListAsync();
             return await query;
         }
     }
