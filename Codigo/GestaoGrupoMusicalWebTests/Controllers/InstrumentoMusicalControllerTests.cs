@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Core;
+using Core.DTO;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Controllers;
 using GestaoGrupoMusicalWeb.Mapper;
@@ -15,11 +16,15 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
     {
         private static InstrumentoMusicalController _controller;
 
+
         [TestInitialize]
         public void Initialize()
         {
             //Arrange
             var mokServer = new Mock<IInstrumentoMusicalService>();
+            var mokServerPessoa = new Mock<IPessoaService>();
+            var mokServerMovimentacao = new Mock<IMovimentacaoInstrumentoService>();
+
             IMapper mapper = new MapperConfiguration(cfg =>
                 cfg.AddProfile(new InstrumentoMusicalProfile())).CreateMapper();
 
@@ -30,21 +35,23 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
             mokServer.Setup(service => service.Create(It.IsAny<Instrumentomusical>()))
                 .Verifiable();
 
-            _controller = new InstrumentoMusicalController(mokServer.Object, mapper);
+            // TODO: implementar o ".setup" para mokServerPessoa
+            // TODO: implementar o ".setup" para mokServerMovimentacao
+            _controller = new InstrumentoMusicalController(mokServer.Object, mokServerPessoa.Object, mokServerMovimentacao.Object, mapper);
         }
 
         [TestMethod()]
         public void IndexTest()
         {
             //Act
-            var result = _controller.Index().Result;
+            var result = _controller.Index().GetAwaiter().GetResult();
 
             // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             ViewResult viewResult = (ViewResult)result;
-            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(List<InstrumentoMusicalViewModel>));
+            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(List<InstrumentoMusicalDTO>));
 
-            List<InstrumentoMusicalViewModel> lista = (List<InstrumentoMusicalViewModel>)viewResult.ViewData.Model;
+            List<InstrumentoMusicalDTO> lista = (List<InstrumentoMusicalDTO>)viewResult.ViewData.Model;
             Assert.AreEqual(3, lista.Count);
         }
 

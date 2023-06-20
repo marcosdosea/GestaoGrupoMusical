@@ -28,6 +28,10 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
         public void Initialize()
         {
             var mokServer = new Mock<IPessoaService>();
+            var mokserverGrupoMusical = new Mock<IGrupoMusical>();
+            var mokserverPapelGrupo = new Mock<IPapelGrupo>();
+            var mokserverManequim = new Mock<IManequim>();
+
             IMapper mapper = new MapperConfiguration(cfg =>
                 cfg.AddProfile(new PessoaProfile())).CreateMapper();
 
@@ -38,7 +42,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
             mokServer.Setup(service => service.Create(It.IsAny<Pessoa>()))
                 .Verifiable();
 
-            _controller = new PessoaController(mokServer.Object, mapper);
+            _controller = new PessoaController(mokServer.Object, mapper, mokserverGrupoMusical.Object, mokserverPapelGrupo.Object, mokserverManequim.Object);
 
         }
 
