@@ -32,9 +32,9 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
             IMapper mapper = new MapperConfiguration(cfg =>
                 cfg.AddProfile(new EnsaioProfile())).CreateMapper();
 
-            mokServer.Setup(server => server.GetAllDTO()).Returns((IAsyncEnumerable<EnsaioDTO>)GetTestEnsaioDTO());
-            mokServer.Setup(server => server.GetAll()).Returns((IAsyncEnumerable<Ensaio>)GetTestEnsaios());
-            mokServer.Setup(server => server.Get(1).Result).Returns(GetTargetInstrumentoMusical());
+            mokServer.Setup(server => server.GetAllDTO().Result).Returns(GetTestEnsaioDTO());
+            mokServer.Setup(server => server.GetAll().Result).Returns(GetTestEnsaios());
+            mokServer.Setup(server => server.Get(1).Result).Returns(GetTargetEnsaio());
             mokServer.Setup(service => service.Edit(It.IsAny<Ensaio>()))
                .Verifiable();
             mokServer.Setup(service => service.Create(It.IsAny<Ensaio>()))
@@ -58,7 +58,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(List<EnsaioDTO>));
 
             List<EnsaioDTO> lista = (List<EnsaioDTO>)viewResult.ViewData.Model;
-            Assert.AreEqual(2, lista.Count());
+            Assert.AreEqual(3, lista.Count());
         }
 
         [TestMethod()]
@@ -70,7 +70,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
             // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             ViewResult viewResult = (ViewResult)result;
-            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(InstrumentoMusicalViewModel));
+            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(EnsaioViewModel));
             EnsaioViewModel ensaioView = (EnsaioViewModel)viewResult.ViewData.Model;
             Assert.AreEqual(1, ensaioView.Id);
             Assert.AreEqual(1, ensaioView.IdGrupoMusical);
@@ -132,7 +132,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
             // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             ViewResult viewResult = (ViewResult)result;
-            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(InstrumentoMusicalViewModel));
+            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(EnsaioViewModel));
             EnsaioViewModel ensaioView = (EnsaioViewModel)viewResult.ViewData.Model;
             Assert.AreEqual(1, ensaioView.Id);
             Assert.AreEqual(1, ensaioView.IdGrupoMusical);
@@ -150,7 +150,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
         public void Edit_Post()
         {
             // Act
-            var result = _controller.Edit(GetTargetInstrumentoMusicalViewModel()).Result;
+            var result = _controller.Edit(GetTargetEnsaioViewModel().Id).Result;
             // Assert
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
             RedirectToActionResult redirectToActionResult = (RedirectToActionResult)result;
@@ -166,7 +166,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
             // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             ViewResult viewResult = (ViewResult)result;
-            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(InstrumentoMusicalViewModel));
+            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(EnsaioViewModel));
             EnsaioViewModel ensaioView = (EnsaioViewModel)viewResult.ViewData.Model;
             Assert.AreEqual(1, ensaioView.Id);
             Assert.AreEqual(1, ensaioView.IdGrupoMusical);
@@ -185,7 +185,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
         public void Delete_post()
         {
             //Act
-            var result = _controller.Delete(GetTargetEnsaio().Id).Result;
+            var result = _controller.Delete(GetTargetEnsaioViewModel().Id).Result;
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
             RedirectToActionResult redirectToActionResult = (RedirectToActionResult)result;
             Assert.IsNull(redirectToActionResult.ControllerName);
@@ -209,7 +209,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
             };
         }
 
-        private EnsaioViewModel GetTargetInstrumentoMusicalViewModel()
+        private EnsaioViewModel GetTargetEnsaioViewModel()
         {
             return new EnsaioViewModel
             {

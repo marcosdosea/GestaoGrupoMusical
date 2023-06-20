@@ -8,7 +8,7 @@ namespace Core.Service
         Task<bool> Edit(Ensaio ensaio);
         Task<bool> Delete(int id);
         Task<Ensaio> Get(int id);
-        IAsyncEnumerable<Ensaio> GetAll();
-        IAsyncEnumerable<EnsaioDTO> GetAllDTO();
+        Task<IEnumerable<Ensaio>> GetAll();
+        Task<IEnumerable<EnsaioDTO>> GetAllDTO();
     }
 }
