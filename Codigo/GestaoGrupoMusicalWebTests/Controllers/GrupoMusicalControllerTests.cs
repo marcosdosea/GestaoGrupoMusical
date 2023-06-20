@@ -14,6 +14,7 @@ using Core;
 using System.Runtime.ConstrainedExecution;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Mvc;
+using Core.DTO;
 
 namespace GestaoGrupoMusicalWeb.Controllers.Tests
 {
@@ -31,6 +32,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
             IMapper mapper = new MapperConfiguration(cfg =>
                 cfg.AddProfile(new GrupoMusicalProfile())).CreateMapper();
 
+            mokServer.Setup(server => server.GetAllDTO()).Returns(GetTestGrupoMusicaisDTO());
             mokServer.Setup(server => server.GetAll()).Returns(GetTestGrupoMusicals());
             mokServer.Setup(server => server.Get(1)).Returns(GetTargetGrupoMusical());
             mokServer.Setup(service => service.Edit(It.IsAny<Grupomusical>()))
@@ -50,9 +52,9 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
             // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             ViewResult viewResult = (ViewResult)result;
-            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(List<GrupoMusicalViewModel>));
+            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(List<GrupoMusicalDTO>));
 
-            List<GrupoMusicalViewModel> lista = (List<GrupoMusicalViewModel>)viewResult.ViewData.Model;
+            List<GrupoMusicalDTO> lista = (List<GrupoMusicalDTO>)viewResult.ViewData.Model;
             Assert.AreEqual(3, lista.Count);
         }
 
@@ -379,6 +381,27 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
                 Telefone2 = "3433-1879",
                 Youtube = "Grupo Batala",
 
+            };
+        }
+        private IEnumerable<GrupoMusicalDTO> GetTestGrupoMusicaisDTO()
+        {
+            return new List<GrupoMusicalDTO>
+            {
+                new GrupoMusicalDTO
+                {
+                    Id = 1,
+                    Name = "Grupo Arraia"
+                },
+                new GrupoMusicalDTO
+                {
+                    Id = 2,
+                    Name = "Grupo Batala"
+                },
+                new GrupoMusicalDTO
+                {
+                    Id = 3,
+                    Name = "Forror do Agreste"
+                }
             };
         }
 
