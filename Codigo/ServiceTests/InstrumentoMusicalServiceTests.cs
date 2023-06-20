@@ -97,22 +97,17 @@ namespace Service.Tests
             _instrumentoMusical.Delete(2);
 
             // Assert
-            var resultList = _instrumentoMusical.GetAll();
-            var listaInstrumentoMusicais = resultList.GetAwaiter().GetResult();
+            var listaInstrumentoMusicais = _instrumentoMusical.GetAll().GetAwaiter().GetResult();
             Assert.AreEqual(2, listaInstrumentoMusicais.Count());
-            var result = _instrumentoMusical.Get(2);
-            var instrumentoMusical = result.GetAwaiter().GetResult();
-            Assert.AreNotEqual(null, instrumentoMusical);
-            Assert.AreNotEqual(2, instrumentoMusical.IdGrupoMusical);
-
+            var instrumentoMusical = _instrumentoMusical.Get(2).GetAwaiter().GetResult();
+            Assert.AreEqual(null, instrumentoMusical);
         }
 
         [TestMethod()]
         public void EditTest()
         {
             //Act
-            var result = _instrumentoMusical.Get(3);
-            var instrumentoMusical = result.GetAwaiter().GetResult();
+            var instrumentoMusical = _instrumentoMusical.Get(3).GetAwaiter().GetResult();
             instrumentoMusical.Id = 7;
             instrumentoMusical.Patrimonio = "7";
             instrumentoMusical.DataAquisicao = DateTime.Parse("24/02/2020");
@@ -133,8 +128,7 @@ namespace Service.Tests
         public void GetTest()
         {
             //Act
-            var result = _instrumentoMusical.Get(1);
-            var instrumentoMusical = result.GetAwaiter().GetResult();
+            var instrumentoMusical = _instrumentoMusical.Get(1).GetAwaiter().GetResult();
 
             //Arrange
             Assert.IsNotNull(instrumentoMusical);
@@ -150,8 +144,7 @@ namespace Service.Tests
         public void GetAllTest()
         {
             //Act
-            var result = _instrumentoMusical.GetAll();
-            var listaInstrumentoMusical = result.GetAwaiter().GetResult();
+            var listaInstrumentoMusical = _instrumentoMusical.GetAll().GetAwaiter().GetResult();
 
             //Arrange
             Assert.IsInstanceOfType(listaInstrumentoMusical, typeof(IEnumerable<Instrumentomusical>));
