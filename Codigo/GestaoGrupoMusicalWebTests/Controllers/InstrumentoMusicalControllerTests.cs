@@ -23,8 +23,8 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
             IMapper mapper = new MapperConfiguration(cfg =>
                 cfg.AddProfile(new InstrumentoMusicalProfile())).CreateMapper();
 
-            mokServer.Setup(server => server.GetAll()).Returns(GetTestInstrumentosMusicais());
-            mokServer.Setup(server => server.Get(1)).Returns(GetTargetInstrumentoMusical());
+            mokServer.Setup(server => server.GetAll().Result).Returns(GetTestInstrumentosMusicais());
+            mokServer.Setup(server => server.Get(1).Result).Returns(GetTargetInstrumentoMusical());
             mokServer.Setup(service => service.Edit(It.IsAny<Instrumentomusical>()))
                .Verifiable();
             mokServer.Setup(service => service.Create(It.IsAny<Instrumentomusical>()))
@@ -37,7 +37,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
         public void IndexTest()
         {
             //Act
-            var result = _controller.Index();
+            var result = _controller.Index().Result;
 
             // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
@@ -52,7 +52,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
         public void DetailsTest()
         {
             //Act
-            var result = _controller.Details(1);
+            var result = _controller.Details(1).GetAwaiter().GetResult();
 
             // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
@@ -80,7 +80,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
         public void CreateTest_Post_Valid()
         {
             // Act
-            var result = _controller.Create(GetNewInstrumentoMusical());
+            var result = _controller.Create(GetNewInstrumentoMusical()).GetAwaiter().GetResult();
 
             // Assert
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
@@ -96,7 +96,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
             _controller.ModelState.AddModelError("Nome", "Campo requerido");
 
             // Act
-            var result = _controller.Create(GetNewInstrumentoMusical());
+            var result = _controller.Create(GetNewInstrumentoMusical()).Result;
 
             // Assert
             Assert.AreEqual(1, _controller.ModelState.ErrorCount);
@@ -110,7 +110,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
         public void Edit_Get()
         {
             //Arrange
-            var result = _controller.Edit(1);
+            var result = _controller.Edit(1).Result;
 
             // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
@@ -129,7 +129,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
         public void Edit_Post()
         {
             // Act
-            var result = _controller.Edit(GetTargetInstrumentoMusicalViewModel().Id, GetTargetInstrumentoMusicalViewModel());
+            var result = _controller.Edit(GetTargetInstrumentoMusicalViewModel().Id, GetTargetInstrumentoMusicalViewModel()).Result;
             // Assert
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
             RedirectToActionResult redirectToActionResult = (RedirectToActionResult)result;
@@ -140,7 +140,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
         [TestMethod()]
         public void Delete_Get()
         {
-            var result = _controller.Delete(1);
+            var result = _controller.Delete(1).Result;
 
             // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
@@ -160,7 +160,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
         public void Delete_post()
         {
             //Act
-            var result = _controller.Delete(GetTargetInstrumentoMusical().Id, GetTargetInstrumentoMusicalViewModel());
+            var result = _controller.Delete(GetTargetInstrumentoMusical().Id, GetTargetInstrumentoMusicalViewModel()).Result;
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
             RedirectToActionResult redirectToActionResult = (RedirectToActionResult)result;
             Assert.IsNull(redirectToActionResult.ControllerName);
