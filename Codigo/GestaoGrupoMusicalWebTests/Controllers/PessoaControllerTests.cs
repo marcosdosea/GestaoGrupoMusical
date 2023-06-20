@@ -42,6 +42,10 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
             mokServer.Setup(service => service.Create(It.IsAny<Pessoa>()))
                 .Verifiable();
 
+            // TODO: implementar o ".setup" para mokServerGrupoMusical
+            // TODO: implementar o ".setup" para mokServerPapelGrupo
+            // TODO: implementar o ".setup" para mokServerManequim
+
             _controller = new PessoaController(mokServer.Object, mapper, mokserverGrupoMusical.Object, mokserverPapelGrupo.Object, mokserverManequim.Object);
 
         }
