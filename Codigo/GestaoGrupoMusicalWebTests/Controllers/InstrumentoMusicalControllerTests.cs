@@ -28,6 +28,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
             IMapper mapper = new MapperConfiguration(cfg =>
                 cfg.AddProfile(new InstrumentoMusicalProfile())).CreateMapper();
 
+            mokServer.Setup(server => server.GetAllDTO().Result).Returns(GetTestInstrumentosMusicaisDTO());
             mokServer.Setup(server => server.GetAll().Result).Returns(GetTestInstrumentosMusicais());
             mokServer.Setup(server => server.Get(1).Result).Returns(GetTargetInstrumentoMusical());
             mokServer.Setup(service => service.Edit(It.IsAny<Instrumentomusical>()))
@@ -49,10 +50,11 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
             // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             ViewResult viewResult = (ViewResult)result;
+            Assert.IsNotNull(viewResult);
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(List<InstrumentoMusicalDTO>));
 
             List<InstrumentoMusicalDTO> lista = (List<InstrumentoMusicalDTO>)viewResult.ViewData.Model;
-            Assert.AreEqual(3, lista.Count);
+            Assert.AreEqual(2, lista.Count());
         }
 
         [TestMethod()]
@@ -244,6 +246,29 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
                 Status = "DISPONIVEL",
                 IdTipoInstrumento = 0,
                 IdGrupoMusical = 0
+            };
+        }
+
+        private IEnumerable<InstrumentoMusicalDTO> GetTestInstrumentosMusicaisDTO()
+        {
+            return new List<InstrumentoMusicalDTO>
+            {
+                new InstrumentoMusicalDTO
+                {
+                    Id = 6,
+                    Patrimonio = "6",
+                    NomeInstrumento = "Tambor",
+                    Status = "DISPONIVEL",
+                    NomeAssociado = "João Arlindo Santana"
+                },
+                new InstrumentoMusicalDTO
+                {
+                    Id = 7,
+                    Patrimonio = "7",
+                    NomeInstrumento = "Flauta",
+                    Status = "EMPRESTADO",
+                    NomeAssociado = "Maria Joana da Silva"
+                }
             };
         }
 
