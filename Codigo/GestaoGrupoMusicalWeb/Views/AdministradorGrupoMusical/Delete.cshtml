@@ -6,9 +6,8 @@
 
 <h1>Remover Cargo de Administrador</h1>
 
-<h3>Are you sure you want to remove @Model.Nome?</h3>
+<h3>Tem certeza de que deseja remover @Model.Nome como administrador do grupo? </h3>
 <div>
-    <h4>PessoaViewModel</h4>
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
@@ -35,6 +34,6 @@
         <input type="hidden" name="idGrupoMusical" value="@ViewBag.idGrupoMusical" />
         <input type="hidden" name="nomeGrupo" value="@ViewBag.nomeGrupo" />
         <input type="submit" value="Remover" class="btn btn-danger" /> |
-        <a asp-action="Index" asp-route-id="@ViewBag.idGrupoMusical" asp-route-NomeGrupo="@ViewBag.nomeGrupo">Back to List</a>
+        <a asp-action="Index" asp-route-id="@ViewBag.idGrupoMusical" asp-route-NomeGrupo="@ViewBag.nomeGrupo">Cancelar</a>
     </form>
 </div>

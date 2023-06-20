@@ -8,8 +8,10 @@ namespace Core.Service
 
         Task<Movimentacaoinstrumento?> GetEmprestimoByIdInstrumento(int idInstrumento);
 
-        Task<IEnumerable<MovimentacaoInstrumentoDTO>> GetAll();
+        Task<IEnumerable<MovimentacaoInstrumentoDTO>> GetAllByIdInstrumento(int idInstrumento);
 
         Task<bool> Delete(int id);
+
+        Task<bool> NotificarViaEmail(int id);
     }
 }

@@ -140,7 +140,7 @@
             </td>
             <td>
                 @Html.ActionLink("Editar", "Edit", new {  id=item.Id }) |
-                @Html.ActionLink("Listar", "Details", new {  id=item.Id  }) |
+                @Html.ActionLink("Detalhes", "Details", new {  id=item.Id  }) |
                 @Html.ActionLink("Excluir", "Delete", new {  id=item.Id  })
                 <!--If para mostrar botao apenas se o usuario nao é colaborador-->
                 @if (item.IdPapelGrupo != 2) {

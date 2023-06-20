@@ -107,6 +107,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
             var instrumento = await _instrumentoMusical.Get(id);
             var movimentacao = await _movimentacaoInstrumento.GetEmprestimoByIdInstrumento(id);
 
+            if(instrumento == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             if(movimentacao != null && instrumento.Status == "EMPRESTADO")
             {
                 movimentacaoModel.IdAssociado = movimentacao.IdAssociado;
@@ -114,7 +119,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 movimentacaoModel.Movimentacao = "DEVOLUCAO";
             }
 
-            movimentacaoModel.Movimentacoes = await _movimentacaoInstrumento.GetAll();
+            movimentacaoModel.Movimentacoes = await _movimentacaoInstrumento.GetAllByIdInstrumento(id);
             movimentacaoModel.Patrimonio = instrumento.Patrimonio;
             movimentacaoModel.IdInstrumentoMusical = instrumento.Id;
             movimentacaoModel.NomeInstrumento = await _instrumentoMusical.GetNomeInstrumento(id);
@@ -127,7 +132,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> Movimentar(MovimentacaoInstrumentoViewModel movimentacaoPost)
         {
             movimentacaoPost.ListaAssociado = new SelectList(_pessoa.GetAll(), "Id", "Nome");
-            movimentacaoPost.Movimentacoes = await _movimentacaoInstrumento.GetAll();
+            movimentacaoPost.Movimentacoes = await _movimentacaoInstrumento.GetAllByIdInstrumento(movimentacaoPost.IdInstrumentoMusical);
 
             try
             {
@@ -156,16 +161,31 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteMovimentacao(int id)
+        public async Task<ActionResult> DeleteMovimentacao(int id, int IdInstrumento)
         {
             try
             {
                 await _movimentacaoInstrumento.Delete(id);
-                return RedirectToAction(nameof(Movimentar));
+                return RedirectToAction(nameof(Movimentar), new { id = IdInstrumento });
             }
             catch
             {
-                return RedirectToAction(nameof(Movimentar));
+                return RedirectToAction(nameof(Movimentar), new { id = IdInstrumento });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> NotificarViaEmail(int id, int IdInstrumento)
+        {
+            try
+            {
+                await _movimentacaoInstrumento.NotificarViaEmail(id);
+                return RedirectToAction(nameof(Movimentar), new { id = IdInstrumento });
+            }
+            catch
+            {
+                return RedirectToAction(nameof(Movimentar), new { id = IdInstrumento });
             }
         }
     }

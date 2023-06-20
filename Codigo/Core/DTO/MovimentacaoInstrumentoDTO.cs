@@ -7,6 +7,8 @@ namespace Core.DTO
     {
         public int Id { get; set; }
 
+        public int IdInstrumento { get; set; }
+
         [Display (Name = "CPF")]
         public string Cpf { get; set; } = string.Empty;
 

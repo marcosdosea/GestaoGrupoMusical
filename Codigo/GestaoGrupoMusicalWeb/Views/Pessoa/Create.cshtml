@@ -78,34 +78,30 @@
                 <input asp-for="DataEntrada" class="form-control" />
                 <span asp-validation-for="DataEntrada" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="DataSaida" class="control-label"></label>
-                <input asp-for="DataSaida" class="form-control" />
-                <span asp-validation-for="DataSaida" class="text-danger"></span>
+                <label asp-for="IsentoPagamento" class="control-label"></label>
+                <input asp-for="IsentoPagamento" class="form-control" />
+                <span asp-validation-for="IsentoPagamento" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="MotivoSaida" class="control-label"></label>
-                <input asp-for="MotivoSaida" class="form-control" />
-                <span asp-validation-for="MotivoSaida" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Ativo" class="control-label"></label>
-                <input asp-for="Ativo" class="form-control" />
+                <input asp-for="Ativo" class="form-control" value="1" type="hidden"/>
                 <span asp-validation-for="Ativo" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="IdGrupoMusical" class="control-label"></label>
-                <input asp-for="IdGrupoMusical" class="form-control" />
+                <select asp-items="@Model.ListaGrupoMusical" asp-for="IdGrupoMusical" class="form-control"></select>
                 <span asp-validation-for="IdGrupoMusical" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="IdPapelGrupo" class="control-label"></label>
-                <input asp-for="IdPapelGrupo" class="form-control" />
+                <select asp-items="@Model.ListaPapelGrupo" asp-for="IdPapelGrupo" class="form-control"></select>
                 <span asp-validation-for="IdPapelGrupo" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="IdManequim" class="control-label"></label>
-                <input asp-for="IdManequim" class="form-control" />
+                <select asp-items="@Model.ListaManequim" asp-for="IdManequim" class="form-control"></select>
                 <span asp-validation-for="IdManequim" class="text-danger"></span>
             </div>
             <div class="form-group">
