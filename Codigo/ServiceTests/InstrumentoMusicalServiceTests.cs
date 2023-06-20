@@ -112,7 +112,7 @@ namespace Service.Tests
         {
             //Act
             var result = _instrumentoMusical.Get(3);
-            var instrumentoMusical = result.GetAwaiter().GetResult(); ;
+            var instrumentoMusical = result.GetAwaiter().GetResult();
             instrumentoMusical.Id = 7;
             instrumentoMusical.Patrimonio = "7";
             instrumentoMusical.DataAquisicao = DateTime.Parse("24/02/2020");
