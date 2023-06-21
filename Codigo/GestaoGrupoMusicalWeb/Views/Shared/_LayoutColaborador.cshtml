@@ -8,13 +8,18 @@
     <link rel="stylesheet" href="~/lib/simple-sidebar/dist/css/styles.css" />
     <link rel="stylesheet" href="~/lib/fontawesome-free-6.4.0-web/css/all.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/headerLayout.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/GestaoGrupoMusicalWeb.styles.css" asp-append-version="true" />
 </head>
 <body>
     <div class="d-flex" id="wrapper">
         <!-- Sidebar-->
-        <div class="border-end bg-white" id="sidebar-wrapper">
-            <div class="sidebar-heading border-bottom bg-light">Batalá Sergipe</div>
+        <div class="border-end-0 bg-white LarguraDiv" id="sidebar-wrapper">
+            
+            <div class="sidebar-heading border-bottom bg-dark tamDivHeader">
+                <img class="posLogo" src="https://i.imgur.com/xRzPBmL.png" alt="Logo Batalá" width="56.57px" height="57px">
+                <span class="corNomeLogo posDivLogo">Batalá Sergipe</span>
+            </div>
             <div class="list-group list-group-flush">
                 <a class="list-group-item list-group-item-action list-group-item-light p-3" asp-controller="Home" asp-action="Index"> Início</a>
                 <a class="list-group-item list-group-item-action list-group-item-light p-3" asp-controller="Ensaio" asp-action="Index">Ensaios</a>
@@ -32,16 +37,16 @@
         <!-- Page content wrapper-->
         <div id="page-content-wrapper">
             <!-- Top navigation-->
-            <nav class="navbar navbar-expand navbar-light bg-light border-bottom">
+            <nav class="navbar navbar-expand navbar-light bg-dark border-bottom tamDivHeader">
                 <div class="container-fluid">
-                    <button class="btn btn-light fs-5" id="sidebarToggle">
+                    <button class="btn btn-dark fs-5" id="sidebarToggle">
                         <i class="fa-solid fa-bars"></i>
                     </button>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle fs-5" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <a class="nav-link dropdown-toggle fs-5 text-light" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="fa-solid fa-circle-user"></i>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
