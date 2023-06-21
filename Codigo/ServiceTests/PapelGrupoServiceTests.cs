@@ -48,5 +48,71 @@ namespace Service.Tests
             _papelGrupo = new PapelGrupoService(_context);
         }
 
+        [TestMethod]
+        public void CreateTest()
+        {
+            // Act
+            _papelGrupo.Create(new Papelgrupo
+            {
+                IdPapelGrupo = 4,
+                Nome = "Maestro"
+            });
+
+            // Assert
+            Assert.AreEqual(4, _papelGrupo.GetAll().Count());
+            var papelGrupo = _papelGrupo.Get(4);
+            Assert.AreEqual(4, papelGrupo.IdPapelGrupo);
+            Assert.AreEqual("Maestro", papelGrupo.Nome);
+        }
+
+        [TestMethod]
+        public void DeleteTest()
+        {
+            // Act
+            _papelGrupo.Delete(3);
+
+            // Assert
+            Assert.AreEqual(2, _papelGrupo.GetAll().Count());
+            var papelGrupo = _papelGrupo.Get(3);
+            Assert.AreEqual(null, papelGrupo);
+        }
+
+        [TestMethod]
+        public void EditTest()
+        {
+            // Act
+            var papelGrupo = _papelGrupo.Get(1);
+            papelGrupo.IdPapelGrupo = 1;
+            papelGrupo.Nome = "Maestro";
+
+            // Assert
+            Assert.AreEqual(1, papelGrupo.IdPapelGrupo);
+            Assert.AreEqual("Maestro", papelGrupo.Nome);
+        }
+
+        [TestMethod]
+        public void GetTest()
+        {
+            // Act
+            var papelGrupo = _papelGrupo.Get(1);
+
+            // Arrange
+            Assert.AreEqual(1, papelGrupo.IdPapelGrupo);
+            Assert.AreEqual("COLABORADOR", papelGrupo.Nome);
+        }
+
+        [TestMethod]
+        public void GetAllTest()
+        {
+            // Act
+            var listaPapelGrupo = _papelGrupo.GetAll();
+
+            // Assert
+            Assert.IsInstanceOfType(listaPapelGrupo, typeof(IEnumerable<Papelgrupo>));
+            Assert.IsNotNull(listaPapelGrupo);
+            Assert.AreEqual(3, listaPapelGrupo.Count());
+            Assert.AreEqual(1, listaPapelGrupo.First().IdPapelGrupo);
+        }
+
     }
 }
