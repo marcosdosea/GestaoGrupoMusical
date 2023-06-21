@@ -61,7 +61,7 @@ namespace Service.Tests
         }
 
         [TestMethod()]
-        public void CreateTest()
+        public  void CreateTest()
         {
             // Act
             _instrumentoMusical.Create(
@@ -76,9 +76,12 @@ namespace Service.Tests
                 });
 
             // Assert
-            Assert.AreEqual(4, _instrumentoMusical.GetAll().Count());
+            var resultList = _instrumentoMusical.GetAll();
+            var listaInstrumentoMusicais = resultList.GetAwaiter().GetResult();
+            Assert.AreEqual(4, listaInstrumentoMusicais.Count());
 
-            var instrumentoMusical = _instrumentoMusical.Get(4);
+            var result = _instrumentoMusical.Get(4);
+            var instrumentoMusical = result.GetAwaiter().GetResult();
             Assert.AreEqual(4, instrumentoMusical.Id);
             Assert.AreEqual("4", instrumentoMusical.Patrimonio);
             Assert.AreEqual(DateTime.Parse("18/12/2018"), instrumentoMusical.DataAquisicao);
@@ -90,10 +93,13 @@ namespace Service.Tests
         [TestMethod()]
         public void DeleteTest()
         {
+            // Act
             _instrumentoMusical.Delete(2);
+
             // Assert
-            Assert.AreEqual(2, _instrumentoMusical.GetAll().Count());
-            var instrumentoMusical = _instrumentoMusical.Get(2);
+            var listaInstrumentoMusicais = _instrumentoMusical.GetAll().GetAwaiter().GetResult();
+            Assert.AreEqual(2, listaInstrumentoMusicais.Count());
+            var instrumentoMusical = _instrumentoMusical.Get(2).GetAwaiter().GetResult();
             Assert.AreEqual(null, instrumentoMusical);
         }
 
@@ -101,7 +107,7 @@ namespace Service.Tests
         public void EditTest()
         {
             //Act
-            var instrumentoMusical = _instrumentoMusical.Get(3);
+            var instrumentoMusical = _instrumentoMusical.Get(3).GetAwaiter().GetResult();
             instrumentoMusical.Id = 7;
             instrumentoMusical.Patrimonio = "7";
             instrumentoMusical.DataAquisicao = DateTime.Parse("24/02/2020");
@@ -122,7 +128,7 @@ namespace Service.Tests
         public void GetTest()
         {
             //Act
-            var instrumentoMusical = _instrumentoMusical.Get(1);
+            var instrumentoMusical = _instrumentoMusical.Get(1).GetAwaiter().GetResult();
 
             //Arrange
             Assert.IsNotNull(instrumentoMusical);
@@ -138,7 +144,7 @@ namespace Service.Tests
         public void GetAllTest()
         {
             //Act
-            var listaInstrumentoMusical = _instrumentoMusical.GetAll();
+            var listaInstrumentoMusical = _instrumentoMusical.GetAll().GetAwaiter().GetResult();
 
             //Arrange
             Assert.IsInstanceOfType(listaInstrumentoMusical, typeof(IEnumerable<Instrumentomusical>));

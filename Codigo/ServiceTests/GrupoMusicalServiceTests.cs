@@ -159,7 +159,9 @@ namespace Service.Tests
         [TestMethod()]
         public void DeleteTest()
         {
+            // Act
             _grupoMusical.Delete(2);
+
             // Assert
             Assert.AreEqual(2, _grupoMusical.GetAll().Count());
             var grupomusical = _grupoMusical.Get(2);

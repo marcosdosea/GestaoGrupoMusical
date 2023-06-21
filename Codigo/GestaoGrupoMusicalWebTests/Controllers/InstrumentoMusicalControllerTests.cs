@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Core;
+using Core.DTO;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Controllers;
 using GestaoGrupoMusicalWeb.Mapper;
@@ -15,44 +16,52 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
     {
         private static InstrumentoMusicalController _controller;
 
+
         [TestInitialize]
         public void Initialize()
         {
             //Arrange
             var mokServer = new Mock<IInstrumentoMusicalService>();
+            var mokServerPessoa = new Mock<IPessoaService>();
+            var mokServerMovimentacao = new Mock<IMovimentacaoInstrumentoService>();
+
             IMapper mapper = new MapperConfiguration(cfg =>
                 cfg.AddProfile(new InstrumentoMusicalProfile())).CreateMapper();
 
-            mokServer.Setup(server => server.GetAll()).Returns(GetTestInstrumentosMusicais());
-            mokServer.Setup(server => server.Get(1)).Returns(GetTargetInstrumentoMusical());
+            mokServer.Setup(server => server.GetAllDTO().Result).Returns(GetTestInstrumentosMusicaisDTO());
+            mokServer.Setup(server => server.GetAll().Result).Returns(GetTestInstrumentosMusicais());
+            mokServer.Setup(server => server.Get(1).Result).Returns(GetTargetInstrumentoMusical());
             mokServer.Setup(service => service.Edit(It.IsAny<Instrumentomusical>()))
                .Verifiable();
             mokServer.Setup(service => service.Create(It.IsAny<Instrumentomusical>()))
                 .Verifiable();
 
-            _controller = new InstrumentoMusicalController(mokServer.Object, mapper);
+            // TODO: implementar o ".setup" para mokServerPessoa
+            // TODO: implementar o ".setup" para mokServerMovimentacao
+            _controller = new InstrumentoMusicalController(mokServer.Object, mokServerPessoa.Object, mokServerMovimentacao.Object, mapper);
         }
 
         [TestMethod()]
         public void IndexTest()
         {
             //Act
-            var result = _controller.Index();
+            var result = _controller.Index().GetAwaiter().GetResult();
 
             // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             ViewResult viewResult = (ViewResult)result;
-            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(List<InstrumentoMusicalViewModel>));
+            Assert.IsNotNull(viewResult);
+            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(List<InstrumentoMusicalDTO>));
 
-            List<InstrumentoMusicalViewModel> lista = (List<InstrumentoMusicalViewModel>)viewResult.ViewData.Model;
-            Assert.AreEqual(3, lista.Count);
+            List<InstrumentoMusicalDTO> lista = (List<InstrumentoMusicalDTO>)viewResult.ViewData.Model;
+            Assert.AreEqual(2, lista.Count());
         }
 
         [TestMethod()]
         public void DetailsTest()
         {
             //Act
-            var result = _controller.Details(1);
+            var result = _controller.Details(1).GetAwaiter().GetResult();
 
             // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
@@ -80,7 +89,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
         public void CreateTest_Post_Valid()
         {
             // Act
-            var result = _controller.Create(GetNewInstrumentoMusical());
+            var result = _controller.Create(GetNewInstrumentoMusical()).GetAwaiter().GetResult();
 
             // Assert
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
@@ -96,7 +105,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
             _controller.ModelState.AddModelError("Nome", "Campo requerido");
 
             // Act
-            var result = _controller.Create(GetNewInstrumentoMusical());
+            var result = _controller.Create(GetNewInstrumentoMusical()).Result;
 
             // Assert
             Assert.AreEqual(1, _controller.ModelState.ErrorCount);
@@ -110,7 +119,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
         public void Edit_Get()
         {
             //Arrange
-            var result = _controller.Edit(1);
+            var result = _controller.Edit(1).Result;
 
             // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
@@ -129,7 +138,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
         public void Edit_Post()
         {
             // Act
-            var result = _controller.Edit(GetTargetInstrumentoMusicalViewModel().Id, GetTargetInstrumentoMusicalViewModel());
+            var result = _controller.Edit(GetTargetInstrumentoMusicalViewModel().Id, GetTargetInstrumentoMusicalViewModel()).Result;
             // Assert
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
             RedirectToActionResult redirectToActionResult = (RedirectToActionResult)result;
@@ -140,7 +149,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
         [TestMethod()]
         public void Delete_Get()
         {
-            var result = _controller.Delete(1);
+            var result = _controller.Delete(1).Result;
 
             // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
@@ -160,7 +169,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
         public void Delete_post()
         {
             //Act
-            var result = _controller.Delete(GetTargetInstrumentoMusical().Id, GetTargetInstrumentoMusicalViewModel());
+            var result = _controller.Delete(GetTargetInstrumentoMusical().Id, GetTargetInstrumentoMusicalViewModel()).Result;
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
             RedirectToActionResult redirectToActionResult = (RedirectToActionResult)result;
             Assert.IsNull(redirectToActionResult.ControllerName);
@@ -237,6 +246,29 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
                 Status = "DISPONIVEL",
                 IdTipoInstrumento = 0,
                 IdGrupoMusical = 0
+            };
+        }
+
+        private IEnumerable<InstrumentoMusicalDTO> GetTestInstrumentosMusicaisDTO()
+        {
+            return new List<InstrumentoMusicalDTO>
+            {
+                new InstrumentoMusicalDTO
+                {
+                    Id = 6,
+                    Patrimonio = "6",
+                    NomeInstrumento = "Tambor",
+                    Status = "DISPONIVEL",
+                    NomeAssociado = "João Arlindo Santana"
+                },
+                new InstrumentoMusicalDTO
+                {
+                    Id = 7,
+                    Patrimonio = "7",
+                    NomeInstrumento = "Flauta",
+                    Status = "EMPRESTADO",
+                    NomeAssociado = "Maria Joana da Silva"
+                }
             };
         }
 
