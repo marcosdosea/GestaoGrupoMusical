@@ -55,9 +55,9 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             ViewResult viewResult = (ViewResult)result;
             Assert.IsNotNull(viewResult);
-            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(List<EnsaioDTO>));
+            Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(List<EnsaioViewModel>));
 
-            List<EnsaioDTO> lista = (List<EnsaioDTO>)viewResult.ViewData.Model;
+            List<EnsaioViewModel> lista = (List<EnsaioViewModel>)viewResult.ViewData.Model;
             Assert.AreEqual(3, lista.Count());
         }
 
@@ -100,10 +100,13 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
             var result = _controller.Create(GetNewEnsaio()).GetAwaiter().GetResult();
 
             // Assert
-            Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
-            RedirectToActionResult redirectToActionResult = (RedirectToActionResult)result;
-            Assert.IsNull(redirectToActionResult.ControllerName);
-            Assert.AreEqual("Index", redirectToActionResult.ActionName);
+            Assert.IsInstanceOfType(result, typeof(ViewResult));
+            ViewResult viewResult = (ViewResult)result;
+            var model = (
+               viewResult.ViewData.Model) as EnsaioViewModel;
+            Assert.AreEqual("Ensaio de Percusão", model.Repertorio);
+            Assert.AreEqual("Centro batalá, rua: percilio andrade, 130, centro, Aracaju-se", model.Local);
+            Assert.AreEqual(1, model.Id);
         }
 
         [TestMethod()]
@@ -118,9 +121,11 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
             // Assert
             Assert.AreEqual(1, _controller.ModelState.ErrorCount);
             Assert.IsInstanceOfType(result, typeof(ViewResult));
-            ViewResult redirectToActionResult = (ViewResult)result;
-            Assert.IsNotNull(redirectToActionResult);
-            Assert.AreEqual("Index", redirectToActionResult.ViewName);
+            ViewResult viewResult = (ViewResult)result;
+            var model = (
+               viewResult.ViewData.Model) as EnsaioViewModel;
+            Assert.IsNull(model.DataHoraInicio);
+
         }
 
         [TestMethod()]
@@ -186,10 +191,10 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
         {
             //Act
             var result = _controller.Delete(GetTargetEnsaioViewModel().Id).Result;
-            Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
-            RedirectToActionResult redirectToActionResult = (RedirectToActionResult)result;
-            Assert.IsNull(redirectToActionResult.ControllerName);
-            Assert.AreEqual("Index", redirectToActionResult.ActionName);
+            Assert.IsInstanceOfType(result, typeof(ViewResult));
+            ViewResult viewResult = (ViewResult)result;
+            var model = (viewResult.ViewData.Model) as EnsaioViewModel;
+            Assert.IsNull(model);
         }
 
         private Ensaio GetTargetEnsaio()
@@ -277,7 +282,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
 
         private EnsaioViewModel GetNewEnsaio()
         {
-             return new EnsaioViewModel
+            return new EnsaioViewModel
             {
                 Id = 1,
                 IdGrupoMusical = 1,
