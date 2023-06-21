@@ -117,10 +117,10 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
 
             // Assert
             Assert.AreEqual(1, _controller.ModelState.ErrorCount);
-            Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
-            RedirectToActionResult redirectToActionResult = (RedirectToActionResult)result;
-            Assert.IsNull(redirectToActionResult.ControllerName);
-            Assert.AreEqual("Index", redirectToActionResult.ActionName);
+            Assert.IsInstanceOfType(result, typeof(ViewResult));
+            ViewResult redirectToActionResult = (ViewResult)result;
+            Assert.IsNotNull(redirectToActionResult);
+            Assert.AreEqual("Index", redirectToActionResult.ViewName);
         }
 
         [TestMethod()]
