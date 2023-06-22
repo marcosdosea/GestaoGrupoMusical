@@ -13,11 +13,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
     {
         private readonly IEventoService _evento;
         private readonly IMapper _mapper;
-        private readonly IGrupoMusical _grupoMusical;
+        private readonly IGrupoMusicalService _grupoMusical;
         private readonly IPessoaService _pessoa;
 
 
-        public EventoController(IEventoService evento, IMapper mapper, IGrupoMusical grupoMusical, IPessoaService pessoa)
+        public EventoController(IEventoService evento, IMapper mapper, IGrupoMusicalService grupoMusical, IPessoaService pessoa)
         {
             _evento = evento;
             _mapper = mapper;
