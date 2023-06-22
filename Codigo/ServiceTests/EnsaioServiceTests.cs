@@ -18,6 +18,7 @@ namespace Service.Tests
     {
         private GrupoMusicalContext _context;
         private IEnsaioService _ensaio;
+
         [TestInitialize]
         public void Initialize()
         {
@@ -29,7 +30,7 @@ namespace Service.Tests
             _context = new GrupoMusicalContext(options);
             _context.Database.EnsureDeleted();
             _context.Database.EnsureCreated();
-            var ensaio = new List<Ensaio>
+            var ensaios = new List<Ensaio>
             {
                 new Ensaio
                 {
@@ -74,7 +75,7 @@ namespace Service.Tests
 
 
         };
-            _context.AddRange(ensaio);
+            _context.AddRange(ensaios);
             _context.SaveChanges();
 
             _ensaio = new EnsaioService(_context);
@@ -96,8 +97,13 @@ namespace Service.Tests
                 PresencaObrigatoria = 1,
                 Tipo = "Extra",
             });
-            Assert.AreEqual(4, _ensaio.GetAll().Count);
-            var ensaio = _ensaio.Get(4);
+            var resultList = _ensaio.GetAll();
+            var listaEnsaio = resultList.GetAwaiter().GetResult();
+            Assert.AreEqual(4, listaEnsaio.Count());
+
+            var result = _ensaio.Get(4);
+            var ensaio = result.GetAwaiter().GetResult();
+
             Assert.AreEqual(4, ensaio.Id);
             Assert.AreEqual("Centro batalá, rua: estancia, 180, centro, Aracaju-se", ensaio.Local);
             Assert.AreEqual(new DateTime(2023, 10, 11, 8, 0, 0), ensaio.DataHoraInicio);
@@ -110,76 +116,82 @@ namespace Service.Tests
 
         }
         [TestMethod()]
-        public void DeleteTest()
+        public async void DeleteTest()
         {
-            _evento.Delete(3);
+            await _ensaio.Delete(3);
             // Assert
-            Assert.AreEqual(2, _evento.GetAll().Count());
-            var evento = _evento.Get(3);
+            var listaEnsaios = _ensaio.GetAll().GetAwaiter().GetResult();
+            Assert.AreEqual(2, listaEnsaios.Count());
+            var evento = _ensaio.Get(3);
             Assert.AreEqual(null, evento);
         }
 
         [TestMethod()]
         public void EditTest()
         {
-            var evento = _ensaio.Get(1);
-            evento.Id = 1;
+            var ensaio = _ensaio.Get(3).GetAwaiter().GetResult();
+            ensaio.Id = 3;
                    
-            evento.IdGrupoMusical = 1;
-            evento.DataHoraInicio = new DateTime(2023, 7, 11, 8, 0, 0);
-            evento.DataHoraFim = new DateTime(2023, 7, 11, 12, 0, 0);
-            evento.Local = "Centro batalá, rua: percilio andrade, 130, centro, Aracaju-se";
-            evento.Repertorio = "Ensaio de Repique";
-            evento.IdColaboradorResponsavel = 1;
-            evento.IdRegente = 1;
+            ensaio.IdGrupoMusical = 1;
+            ensaio.DataHoraInicio = new DateTime(2023, 10, 11, 8, 0, 0);
+            ensaio.DataHoraFim = new DateTime(2023, 10, 11, 12, 0, 0);
+            ensaio.Local = "Centro batalá, rua: percilio andrade, 130, centro, Aracaju-se";
+            ensaio.Repertorio = "Ensaio de dança";
+            ensaio.IdColaboradorResponsavel = 1;
+            ensaio.IdRegente = 1;
+            ensaio.PresencaObrigatoria = 1;
+            ensaio.Tipo = "Extra";
 
             //Assert
-            Assert.AreEqual(1, evento.Id);
-            Assert.AreEqual("Centro batalá, rua: percilio andrade, 130, centro, Aracaju-se", evento.Local);
-            Assert.AreEqual(new DateTime(2023, 7, 11, 8, 0, 0), evento.DataHoraInicio);
-            Assert.AreEqual(new DateTime(2023, 7, 11, 12, 0, 0), evento.DataHoraFim);
-            Assert.AreEqual("Ensaio de Repique", evento.Repertorio);
-            Assert.AreEqual(1, evento.IdGrupoMusical);
-            Assert.AreEqual(1, evento.IdColaboradorResponsavel);
-            Assert.AreEqual(1, evento.IdRegente);
+            Assert.AreEqual(3, ensaio.Id);
+            Assert.AreEqual("Centro batalá, rua: percilio andrade, 130, centro, Aracaju-se", ensaio.Local);
+            Assert.AreEqual(new DateTime(2023, 10, 11, 8, 0, 0), ensaio.DataHoraInicio);
+            Assert.AreEqual(new DateTime(2023, 10, 11, 12, 0, 0), ensaio.DataHoraFim);
+            Assert.AreEqual("Ensaio de dança", ensaio.Repertorio);
+            Assert.AreEqual(1, ensaio.IdGrupoMusical);
+            Assert.AreEqual(1, ensaio.IdColaboradorResponsavel);
+            Assert.AreEqual(1, ensaio.IdRegente);
 
 
         }
         [TestMethod()]
         public void GetTest()
         {
-            var evento = _evento.Get(2);
-            Assert.AreEqual(2, evento.Id);
-            Assert.AreEqual("Ginásio Professor Lima, rua: Francisco bragança, 260, centro, Aracaju-se", evento.Local);
-            Assert.AreEqual(new DateTime(2023, 6, 30, 14, 0, 0), evento.DataHoraInicio);
-            Assert.AreEqual(new DateTime(2023, 7, 30, 16, 0, 0), evento.DataHoraFim);
-            Assert.AreEqual("Recepcão de alunos novos", evento.Repertorio);
-            Assert.AreEqual(1, evento.IdGrupoMusical);
-            Assert.AreEqual(2, evento.IdColaboradorResponsavel);
-            Assert.AreEqual(1, evento.IdRegente);
+            var ensaio = _ensaio.Get(2).GetAwaiter().GetResult();
+            Assert.AreEqual(2, ensaio.Id);
+            Assert.AreEqual("Centro batalá, rua: percilio andrade, 130, centro, Aracaju-se", ensaio.Local);
+            Assert.AreEqual(new DateTime(2023, 9, 11, 8, 0, 0), ensaio.DataHoraInicio);
+            Assert.AreEqual(new DateTime(2023, 9, 11, 12, 0, 0), ensaio.DataHoraFim);
+            Assert.AreEqual("Ensaio de bateria", ensaio.Repertorio);
+            Assert.AreEqual(1, ensaio.IdGrupoMusical);
+            Assert.AreEqual(1, ensaio.IdColaboradorResponsavel);
+            Assert.AreEqual(1, ensaio.IdRegente);
+            Assert.AreEqual("Extra", ensaio.Tipo);
+            Assert.AreEqual(1, ensaio.PresencaObrigatoria);
+          
 
         }
         [TestMethod()]
         public void GetAllTest()
         {
-            var listaEvento = _evento.GetAll();
+            var listaEnsaio = _ensaio.GetAll().GetAwaiter().GetResult();
             // Assert
-            Assert.IsInstanceOfType(listaEvento, typeof(IEnumerable<Evento>));
-            Assert.IsNotNull(listaEvento);
-            Assert.AreEqual(3, listaEvento.Count());
-            Assert.AreEqual(1, listaEvento.First().Id);
+            Assert.IsInstanceOfType(listaEnsaio, typeof(IEnumerable<Ensaio>));
+            Assert.IsNotNull(listaEnsaio);
+            Assert.AreEqual(3, listaEnsaio.Count());
+            Assert.AreEqual(1, listaEnsaio.First().Id);
         }
         [TestMethod()]
         public void GetAllDTO()
         {
             // Act
-            var listaEvento = _evento.GetAllDTO();
+            var listaEnsaio = _ensaio.GetAllDTO().GetAwaiter().GetResult();
 
             //Assert
-            Assert.IsInstanceOfType(listaEvento, typeof(IEnumerable<EventoDTO>));
-            Assert.IsNotNull(listaEvento);
-            Assert.AreEqual(3, listaEvento.Count());
-            Assert.AreEqual(0, listaEvento.First().Id);
+            Assert.IsInstanceOfType(listaEnsaio, typeof(IEnumerable<EnsaioDTO>));
+            Assert.IsNotNull(listaEnsaio);
+            Assert.AreEqual(3, listaEnsaio.Count());
+            Assert.AreEqual(1, listaEnsaio.First().Id);
 
         }
 
