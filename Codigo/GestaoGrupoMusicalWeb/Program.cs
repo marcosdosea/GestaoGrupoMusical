@@ -18,6 +18,9 @@ namespace GestaoGrupoMusicalWeb
             builder.Services.AddDbContext<GrupoMusicalContext>(
                 options => options.UseMySQL(builder.Configuration.GetConnectionString("GrupoMusicalDatabase")));
 
+            builder.Services.AddDbContext<IdentityContext>(
+                options => options.UseMySQL(builder.Configuration.GetConnectionString("GrupoMusicalDatabase")));
+
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             builder.Services.AddTransient<IGrupoMusical, GrupoMusicalService>();
