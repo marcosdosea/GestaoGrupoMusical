@@ -79,15 +79,15 @@
                 <span asp-validation-for="DataEntrada" class="text-danger"></span>
             </div>
 
-            <div>
-                <label class="control-label" asp-for="IsentoPagamento"></label>
-                <select asp-for="IsentoPagamento">
-                <option value="1">Sim</option>
-                <option value="0">Não</option>
-                </select>
-                <span asp-validation-for="IsentoPagamento" class="text-danger"></span>
+             <div class="form-group">
+                    <label class="control-label" asp-for="IsentoPagamento"></label>
+                    <select asp-for="IsentoPagamento" asp-items='new SelectList(new[]
+                            {
+                            new SelectListItem { Text = "Sim", Value = "1" },
+                            new SelectListItem { Text = "Não", Value = "0" }
+                        }, "Value", "Text")'>
+                    </select>
             </div>
-
             <div>
                 <label class="control-label" asp-for="Ativo"></label>
                 <select asp-for="Ativo">
