@@ -94,11 +94,15 @@ namespace Service
 
                     Create(pessoa);
                 }
-                else
+                else if (pessoaF.IdGrupoMusical == pessoa.IdGrupoMusical)
                 {
                     //id para adm de grupo == 3
                     pessoaF.IdPapelGrupo = 3;
                     Edit(pessoaF);
+                }
+                else
+                {
+                    return false;
                 }
                 
 
