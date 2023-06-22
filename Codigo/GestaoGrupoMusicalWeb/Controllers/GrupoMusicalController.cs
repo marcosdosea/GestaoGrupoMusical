@@ -11,10 +11,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
 {
     public class GrupoMusicalController : Controller
     {
-        private readonly IGrupoMusical _grupoMusical;
+        private readonly IGrupoMusicalService _grupoMusical;
         private readonly IMapper _mapper;
 
-        public GrupoMusicalController(IGrupoMusical grupoMusical, IMapper mapper)
+        public GrupoMusicalController(IGrupoMusicalService grupoMusical, IMapper mapper)
         {
             _grupoMusical = grupoMusical;
             _mapper = mapper;

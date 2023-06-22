@@ -28,7 +28,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
         public void Initialize()
         {
             var mokServer = new Mock<IPessoaService>();
-            var mokserverGrupoMusical = new Mock<IGrupoMusical>();
+            var mokserverGrupoMusical = new Mock<IGrupoMusicalService>();
             var mokserverPapelGrupo = new Mock<IPapelGrupo>();
             var mokserverManequim = new Mock<IManequim>();
 

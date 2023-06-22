@@ -28,7 +28,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
         [TestInitialize]
         public void Initialize()
         {
-            var mokServer = new Mock<IGrupoMusical>();
+            var mokServer = new Mock<IGrupoMusicalService>();
             IMapper mapper = new MapperConfiguration(cfg =>
                 cfg.AddProfile(new GrupoMusicalProfile())).CreateMapper();
 
