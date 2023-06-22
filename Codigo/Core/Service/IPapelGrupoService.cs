@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Core.Service
 {
-    internal interface IPapelGrupoService
+    public interface IPapelGrupoService
     {
+        IEnumerable<Papelgrupo> GetAll();
     }
 }

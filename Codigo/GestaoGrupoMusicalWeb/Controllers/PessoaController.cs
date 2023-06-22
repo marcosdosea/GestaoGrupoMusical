@@ -13,7 +13,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IPessoaService _pessoaService;
         private readonly IMapper _mapper;
         private readonly IGrupoMusicalService _grupoMusical;
-        //private readonly IPapelGrupoService _papelGrupo;
+        private readonly IPapelGrupoService _papelGrupo;
         private readonly IManequimService _manequim;
 
         public PessoaController (IPessoaService pessoaService, IMapper mapper, IGrupoMusicalService grupoMusical, IPapelGrupoService papelgrupo, IManequimService manequim)
