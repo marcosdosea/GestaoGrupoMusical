@@ -64,6 +64,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(PessoaViewModel pessoaViewModel)
         {
+            pessoaViewModel.IsentoPagamento = Convert.ToSByte(pessoaViewModel.IsentoPagamento);
+            pessoaViewModel.Ativo = Convert.ToSByte(pessoaViewModel.Ativo);
             if (ModelState.IsValid)
             {
                 var pessoa = _mapper.Map<Pessoa>(pessoaViewModel);
