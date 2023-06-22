@@ -116,14 +116,15 @@ namespace Service.Tests
 
         }
         [TestMethod()]
-        public async void DeleteTest()
+        public void DeleteTest()
         {
-            await _ensaio.Delete(3);
+            _ensaio.Delete(2);
             // Assert
             var listaEnsaios = _ensaio.GetAll().GetAwaiter().GetResult();
             Assert.AreEqual(2, listaEnsaios.Count());
-            var evento = _ensaio.Get(3);
-            Assert.AreEqual(null, evento);
+            var ensaio = _ensaio.Get(2).GetAwaiter().GetResult();
+            Assert.AreEqual(0, ensaio.Id);
+            Assert.AreEqual(null, ensaio.Local);
         }
 
         [TestMethod()]
@@ -192,7 +193,7 @@ namespace Service.Tests
             Assert.IsInstanceOfType(listaEnsaio, typeof(IEnumerable<EnsaioDTO>));
             Assert.IsNotNull(listaEnsaio);
             Assert.AreEqual(3, listaEnsaio.Count());
-            Assert.AreEqual(1, listaEnsaio.First().Id);
+            Assert.AreEqual(0, listaEnsaio.First().Id);
 
         }
 
