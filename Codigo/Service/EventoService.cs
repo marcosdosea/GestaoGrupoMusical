@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Service
 {
-    public class EventoService : IEvento
+    public class EventoService : IEventoService
     {
         private readonly GrupoMusicalContext _context;
 
