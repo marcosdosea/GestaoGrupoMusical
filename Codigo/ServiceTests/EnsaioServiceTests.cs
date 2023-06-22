@@ -187,6 +187,7 @@ namespace Service.Tests
             // Act
             var listaEnsaio = _ensaio.GetAllDTO().GetAwaiter().GetResult();
 
+
             //Assert
             Assert.IsInstanceOfType(listaEnsaio, typeof(IEnumerable<EnsaioDTO>));
             Assert.IsNotNull(listaEnsaio);
