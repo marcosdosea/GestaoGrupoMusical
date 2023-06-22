@@ -59,14 +59,14 @@ namespace GestaoGrupoMusicalWeb
             });
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            builder.Services.AddTransient<IGrupoMusical, GrupoMusicalService>();
+            builder.Services.AddTransient<IGrupoMusicalService, GrupoMusicalService>();
             builder.Services.AddTransient<IPessoaService, PessoaService>();
-            builder.Services.AddTransient<IEvento, EventoService>();
+            builder.Services.AddTransient<IEventoService, EventoService>();
             builder.Services.AddScoped<IEnsaioService, EnsaioService>();
             builder.Services.AddTransient<IInstrumentoMusicalService, InstrumentoMusicalService>();
             builder.Services.AddScoped<IMovimentacaoInstrumentoService, MovimentacaoInstrumentoService>();
-            builder.Services.AddTransient<IPapelGrupo, PapelGrupoService>();
-            builder.Services.AddTransient<IManequim, ManequimService>();
+            builder.Services.AddTransient<IPapelGrupoService, PapelGrupoService>();
+            builder.Services.AddTransient<IManequimService, ManequimService>();
 
 
             var app = builder.Build();

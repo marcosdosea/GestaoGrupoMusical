@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Core.Service
 {
-    public interface IGrupoMusical
+    public interface IGrupoMusicalService
     {
         int Create(Grupomusical grupomusical);
         void Edit(Grupomusical grupomusical);
