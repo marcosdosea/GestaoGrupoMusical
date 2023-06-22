@@ -10,6 +10,7 @@ namespace Core
             Ensaios = new HashSet<Ensaio>();
             Eventos = new HashSet<Evento>();
             Figurinos = new HashSet<Figurino>();
+            Informativos = new HashSet<Informativo>();
             Instrumentomusicals = new HashSet<Instrumentomusical>();
             Materialestudos = new HashSet<Materialestudo>();
             Pessoas = new HashSet<Pessoa>();
@@ -41,6 +42,7 @@ namespace Core
         public virtual ICollection<Ensaio> Ensaios { get; set; }
         public virtual ICollection<Evento> Eventos { get; set; }
         public virtual ICollection<Figurino> Figurinos { get; set; }
+        public virtual ICollection<Informativo> Informativos { get; set; }
         public virtual ICollection<Instrumentomusical> Instrumentomusicals { get; set; }
         public virtual ICollection<Materialestudo> Materialestudos { get; set; }
         public virtual ICollection<Pessoa> Pessoas { get; set; }
