@@ -98,9 +98,9 @@ namespace Service
                 {
                     //id para adm de grupo == 3
                     pessoaF.IdPapelGrupo = 3;
-                    _context.Update(pessoaF);
+                    Edit(pessoaF);
                 }
-                _context.SaveChanges();
+                
 
                 return true;
             }
