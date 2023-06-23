@@ -49,11 +49,11 @@ namespace GestaoGrupoMusicalWeb
 
             builder.Services.ConfigureApplicationCookie(options =>
             {
-                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+                options.AccessDeniedPath = "/Identity/Autenticar";
                 options.Cookie.Name = "YourAppCookieName";
                 options.Cookie.HttpOnly = true;
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
-                options.LoginPath = "/Identity/Account/Login";
+                options.LoginPath = "/Identity/Autenticar";
                 // ReturnUrlParameter requires 
                 options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
                 options.SlidingExpiration = true;

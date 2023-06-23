@@ -11,16 +11,19 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly SignInManager<UsuarioIdentity> _signInManager;
         private readonly UserManager<UsuarioIdentity> _userManager;
         private readonly IUserStore<UsuarioIdentity> _userStore;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public IdentityController(
             SignInManager<UsuarioIdentity>  signInManager,
             UserManager<UsuarioIdentity> userManager,
-            IUserStore<UsuarioIdentity> userStore
+            IUserStore<UsuarioIdentity> userStore,
+            RoleManager<IdentityRole> roleManager
             )
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _userStore = userStore;
+            _roleManager = roleManager;
         }
 
         [HttpGet]
@@ -68,7 +71,16 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
                 if (result.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(user, "ADMINISTRADOR GRUPO");
+                    bool roleExists = await _roleManager.RoleExistsAsync("ADMINISTRADOR GRUPO");
+                    if (!roleExists)
+                    {
+                        await _roleManager.CreateAsync(new IdentityRole("ADMINISTRADOR GRUPO"));
+                    }
+
+                    var userDb = await _userManager.FindByNameAsync(model.Pessoa.Cpf);
+                    await _userManager.AddToRoleAsync(userDb, "ADMINISTRADOR GRUPO");
+
+
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return RedirectToAction("Index","Home");    
                 }
