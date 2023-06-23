@@ -40,11 +40,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [HttpGet]
         public async Task<IActionResult> Cadastrar()
         {
+            CadastrarViewMdodel
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Cadastrar(CadastrarViewMdodel model)
+        public async Task<IActionResult> Cadastrar(CadastrarViewModel model)
         {
             //TODO: Cadastrar e associar a atribuição de papel, grupo e manequim ao Adm do Grupo
             model.Pessoa.IdPapelGrupo = 1;

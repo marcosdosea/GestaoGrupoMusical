@@ -14,7 +14,7 @@ namespace GestaoGrupoMusicalWeb.Models
             public string Senha { get; set; } = string.Empty;
         }
 
-        public class CadastrarViewMdodel
+        public class CadastrarViewModel
         {
             public PessoaViewModel Pessoa { get; set; } = new();
 
