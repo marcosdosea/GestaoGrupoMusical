@@ -150,5 +150,10 @@ namespace Service
             
 
         }
+
+        public Task<IEnumerable<PessoaDTO>> GetAllDTO()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
