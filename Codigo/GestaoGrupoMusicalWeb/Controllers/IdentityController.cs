@@ -1,4 +1,7 @@
-﻿using Core;
+﻿using AutoMapper;
+using Core;
+using Core.Service;
+using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,17 +16,25 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IUserStore<UsuarioIdentity> _userStore;
         private readonly RoleManager<IdentityRole> _roleManager;
 
+        private readonly IPessoaService _pessoaService;
+        private readonly IMapper _mapper;
+
         public IdentityController(
             SignInManager<UsuarioIdentity>  signInManager,
             UserManager<UsuarioIdentity> userManager,
             IUserStore<UsuarioIdentity> userStore,
-            RoleManager<IdentityRole> roleManager
+            RoleManager<IdentityRole> roleManager,
+            IPessoaService pessoaService,
+            IMapper mapper
             )
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _userStore = userStore;
             _roleManager = roleManager;
+
+            _pessoaService = pessoaService;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -58,7 +69,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [HttpPost]
         public async Task<IActionResult> Cadastrar(CadastrarViewModel model)
         {
-            //TODO: Cadastrar e associar a atribuição de papel, grupo e manequim ao Adm do Grupo
             model.Pessoa.IdPapelGrupo = 3;
             model.Pessoa.IdGrupoMusical = 1;
             model.Pessoa.IdManequim = 1;
@@ -80,6 +90,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     var userDb = await _userManager.FindByNameAsync(model.Pessoa.Cpf);
                     await _userManager.AddToRoleAsync(userDb, "ADMINISTRADOR GRUPO");
 
+                    await _pessoaService.Create(_mapper.Map<Pessoa>(model.Pessoa));
 
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return RedirectToAction("Index","Home");    
