@@ -56,7 +56,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<IActionResult> Cadastrar(CadastrarViewModel model)
         {
             //TODO: Cadastrar e associar a atribuição de papel, grupo e manequim ao Adm do Grupo
-            model.Pessoa.IdPapelGrupo = 1;
+            model.Pessoa.IdPapelGrupo = 3;
             model.Pessoa.IdGrupoMusical = 1;
             model.Pessoa.IdManequim = 1;
             if (ModelState.IsValid)
@@ -68,6 +68,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
                 if (result.Succeeded)
                 {
+                    await _userManager.AddToRoleAsync(user, "ADMINISTRADOR GRUPO");
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return RedirectToAction("Index","Home");    
                 }
