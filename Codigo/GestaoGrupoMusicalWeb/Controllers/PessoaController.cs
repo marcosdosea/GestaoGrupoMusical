@@ -62,14 +62,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: PessoaController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(PessoaViewModel pessoaViewModel)
+        public async Task<ActionResult> Create(PessoaViewModel pessoaViewModel)
         {
-            pessoaViewModel.IsentoPagamento = Convert.ToSByte(pessoaViewModel.IsentoPagamento);
-            pessoaViewModel.Ativo = Convert.ToSByte(pessoaViewModel.Ativo);
             if (ModelState.IsValid)
             {
-                var pessoa = _mapper.Map<Pessoa>(pessoaViewModel);
-                _pessoaService.Create(pessoa);
+                var pessoaModel = _mapper.Map<Pessoa>(pessoaViewModel);
+                await _pessoaService.Create(pessoaModel);
             }
             return RedirectToAction(nameof(Index));
         }
