@@ -26,6 +26,12 @@ namespace GestaoGrupoMusicalWeb.Models
             [Display(Name = "Confirmar Senha")]
             [Compare("Senha", ErrorMessage = "As senhas devem ser iguais")]
             public string ConfirmarSenha { get; set; } = string.Empty;
+
+            public Dictionary<string, string> SexoPessoa { get; } = new()
+            {
+                { "Feminino", "F" },
+                { "Masculino", "M" }
+            };
         }
     }
 }
