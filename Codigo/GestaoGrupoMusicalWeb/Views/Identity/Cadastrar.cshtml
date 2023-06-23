@@ -1,0 +1,51 @@
+﻿@model GestaoGrupoMusicalWeb.Models.IdentityViewModel.CadastrarViewMdodel
+
+@{
+    ViewData["Title"] = "Cadastro";
+}
+
+
+<form asp-action="Cadastrar">
+    <div class="form-group">
+        <label asp-for="Pessoa.Cpf" class="control-label"></label>
+        <input asp-for="Pessoa.Cpf" class="form-control" />
+        <span asp-validation-for="Pessoa.Cpf" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Pessoa.Nome" class="control-label"></label>
+        <input asp-for="Pessoa.Nome" class="form-control" />
+        <span asp-validation-for="Pessoa.Nome" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Pessoa.Sexo" class="control-label"></label>
+        <div class="d-flex justify-content-around">
+            @{
+                foreach (var item in Model.SexoPessoa)
+                {
+                    <div>
+                        <label for="@item.Key">@item.Key</label>
+                        <input type="radio" value="@item.Value" asp-for="Pessoa.Sexo" id="@item.Key" />
+                    </div>
+                }
+            }
+        </div>
+        <span asp-validation-for="Pessoa.Sexo" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Pessoa.Email" class="control-label"></label>
+        <input asp-for="Pessoa.Email" class="form-control" />
+        <span asp-validation-for="Pessoa.Email" class="text-danger"></span>
+    </div>
+    <div class="row">
+        <div class="d-flex justify-content-lg-end flex-column flex-lg-row">
+            <a class="btn btn-light col-lg-2 mt-3 me-lg-3" asp-controller="Identity" asp-action="Autenticar">Voltar</a>
+            <input class="btn btn-primary col-lg-2 mt-3 ml-3" type="submit" value="Cadastre-se" />
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
