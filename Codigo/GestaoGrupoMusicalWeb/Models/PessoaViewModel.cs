@@ -87,10 +87,5 @@ namespace GestaoGrupoMusicalWeb.Models
      
 
     }
-    public enum IsentoPagamento
-    {
-        Sim,
-        Não
-    }
    
 }
