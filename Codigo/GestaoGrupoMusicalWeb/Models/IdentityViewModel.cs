@@ -18,12 +18,13 @@ namespace GestaoGrupoMusicalWeb.Models
         {
             public PessoaViewModel Pessoa { get; set; } = new();
 
-            [Required]
+            [Required (ErrorMessage = "O campo {0} é obrigatório")]
             [DataType(DataType.Password)]
             public string Senha { get; set; } = string.Empty;
 
             [DataType(DataType.Password)]
             [Display(Name = "Confirmar Senha")]
+            [Required(ErrorMessage = "O campo {0} é obrigatório")]
             [Compare("Senha", ErrorMessage = "As senhas devem ser iguais")]
             public string ConfirmarSenha { get; set; } = string.Empty;
 

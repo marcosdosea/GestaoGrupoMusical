@@ -33,15 +33,14 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [HttpPost]
         public async Task<IActionResult> Autenticar(AutenticarViewModel model)
         {
-            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
             return View();
         }
 
         [HttpGet]
         public async Task<IActionResult> Cadastrar()
         {
-            CadastrarViewMdodel
-            return View();
+            CadastrarViewModel model = new();
+            return View(model);
         }
 
         [HttpPost]
@@ -51,14 +50,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
             model.Pessoa.IdPapelGrupo = 1;
             model.Pessoa.IdGrupoMusical = 1;
             model.Pessoa.IdManequim = 1;
-            model.Pessoa.Telefone1 = "";
-            model.Pessoa.Cep = "";
-            model.Pessoa.Estado = "";
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
 
-                await _userStore.SetUserNameAsync(user, model.Pessoa.Email, CancellationToken.None);
+                await _userStore.SetUserNameAsync(user, model.Pessoa.Cpf, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, model.Senha);
 
                 if (result.Succeeded)
