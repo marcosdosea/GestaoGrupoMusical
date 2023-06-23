@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Core.Service;
 using Service;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 
 namespace GestaoGrupoMusicalWeb
 {
@@ -21,7 +22,7 @@ namespace GestaoGrupoMusicalWeb
             builder.Services.AddDbContext<IdentityContext>(
                 options => options.UseMySQL(builder.Configuration.GetConnectionString("GrupoMusicalDatabase")));
 
-            builder.Services.AddIdentityCore<UsuarioIdentity>(options =>
+            builder.Services.AddIdentity<UsuarioIdentity, IdentityRole>(options =>
             {
                 // SignIn settings
                 options.SignIn.RequireConfirmedAccount = false;
@@ -68,7 +69,7 @@ namespace GestaoGrupoMusicalWeb
             builder.Services.AddTransient<IPapelGrupoService, PapelGrupoService>();
             builder.Services.AddTransient<IManequimService, ManequimService>();
 
-
+           
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -84,7 +85,10 @@ namespace GestaoGrupoMusicalWeb
 
             app.UseRouting();
 
+            app.UseAuthentication();
+
             app.UseAuthorization();
+
 
             app.MapControllerRoute(
                 name: "default",
