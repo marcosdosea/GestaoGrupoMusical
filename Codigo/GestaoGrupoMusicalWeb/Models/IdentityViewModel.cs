@@ -13,5 +13,19 @@ namespace GestaoGrupoMusicalWeb.Models
             [DataType(DataType.Password)]
             public string Senha { get; set; } = string.Empty;
         }
+
+        public class CadastrarViewMdodel
+        {
+            public PessoaViewModel Pessoa { get; set; } = new();
+
+            [Required]
+            [DataType(DataType.Password)]
+            public string Senha { get; set; } = string.Empty;
+
+            [DataType(DataType.Password)]
+            [Display(Name = "Confirmar Senha")]
+            [Compare("Senha", ErrorMessage = "As senhas devem ser iguais")]
+            public string ConfirmarSenha { get; set; } = string.Empty;
+        }
     }
 }
