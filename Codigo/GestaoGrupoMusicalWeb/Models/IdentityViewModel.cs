@@ -6,10 +6,11 @@ namespace GestaoGrupoMusicalWeb.Models
     {
         public class AutenticarViewModel
         {
-            [Required]
+            [Display(Name = "CPF")]
+            [Required(ErrorMessage = "O campo {0} é obrigatório")]
             public string Cpf { get; set; } = string.Empty;
 
-            [Required]
+            [Required(ErrorMessage = "O campo {0} é obrigatório")]
             [DataType(DataType.Password)]
             public string Senha { get; set; } = string.Empty;
         }
