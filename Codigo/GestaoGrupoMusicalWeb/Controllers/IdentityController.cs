@@ -54,6 +54,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [HttpPost]
         public async Task<IActionResult> Cadastrar(CadastrarViewMdodel model)
         {
+            //TODO: Cadastrar e associar a atribuição de papel, grupo e manequim ao Adm do Grupo
+            model.Pessoa.IdPapelGrupo = 1;
+            model.Pessoa.IdGrupoMusical = 1;
+            model.Pessoa.IdManequim = 1;
+            model.Pessoa.Telefone1 = "";
+            model.Pessoa.Cep = "";
+            model.Pessoa.Estado = "";
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
