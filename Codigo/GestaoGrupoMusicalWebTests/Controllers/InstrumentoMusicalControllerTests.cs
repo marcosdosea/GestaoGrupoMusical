@@ -80,7 +80,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
         public void CreateTest()
         {
             // Act
-            var result = _controller.Create();
+            var result = _controller.Create().Result;
             // Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
         }

@@ -23,9 +23,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: EnsaioController
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            var ensaios = _ensaio.GetAll();
+            var ensaios = await _ensaio.GetAll();
             return View(_mapper.Map<IEnumerable<EnsaioViewModel>>(ensaios));
         }
 
@@ -50,19 +50,19 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: EnsaioController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(EnsaioViewModel ensaioModel)
+        public async Task<ActionResult> Create(EnsaioViewModel ensaioViewModel)
         {
             if (ModelState.IsValid)
             {
-                if (await _ensaio.Create(_mapper.Map<Ensaio>(ensaioModel))) 
+                if (await _ensaio.Create(_mapper.Map<Ensaio>(ensaioViewModel)))
                 {
                     return RedirectToAction(nameof(Index));
                 }
             }
-            ensaioModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
-            ensaioModel.ListaGrupoMusical = new SelectList(_grupoMusical.GetAll(), "Id", "Nome");
+            ensaioViewModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
+            ensaioViewModel.ListaGrupoMusical = new SelectList(_grupoMusical.GetAll(), "Id", "Nome");
 
-            return View(ensaioModel);
+            return View(ensaioViewModel);
         }
 
         // GET: EnsaioController/Edit/5
@@ -80,19 +80,19 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: EnsaioController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(EnsaioViewModel ensaioModel)
+        public async Task<ActionResult> Edit(EnsaioViewModel ensaioViewModel)
         {
             if (ModelState.IsValid)
             {
-                if (await _ensaio.Edit(_mapper.Map<Ensaio>(ensaioModel)))
+                if (await _ensaio.Edit(_mapper.Map<Ensaio>(ensaioViewModel)))
                 {
                     return RedirectToAction(nameof(Index));
                 }
             }
-            ensaioModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
-            ensaioModel.ListaGrupoMusical = new SelectList(_grupoMusical.GetAll(), "Id", "Nome");
+            ensaioViewModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
+            ensaioViewModel.ListaGrupoMusical = new SelectList(_grupoMusical.GetAll(), "Id", "Nome");
 
-            return View(ensaioModel);
+            return View(ensaioViewModel);
         }
 
         // GET: EnsaioController/Delete/5
