@@ -35,9 +35,9 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
             mokServer.Setup(server => server.GetAllDTO().Result).Returns(GetTestEnsaioDTO());
             mokServer.Setup(server => server.GetAll().Result).Returns(GetTestEnsaios());
             mokServer.Setup(server => server.Get(1).Result).Returns(GetTargetEnsaio());
-            mokServer.Setup(service => service.Edit(It.IsAny<Ensaio>()))
+            mokServer.Setup(service => service.Edit(It.IsAny<Ensaio>()).Result).Returns(true)
                .Verifiable();
-            mokServer.Setup(service => service.Create(It.IsAny<Ensaio>()))
+            mokServer.Setup(service => service.Create(It.IsAny<Ensaio>()).Result).Returns(true)
                 .Verifiable();
 
             // TODO: implementar o ".setup" para mokServerPessoa
@@ -100,13 +100,10 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
             var result = _controller.Create(GetNewEnsaio()).GetAwaiter().GetResult();
 
             // Assert
-            Assert.IsInstanceOfType(result, typeof(ViewResult));
-            ViewResult viewResult = (ViewResult)result;
-            var model = (
-               viewResult.ViewData.Model) as EnsaioViewModel;
-            Assert.AreEqual("Ensaio de Percusão", model.Repertorio);
-            Assert.AreEqual("Centro batalá, rua: percilio andrade, 130, centro, Aracaju-se", model.Local);
-            Assert.AreEqual(1, model.Id);
+            Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
+            RedirectToActionResult redirectToActionResult = (RedirectToActionResult)result;
+            Assert.IsNull(redirectToActionResult.ControllerName);
+            Assert.AreEqual("Index", redirectToActionResult.ActionName);
         }
 
         [TestMethod()]
@@ -122,9 +119,8 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
             Assert.AreEqual(1, _controller.ModelState.ErrorCount);
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             ViewResult viewResult = (ViewResult)result;
-            var model = (
-               viewResult.ViewData.Model) as EnsaioViewModel;
-            Assert.IsNull(model.DataHoraInicio);
+            var model = (viewResult.ViewData.Model) as EnsaioViewModel;
+            Assert.IsFalse(_controller.ModelState.IsValid);
 
         }
 
@@ -155,8 +151,10 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
         public void Edit_Post()
         {
             // Act
-            var result = _controller.Edit(GetTargetEnsaioViewModel().Id).Result;
+            var result = _controller.Edit(GetTargetEnsaioViewModel()).Result;
+            
             // Assert
+
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
             RedirectToActionResult redirectToActionResult = (RedirectToActionResult)result;
             Assert.IsNull(redirectToActionResult.ControllerName);
@@ -228,7 +226,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
                 IdRegente = 1,
                 PresencaObrigatoria = true,
                 Tipo = Tipo.Fixo,
-
+          
             };
         }
 
