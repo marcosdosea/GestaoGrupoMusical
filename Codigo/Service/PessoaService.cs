@@ -157,7 +157,13 @@ namespace Service
 
         public Task<IEnumerable<PessoaDTO>> GetAllDTO()
         {
-            throw new NotImplementedException();
+            return (Task<IEnumerable<PessoaDTO>>)(from pessoa in _context.Pessoas
+                   select new PessoaDTO
+                   {
+                       Id = pessoa.Id,
+                       Nome = pessoa.Nome,
+                       Ativo = pessoa.Ativo
+                   });
         }
     }
 }
