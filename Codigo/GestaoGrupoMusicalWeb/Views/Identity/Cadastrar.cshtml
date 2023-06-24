@@ -1,0 +1,62 @@
+﻿@model GestaoGrupoMusicalWeb.Models.IdentityViewModel.CadastrarViewModel
+
+@{
+    ViewData["Title"] = "Cadastro";
+}
+
+<form asp-controller="Identity" asp-action="Cadastrar">
+    <h1 class="h3 mb-4 fw-normal text-center">@ViewData["Title"]</h1>
+
+    <div class="form-group">
+        <label asp-for="Pessoa.Cpf" class="control-label"></label>
+        <input asp-for="Pessoa.Cpf" class="form-control" />
+        <span asp-validation-for="Pessoa.Cpf" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Pessoa.Nome" class="control-label"></label>
+        <input asp-for="Pessoa.Nome" class="form-control" />
+        <span asp-validation-for="Pessoa.Nome" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Pessoa.Sexo" class="control-label"></label>
+        <div class="d-flex justify-content-around">
+            @{
+                foreach (var item in Model.SexoPessoa)
+                {
+                    <div>
+                        <label for="@item.Key">@item.Key</label>
+                        <input type="radio" value="@item.Value" asp-for="Pessoa.Sexo" id="@item.Key" />
+                    </div>
+                }
+            }
+        </div>
+        <span asp-validation-for="Pessoa.Sexo" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Pessoa.Email" class="control-label"></label>
+        <input asp-for="Pessoa.Email" class="form-control" />
+        <span asp-validation-for="Pessoa.Email" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Senha" class="control-label"></label>
+        <input asp-for="Senha" class="form-control" />
+        <span asp-validation-for="Senha" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="ConfirmarSenha" class="control-label"></label>
+        <input asp-for="ConfirmarSenha" class="form-control" />
+        <span asp-validation-for="ConfirmarSenha" class="text-danger"></span>
+    </div>
+    <input asp-for="Pessoa.Cep" class="form-control" type="hidden" value="Teste"/>
+    <input asp-for="Pessoa.Estado" class="form-control" type="hidden" value="SE" />
+    <input asp-for="Pessoa.Telefone1" class="form-control" type="hidden" value="Teste" />
+
+    <input class="w-100 btn btn-lg btn-secondary mt-4" type="submit" value="Cadastre-se" />
+    <a class="w-100 btn btn-lg btn-outline-secondary mt-2" asp-controller="Identity" asp-action="Autenticar">Voltar</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -17,6 +17,12 @@ namespace Core
         }
 
         public virtual DbSet<Apresentacaotipoinstrumento> Apresentacaotipoinstrumentos { get; set; } = null!;
+        public virtual DbSet<Aspnetrole> Aspnetroles { get; set; } = null!;
+        public virtual DbSet<Aspnetroleclaim> Aspnetroleclaims { get; set; } = null!;
+        public virtual DbSet<Aspnetuser> Aspnetusers { get; set; } = null!;
+        public virtual DbSet<Aspnetuserclaim> Aspnetuserclaims { get; set; } = null!;
+        public virtual DbSet<Aspnetuserlogin> Aspnetuserlogins { get; set; } = null!;
+        public virtual DbSet<Aspnetusertoken> Aspnetusertokens { get; set; } = null!;
         public virtual DbSet<Ensaio> Ensaios { get; set; } = null!;
         public virtual DbSet<Ensaiopessoa> Ensaiopessoas { get; set; } = null!;
         public virtual DbSet<Evento> Eventos { get; set; } = null!;
@@ -24,6 +30,7 @@ namespace Core
         public virtual DbSet<Figurino> Figurinos { get; set; } = null!;
         public virtual DbSet<Figurinomanequim> Figurinomanequims { get; set; } = null!;
         public virtual DbSet<Grupomusical> Grupomusicals { get; set; } = null!;
+        public virtual DbSet<Informativo> Informativos { get; set; } = null!;
         public virtual DbSet<Instrumentomusical> Instrumentomusicals { get; set; } = null!;
         public virtual DbSet<Manequim> Manequims { get; set; } = null!;
         public virtual DbSet<Materialestudo> Materialestudos { get; set; } = null!;
@@ -78,6 +85,159 @@ namespace Core
                     .HasConstraintName("fk_ApresentacaoTipoInstrumento_TipoInstrumento1");
             });
 
+            modelBuilder.Entity<Aspnetrole>(entity =>
+            {
+                entity.ToTable("aspnetroles");
+
+                entity.HasIndex(e => e.NormalizedName, "RoleNameIndex")
+                    .IsUnique();
+
+                entity.Property(e => e.Id).HasMaxLength(767);
+
+                entity.Property(e => e.ConcurrencyStamp).HasColumnType("text");
+
+                entity.Property(e => e.Name).HasMaxLength(256);
+
+                entity.Property(e => e.NormalizedName).HasMaxLength(256);
+            });
+
+            modelBuilder.Entity<Aspnetroleclaim>(entity =>
+            {
+                entity.ToTable("aspnetroleclaims");
+
+                entity.HasIndex(e => e.RoleId, "IX_AspNetRoleClaims_RoleId");
+
+                entity.Property(e => e.ClaimType).HasColumnType("text");
+
+                entity.Property(e => e.ClaimValue).HasColumnType("text");
+
+                entity.Property(e => e.RoleId).HasMaxLength(767);
+
+                entity.HasOne(d => d.Role)
+                    .WithMany(p => p.Aspnetroleclaims)
+                    .HasForeignKey(d => d.RoleId)
+                    .HasConstraintName("FK_AspNetRoleClaims_AspNetRoles_RoleId");
+            });
+
+            modelBuilder.Entity<Aspnetuser>(entity =>
+            {
+                entity.ToTable("aspnetusers");
+
+                entity.HasIndex(e => e.NormalizedEmail, "EmailIndex");
+
+                entity.HasIndex(e => e.NormalizedUserName, "UserNameIndex")
+                    .IsUnique();
+
+                entity.Property(e => e.Id).HasMaxLength(767);
+
+                entity.Property(e => e.ConcurrencyStamp).HasColumnType("text");
+
+                entity.Property(e => e.Email).HasMaxLength(256);
+
+                entity.Property(e => e.EmailConfirmed).HasColumnType("bit(1)");
+
+                entity.Property(e => e.LockoutEnabled).HasColumnType("bit(1)");
+
+                entity.Property(e => e.LockoutEnd).HasColumnType("timestamp");
+
+                entity.Property(e => e.NormalizedEmail).HasMaxLength(256);
+
+                entity.Property(e => e.NormalizedUserName).HasMaxLength(256);
+
+                entity.Property(e => e.PasswordHash).HasColumnType("text");
+
+                entity.Property(e => e.PhoneNumber).HasColumnType("text");
+
+                entity.Property(e => e.PhoneNumberConfirmed).HasColumnType("bit(1)");
+
+                entity.Property(e => e.SecurityStamp).HasColumnType("text");
+
+                entity.Property(e => e.TwoFactorEnabled).HasColumnType("bit(1)");
+
+                entity.Property(e => e.UserName).HasMaxLength(256);
+
+                entity.HasMany(d => d.Roles)
+                    .WithMany(p => p.Users)
+                    .UsingEntity<Dictionary<string, object>>(
+                        "Aspnetuserrole",
+                        l => l.HasOne<Aspnetrole>().WithMany().HasForeignKey("RoleId").HasConstraintName("FK_AspNetUserRoles_AspNetRoles_RoleId"),
+                        r => r.HasOne<Aspnetuser>().WithMany().HasForeignKey("UserId").HasConstraintName("FK_AspNetUserRoles_AspNetUsers_UserId"),
+                        j =>
+                        {
+                            j.HasKey("UserId", "RoleId").HasName("PRIMARY");
+
+                            j.ToTable("aspnetuserroles");
+
+                            j.HasIndex(new[] { "RoleId" }, "IX_AspNetUserRoles_RoleId");
+
+                            j.IndexerProperty<string>("UserId").HasMaxLength(767);
+
+                            j.IndexerProperty<string>("RoleId").HasMaxLength(767);
+                        });
+            });
+
+            modelBuilder.Entity<Aspnetuserclaim>(entity =>
+            {
+                entity.ToTable("aspnetuserclaims");
+
+                entity.HasIndex(e => e.UserId, "IX_AspNetUserClaims_UserId");
+
+                entity.Property(e => e.ClaimType).HasColumnType("text");
+
+                entity.Property(e => e.ClaimValue).HasColumnType("text");
+
+                entity.Property(e => e.UserId).HasMaxLength(767);
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Aspnetuserclaims)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK_AspNetUserClaims_AspNetUsers_UserId");
+            });
+
+            modelBuilder.Entity<Aspnetuserlogin>(entity =>
+            {
+                entity.HasKey(e => new { e.LoginProvider, e.ProviderKey })
+                    .HasName("PRIMARY");
+
+                entity.ToTable("aspnetuserlogins");
+
+                entity.HasIndex(e => e.UserId, "IX_AspNetUserLogins_UserId");
+
+                entity.Property(e => e.LoginProvider).HasMaxLength(128);
+
+                entity.Property(e => e.ProviderKey).HasMaxLength(128);
+
+                entity.Property(e => e.ProviderDisplayName).HasColumnType("text");
+
+                entity.Property(e => e.UserId).HasMaxLength(767);
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Aspnetuserlogins)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK_AspNetUserLogins_AspNetUsers_UserId");
+            });
+
+            modelBuilder.Entity<Aspnetusertoken>(entity =>
+            {
+                entity.HasKey(e => new { e.UserId, e.LoginProvider, e.Name })
+                    .HasName("PRIMARY");
+
+                entity.ToTable("aspnetusertokens");
+
+                entity.Property(e => e.UserId).HasMaxLength(767);
+
+                entity.Property(e => e.LoginProvider).HasMaxLength(128);
+
+                entity.Property(e => e.Name).HasMaxLength(128);
+
+                entity.Property(e => e.Value).HasColumnType("text");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Aspnetusertokens)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK_AspNetUserTokens_AspNetUsers_UserId");
+            });
+
             modelBuilder.Entity<Ensaio>(entity =>
             {
                 entity.ToTable("ensaio");
@@ -108,9 +268,7 @@ namespace Core
                     .HasMaxLength(100)
                     .HasColumnName("local");
 
-                entity.Property(e => e.PresencaObrigatoria)
-                    .HasColumnName("presencaObrigatoria")
-                    .HasDefaultValueSql("'1'");
+                entity.Property(e => e.PresencaObrigatoria).HasColumnName("presencaObrigatoria");
 
                 entity.Property(e => e.Repertorio)
                     .HasMaxLength(1000)
@@ -472,6 +630,46 @@ namespace Core
                 entity.Property(e => e.Youtube)
                     .HasMaxLength(100)
                     .HasColumnName("youtube");
+            });
+
+            modelBuilder.Entity<Informativo>(entity =>
+            {
+                entity.HasKey(e => new { e.IdGrupoMusical, e.IdPessoa })
+                    .HasName("PRIMARY");
+
+                entity.ToTable("informativo");
+
+                entity.HasIndex(e => e.IdGrupoMusical, "fk_GrupoMusicalPessoa_GrupoMusical1_idx");
+
+                entity.HasIndex(e => e.IdPessoa, "fk_GrupoMusicalPessoa_Pessoa1_idx");
+
+                entity.Property(e => e.IdGrupoMusical).HasColumnName("idGrupoMusical");
+
+                entity.Property(e => e.IdPessoa).HasColumnName("idPessoa");
+
+                entity.Property(e => e.Data)
+                    .HasColumnType("date")
+                    .HasColumnName("data");
+
+                entity.Property(e => e.EntregarAssociadosAtivos)
+                    .HasColumnName("entregarAssociadosAtivos")
+                    .HasDefaultValueSql("'1'");
+
+                entity.Property(e => e.Mensagem)
+                    .HasMaxLength(2000)
+                    .HasColumnName("mensagem");
+
+                entity.HasOne(d => d.IdGrupoMusicalNavigation)
+                    .WithMany(p => p.Informativos)
+                    .HasForeignKey(d => d.IdGrupoMusical)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_GrupoMusicalPessoa_GrupoMusical1");
+
+                entity.HasOne(d => d.IdPessoaNavigation)
+                    .WithMany(p => p.Informativos)
+                    .HasForeignKey(d => d.IdPessoa)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_GrupoMusicalPessoa_Pessoa1");
             });
 
             modelBuilder.Entity<Instrumentomusical>(entity =>
