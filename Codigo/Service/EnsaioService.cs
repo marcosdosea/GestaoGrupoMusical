@@ -79,12 +79,12 @@ namespace Service
         /// Consulta todos os Ensaios no banco de dados
         /// </summary>
         /// <returns>Uma lista contendo todos os Ensaios</returns>
-        public IAsyncEnumerable<Ensaio> GetAll()
+        public async Task<IEnumerable<Ensaio>> GetAll()
         {
-            return _context.Ensaios.AsNoTracking().AsAsyncEnumerable();
+            return await _context.Ensaios.AsNoTracking().ToListAsync();
         }
 
-        public IAsyncEnumerable<EnsaioDTO> GetAllDTO()
+        public async Task<IEnumerable<EnsaioDTO>> GetAllDTO()
         {
             var query = _context.Ensaios
                 .OrderBy(g => g.DataHoraInicio)
@@ -93,8 +93,8 @@ namespace Service
                 {
                     DataHoraInicio = g.DataHoraInicio,
                     Local = g.Local
-                });
-            return query.AsNoTracking().AsAsyncEnumerable();
+                }).AsNoTracking().ToListAsync();
+            return await query;
         }
     }
 }

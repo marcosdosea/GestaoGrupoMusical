@@ -21,11 +21,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
             _mapper = mapper;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var listaEvento = _evento.GetAllDTO();
             var EventoViewDTO = _mapper.Map<List<EventoViewModelDTO>>(listaEvento);
-            var listaEnsaio = _ensaioService.GetAllDTO();
+            var listaEnsaio = await _ensaioService.GetAllDTO();
             var EnsaioViewDTO = _mapper.Map<List<EnsaioViewModelDTO>>(listaEnsaio);
 
 
