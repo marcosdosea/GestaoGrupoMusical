@@ -154,5 +154,16 @@ namespace Service
             
 
         }
+
+        public IEnumerable<AssociadoDTO> GetAllAssociadoDTO()
+        {
+            return from pessoa in _context.Pessoas
+                   select new AssociadoDTO
+                   {
+                       Id = pessoa.Id,
+                       Nome = pessoa.Nome,
+                       Ativo = pessoa.Ativo
+                   };
+        }
     }
 }
