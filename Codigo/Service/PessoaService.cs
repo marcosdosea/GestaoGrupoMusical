@@ -155,15 +155,15 @@ namespace Service
 
         }
 
-        public Task<IEnumerable<PessoaDTO>> GetAllDTO()
+        public IEnumerable<PessoaDTO> GetAllDTO()
         {
-            return (Task<IEnumerable<PessoaDTO>>)(from pessoa in _context.Pessoas
+            return from pessoa in _context.Pessoas
                    select new PessoaDTO
                    {
                        Id = pessoa.Id,
                        Nome = pessoa.Nome,
                        Ativo = pessoa.Ativo
-                   });
+                   };
         }
     }
 }

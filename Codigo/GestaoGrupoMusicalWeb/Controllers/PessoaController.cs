@@ -28,10 +28,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: PessoaController
         public ActionResult Index()
         {
-            var listaPessoas = _pessoaService.GetAll();
-            var listaPessoasModel = _mapper.Map<List<PessoaViewModel>>(listaPessoas);
+            var listaPessoasDTO = _pessoaService.GetAllDTO();
 
-            return View(listaPessoasModel);
+            return View(listaPessoasDTO);
         }
 
         // GET: PessoaController/Details/5
