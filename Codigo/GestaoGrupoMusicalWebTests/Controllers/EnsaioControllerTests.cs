@@ -27,7 +27,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
             //Arrange
             var mokServer = new Mock<IEnsaioService>();
             var mokServerPessoa = new Mock<IPessoaService>();
-            var mokServerMovimentacao = new Mock<IGrupoMusical>();
+            var mokServerMovimentacao = new Mock<IGrupoMusicalService>();
 
             IMapper mapper = new MapperConfiguration(cfg =>
                 cfg.AddProfile(new EnsaioProfile())).CreateMapper();
