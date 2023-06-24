@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Core.Service
 {
-    public interface IPapelGrupo
+    public interface IPapelGrupoService
     {
         int Create(Papelgrupo papel);
         void Edit(Papelgrupo papel);

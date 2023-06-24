@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Core.Service
 {
-    public interface IManequim
+    public interface IManequimService
     {
         int Create(Manequim manequim);
         void Edit(Manequim manequim);

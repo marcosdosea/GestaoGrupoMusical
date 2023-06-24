@@ -12,11 +12,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
     {
         private readonly IPessoaService _pessoaService;
         private readonly IMapper _mapper;
-        private readonly IGrupoMusical _grupoMusical;
-        private readonly IPapelGrupo _papelGrupo;
-        private readonly IManequim _manequim;
+        private readonly IGrupoMusicalService _grupoMusical;
+        private readonly IPapelGrupoService _papelGrupo;
+        private readonly IManequimService _manequim;
 
-        public PessoaController (IPessoaService pessoaService, IMapper mapper, IGrupoMusical grupoMusical, IPapelGrupo papelgrupo, IManequim manequim)
+        public PessoaController (IPessoaService pessoaService, IMapper mapper, IGrupoMusicalService grupoMusical, IPapelGrupoService papelgrupo, IManequimService manequim)
         {
             _pessoaService = pessoaService;
             _mapper = mapper;
@@ -62,12 +62,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: PessoaController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(PessoaViewModel pessoaViewModel)
+        public async Task<ActionResult> Create(PessoaViewModel pessoaViewModel)
         {
             if (ModelState.IsValid)
             {
-                var pessoa = _mapper.Map<Pessoa>(pessoaViewModel);
-                _pessoaService.Create(pessoa);
+                var pessoaModel = _mapper.Map<Pessoa>(pessoaViewModel);
+                await _pessoaService.Create(pessoaModel);
             }
             return RedirectToAction(nameof(Index));
         }

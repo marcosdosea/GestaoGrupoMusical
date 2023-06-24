@@ -1,14 +1,13 @@
 ﻿@model GestaoGrupoMusicalWeb.Models.InstrumentoMusicalViewModel
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Excluir Instrumento";
 }
 
-<h1>Delete</h1>
-
-<h3>Are you sure you want to delete this?</h3>
+<h1>Excluir Instrumento</h1>
+<br>
+<h3>Tem certeza de que deseja excluir este instrumento?</h3>
 <div>
-    <h4>InstrumentoMusicalViewModel</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -50,7 +49,7 @@
     </dl>
     
     <form asp-action="Delete">
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <input type="submit" value="Excluir" class="btn btn-danger" /> |
+        <a asp-action="Index">Voltar</a>
     </form>
 </div>

@@ -11,5 +11,6 @@ namespace Core.Service
         Task<IEnumerable<Instrumentomusical>> GetAll();
         Task<IEnumerable<InstrumentoMusicalDTO>> GetAllDTO();
         Task<string> GetNomeInstrumento(int id);
+        Task<IEnumerable<Tipoinstrumento>> GetAllTipoInstrumento();
     }
 }
