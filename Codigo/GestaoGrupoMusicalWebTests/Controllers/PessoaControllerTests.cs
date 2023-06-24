@@ -109,7 +109,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
         public void CreateTest_Post_Valid()
         {
             // Act
-            var result = _controller.Create(GetNewPessoa());
+            var result = _controller.Create(GetNewPessoa()).Result;
 
             // Assert
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
@@ -125,7 +125,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
             _controller.ModelState.AddModelError("Nome", "Campo requerido");
 
             // Act
-            var result = _controller.Create(GetNewPessoa());
+            var result = _controller.Create(GetNewPessoa()).Result;
 
             // Assert
             Assert.AreEqual(1, _controller.ModelState.ErrorCount);
