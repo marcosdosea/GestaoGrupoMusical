@@ -155,10 +155,10 @@ namespace Service
 
         }
 
-        public IEnumerable<PessoaDTO> GetAllDTO()
+        public IEnumerable<AssociadoDTO> GetAllDTO()
         {
             return from pessoa in _context.Pessoas
-                   select new PessoaDTO
+                   select new AssociadoDTO
                    {
                        Id = pessoa.Id,
                        Nome = pessoa.Nome,

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Core.DTO
 {
-    public class PessoaDTO
+    public class AssociadoDTO
     {
         public int Id { get; set; }
         public string Nome { get; set; } = null!;
