@@ -21,6 +21,7 @@ namespace GestaoGrupoMusicalWeb.Models
 
             [Required (ErrorMessage = "O campo {0} é obrigatório")]
             [DataType(DataType.Password)]
+            [MinLength(6, ErrorMessage = "A {0} deve contar no mínimo {1} caracteres")]
             public string Senha { get; set; } = string.Empty;
 
             [DataType(DataType.Password)]
