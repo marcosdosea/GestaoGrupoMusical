@@ -155,7 +155,7 @@ namespace Service
 
         }
 
-        public IEnumerable<AssociadoDTO> GetAllDTO()
+        public IEnumerable<AssociadoDTO> GetAllAssociadoDTO()
         {
             return from pessoa in _context.Pessoas
                    select new AssociadoDTO

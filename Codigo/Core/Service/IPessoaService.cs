@@ -14,7 +14,7 @@ namespace Core.Service
         void Delete(int id);
         Pessoa Get(int id);
         IEnumerable<Pessoa> GetAll();
-        IEnumerable<AssociadoDTO> GetAllDTO();
+        IEnumerable<AssociadoDTO> GetAllAssociadoDTO();
 
         Task<bool> AddAdmGroup(Pessoa pessoa);
         IAsyncEnumerable<AdministradorGrupoMusicalDTO> GetAllAdmGroup(int id);

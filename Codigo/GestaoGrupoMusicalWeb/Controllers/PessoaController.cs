@@ -28,7 +28,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: PessoaController
         public ActionResult Index()
         {
-            var listaPessoasDTO = _pessoaService.GetAllDTO();
+            var listaPessoasDTO = _pessoaService.GetAllAssociadoDTO();
 
             return View(listaPessoasDTO);
         }
