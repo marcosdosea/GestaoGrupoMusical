@@ -16,12 +16,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IPapelGrupoService _papelGrupo;
         private readonly IManequimService _manequim;
 
-        public PessoaController (IPessoaService pessoaService, IMapper mapper, IGrupoMusicalService grupoMusical, IPapelGrupoService papelgrupo, IManequimService manequim)
+        public PessoaController (IPessoaService pessoaService, IMapper mapper, IGrupoMusicalService grupoMusical, IManequimService manequim)
         {
             _pessoaService = pessoaService;
             _mapper = mapper;
             _grupoMusical = grupoMusical;
-            _papelGrupo = papelgrupo;
             _manequim = manequim;
         }
 
@@ -47,7 +46,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             PessoaViewModel pessoaViewModel = new PessoaViewModel();
 
-            IEnumerable<Papelgrupo> listaPapelGrupo = _papelGrupo.GetAll();
+            IEnumerable<Papelgrupo> listaPapelGrupo = _pessoaService.GetAllPapelGrupo();
             IEnumerable<Grupomusical> listaGrupoMusical = _grupoMusical.GetAll();
             IEnumerable<Manequim> listaManequim = _manequim.GetAll();
 
@@ -77,7 +76,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             var pessoa = _pessoaService.Get(id);
             var pessoaViewModel = _mapper.Map<PessoaViewModel>(pessoa);
 
-            IEnumerable<Papelgrupo> listaPapelGrupo = _papelGrupo.GetAll();
+            IEnumerable<Papelgrupo> listaPapelGrupo = _pessoaService.GetAllPapelGrupo();
             IEnumerable<Grupomusical> listaGrupoMusical = _grupoMusical.GetAll();
             IEnumerable<Manequim> listaManequim = _manequim.GetAll();
 

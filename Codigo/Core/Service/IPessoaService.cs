@@ -1,4 +1,5 @@
 ﻿using Core.DTO;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,7 @@ namespace Core.Service
         Task<bool> AddAdmGroup(Pessoa pessoa);
         IAsyncEnumerable<AdministradorGrupoMusicalDTO> GetAllAdmGroup(int id);
         Task<bool> RemoveAdmGroup(int id);
+        IEnumerable<Papelgrupo> GetAllPapelGrupo();
 
     }
 }
