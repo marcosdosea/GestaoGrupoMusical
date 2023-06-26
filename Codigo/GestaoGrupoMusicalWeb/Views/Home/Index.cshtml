@@ -4,17 +4,20 @@
 
 <div class="d-flex justify-content-between align-items-center">
     <h5>Próximos Evento</h5>
-    <a role="button" class="btn btn-primary" asp-controller="Evento" asp-action="Create">Novo Evento</a>
+    <a role="button" class="btn btn-secondary" asp-controller="Evento" asp-action="Create">Novo Evento</a>
 </div>
 
 <table class="table">
-    <thead>
+    <thead class="border-bottom border-danger">
         <tr>
-            <th>
-                Data
+            <th class="bg-danger opacity-75 border-0">
+                <span class="text-white">Data</span>
             </th>
-            <th>
-                Local
+            <th class="bg-danger opacity-75 border-0">
+                <span class="text-white">Local</span>
+            </th>
+            <th class="bg-danger opacity-75 border-0">
+                <span class="text-white">Açoes</span>
             </th>
         </tr>
     </thead>
@@ -22,11 +25,14 @@
         @foreach (var item in Model.Evento)
         {
             <tr>
-                <td>
+                <td class="border-bottom border-danger opacity-75">
                     @item.DataHoraInicio
                 </td>
-                <td>
+                <td class="border-bottom border-danger opacity-75">
                     @item.Local
+                </td>
+                <td class="border-bottom border-danger opacity-75">
+
                 </td>
             </tr>
         }
@@ -35,17 +41,20 @@
 
 <div class="d-flex justify-content-between align-items-center">
     <h5>Próximos Ensaio</h5>
-    <a role="button" class="btn btn-primary" asp-controller="Ensaio" asp-action="Create">Novo Ensaio</a>
+    <a role="button" class="btn btn-secondary" asp-controller="Ensaio" asp-action="Create">Novo Ensaio</a>
 </div>
 
 <table class="table">
     <thead>
         <tr>
-            <th>
-                Data
+            <th class="bg-danger opacity-75 border-0">
+                <span class="text-white">Data</span>
             </th>
-            <th>
-                Local
+            <th class="bg-danger opacity-75 border-0">
+                <span class="text-white">Local</span>
+            </th>
+            <th class="bg-danger opacity-75 border-0">
+                <span class="text-white">Açoes</span>
             </th>
         </tr>
     </thead>
@@ -53,11 +62,14 @@
         @foreach (var item in Model.Ensaio)
         {
             <tr>
-                <td>
+                <td class="border-bottom border-danger opacity-75">
                     @item.DataHoraInicio
                 </td>
-                <td>
+                <td class="border-bottom border-danger opacity-75">
                     @item.Local
+                </td>
+                <td class="border-bottom border-danger opacity-75">
+
                 </td>
             </tr>
         }
