@@ -91,7 +91,7 @@ namespace GestaoGrupoMusicalWeb
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Identity}/{action=Autenticar}/{id?}");
+                pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.Run();
         }
