@@ -10,7 +10,7 @@
 <div>
 
     <hr />
-    <form asp-action="RemoveAssociado">
+
         <dl class="row">
 
             <dt class="col-sm-2">
@@ -87,7 +87,7 @@
             </dd>
         </dl>
 
-
+    <form asp-action="RemoveAssociado">
 
         <div class="form-group">
             <label asp-for="MotivoSaida" class="control-label"></label>
@@ -95,6 +95,6 @@
             <span asp-validation-for="MotivoSaida" class="text-danger"></span>
         </div>
         <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <a asp-action="Index">Voltar</a>
     </form>
 </div>
