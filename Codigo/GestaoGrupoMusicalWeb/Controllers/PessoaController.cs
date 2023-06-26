@@ -119,34 +119,5 @@ namespace GestaoGrupoMusicalWeb.Controllers
             _pessoaService.Delete(id);
             return RedirectToAction(nameof(Index));
         }
-
-        /// <summary>
-        /// Esse metodo tem a função de trocar um usuario
-        /// para colaborador
-        /// </summary>
-        /// <param name="id">id do usuario alvo</param>
-        /// <returns>retorna a viewmodel da pessoa encontrada</returns>
-        // GET: PessoaController/ChangeToCollaborator/5
-        public ActionResult ChangeToCollaborator(int id)
-        {
-            var pessoa = _pessoaService.Get(id);
-            var pessoaViewModel = _mapper.Map<PessoaViewModel>(pessoa);
-
-            return View(pessoaViewModel);
-        }
-
-        // POST: PessoaController/ChangeToCollaborator/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult ChangeToCollaborator(int id, PessoaViewModel pessoaViewModel)
-        {
-
-            pessoaViewModel.IdPapelGrupo = 2;
-
-            var pessoa = _mapper.Map<Pessoa>(pessoaViewModel);
-
-            _pessoaService.Edit(pessoa);
-            return RedirectToAction(nameof(Index));
-        }
     }
 }
