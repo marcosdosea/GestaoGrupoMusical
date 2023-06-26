@@ -22,6 +22,7 @@ namespace Core.Service
         Task<bool> RemoveAdmGroup(int id);
 
         Task<bool> ToCollaborator(Pessoa pessoa);
+        Task<bool> RemoveCollaborator(Pessoa pessoa);
 
         IEnumerable<Papelgrupo> GetAllPapelGrupo();
 
