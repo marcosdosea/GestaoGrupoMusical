@@ -42,9 +42,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: ColaboradorController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(int id, PessoaViewModel pessoaViewModel)
         {
+            var pessoa = _mapper.Map<Pessoa>(pessoaViewModel);
 
+            _pessoaService.ToCollaborator(pessoa);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: ColaboradorController/Edit/5
