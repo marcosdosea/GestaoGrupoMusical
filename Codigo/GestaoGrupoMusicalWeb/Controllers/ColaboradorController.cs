@@ -48,9 +48,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(int id, PessoaViewModel pessoaViewModel)
         {
-            var pessoa = _mapper.Map<Pessoa>(pessoaViewModel);
-
-            _pessoaService.ToCollaborator(pessoa);
+            _pessoaService.ToCollaborator(id);
 
             return RedirectToAction("Index", "Pessoa");
         }
@@ -95,8 +93,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, PessoaViewModel pessoaViewModel)
         {
-            var pessoa = _mapper.Map<Pessoa>(pessoaViewModel);
-            _pessoaService.RemoveCollaborator(pessoa);
+            _pessoaService.RemoveCollaborator(id);
 
             return RedirectToAction("Index", "Pessoa");
         }
