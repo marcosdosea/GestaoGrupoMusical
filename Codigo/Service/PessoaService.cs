@@ -165,5 +165,9 @@ namespace Service
                        Ativo = pessoa.Ativo
                    };
         }
+        public IEnumerable<Papelgrupo> GetAllPapelGrupo()
+        {
+            return _context.Papelgrupos.AsNoTracking();
+        }
     }
 }
