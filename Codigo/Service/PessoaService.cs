@@ -169,5 +169,12 @@ namespace Service
         {
             return _context.Papelgrupos.AsNoTracking();
         }
+
+        public void RemoverAssociado(Pessoa pessoa)
+        {
+            _context.Update(pessoa);
+            _context.SaveChanges();
+            
+        }
     }
 }

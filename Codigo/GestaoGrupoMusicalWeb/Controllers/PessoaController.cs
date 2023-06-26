@@ -115,7 +115,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, PessoaViewModel pessoaViewModel)
         {
-            _pessoaService.Delete(id);
+            
+
+
             return RedirectToAction(nameof(Index));
         }
 

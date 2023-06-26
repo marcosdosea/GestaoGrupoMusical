@@ -21,6 +21,7 @@ namespace Core.Service
         IAsyncEnumerable<AdministradorGrupoMusicalDTO> GetAllAdmGroup(int id);
         Task<bool> RemoveAdmGroup(int id);
         IEnumerable<Papelgrupo> GetAllPapelGrupo();
+        void RemoverAssociado(Pessoa pessoa);
 
     }
 }
