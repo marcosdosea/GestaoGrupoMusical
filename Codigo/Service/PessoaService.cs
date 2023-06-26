@@ -194,5 +194,24 @@ namespace Service
             }
 
         }
+
+        public async Task<bool> RemoveCollaborator(Pessoa pessoa)
+        {
+            var idPapel = _context.Papelgrupos
+                .Where(p => p.Nome == "Associado")
+                .Select(p => p.IdPapelGrupo)
+                .First();
+
+            if (idPapel != null && idPapel.GetType() == typeof(int))
+            {
+                pessoa.IdPapelGrupo = idPapel;
+                Edit(pessoa);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }
