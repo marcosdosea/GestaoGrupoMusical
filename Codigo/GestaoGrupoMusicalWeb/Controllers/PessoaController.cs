@@ -149,5 +149,28 @@ namespace GestaoGrupoMusicalWeb.Controllers
             _pessoaService.Edit(pessoa);
             return RedirectToAction(nameof(Index));
         }
+
+        public ActionResult RemoveAssociado(int id)
+        {
+            var pessoa = _pessoaService.Get(id);
+            var pessoaViewModel = _mapper.Map<PessoaViewModel>(pessoa);
+            return View(pessoaViewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult RemoveAssociado(int id, PessoaViewModel pessoaViewModel)
+        {
+            var pessoassociada = _pessoaService.Get(id);
+            
+            pessoassociada.MotivoSaida = pessoaViewModel.MotivoSaida;
+            pessoassociada.Ativo = 0;
+            pessoassociada.DataSaida = DateTime.Now; 
+                
+                _pessoaService.RemoverAssociado(pessoassociada);
+            
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }
