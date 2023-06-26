@@ -175,14 +175,17 @@ namespace Service
         /// </summary>
         /// <param name="pessoa">objeto pessoa para fazer a mudança</param>
         /// <returns>retorna true caso de tudo certo e false caso nao de certo</returns>
-        public async Task<bool> ToCollaborator(Pessoa pessoa)
+        public async Task<bool> ToCollaborator(int id)
         {
+            var pessoa = Get(id);
+
+            //uma query pois pode ser que o id seja alterado futuramente
             var idPapel = _context.Papelgrupos
                 .Where(p=>p.Nome == "Colaborador")
                 .Select(p => p.IdPapelGrupo)
                 .First();
 
-            if (idPapel != null && idPapel.GetType() == typeof(int))
+            if (idPapel != null && idPapel.GetType() == typeof(int) && pessoa != null)
             {
                 pessoa.IdPapelGrupo = idPapel;
                 Edit(pessoa);
@@ -195,14 +198,21 @@ namespace Service
 
         }
 
-        public async Task<bool> RemoveCollaborator(Pessoa pessoa)
+        public async Task<bool> RemoveCollaborator(int id)
         {
+            var pessoa = Get(id);
+
+            //uma query pois pode ser que o id seja alterado futuramente
             var idPapel = _context.Papelgrupos
                 .Where(p => p.Nome == "Associado")
                 .Select(p => p.IdPapelGrupo)
                 .First();
 
-            if (idPapel != null && idPapel.GetType() == typeof(int))
+            //aqui ha uma comparacao com id de papel da pessoa
+            //isso e para evitar que um adm de grupo seja
+            //rebaixado a associado
+            if (idPapel != null && idPapel.GetType() == typeof(int)
+                && pessoa != null && pessoa.IdPapelGrupo <= idPapel)
             {
                 pessoa.IdPapelGrupo = idPapel;
                 Edit(pessoa);
