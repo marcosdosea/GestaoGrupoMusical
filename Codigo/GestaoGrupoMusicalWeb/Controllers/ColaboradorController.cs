@@ -47,7 +47,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
             var pessoa = _mapper.Map<Pessoa>(pessoaViewModel);
 
             _pessoaService.ToCollaborator(pessoa);
-            return RedirectToAction(nameof(Index));
+
+            return RedirectToAction("Index", "Pessoa");
         }
 
         // GET: ColaboradorController/Edit/5
