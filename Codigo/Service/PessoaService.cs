@@ -169,5 +169,30 @@ namespace Service
         {
             return _context.Papelgrupos.AsNoTracking();
         }
+
+        /// <summary>
+        /// Este metodo faz o update de uma pessoa para colaborador do grupo
+        /// </summary>
+        /// <param name="pessoa">objeto pessoa para fazer a mudança</param>
+        /// <returns>retorna true caso de tudo certo e false caso nao de certo</returns>
+        public async Task<bool> ToCollaborator(Pessoa pessoa)
+        {
+            var idPapel = _context.Papelgrupos
+                .Where(p=>p.Nome == "Colaborador")
+                .Select(p => p.IdPapelGrupo)
+                .First();
+
+            if (idPapel != null && idPapel.GetType() == typeof(int))
+            {
+                pessoa.IdPapelGrupo = idPapel;
+                Edit(pessoa);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
     }
 }
