@@ -30,7 +30,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return View();
         }
 
-        // GET: ColaboradorController/Create
+        /// <summary>
+        /// Muda o papel de uma pessoa para colaborador
+        /// </summary>
+        /// <param name="id">id do alvo</param>
+        /// <returns></returns>
         public ActionResult Create(int id)
         {
             var pessoa = _pessoaService.Get(id);
@@ -72,25 +76,29 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
         }
 
-        // GET: ColaboradorController/Delete/5
+        /// <summary>
+        /// remove o papel de colaborador e 
+        /// volta a ser associado
+        /// </summary>
+        /// <param name="id">id do alvo</param>
+        /// <returns></returns>
         public ActionResult Delete(int id)
         {
-            return View();
+            var pessoa = _pessoaService.Get(id);
+            var pessoaViewModel = _mapper.Map<PessoaViewModel>(pessoa);
+
+            return View(pessoaViewModel);
         }
 
         // POST: ColaboradorController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(int id, PessoaViewModel pessoaViewModel)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            var pessoa = _mapper.Map<Pessoa>(pessoaViewModel);
+            _pessoaService.RemoveCollaborator(pessoa);
+
+            return RedirectToAction("Index", "Pessoa");
         }
     }
 }
