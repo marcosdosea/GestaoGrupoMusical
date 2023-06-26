@@ -1,10 +1,23 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Core;
+using Core.Service;
+using GestaoGrupoMusicalWeb.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
     public class ColaboradorController : Controller
     {
+        private readonly IPessoaService _pessoaService;
+        private readonly IMapper _mapper;
+
+        public ColaboradorController(IPessoaService pessoaService, IMapper mapper)
+        {
+            _pessoaService = pessoaService;
+            _mapper = mapper;
+        }
+
         // GET: ColaboradorController
         public ActionResult Index()
         {
@@ -18,9 +31,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: ColaboradorController/Create
-        public ActionResult Create()
+        public ActionResult Create(int id)
         {
-            return View();
+            var pessoa = _pessoaService.Get(id);
+            var pessoaViewModel = _mapper.Map<PessoaViewModel>(pessoa);
+
+            return View(pessoaViewModel);
         }
 
         // POST: ColaboradorController/Create
@@ -28,14 +44,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(IFormCollection collection)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+
         }
 
         // GET: ColaboradorController/Edit/5
