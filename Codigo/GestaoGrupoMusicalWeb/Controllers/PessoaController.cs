@@ -16,22 +16,20 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IPapelGrupoService _papelGrupo;
         private readonly IManequimService _manequim;
 
-        public PessoaController (IPessoaService pessoaService, IMapper mapper, IGrupoMusicalService grupoMusical, IPapelGrupoService papelgrupo, IManequimService manequim)
+        public PessoaController (IPessoaService pessoaService, IMapper mapper, IGrupoMusicalService grupoMusical, IManequimService manequim)
         {
             _pessoaService = pessoaService;
             _mapper = mapper;
             _grupoMusical = grupoMusical;
-            _papelGrupo = papelgrupo;
             _manequim = manequim;
         }
 
         // GET: PessoaController
         public ActionResult Index()
         {
-            var listaPessoas = _pessoaService.GetAll();
-            var listaPessoasModel = _mapper.Map<List<PessoaViewModel>>(listaPessoas);
+            var listaPessoasDTO = _pessoaService.GetAllAssociadoDTO();
 
-            return View(listaPessoasModel);
+            return View(listaPessoasDTO);
         }
 
         // GET: PessoaController/Details/5
@@ -48,7 +46,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             PessoaViewModel pessoaViewModel = new PessoaViewModel();
 
-            IEnumerable<Papelgrupo> listaPapelGrupo = _papelGrupo.GetAll();
+            IEnumerable<Papelgrupo> listaPapelGrupo = _pessoaService.GetAllPapelGrupo();
             IEnumerable<Grupomusical> listaGrupoMusical = _grupoMusical.GetAll();
             IEnumerable<Manequim> listaManequim = _manequim.GetAll();
 
@@ -62,12 +60,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: PessoaController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(PessoaViewModel pessoaViewModel)
+        public async Task<ActionResult> Create(PessoaViewModel pessoaViewModel)
         {
             if (ModelState.IsValid)
             {
-                var pessoa = _mapper.Map<Pessoa>(pessoaViewModel);
-                _pessoaService.Create(pessoa);
+                var pessoaModel = _mapper.Map<Pessoa>(pessoaViewModel);
+                await _pessoaService.Create(pessoaModel);
             }
             return RedirectToAction(nameof(Index));
         }
@@ -78,7 +76,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             var pessoa = _pessoaService.Get(id);
             var pessoaViewModel = _mapper.Map<PessoaViewModel>(pessoa);
 
-            IEnumerable<Papelgrupo> listaPapelGrupo = _papelGrupo.GetAll();
+            IEnumerable<Papelgrupo> listaPapelGrupo = _pessoaService.GetAllPapelGrupo();
             IEnumerable<Grupomusical> listaGrupoMusical = _grupoMusical.GetAll();
             IEnumerable<Manequim> listaManequim = _manequim.GetAll();
 

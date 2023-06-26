@@ -2,11 +2,14 @@
 using Core;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Data;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
+    [Authorize(Roles = "ADMINISTRADOR GRUPO")]
     public class InstrumentoMusicalController : Controller
     {
         private readonly IInstrumentoMusicalService _instrumentoMusical;
@@ -44,9 +47,15 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: InstrumentoMusicalController/Create
-        public ActionResult Create()
+        public async Task<ActionResult> Create()
         {
-            return View();
+            InstrumentoMusicalViewModel instrumentoMusicalViewModel = new InstrumentoMusicalViewModel();
+
+            IEnumerable<Tipoinstrumento> listaInstrumentos = await _instrumentoMusical.GetAllTipoInstrumento();
+
+            instrumentoMusicalViewModel.ListaInstrumentos = new SelectList(listaInstrumentos, "Id", "Nome", null);
+
+            return View(instrumentoMusicalViewModel);
         }
 
         // POST: InstrumentoMusicalController/Create
@@ -67,6 +76,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             var instrumentoMusical = await _instrumentoMusical.Get(id);
             var instrumentoMusicalModel = _mapper.Map<InstrumentoMusicalViewModel>(instrumentoMusical);
+
+            IEnumerable<Tipoinstrumento> listaInstrumentos = await _instrumentoMusical.GetAllTipoInstrumento();
+
+            instrumentoMusicalModel.ListaInstrumentos = new SelectList(listaInstrumentos, "Id", "Nome", null);
 
             return View(instrumentoMusicalModel);
         }

@@ -13,6 +13,7 @@ namespace Core
             EventoIdColaboradorResponsavelNavigations = new HashSet<Evento>();
             EventoIdRegenteNavigations = new HashSet<Evento>();
             Eventopessoas = new HashSet<Eventopessoa>();
+            Informativos = new HashSet<Informativo>();
             Materialestudos = new HashSet<Materialestudo>();
             MovimentacaofigurinoIdAssociadoNavigations = new HashSet<Movimentacaofigurino>();
             MovimentacaofigurinoIdColaboradorNavigations = new HashSet<Movimentacaofigurino>();
@@ -53,6 +54,7 @@ namespace Core
         public virtual ICollection<Evento> EventoIdColaboradorResponsavelNavigations { get; set; }
         public virtual ICollection<Evento> EventoIdRegenteNavigations { get; set; }
         public virtual ICollection<Eventopessoa> Eventopessoas { get; set; }
+        public virtual ICollection<Informativo> Informativos { get; set; }
         public virtual ICollection<Materialestudo> Materialestudos { get; set; }
         public virtual ICollection<Movimentacaofigurino> MovimentacaofigurinoIdAssociadoNavigations { get; set; }
         public virtual ICollection<Movimentacaofigurino> MovimentacaofigurinoIdColaboradorNavigations { get; set; }

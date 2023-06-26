@@ -24,7 +24,7 @@
                 <a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" asp-controller="Home" asp-action="Index"> Início</a>
                 <a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" asp-controller="Ensaio" asp-action="Index">Ensaios</a>
                 <a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" asp-controller="Evento" asp-action="Index">Eventos</a>
-                <a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" href="#!">Associados</a>
+                <a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" asp-controller="Pessoa"  asp-action="Index">Associados</a>
                 <a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" href="#!">Financeiro</a>
                 <a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" asp-controller="InstrumentoMusical" asp-action="Index">Instrumentos</a>
                 <a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" href="#!">Figurinos</a>
@@ -59,10 +59,12 @@
                                         Configurações
                                     </a>
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="#!">
-                                        <i class="fa-solid fa-right-from-bracket"></i> 
-                                        Sair
-                                    </a>
+                                    <form asp-controller="Identity" asp-action="Sair">
+                                        <button class="dropdown-item">
+                                            <i class="fa-solid fa-right-from-bracket"></i> 
+                                            Sair
+                                        </button>
+                                    </form>
                                 </div>
                             </li>
                         </ul>

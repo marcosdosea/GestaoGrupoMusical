@@ -75,7 +75,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             var pessoa = _pessoaService.Get(id);
             var pessoaViewModel = _mapper.Map<PessoaViewModel>(pessoa);
 
-            ViewBag.idGrupoMusical = pessoa.IdGrupoMusical;
+            ViewBag.idGrupoMusical = pessoaViewModel.IdGrupoMusical;
             ViewBag.nomeGrupo = nomeGrupo;
 
             return View(pessoaViewModel);

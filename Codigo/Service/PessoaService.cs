@@ -94,13 +94,17 @@ namespace Service
 
                     Create(pessoa);
                 }
-                else
+                else if (pessoaF.IdGrupoMusical == pessoa.IdGrupoMusical)
                 {
                     //id para adm de grupo == 3
                     pessoaF.IdPapelGrupo = 3;
-                    _context.Update(pessoaF);
+                    Edit(pessoaF);
                 }
-                _context.SaveChanges();
+                else
+                {
+                    return false;
+                }
+                
 
                 return true;
             }
@@ -149,6 +153,21 @@ namespace Service
             }
             
 
+        }
+
+        public IEnumerable<AssociadoDTO> GetAllAssociadoDTO()
+        {
+            return from pessoa in _context.Pessoas
+                   select new AssociadoDTO
+                   {
+                       Id = pessoa.Id,
+                       Nome = pessoa.Nome,
+                       Ativo = pessoa.Ativo
+                   };
+        }
+        public IEnumerable<Papelgrupo> GetAllPapelGrupo()
+        {
+            return _context.Papelgrupos.AsNoTracking();
         }
     }
 }

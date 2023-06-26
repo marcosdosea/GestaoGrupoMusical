@@ -70,6 +70,11 @@ namespace Service
             return query;
         }
 
+        public async Task<IEnumerable<Tipoinstrumento>> GetAllTipoInstrumento()
+        {
+            return await _context.Tipoinstrumentos.AsNoTracking().ToListAsync();
+        }
+
         public async Task<string> GetNomeInstrumento(int id)
         {
             var query = await (from instrumento in _context.Instrumentomusicals
