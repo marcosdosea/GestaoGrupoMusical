@@ -33,14 +33,14 @@ html {
 .form-select.valid {
     padding-right: 4.125rem;
     background-image: url("../icon/valid_icon.svg"), url("../icon/select_icon.svg");
-    background-position: right 0.60rem center, center right 2.25rem;
+    background-position: right 0.55rem center, center right 2.25rem;
     background-size: 16px;
 }
 
 .form-select.input-validation-error {
     padding-right: 4.125rem;
     background-image: url("../icon/invalid_icon.svg"), url("../icon/select_icon.svg");
-    background-position: right 0.60rem center, center right 2.25rem;
+    background-position: right 0.55rem center, center right 2.25rem;
     background-size: 16px;
 }
 
@@ -48,7 +48,6 @@ html {
     display: block;
     width: 100%;
     padding: 0.375rem 2.25rem 0.375rem 0.75rem;
-    -moz-padding-start: calc(0.75rem - 3px);
     font-size: 1rem;
     font-weight: 400;
     line-height: 1.5;
