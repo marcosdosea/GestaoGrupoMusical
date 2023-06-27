@@ -11,6 +11,7 @@ namespace GestaoGrupoMusicalWeb.Models
         public int Id { get; set; }
 
         [Required(ErrorMessage = "O campo de CPF é obrigatório.")]
+        [RegularExpression(@"^\d{3}\.\d{3}\.\d{3}-\d{2}$", ErrorMessage = "CPF inválido")]
         [StringLength(15)]
         public string? Cpf { get; set; }
 
@@ -23,6 +24,7 @@ namespace GestaoGrupoMusicalWeb.Models
         public string? Sexo { get; set; }
 
         [Required(ErrorMessage = "O campo CEP é obrigatório.")]
+        [RegularExpression(@"^\d{5}-\d{3}$", ErrorMessage = "O CEP deve estar no formato 00000-000.")]
         [StringLength(10)]
         public string? Cep { get; set; }
 
@@ -45,10 +47,13 @@ namespace GestaoGrupoMusicalWeb.Models
 
         [Required(ErrorMessage = "O campo telefone é obrigatório.")]
         [StringLength(20)]
+        [RegularExpression(@"^\(\d{2}\)\d{5}-\d{4}$", ErrorMessage = "O telefone deve estar no formato (XX) XXXXX-XXXX.")]
         [Display(Name = "Telefone 1")]
         public string? Telefone1 { get; set; }
 
         [Display(Name = "Telefone 2")]
+        [StringLength(20)]
+        [RegularExpression(@"^\(\d{2}\)\d{5}-\d{4}$", ErrorMessage = "O telefone deve estar no formato (XX) XXXXX-XXXX.")]
         public string? Telefone2 { get; set; }
 
         [Required(ErrorMessage = "O e-mail é obrigatório.")]
