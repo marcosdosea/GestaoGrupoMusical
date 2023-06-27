@@ -33,7 +33,6 @@ html {
 .form-control {
     display: block;
     width: 100%;
-    padding: 0.375rem 0.75rem;
     font-size: 1rem;
     font-weight: 400;
     line-height: 1.5;
@@ -87,4 +86,8 @@ html {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
+}
+
+.control-label{
+    font-weight: 500;
 }
