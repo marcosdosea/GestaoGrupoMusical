@@ -61,6 +61,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(PessoaViewModel pessoaViewModel)
         {
+            pessoaViewModel.Cpf = pessoaViewModel.Cpf.Replace("-", string.Empty).Replace(".", string.Empty);
+            pessoaViewModel.Cep = pessoaViewModel.Cep.Replace("-", string.Empty);
+
+
             if (ModelState.IsValid)
             {
                 var pessoaModel = _mapper.Map<Pessoa>(pessoaViewModel);
@@ -93,6 +97,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, PessoaViewModel pessoaViewModel)
         {
+            pessoaViewModel.Cpf = pessoaViewModel.Cpf.Replace("-", string.Empty).Replace(".", string.Empty);
+            pessoaViewModel.Cep = pessoaViewModel.Cep.Replace("-", string.Empty);
+
             if (ModelState.IsValid)
             {
                 var pessoa = _mapper.Map<Pessoa>(pessoaViewModel);
