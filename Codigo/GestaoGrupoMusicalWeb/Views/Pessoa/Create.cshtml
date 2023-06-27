@@ -14,7 +14,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Cpf" class="control-label"></label>
-                <input asp-for ="Cpf" id="campocpf" class="form-control" />
+                <input asp-for ="Cpf" id="campoCpf" class="form-control" />
                 <span asp-validation-for="Cpf" class="text-danger"></span>
             </div>
            
@@ -30,7 +30,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Cep" class="control-label"></label>
-                <input asp-for="Cep" id="campocep" class="form-control" />
+                <input asp-for="Cep" id="campoCep" class="form-control" />
                 <span asp-validation-for="Cep" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -60,12 +60,12 @@
             </div>
             <div class="form-group">
                 <label asp-for="Telefone1" class="control-label"></label>
-                <input asp-for="Telefone1" id="campotelefone1" class="form-control" />
+                <input asp-for="Telefone1" id="campoTelefone1" class="form-control" />
                 <span asp-validation-for="Telefone1" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Telefone2" class="control-label"></label>
-                <input asp-for="Telefone2" id="campotelefone2"class="form-control" />
+                <input asp-for="Telefone2" id="campoTelefone2"class="form-control" />
                 <span asp-validation-for="Telefone2" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -124,10 +124,10 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            $("#campocpf").inputmask("999.999.999-99");  //static mask
-            $("#campocep").inputmask("99999-999");
-            $("#campotelefone1").inputmask("(99)99999-9999");
-            $("#campotelefone2").inputmask("(99)99999-9999");
+            $("#campoCpf").inputmask("999.999.999-99");  //static mask
+            $("#campoCep").inputmask("99999-999");
+            $("#campoTelefone1").inputmask("(99)99999-9999");
+            $("#campoTelefone2").inputmask("(99)99999-9999");
            
         });
       
