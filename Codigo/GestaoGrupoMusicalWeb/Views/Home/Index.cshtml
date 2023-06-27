@@ -24,18 +24,18 @@
     <tbody>
         @foreach (var item in Model.Evento)
         {
-            <tr>
-                <td class="border-bottom border-danger opacity-75 p-3">
+            <tr class="border-bottom border-danger opacity-75 p-3 align-middle">
+                <td class="p-3">
                     @item.DataHoraInicio
                 </td>
-                <td class="border-bottom border-danger opacity-75 p-3">
+                <td class="p-3">
                     @item.Local
                 </td>
-                <td class="border-bottom border-danger opacity-75 p-3 d-flex justify-content-between">
-                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="" asp-action=""><i class="fa-solid fa-list-check"></i>Frequência</a>
-                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="" asp-action=""><i class="fa-solid fa-file"></i>Detalhes</a>
-                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="" asp-action=""><i class="fa-solid fa-pen-to-square"></i>Editar</a>
-                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="" asp-action=""><i class="fa-solid fa-xmark"></i>Excluir</a>
+                <td class="d-flex justify-content-between border-0 p-3">
+                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="" asp-action=""><i class="fa-solid fa-list-check"> </i> Frequência </a>
+                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="" asp-action=""><i class="fa-solid fa-file"> </i> Detalhes </a>
+                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="" asp-action=""><i class="fa-solid fa-pen-to-square"> </i> Editar </a>
+                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="" asp-action=""><i class="fa-solid fa-xmark"> </i> Excluir </a>
                 </td>
             </tr>
         }
@@ -64,18 +64,18 @@
     <tbody>
         @foreach (var item in Model.Ensaio)
         {
-            <tr>
-                <td class="border-bottom border-danger opacity-75 p-3">
+            <tr class="border-bottom border-danger opacity-75 p-3 align-middle">
+                <td class="p-3">
                     @item.DataHoraInicio
                 </td>
-                <td class="border-bottom border-danger opacity-75 p-3">
+                <td class="p-3">
                     @item.Local
                 </td>
-                <td class="border-bottom border-danger opacity-75 p-3 d-flex justify-content-between">
-                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="" asp-action=""><i class="fa-solid fa-list-check"></i>Frequência</a>
-                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="" asp-action=""><i class="fa-solid fa-file"></i>Detalhes</a>
-                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="" asp-action=""><i class="fa-solid fa-pen-to-square"></i>Editar</a>
-                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="" asp-action=""><i class="fa-solid fa-xmark"></i>Excluir</a>
+                <td class="d-flex justify-content-between border-0 p-3">
+                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="" asp-action=""><i class="fa-solid fa-list-check"> </i> Frequência </a>
+                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="" asp-action=""><i class="fa-solid fa-file"> </i> Detalhes </a>
+                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="" asp-action=""><i class="fa-solid fa-pen-to-square"> </i> Editar </a>
+                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="" asp-action=""><i class="fa-solid fa-xmark"> </i> Excluir </a>
                 </td>
             </tr>
         }
