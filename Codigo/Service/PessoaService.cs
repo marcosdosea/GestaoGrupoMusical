@@ -212,7 +212,7 @@ namespace Service
             //isso e para evitar que um adm de grupo seja
             //rebaixado a associado
             if (idPapel != null && idPapel.GetType() == typeof(int)
-                && pessoa != null && pessoa.IdPapelGrupo <= idPapel)
+                && pessoa != null && pessoa.IdPapelGrupo <= (idPapel+1))
             {
                 pessoa.IdPapelGrupo = idPapel;
                 Edit(pessoa);
