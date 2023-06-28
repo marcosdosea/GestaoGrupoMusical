@@ -55,8 +55,14 @@ html {
     font-weight: 500;
 }
 
-form-check-input:checked[type=radio] {
+.form-check-input:checked[type=radio] {
+    box-shadow: none !important;
     background-image: url("../icon/radio_icon.svg");
+}
+
+.form-check-input:checked[type=checkbox] {
+    box-shadow: none !important;
+    background-image: url("../icon/checkbox_icon.svg");
 }
 
 .form-check-input:checked {
