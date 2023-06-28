@@ -20,6 +20,10 @@ namespace Core.Service
         Task<bool> AddAdmGroup(Pessoa pessoa);
         IAsyncEnumerable<AdministradorGrupoMusicalDTO> GetAllAdmGroup(int id);
         Task<bool> RemoveAdmGroup(int id);
+
+        Task<bool> ToCollaborator(int id);
+        Task<bool> RemoveCollaborator(int id);
+
         IEnumerable<Papelgrupo> GetAllPapelGrupo();
         void RemoverAssociado(Pessoa pessoa);
 
