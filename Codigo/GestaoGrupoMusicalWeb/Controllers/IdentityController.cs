@@ -47,6 +47,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [HttpPost]
         public async Task<IActionResult> Autenticar(AutenticarViewModel model)
         {
+            model.Cpf = model.Cpf.Replace("-", string.Empty).Replace(".", string.Empty);
             if (ModelState.IsValid)
             {
                 var result = await _signInManager.PasswordSignInAsync(model.Cpf, model.Senha, true, lockoutOnFailure: false);
@@ -72,6 +73,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             model.Pessoa.IdPapelGrupo = 3;
             model.Pessoa.IdGrupoMusical = 1;
             model.Pessoa.IdManequim = 1;
+            model.Pessoa.Cpf = model.Pessoa.Cpf.Replace("-", string.Empty).Replace(".", string.Empty);
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
