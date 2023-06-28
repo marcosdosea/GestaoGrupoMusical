@@ -9,7 +9,7 @@
 
     <div class="form-group">
         <label asp-for="Pessoa.Cpf" class="control-label"></label>
-        <input asp-for="Pessoa.Cpf" class="form-control" />
+        <input asp-for="Pessoa.Cpf" id="campoCpf" class="form-control" />
         <span asp-validation-for="Pessoa.Cpf" class="text-danger"></span>
     </div>
     <div class="form-group">
@@ -56,6 +56,12 @@
 </form>
 
 @section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#campoCpf").inputmask("999.999.999-99");  //static mask
+        });
+
+    </script>
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
