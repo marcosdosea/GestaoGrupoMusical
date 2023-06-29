@@ -74,6 +74,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             model.Pessoa.IdGrupoMusical = 1;
             model.Pessoa.IdManequim = 1;
             model.Pessoa.Cpf = model.Pessoa.Cpf.Replace("-", string.Empty).Replace(".", string.Empty);
+            model.Pessoa.Cep = model.Pessoa.Cep.Replace("-", string.Empty);
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
