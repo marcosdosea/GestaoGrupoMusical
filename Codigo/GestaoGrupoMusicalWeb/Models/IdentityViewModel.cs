@@ -8,6 +8,7 @@ namespace GestaoGrupoMusicalWeb.Models
         {
             [Display(Name = "CPF")]
             [Required(ErrorMessage = "O campo {0} é obrigatório")]
+            [RegularExpression(@"^\d{3}\.\d{3}\.\d{3}-\d{2}$", ErrorMessage = "CPF inválido")]
             public string Cpf { get; set; } = string.Empty;
 
             [Required(ErrorMessage = "O campo {0} é obrigatório")]
