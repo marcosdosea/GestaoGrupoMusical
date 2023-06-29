@@ -1,7 +1,7 @@
 ﻿@if (TempData["alertText"] != null && TempData["alertType"] != null)
 {
-    <div class="alert alert-@TempData["alertType"] alert-dismissible fade show" role="alert">
-        <i class="@TempData["alertIcon"]"></i>
+    <div class="alert alert-@TempData["alertType"] alert-dismissible fade show d-flex align-items-center" role="alert">
+        <i class="@TempData["alertIcon"] fs-5"></i>
         <span class="ms-2">@TempData["alertText"]</span>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>

@@ -160,7 +160,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     };
                     if (await _movimentacaoInstrumento.Create(movimentacao))
                     {
-                        Notificar("Instrumento movimentado com sucesso", Notifica.Sucesso);
+                        Notificar("Instrumento movimentado com sucesso", Notifica.Alerta);
                         return RedirectToAction(nameof(Movimentar));
                     }
                 }
