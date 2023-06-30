@@ -4,29 +4,37 @@
 
 <div class="d-flex justify-content-between align-items-center">
     <h5>Próximos Evento</h5>
-    <a role="button" class="btn btn-primary" asp-controller="Evento" asp-action="Create">Novo Evento</a>
+    <a role="button" class="btn btn-secondary m-3" asp-controller="Evento" asp-action="Create">Novo Evento</a>
 </div>
-
 <table class="table">
     <thead>
-        <tr>
-            <th>
-                Data
+        <tr class="bg-danger opacity-75">
+            <th class="px-3 border-0">
+                <span class="text-white">Data</span>
             </th>
-            <th>
-                Local
+            <th class="border-0 px-3">
+                <span class="text-white">Local</span>
+            </th>
+            <th class="border-0 px-3">
+                <span class="text-white">Açoes</span>
             </th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model.Evento)
         {
-            <tr>
-                <td>
+            <tr class="border-bottom border-danger border-opacity-75 p-3 align-middle">
+                <td class="p-3">
                     @item.DataHoraInicio
                 </td>
-                <td>
+                <td class="p-3">
                     @item.Local
+                </td>
+                <td class="d-flex justify-content-between border-0 p-3">
+                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="" asp-action=""><i class="fa-solid fa-list-check"> </i> Frequência </a>
+                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="" asp-action=""><i class="fa-solid fa-file"> </i> Detalhes </a>
+                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="" asp-action=""><i class="fa-solid fa-pen-to-square"> </i> Editar </a>
+                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="" asp-action=""><i class="fa-solid fa-xmark"> </i> Excluir </a>
                 </td>
             </tr>
         }
@@ -35,29 +43,38 @@
 
 <div class="d-flex justify-content-between align-items-center">
     <h5>Próximos Ensaio</h5>
-    <a role="button" class="btn btn-primary" asp-controller="Ensaio" asp-action="Create">Novo Ensaio</a>
+    <a role="button" class="btn btn-secondary m-3" asp-controller="Ensaio" asp-action="Create">Novo Ensaio</a>
 </div>
 
 <table class="table">
     <thead>
-        <tr>
-            <th>
-                Data
+        <tr class="bg-danger opacity-75">
+            <th class="px-3 border-0">
+                <span class="text-white">Data</span>
             </th>
-            <th>
-                Local
+            <th class="px-3 border-0">
+                <span class="text-white">Local</span>
+            </th>
+            <th class="px-3 border-0">
+                <span class="text-white">Açoes</span>
             </th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model.Ensaio)
         {
-            <tr>
-                <td>
+            <tr class="border-bottom border-danger border-opacity-75 p-3 align-middle">
+                <td class="p-3">
                     @item.DataHoraInicio
                 </td>
-                <td>
+                <td class="p-3">
                     @item.Local
+                </td>
+                <td class="d-flex justify-content-between border-0 p-3">
+                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="" asp-action=""><i class="fa-solid fa-list-check"> </i> Frequência </a>
+                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="" asp-action=""><i class="fa-solid fa-file"> </i> Detalhes </a>
+                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="" asp-action=""><i class="fa-solid fa-pen-to-square"> </i> Editar </a>
+                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="" asp-action=""><i class="fa-solid fa-xmark"> </i> Excluir </a>
                 </td>
             </tr>
         }

@@ -66,7 +66,6 @@ namespace GestaoGrupoMusicalWeb
             builder.Services.AddScoped<IEnsaioService, EnsaioService>();
             builder.Services.AddTransient<IInstrumentoMusicalService, InstrumentoMusicalService>();
             builder.Services.AddScoped<IMovimentacaoInstrumentoService, MovimentacaoInstrumentoService>();
-            builder.Services.AddTransient<IPapelGrupoService, PapelGrupoService>();
             builder.Services.AddTransient<IManequimService, ManequimService>();
 
            
@@ -92,7 +91,7 @@ namespace GestaoGrupoMusicalWeb
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Identity}/{action=Autenticar}/{id?}");
+                pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.Run();
         }

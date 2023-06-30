@@ -13,7 +13,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IPessoaService _pessoaService;
         private readonly IMapper _mapper;
         private readonly IGrupoMusicalService _grupoMusical;
-        private readonly IPapelGrupoService _papelGrupo;
         private readonly IManequimService _manequim;
 
         public PessoaController (IPessoaService pessoaService, IMapper mapper, IGrupoMusicalService grupoMusical, IManequimService manequim)
@@ -62,6 +61,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(PessoaViewModel pessoaViewModel)
         {
+            pessoaViewModel.Cpf = pessoaViewModel.Cpf.Replace("-", string.Empty).Replace(".", string.Empty);
+            pessoaViewModel.Cep = pessoaViewModel.Cep.Replace("-", string.Empty);
+
+
             if (ModelState.IsValid)
             {
                 var pessoaModel = _mapper.Map<Pessoa>(pessoaViewModel);
@@ -94,6 +97,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, PessoaViewModel pessoaViewModel)
         {
+            pessoaViewModel.Cpf = pessoaViewModel.Cpf.Replace("-", string.Empty).Replace(".", string.Empty);
+            pessoaViewModel.Cep = pessoaViewModel.Cep.Replace("-", string.Empty);
+
             if (ModelState.IsValid)
             {
                 var pessoa = _mapper.Map<Pessoa>(pessoaViewModel);
@@ -117,35 +123,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public ActionResult Delete(int id, PessoaViewModel pessoaViewModel)
         {
             _pessoaService.Delete(id);
-            return RedirectToAction(nameof(Index));
-        }
-
-        /// <summary>
-        /// Esse metodo tem a função de trocar um usuario
-        /// para colaborador
-        /// </summary>
-        /// <param name="id">id do usuario alvo</param>
-        /// <returns>retorna a viewmodel da pessoa encontrada</returns>
-        // GET: PessoaController/ChangeToCollaborator/5
-        public ActionResult ChangeToCollaborator(int id)
-        {
-            var pessoa = _pessoaService.Get(id);
-            var pessoaViewModel = _mapper.Map<PessoaViewModel>(pessoa);
-
-            return View(pessoaViewModel);
-        }
-
-        // POST: PessoaController/ChangeToCollaborator/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult ChangeToCollaborator(int id, PessoaViewModel pessoaViewModel)
-        {
-
-            pessoaViewModel.IdPapelGrupo = 2;
-
-            var pessoa = _mapper.Map<Pessoa>(pessoaViewModel);
-
-            _pessoaService.Edit(pessoa);
             return RedirectToAction(nameof(Index));
         }
     }
