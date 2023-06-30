@@ -24,29 +24,27 @@
             <div class="form-group">
                 @{
                     var mark = "";
+                    var hide = "";
 
-                    if (Model.Status.CompareTo("Danificado") == 1)
+                    if (Model.Status.SequenceEqual("DANIFICADO"))
                     {
                         mark = "checked";
                     }
+                    else if (Model.Status.SequenceEqual("EMPRESTADO"))
+                    {
+                        mark = "hidden";
+                        hide = "hidden";
+                    }
                 }
-                <input type="checkbox" id="Status" name="Status" checked onclick="changeValue()" onload="verifyCheckbox(" />
-                <label for="Status">Danificado</label>
+                <input type="checkbox" id="Status" name="Status" value="" oninput="changeValue()" @mark />
+                <label for="Status" @hide>Danificado</label>
 
                 <script>
-                    function verifyCheckbox(){
-                        if (@Model.Status.CompareTo("DANIFICADO") == 1) {
-                            document.getElementById("Status").setAttribute("checked", "true");
-                        } else{
-                            document.getElementById("Status").setAttribute("checked", "false");
-                        }
-                    }
-
                     function changeValue(){
-                        if (document.getElementById("Status").getAttribute("checked")){
-                            document.getElementById("Status").setAttribute("value", "Danificado");
+                        if (document.getElementById("Status").checked){
+                            document.getElementById("Status").setAttribute("value", "DANIFICADO");
                         }else{
-                            document.getElementById("Status").setAttribute("value", "Disponível");
+                            document.getElementById("Status").setAttribute("value", "DISPONIVEL");
                         }
                         
                     }
