@@ -22,8 +22,35 @@
                 <span asp-validation-for="DataAquisicao" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input name="Status" type="checkbox" value="Danificado" />
+                @{
+                    var mark = "";
+
+                    if (Model.Status.CompareTo("Danificado") == 1)
+                    {
+                        mark = "checked";
+                    }
+                }
+                <input type="checkbox" id="Status" name="Status" checked onclick="changeValue()" onload="verifyCheckbox(" />
                 <label for="Status">Danificado</label>
+
+                <script>
+                    function verifyCheckbox(){
+                        if (@Model.Status.CompareTo("DANIFICADO") == 1) {
+                            document.getElementById("Status").setAttribute("checked", "true");
+                        } else{
+                            document.getElementById("Status").setAttribute("checked", "false");
+                        }
+                    }
+
+                    function changeValue(){
+                        if (document.getElementById("Status").getAttribute("checked")){
+                            document.getElementById("Status").setAttribute("value", "Danificado");
+                        }else{
+                            document.getElementById("Status").setAttribute("value", "Disponível");
+                        }
+                        
+                    }
+                </script>
             </div>
             <div class="form-group">
                 <label asp-for="IdTipoInstrumento" class="control-label"></label>
