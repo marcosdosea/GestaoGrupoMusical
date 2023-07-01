@@ -224,7 +224,7 @@ namespace Service
             }
         }
 
-        public void RemoverAssociado(Pessoa pessoaAssociada, String motivoSaida)
+        public void RemoverAssociado(Pessoa pessoaAssociada, String? motivoSaida)
         {
             pessoaAssociada.MotivoSaida = motivoSaida;
             pessoaAssociada.Ativo = 0;
