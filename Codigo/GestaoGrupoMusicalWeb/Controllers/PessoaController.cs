@@ -140,13 +140,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public ActionResult RemoveAssociado(int id, PessoaViewModel pessoaViewModel)
         {
             var pessoassociada = _pessoaService.Get(id);
-            
-            pessoassociada.MotivoSaida = pessoaViewModel.MotivoSaida;
-            pessoassociada.Ativo = 0;
-            pessoassociada.DataSaida = DateTime.Now; 
-                
-                _pessoaService.RemoverAssociado(pessoassociada);
-            
+            _pessoaService.RemoverAssociado(pessoassociada, pessoaViewModel.MotivoSaida);
             return RedirectToAction(nameof(Index));
         }
 

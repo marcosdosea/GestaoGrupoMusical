@@ -25,7 +25,7 @@ namespace Core.Service
         Task<bool> RemoveCollaborator(int id);
 
         IEnumerable<Papelgrupo> GetAllPapelGrupo();
-        void RemoverAssociado(Pessoa pessoa);
+        void RemoverAssociado(Pessoa pessoa, String? motivoSaida);
 
     }
 }
