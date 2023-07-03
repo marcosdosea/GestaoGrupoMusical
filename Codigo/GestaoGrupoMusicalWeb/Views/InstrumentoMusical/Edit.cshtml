@@ -22,6 +22,42 @@
                 <span asp-validation-for="DataAquisicao" class="text-danger"></span>
             </div>
             <div class="form-group">
+                @{
+                    var mark = "";
+                    var hide = "";
+
+                    if (Model.Status.SequenceEqual("DISPONIVEL"))
+                    {
+                        mark = "false";
+                    }
+                    else if (Model.Status.SequenceEqual("DANIFICADO"))
+                    {
+                        mark = "true";
+                    }
+                    else if (Model.Status.SequenceEqual("EMPRESTADO"))
+                    {
+                        //mark = "hidden";
+                        hide = "hidden";
+                    }
+                }
+                <input type="checkbox" id="Status" name="Status" value="DANIFICADO" checked=@mark onclick="changeValue()" @hide  />
+                <label for="Status" @hide>Danificado</label>
+
+                <script>
+                    function changeValue(){
+                        alert(document.getElementById("Status").getAttribute("checked"));
+                        if (document.getElementById("Status").checked) {
+                            document.getElementById("Status").value = "DANIFICADO";
+                            alert(document.getElementById("Status").value);
+                        }else{
+                            document.getElementById("Status").value = "DISPONIVEL";
+                            alert(document.getElementById("Status").value);
+                        }
+                        
+                    }
+                </script>
+            </div>
+            <div class="form-group">
                 <label asp-for="IdTipoInstrumento" class="control-label"></label>
                 <select asp-for="IdTipoInstrumento" asp-items="@Model.ListaInstrumentos" class="form-control"></select>
                 <span asp-validation-for="IdTipoInstrumento" class="text-danger"></span>
@@ -45,7 +81,6 @@
         </form>
     </div>
 </div>
-
 <div>
     <a asp-action="Index">Voltar</a>
 </div>

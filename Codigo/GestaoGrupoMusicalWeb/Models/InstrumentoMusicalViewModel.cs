@@ -11,22 +11,23 @@ namespace GestaoGrupoMusicalWeb.Models
         public int Id { get; set; }
 
         [Display(Name = "Patrimônio")]
-        [Required]
+        [Required(ErrorMessage = "O campo Patrimonio é obrigatório")]
+        [StringLength(20, MinimumLength = 5, ErrorMessage = "O nome do associado deve ter entre 5 e 20 caracteres")]
         public string Patrimonio { get; set; }
 
         [Display(Name ="Data Aquisição")]
-        [Required]
+        [Required(ErrorMessage ="A data é obrigatória")]
         public DateTime DataAquisicao { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "O campo {0} é obrigatório")]
         [Display(Name = "Disponível")]
         public string Status { get; set; } = "DISPONIVEL";
 
         [Display(Name = "Instrumento")]
-        [Required]
+        [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public int IdTipoInstrumento { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public int IdGrupoMusical { get; set; }
 
         public SelectList? ListaInstrumentos { get; set; }
