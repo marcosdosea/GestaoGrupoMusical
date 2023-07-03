@@ -122,8 +122,27 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, PessoaViewModel pessoaViewModel)
         {
-            _pessoaService.Delete(id);
+            
+
+
             return RedirectToAction(nameof(Index));
         }
+
+        public ActionResult RemoveAssociado(int id)
+        {
+            var pessoa = _pessoaService.Get(id);
+            var pessoaViewModel = _mapper.Map<PessoaViewModel>(pessoa);
+            return View(pessoaViewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult RemoveAssociado(int id, PessoaViewModel pessoaViewModel)
+        {
+            var pessoassociada = _pessoaService.Get(id);
+            _pessoaService.RemoverAssociado(pessoassociada, pessoaViewModel.MotivoSaida);
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }
