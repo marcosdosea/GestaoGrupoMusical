@@ -19,7 +19,7 @@ namespace GestaoGrupoMusicalWeb.Models
         public DateTime DataAquisicao { get; set; }
 
         [Required]
-        public string Status { get; set; }
+        public string Status { get; set; } = "DISPONIVEL";
 
         [Display(Name = "Instrumento")]
         [Required]
@@ -29,5 +29,6 @@ namespace GestaoGrupoMusicalWeb.Models
         public int IdGrupoMusical { get; set; }
 
         public SelectList? ListaInstrumentos { get; set; }
+        public bool IsDanificado { get; set; } = true;
     }
 }

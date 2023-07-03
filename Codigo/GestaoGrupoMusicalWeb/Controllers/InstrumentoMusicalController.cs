@@ -5,6 +5,7 @@ using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Data;
 
 namespace GestaoGrupoMusicalWeb.Controllers
@@ -89,6 +90,15 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(int id, InstrumentoMusicalViewModel instrumentoMusicalViewModel)
         {
+
+            if(instrumentoMusicalViewModel.IsDanificado == true)
+            {
+                instrumentoMusicalViewModel.Status = "DANIFICADO";
+            }
+            else
+            {
+                instrumentoMusicalViewModel.Status = "DISPONIVEL";
+            }
             if (ModelState.IsValid)
             {
                 var instrumentoMusical = _mapper.Map<Instrumentomusical>(instrumentoMusicalViewModel);
