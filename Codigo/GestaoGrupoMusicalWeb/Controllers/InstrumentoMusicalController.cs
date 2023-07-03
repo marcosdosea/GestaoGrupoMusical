@@ -91,7 +91,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> Edit(int id, InstrumentoMusicalViewModel instrumentoMusicalViewModel)
         {
 
-            if(instrumentoMusicalViewModel.IsDanificado == true)
+            if(instrumentoMusicalViewModel.IsDanificado == false)
             {
                 instrumentoMusicalViewModel.Status = "DANIFICADO";
             }

@@ -19,6 +19,7 @@ namespace GestaoGrupoMusicalWeb.Models
         public DateTime DataAquisicao { get; set; }
 
         [Required]
+        [Display(Name = "Disponível")]
         public string Status { get; set; } = "DISPONIVEL";
 
         [Display(Name = "Instrumento")]
