@@ -90,7 +90,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(int id, InstrumentoMusicalViewModel instrumentoMusicalViewModel)
         {
-
             if(instrumentoMusicalViewModel.IsDanificado == false)
             {
                 instrumentoMusicalViewModel.Status = "DANIFICADO";
