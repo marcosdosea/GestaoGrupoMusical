@@ -19,9 +19,11 @@ namespace GestaoGrupoMusicalWeb.Models
         [Required]
         [Display(Name = "CNPJ")]
         [StringLength(14, MinimumLength = 14, ErrorMessage ="O campo CNPJ deve ter 14 caracteres")]
+        [RegularExpression(@"^\d{14}$", ErrorMessage = "CNPJ inválido")]
         public string Cnpj { get; set; } = null!;
         [Display(Name = "CEP")]
-        [StringLength(8, MinimumLength = 8,ErrorMessage ="O campo CEP deve ter 14 caracteres")]
+        [StringLength(8, MinimumLength = 8,ErrorMessage ="O campo CEP deve ter 8 caracteres")]
+        [RegularExpression(@"^\d{5}-\d{3}$", ErrorMessage = "O CEP deve estar no formato 00000-000.")]
         public string? Cep { get; set; }
         [Display(Name ="Rua")]
         [StringLength(100, MinimumLength = 5, ErrorMessage ="O campo rua deve ter entre 5 a 100 caracteres")]
@@ -48,9 +50,11 @@ namespace GestaoGrupoMusicalWeb.Models
         [Display(Name = "Facebook")]
         public string? Facebook { get; set; }
         [Display(Name = "Telefone 1")]
+        [RegularExpression(@"^\(\d{2}\)\d{5}-\d{4}$", ErrorMessage = "O telefone deve estar no formato (XX) XXXXX-XXXX.")]
         [StringLength(20)]
         public string? Telefone1 { get; set; }
         [Display(Name = " Telefone 2")]
+        [RegularExpression(@"^\(\d{2}\)\d{5}-\d{4}$", ErrorMessage = "O telefone deve estar no formato (XX) XXXXX-XXXX.")]
         [StringLength (20)]
         public string? Telefone2 { get; set; }
         [Display(Name = "Banco")]
