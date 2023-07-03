@@ -48,6 +48,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(GrupoMusicalViewModel grupoMusicalViewModel)
         {
+            grupoMusicalViewModel.Cnpj = grupoMusicalViewModel.Cnpj.Replace(".", string.Empty).Replace("-",string.Empty).Replace("/", string.Empty);
+            grupoMusicalViewModel.Cep = grupoMusicalViewModel.Cep.Replace("-", string.Empty);
             if (ModelState.IsValid)
             {
                 var grupoModel = _mapper.Map<Grupomusical>(grupoMusicalViewModel);
