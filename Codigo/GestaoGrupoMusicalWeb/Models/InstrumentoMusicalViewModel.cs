@@ -19,7 +19,7 @@ namespace GestaoGrupoMusicalWeb.Models
         [Required(ErrorMessage ="A data é obrigatória")]
         public DateTime DataAquisicao { get; set; }
 
-        [Required(ErrorMessage = "O campo {0} é obrigatório")]
+        [Required]
         [Display(Name = "Disponível")]
         public string Status { get; set; } = "DISPONIVEL";
 
