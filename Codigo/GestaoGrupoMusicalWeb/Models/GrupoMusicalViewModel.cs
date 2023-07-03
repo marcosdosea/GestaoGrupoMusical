@@ -18,12 +18,12 @@ namespace GestaoGrupoMusicalWeb.Models
         public string RazaoSocial { get; set; } = null!;
         [Required]
         [Display(Name = "CNPJ")]
-        [StringLength(14, MinimumLength = 14, ErrorMessage ="O campo CNPJ deve ter 14 caracteres")]
-        [RegularExpression(@"^\d{14}$", ErrorMessage = "CNPJ inválido")]
+        [RegularExpression(@"^\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}$", ErrorMessage = "CNPJ inválido")]
+        [StringLength(18, MinimumLength = 18, ErrorMessage ="O campo CNPJ deve ter 14 caracteres")]
         public string Cnpj { get; set; } = null!;
         [Display(Name = "CEP")]
-        [StringLength(8, MinimumLength = 8,ErrorMessage ="O campo CEP deve ter 8 caracteres")]
         [RegularExpression(@"^\d{5}-\d{3}$", ErrorMessage = "O CEP deve estar no formato 00000-000.")]
+        [StringLength(9, MinimumLength = 9,ErrorMessage ="O campo CEP deve ter 8 caracteres")]
         public string? Cep { get; set; }
         [Display(Name ="Rua")]
         [StringLength(100, MinimumLength = 5, ErrorMessage ="O campo rua deve ter entre 5 a 100 caracteres")]
