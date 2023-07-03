@@ -26,25 +26,32 @@
                     var mark = "";
                     var hide = "";
 
-                    if (Model.Status.SequenceEqual("DANIFICADO"))
+                    if (Model.Status.SequenceEqual("DISPONIVEL"))
                     {
-                        mark = "checked";
+                        mark = "false";
+                    }
+                    else if (Model.Status.SequenceEqual("DANIFICADO"))
+                    {
+                        mark = "true";
                     }
                     else if (Model.Status.SequenceEqual("EMPRESTADO"))
                     {
-                        mark = "hidden";
+                        //mark = "hidden";
                         hide = "hidden";
                     }
                 }
-                <input type="checkbox" id="Status" name="Status" value="" oninput="changeValue()" @mark />
+                <input type="checkbox" id="Status" name="Status" value="DANIFICADO" checked=@mark onclick="changeValue()" @hide  />
                 <label for="Status" @hide>Danificado</label>
 
                 <script>
                     function changeValue(){
-                        if (document.getElementById("Status").checked){
-                            document.getElementById("Status").setAttribute("value", "DANIFICADO");
+                        alert(document.getElementById("Status").getAttribute("checked"));
+                        if (document.getElementById("Status").checked) {
+                            document.getElementById("Status").value = "DANIFICADO";
+                            alert(document.getElementById("Status").value);
                         }else{
-                            document.getElementById("Status").setAttribute("value", "DISPONIVEL");
+                            document.getElementById("Status").value = "DISPONIVEL";
+                            alert(document.getElementById("Status").value);
                         }
                         
                     }
