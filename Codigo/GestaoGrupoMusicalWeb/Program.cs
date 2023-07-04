@@ -67,6 +67,7 @@ namespace GestaoGrupoMusicalWeb
             builder.Services.AddTransient<IInstrumentoMusicalService, InstrumentoMusicalService>();
             builder.Services.AddScoped<IMovimentacaoInstrumentoService, MovimentacaoInstrumentoService>();
             builder.Services.AddTransient<IManequimService, ManequimService>();
+            builder.Services.AddTransient<IInformativoService, InformativoService>();
 
            
             var app = builder.Build();
