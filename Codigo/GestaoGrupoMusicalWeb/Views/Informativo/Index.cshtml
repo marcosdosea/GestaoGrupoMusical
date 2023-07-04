@@ -4,10 +4,8 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
-
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Criar Informativo</a>
 </p>
 <table class="table">
     <thead>
@@ -49,9 +47,9 @@
                 @Html.DisplayFor(modelItem => item.EntregarAssociadosAtivos)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new {  idGrupoMusical=item.IdGrupoMusical,idPessoa=item.IdPessoa  }) |
-                    @Html.ActionLink("Details", "Details", new { idGrupoMusical=item.IdGrupoMusical,idPessoa=item.IdPessoa }) |
-                    @Html.ActionLink("Delete", "Delete", new { idGrupoMusical=item.IdGrupoMusical,idPessoa=item.IdPessoa })
+                @Html.ActionLink("Editar", "Edit", new {  idGrupoMusical=item.IdGrupoMusical,idPessoa=item.IdPessoa  }) |
+                    @Html.ActionLink("Detalhes", "Details", new { idGrupoMusical=item.IdGrupoMusical,idPessoa=item.IdPessoa }) |
+                    @Html.ActionLink("Apagar", "Delete", new { idGrupoMusical=item.IdGrupoMusical,idPessoa=item.IdPessoa })
             </td>
         </tr>
 }
