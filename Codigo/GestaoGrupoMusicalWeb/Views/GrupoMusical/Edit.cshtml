@@ -23,12 +23,12 @@
             </div>
             <div class="form-group">
                 <label asp-for="Cnpj" class="control-label"></label>
-                <input asp-for="Cnpj" class="form-control" />
+                <input asp-for="Cnpj" id="campoCnpj" class="form-control" />
                 <span asp-validation-for="Cnpj" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Cep" class="control-label"></label>
-                <input asp-for="Cep" class="form-control" />
+                <input asp-for="Cep" id="campoCep" class="form-control" />
                 <span asp-validation-for="Cep" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -78,12 +78,12 @@
             </div>
             <div class="form-group">
                 <label asp-for="Telefone1" class="control-label"></label>
-                <input asp-for="Telefone1" class="form-control" />
+                <input asp-for="Telefone1" id="campoTelefone1" class="form-control" />
                 <span asp-validation-for="Telefone1" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Telefone2" class="control-label"></label>
-                <input asp-for="Telefone2" class="form-control" />
+                <input asp-for="Telefone2" id="campoTelefone2" class="form-control" />
                 <span asp-validation-for="Telefone2" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -123,5 +123,13 @@
 </div>
 
 @section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#campoCnpj").inputmask("99.999.999/9999-99");
+            $("#campoCep").inputmask("99999-999");
+            $("#campoTelefone1").inputmask("(99)99999-9999");
+            $("#campoTelefone2").inputmask("(99)99999-9999");
+        });
+    </script>
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
