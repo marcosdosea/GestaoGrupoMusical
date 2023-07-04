@@ -90,14 +90,19 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(int id, InstrumentoMusicalViewModel instrumentoMusicalViewModel)
         {
-            if(!instrumentoMusicalViewModel.IsDanificado)
+
+            if(instrumentoMusicalViewModel.IsDanificado != null)
             {
-                instrumentoMusicalViewModel.Status = "DANIFICADO";
+                if (instrumentoMusicalViewModel.IsDanificado == true)
+                {
+                    instrumentoMusicalViewModel.Status = "DANIFICADO";
+                }
+                else
+                {
+                    instrumentoMusicalViewModel.Status = "DISPONIVEL";
+                }
             }
-            else
-            {
-                instrumentoMusicalViewModel.Status = "DISPONIVEL";
-            }
+            
             if (ModelState.IsValid)
             {
                 var instrumentoMusical = _mapper.Map<Instrumentomusical>(instrumentoMusicalViewModel);

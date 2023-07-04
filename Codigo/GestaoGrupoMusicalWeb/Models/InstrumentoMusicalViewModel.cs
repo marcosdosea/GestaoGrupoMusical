@@ -31,6 +31,8 @@ namespace GestaoGrupoMusicalWeb.Models
         public int IdGrupoMusical { get; set; }
 
         public SelectList? ListaInstrumentos { get; set; }
-        public bool IsDanificado { get; set; } = true;
+
+        [Display(Name = "Danificado")]
+        public bool? IsDanificado { get; set; } = null; 
     }
 }

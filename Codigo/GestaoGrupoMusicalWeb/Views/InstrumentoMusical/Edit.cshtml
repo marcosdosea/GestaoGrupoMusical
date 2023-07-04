@@ -34,10 +34,16 @@
             @if (Model.Status != "EMPRESTADO")
             {
                 <div class="form-check">
-                    <input asp-for="IsDanificado" class="form-check-input" type="checkbox" value=@Model.IsDanificado id="flexCheckChecked" checked>
-                    <label asp-for="Status" class="form-check-label" for="flexCheckChecked"></label>
+                    <!-- <input asp-for="IsDanificado" checked="" /> -->
+                    <!-- <input asp-for="IsDanificado" name="IsDanificado" type="hidden" value="false" id="flexCheckChecked" /> -->
+                    @Html.CheckBox("IsDanificado", (Model.Status.Equals("DANIFICADO")) ? true : false )
+                    <label asp-for="IsDanificado" class="form-check-label" for="flexCheckChecked"></label>
                     <span asp-validation-for="Status" class="text-danger"></span>
                 </div>
+            }
+            else
+            {
+                <input asp-for="IsDanificado" value="null" hidden />
             }
             <div class="form-group">
                 <input type="submit" value="Salvar" class="btn btn-primary" />
