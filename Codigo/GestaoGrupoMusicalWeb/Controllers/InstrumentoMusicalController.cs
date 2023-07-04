@@ -162,20 +162,20 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         Notificar("Instrumento movimentado com sucesso", Notifica.Sucesso);
                         return RedirectToAction(nameof(Movimentar));
                     case 400:
-                        Notificar("Não é possível emprestar um instrumento danificado", Notifica.Alerta);
+                        Notificar("Não é possível <b>Emprestar</b> um instrumento <b>Danificado</b>", Notifica.Alerta);
                         break;
                     case 401:
                         if (movimentacao.TipoMovimento == "EMPRESTIMO")
                         {
-                            Notificar("Não é possível emprestar um instrumento que está em situação de empréstimo", Notifica.Alerta);
+                            Notificar("Não é possível <b>Emprestar</b> um instrumento que não está <b>Disponível</b>", Notifica.Alerta);
                         }
                         else
                         {
-                            Notificar("Não é possível devolver um instrumento que não está em situação de empréstimo", Notifica.Alerta);
+                            Notificar("Não é possível <b>Devolver</b> um instrumento que não está <b>Emprestado</b>", Notifica.Alerta);
                         }
                         break;
                     case 500:
-                        Notificar("Desculpe, ocorreu um erro durante a movimentação do instrumento", Notifica.Erro);
+                        Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Movimentação</b> do instrumento, se voltar a ocorrer entre em contato com o suporte", Notifica.Erro);
                     break;
                 }
             }
