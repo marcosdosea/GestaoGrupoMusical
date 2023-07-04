@@ -12,11 +12,11 @@ namespace Service
 {
     public class InformativoService : IInformativoService
     {
-            private readonly GrupoMusicalContext _context;
-            public InformativoService(GrupoMusicalContext context)
-            {
-                _context = context;
-            }
+        private readonly GrupoMusicalContext _context;
+        public InformativoService(GrupoMusicalContext context)
+        {
+            _context = context;
+        }
 
         public async Task<bool> Create(Informativo informativo)
         {
@@ -69,6 +69,20 @@ namespace Service
         {
             return await _context.Informativos.AsNoTracking().ToListAsync();
         }
+
+        public async Task<IEnumerable<InformativoDTO>> GetAllDTO()
+        {
+            var query = _context.Informativos
+                .OrderBy(g => g.Data)
+                .Select(g =>
+              new InformativoDTO
+              {
+                  Data = g.Data,
+                  Mensagem = g.Mensagem
+              }).AsNoTracking().ToListAsync();
+            return await query;
+        }
+
     }
-    }
+}
 

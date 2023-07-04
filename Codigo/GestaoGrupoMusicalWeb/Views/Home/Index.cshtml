@@ -81,3 +81,42 @@
     </tbody>
 </table>
 
+<div class="d-flex justify-content-between align-items-center">
+    <h5>Próximos Informativos</h5>
+    <a role="button" class="btn btn-secondary m-3" asp-controller="Informativo" asp-action="Create">Novo Ensaio</a>
+</div>
+<table class="table">
+    <thead>
+        <tr class="bg-danger opacity-75">
+            <th class="px-3 border-0">
+                <span class="text-white">Data</span>
+            </th>
+            <th class="px-3 border-0">
+                <span class="text-white">Informativo</span>
+            </th>
+            <th class="px-3 border-0">
+                <span class="text-white">Açoes</span>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Informativo)
+        {
+            <tr class="border-bottom border-danger border-opacity-75 p-3 align-middle">
+                <td class="p-3">
+                    @item.Data
+                </td>
+                <td class="p-3">
+                    @item.Mensagem
+                </td>
+                <td class="d-flex justify-content-between border-0 p-3">
+                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="" asp-action=""><i class="fa-solid fa-list-check"> </i> Frequência </a>
+                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="" asp-action=""><i class="fa-solid fa-file"> </i> Detalhes </a>
+                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="" asp-action=""><i class="fa-solid fa-pen-to-square"> </i> Editar </a>
+                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="" asp-action=""><i class="fa-solid fa-xmark"> </i> Excluir </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
