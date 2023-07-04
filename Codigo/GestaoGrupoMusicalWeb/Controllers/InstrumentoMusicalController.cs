@@ -182,8 +182,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         }
                         break;
                     case 500:
-                        Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Movimentação</b> do instrumento, se voltar a ocorrer entre em contato com o suporte", Notifica.Erro);
-                    break;
+                        Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Movimentação</b> do instrumento, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                        break;
                 }
             }
             return View(movimentacaoPost);
