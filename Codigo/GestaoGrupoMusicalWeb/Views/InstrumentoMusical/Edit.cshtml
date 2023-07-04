@@ -22,14 +22,6 @@
                 <span asp-validation-for="DataAquisicao" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <select asp-for="Status">
-                    <option value="DISPONIVEL">Disponível</option>
-                    <option value="DANIFICADO">Danificado</option>
-                </select>
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="IdTipoInstrumento" class="control-label"></label>
                 <select asp-for="IdTipoInstrumento" asp-items="@Model.ListaInstrumentos" class="form-control"></select>
                 <span asp-validation-for="IdTipoInstrumento" class="text-danger"></span>
@@ -39,6 +31,20 @@
                 <input asp-for="IdGrupoMusical" class="form-control" />
                 <span asp-validation-for="IdGrupoMusical" class="text-danger"></span>
             </div>
+            @if (Model.Status != "EMPRESTADO")
+            {
+                <div class="form-check">
+                    <!-- <input asp-for="IsDanificado" checked="" /> -->
+                    <!-- <input asp-for="IsDanificado" name="IsDanificado" type="hidden" value="false" id="flexCheckChecked" /> -->
+                    @Html.CheckBox("IsDanificado", (Model.Status.Equals("DANIFICADO")) ? true : false )
+                    <label asp-for="IsDanificado" class="form-check-label" for="flexCheckChecked"></label>
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
+            }
+            else
+            {
+                <input asp-for="IsDanificado" value="null" hidden />
+            }
             <div class="form-group">
                 <input type="submit" value="Salvar" class="btn btn-primary" />
             </div>

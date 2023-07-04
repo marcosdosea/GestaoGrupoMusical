@@ -20,7 +20,8 @@ namespace GestaoGrupoMusicalWeb.Models
         public DateTime DataAquisicao { get; set; }
 
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
-        public string Status { get; set; }
+        [Display(Name = "Disponível")]
+        public string Status { get; set; } = "DISPONIVEL";
 
         [Display(Name = "Instrumento")]
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
@@ -30,5 +31,8 @@ namespace GestaoGrupoMusicalWeb.Models
         public int IdGrupoMusical { get; set; }
 
         public SelectList? ListaInstrumentos { get; set; }
+
+        [Display(Name = "Danificado")]
+        public bool? IsDanificado { get; set; } = null; 
     }
 }
