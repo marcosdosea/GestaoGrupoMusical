@@ -9,9 +9,9 @@ namespace Core.Service
         /// </summary>
         /// <param name="movimentacao"></param>
         /// <returns>
-        /// 100 - Ação de emprestimo/devolução para instrumento já emprestado/devolvido <para />
         /// 200 - Sucesso <para />
         /// 400 - Instrumento com status danificado <para />
+        /// 401 - Ação de emprestimo/devolução para instrumento já emprestado/devolvido <para />
         /// 500 - Erro interno
         /// </returns>
         Task<int> CreateAsync(Movimentacaoinstrumento movimentacao);

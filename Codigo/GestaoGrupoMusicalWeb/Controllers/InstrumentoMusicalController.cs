@@ -146,41 +146,40 @@ namespace GestaoGrupoMusicalWeb.Controllers
             movimentacaoPost.ListaAssociado = new SelectList(_pessoa.GetAll(), "Id", "Nome");
             movimentacaoPost.Movimentacoes = await _movimentacaoInstrumento.GetAllByIdInstrumento(movimentacaoPost.IdInstrumentoMusical);
 
-            try
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
+                var movimentacao = new Movimentacaoinstrumento
                 {
-                    var movimentacao = new Movimentacaoinstrumento
-                    {
-                        Data = movimentacaoPost.Data,
-                        IdInstrumentoMusical = movimentacaoPost.IdInstrumentoMusical,
-                        IdAssociado = movimentacaoPost.IdAssociado,
-                        IdColaborador = movimentacaoPost.IdColaborador,
-                        TipoMovimento = movimentacaoPost.Movimentacao
-                    };
-                    switch (await _movimentacaoInstrumento.CreateAsync(movimentacao))
-                    {
-                        case 200:
-                            Notificar("Instrumento movimentado com sucesso", Notifica.Sucesso);
-                            return RedirectToAction(nameof(Movimentar));
-                        break;
-                        case 200:
-                            Notificar("Instrumento movimentado com sucesso", Notifica.Sucesso);
-                            return RedirectToAction(nameof(Movimentar));
-                        break;
-                    }
-                    if (await _movimentacaoInstrumento.Create(movimentacao))
-                    {
+                    Data = movimentacaoPost.Data,
+                    IdInstrumentoMusical = movimentacaoPost.IdInstrumentoMusical,
+                    IdAssociado = movimentacaoPost.IdAssociado,
+                    IdColaborador = movimentacaoPost.IdColaborador,
+                    TipoMovimento = movimentacaoPost.Movimentacao
+                };
+                switch (await _movimentacaoInstrumento.CreateAsync(movimentacao))
+                {
+                    case 200:
                         Notificar("Instrumento movimentado com sucesso", Notifica.Sucesso);
                         return RedirectToAction(nameof(Movimentar));
-                    }
+                    case 400:
+                        Notificar("Não é possível emprestar um instrumento danificado", Notifica.Alerta);
+                        break;
+                    case 401:
+                        if (movimentacao.TipoMovimento == "EMPRESTIMO")
+                        {
+                            Notificar("Não é possível emprestar um instrumento que está em situação de empréstimo", Notifica.Alerta);
+                        }
+                        else
+                        {
+                            Notificar("Não é possível devolver um instrumento que não está em situação de empréstimo", Notifica.Alerta);
+                        }
+                        break;
+                    case 500:
+                        Notificar("Desculpe, ocorreu um erro durante a movimentação do instrumento", Notifica.Erro);
+                    break;
                 }
-                return View(movimentacaoPost);
             }
-            catch
-            {
-                return View(movimentacaoPost);
-            }
+            return View(movimentacaoPost);
         }
 
         [HttpPost]
