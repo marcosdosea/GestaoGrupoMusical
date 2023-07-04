@@ -15,7 +15,7 @@ namespace Service
             _context = context;
         }
 
-        public async Task<bool> Create(Movimentacaoinstrumento movimentacao)
+        public async Task<int> CreateAsync(Movimentacaoinstrumento movimentacao)
         {
             using var transaction = _context.Database.BeginTransaction();
 
@@ -55,7 +55,7 @@ namespace Service
                             await EmailService.Enviar(email);
                         }
 
-                        return true;
+                        return 200;
                     }
                     else if(movimentacao.TipoMovimento == "DEVOLUCAO" && instrumento.Status == "EMPRESTADO")
                     {
@@ -85,18 +85,20 @@ namespace Service
                             await EmailService.Enviar(email);
                         }
 
-                        return true;
+                        return 200;
                     }
+
+                    return 100;
                 }
                 
                 await transaction.RollbackAsync();
-                return false;
+                return 400;
                 
             }
             catch 
             {
                 await transaction.RollbackAsync();
-                return false;
+                return 500;
             }
         }
 
