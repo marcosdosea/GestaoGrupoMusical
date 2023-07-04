@@ -4,7 +4,17 @@ namespace Core.Service
 {
     public interface IMovimentacaoInstrumentoService
     {
-        Task<bool> Create(Movimentacaoinstrumento movimentacao);
+        /// <summary>
+        /// Cadastra uma movimentação no banco de dados
+        /// </summary>
+        /// <param name="movimentacao"></param>
+        /// <returns>
+        /// 100 - Ação de emprestimo/devolução para instrumento já emprestado/devolvido <para />
+        /// 200 - Sucesso <para />
+        /// 400 - Instrumento com status danificado <para />
+        /// 500 - Erro interno
+        /// </returns>
+        Task<int> CreateAsync(Movimentacaoinstrumento movimentacao);
 
         Task<Movimentacaoinstrumento?> GetEmprestimoByIdInstrumento(int idInstrumento);
 
