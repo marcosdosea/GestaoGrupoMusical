@@ -159,7 +159,14 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 switch (await _movimentacaoInstrumento.CreateAsync(movimentacao))
                 {
                     case 200:
-                        Notificar("Instrumento movimentado com sucesso", Notifica.Sucesso);
+                        if (movimentacao.TipoMovimento == "EMPRESTIMO")
+                        {
+                            Notificar("Instrumento <b>Emprestado</b> com <b>Sucesso</b>", Notifica.Sucesso);
+                        }
+                        else
+                        {
+                            Notificar("Instrumento <b>Devolvido</b> com <b>Sucesso</b>", Notifica.Sucesso);
+                        }
                         return RedirectToAction(nameof(Movimentar));
                     case 400:
                         Notificar("Não é possível <b>Emprestar</b> um instrumento <b>Danificado</b>", Notifica.Alerta);
