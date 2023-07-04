@@ -158,9 +158,20 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         IdColaborador = movimentacaoPost.IdColaborador,
                         TipoMovimento = movimentacaoPost.Movimentacao
                     };
+                    switch (await _movimentacaoInstrumento.CreateAsync(movimentacao))
+                    {
+                        case 200:
+                            Notificar("Instrumento movimentado com sucesso", Notifica.Sucesso);
+                            return RedirectToAction(nameof(Movimentar));
+                        break;
+                        case 200:
+                            Notificar("Instrumento movimentado com sucesso", Notifica.Sucesso);
+                            return RedirectToAction(nameof(Movimentar));
+                        break;
+                    }
                     if (await _movimentacaoInstrumento.Create(movimentacao))
                     {
-                        Notificar("Instrumento movimentado com sucesso", Notifica.Alerta);
+                        Notificar("Instrumento movimentado com sucesso", Notifica.Sucesso);
                         return RedirectToAction(nameof(Movimentar));
                     }
                 }
