@@ -11,13 +11,15 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IEventoService _evento;
         private readonly IEnsaioService _ensaioService;
+        private readonly IInformativoService _informativoService;
         private readonly IMapper _mapper;
 
-        public HomeController(ILogger<HomeController> logger, IEventoService evento, IEnsaioService ensaioService, IMapper mapper)
+        public HomeController(ILogger<HomeController> logger, IEventoService evento, IEnsaioService ensaioService, IInformativoService informativoService,IMapper mapper)
         {
             _logger = logger;
             _evento = evento;
             _ensaioService = ensaioService;
+            _informativoService = informativoService;
             _mapper = mapper;
         }
 
@@ -27,12 +29,15 @@ namespace GestaoGrupoMusicalWeb.Controllers
             var EventoViewDTO = _mapper.Map<List<EventoViewModelDTO>>(listaEvento);
             var listaEnsaio = await _ensaioService.GetAllDTO();
             var EnsaioViewDTO = _mapper.Map<List<EnsaioViewModelDTO>>(listaEnsaio);
+            var listaIformativo = await _informativoService.GetAllDTO();
+            var InformativoDTO = _mapper.Map<List<InformativoViewModelDTO>>(listaIformativo);
 
 
             var viewModel = new TelaPrincipalViewModel
             {
                 Ensaio = EnsaioViewDTO,
-                Evento = EventoViewDTO
+                Evento = EventoViewDTO,
+                Informativo = InformativoDTO
             };
 
 
