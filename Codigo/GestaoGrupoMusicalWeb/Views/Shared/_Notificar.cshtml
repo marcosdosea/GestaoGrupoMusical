@@ -2,7 +2,7 @@
 {
     <div class="alert alert-@TempData["alertType"] alert-dismissible fade show d-flex align-items-center" role="alert">
         <i class="@TempData["alertIcon"] fs-5"></i>
-        <span class="ms-2">@TempData["alertText"]</span>
+        <span class="ms-3">@(Html.Raw(TempData["alertText"]?.ToString()))</span>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 }
