@@ -96,5 +96,21 @@ namespace Service
                 }).AsNoTracking().ToListAsync();
             return await query;
         }
+
+        public async Task<IEnumerable<EnsaioIndexDTO>> GetAllIndexDTO()
+        {
+            var query = _context.Ensaios
+                .OrderBy(g => g.DataHoraInicio)
+                .Select(g => new EnsaioIndexDTO
+                {
+                    DataHoraInicio = g.DataHoraInicio,
+                    Tipo = g.Tipo,
+                    Local = g.Local,
+                    PresencaObrigatoria = g.PresencaObrigatoria
+
+                }
+                ).AsNoTracking().ToListAsync();
+            return await query;
+        }
     }
 }
