@@ -1,20 +1,15 @@
-﻿@model IEnumerable<GestaoGrupoMusicalWeb.Models.EnsaioViewModelIndexDTO>
+﻿@model IEnumerable<Core.DTO.EnsaioIndexDTO>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Ensaio";
 }
 
-<h1>Index</h1>
-
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Novo ensaio</a>
 </p>
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
             <th>
                 @Html.DisplayNameFor(model => model.DataHoraInicio)
             </th>
@@ -34,9 +29,6 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.DataHoraInicio)
             </td>
             <td>
@@ -45,13 +37,21 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Local)
             </td>
+                @{
+                    String presenca = String.Empty;
+                    if (item.PresencaObrigatoria == 1){
+                        presenca = "Sim";
+                    }else{
+                        presenca = "Não";
+                    }
+            }
             <td>
-                @Html.DisplayFor(modelItem => item.PresencaObrigatoria)
+                @Html.DisplayFor(modelItem => presenca)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new {  id=item.Id  }) |
-                @Html.ActionLink("Details", "Details", new {  id=item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+                @Html.ActionLink("Editar", "Edit", new {  id=item.Id }) |
+                @Html.ActionLink("Detalhes", "Details", new {  id=item.Id }) |
+                @Html.ActionLink("Excluir", "Delete", new {  id=item.Id })
             </td>
         </tr>
 }
