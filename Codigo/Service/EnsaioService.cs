@@ -103,13 +103,13 @@ namespace Service
                 .OrderBy(g => g.DataHoraInicio)
                 .Select(g => new EnsaioIndexDTO
                 {
+                    Id = g.Id,
                     DataHoraInicio = g.DataHoraInicio,
                     Tipo = g.Tipo,
                     Local = g.Local,
                     PresencaObrigatoria = g.PresencaObrigatoria
 
-                }
-                ).AsNoTracking().ToListAsync();
+                }).AsNoTracking().ToListAsync();
             return await query;
         }
     }
