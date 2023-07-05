@@ -26,7 +26,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> Index()
         {
             var ensaios = await _ensaio.GetAllIndexDTO();
-            return View(_mapper.Map<IEnumerable<EnsaioViewModelIndexDTO>>(ensaios));
+            return View(ensaios);
         }
 
         // GET: EnsaioController/Details/5
