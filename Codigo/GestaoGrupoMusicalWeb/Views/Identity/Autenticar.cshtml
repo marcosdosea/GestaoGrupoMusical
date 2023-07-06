@@ -2,11 +2,9 @@
 @{
     ViewData["Title"] = "Autenticar";
 }
-
-<form asp-controller="Identity" asp-action="Autenticar">
-    <div class="d-flex justify-content-between align-items-center">
-
-        <div class="float-start m-3 mt-0">
+<div class="d-flex justify-content-between align-items-center">
+    <form asp-controller="Identity" asp-action="Autenticar">
+        <div class="float-start col m-3 mt-0">
             <div class="d-flex justify-content-center m-0 mb-4">
                 <img src="~/assets/logo_batalase_SF.png" alt="Logo do batalá - SE" class="img-fluid" width="50%">
             </div>
@@ -35,15 +33,13 @@
             <button class="w-100 btn btn-lg btn-secondary mt-4" type="submit">Entrar</button>
             <a class="w-100 btn btn-lg btn-outline-secondary mt-2" role="button" asp-controller="Identity" asp-action="Cadastrar">Criar uma nova conta</a>
         </div>
+    </form>
 
-        <div class="float-end">
-            <img src="~/assets/imagem de bem vindo.png" width="100%" height="100%">
-        </div>
+    <div class="float-end col">
+        <img src="~/assets/imagem de bem vindo.png" class="float-end">
+    </div>
 
-   </div>
-
-</form>
-
+</div>
 @section Scripts {
     <script>
         $(document).ready(function () {
