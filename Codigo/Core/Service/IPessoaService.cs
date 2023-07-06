@@ -27,7 +27,7 @@ namespace Core.Service
         IEnumerable<Papelgrupo> GetAllPapelGrupo();
         void RemoverAssociado(Pessoa pessoa, String? motivoSaida);
 
-        Task<bool> VerificCPF(string cpf);
+        bool VerificCPF(string cpf);
 
     }
 }
