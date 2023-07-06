@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Core;
+using Core.Service;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -10,6 +12,13 @@ namespace Util
 {
     public class Methods
     {
+        public IPessoaService _pessoaService;
+
+        public Methods(IPessoaService pessoaService)
+        {
+            _pessoaService = pessoaService;
+        }
+
         public static string RemoveSpecialsCaracts(string poluatedString) => Regex.Replace(poluatedString, @"[^0-9a-zA-Z_]", string.Empty);
 
         public static string RemoverAcentos(string texto)
@@ -44,12 +53,15 @@ namespace Util
             return ret;
         }
 
-        public static bool ValidarCpf(string cpf)
+        
+
+        public bool ValidarCpf(string cpf)
         {
             cpf = RemoveNaoNumericos(cpf);
 
             if (string.IsNullOrEmpty(cpf))
                 return false;
+
 
             var multiplicador1 = new int[9] { 10, 9, 8, 7, 6, 5, 4, 3, 2 };
             var multiplicador2 = new int[10] { 11, 10, 9, 8, 7, 6, 5, 4, 3, 2 };
@@ -60,6 +72,14 @@ namespace Util
             cpf = cpf.Trim();
             cpf = cpf.Replace(".", "").Replace("-", "");
 
+
+                var cpfRepetido = _pessoaService.VerificCPF(cpf);
+
+                if (cpfRepetido)
+                {
+
+                }
+         
             if (cpf.Length != 11)
                 return false;
 
