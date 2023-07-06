@@ -239,13 +239,13 @@ namespace Service
         /// <param name="cpf"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public Task<bool> VerificCPF(string cpf)
+        public async Task<bool> VerificCPF(string cpf)
         {
             var quary = _context.Pessoas
                 .Where(p => p.Cpf == cpf);
             if (quary != null)
-                return Task.FromResult(true);
-            return Task.FromResult(false);                
+                return true;
+            return false;                
         }
     }
 }
