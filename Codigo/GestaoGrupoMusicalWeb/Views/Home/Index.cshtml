@@ -34,7 +34,7 @@
                     <a role="button" class="btn btn-secondary btn-sm" asp-controller="" asp-action=""><i class="fa-solid fa-list-check"> </i> Frequência </a>
                     <a role="button" class="btn btn-secondary btn-sm" asp-controller="Evento" asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-file"> </i> Detalhes </a>
                     <a role="button" class="btn btn-secondary btn-sm" asp-controller="Evento" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"> </i> Editar </a>
-                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="" asp-action=""><i class="fa-solid fa-xmark"> </i> Excluir </a>
+                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="Evento" asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-xmark"> </i> Excluir </a>
                 </td>
             </tr>
         }
