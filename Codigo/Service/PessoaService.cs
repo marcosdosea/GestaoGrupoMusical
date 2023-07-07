@@ -92,7 +92,7 @@ namespace Service
                     pessoa.IsentoPagamento = 1;
                     pessoa.Telefone1 = "";
 
-                    Create(pessoa);
+                    await Create(pessoa);
                 }
                 else if (pessoaF.IdGrupoMusical == pessoa.IdGrupoMusical)
                 {
