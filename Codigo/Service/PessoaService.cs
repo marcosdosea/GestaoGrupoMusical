@@ -131,6 +131,8 @@ namespace Service
                             await _roleManager.CreateAsync(new IdentityRole("ADMINISTRADOR GRUPO"));
                         }
                         await _userManager.AddToRoleAsync(user, "ADMINISTRADOR GRUPO");
+
+                        await NotificarCadastroAdmGrupoAsync(pessoa);
                     }
 
                     //id para adm de grupo == 3
@@ -274,7 +276,7 @@ namespace Service
             
         }
 
-        public async Task<bool> NotificarCadastroAdmGrupo(Pessoa pessoa)
+        public async Task<bool> NotificarCadastroAdmGrupoAsync(Pessoa pessoa)
         {
             try
             {

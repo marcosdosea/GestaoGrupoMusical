@@ -27,7 +27,7 @@ namespace Core.Service
         IEnumerable<Papelgrupo> GetAllPapelGrupo();
         void RemoverAssociado(Pessoa pessoa, String? motivoSaida);
 
-        Task<bool> NotificarCadastroAdmGrupo(Pessoa pessoa);
+        Task<bool> NotificarCadastroAdmGrupoAsync(Pessoa pessoa);
 
     }
 }
