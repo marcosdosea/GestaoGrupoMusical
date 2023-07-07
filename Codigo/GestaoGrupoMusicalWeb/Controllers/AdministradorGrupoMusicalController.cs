@@ -52,7 +52,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: AdministradorGrupoMusicalController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(AdministradorModel admViewModel)
+        public async Task<ActionResult> Create(AdministradorModel admViewModel)
         {
             if (ModelState.IsValid)
             {
@@ -65,7 +65,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     IdGrupoMusical = admViewModel.IdGrupoMusical
                 };
 
-                _pessoaService.AddAdmGroup(pessoa);
+                await _pessoaService.AddAdmGroup(pessoa);
             }
             return RedirectToAction(nameof(Index), new { id=admViewModel.IdGrupoMusical });
         }

@@ -117,6 +117,8 @@ namespace Service
 
                         var userDb = await _userManager.FindByNameAsync(pessoa.Cpf);
                         await _userManager.AddToRoleAsync(userDb, "ADMINISTRADOR GRUPO");
+
+                        await NotificarCadastroAdmGrupoAsync(pessoa);
                     }
                 }
                 else if (pessoaF.IdGrupoMusical == pessoa.IdGrupoMusical)
