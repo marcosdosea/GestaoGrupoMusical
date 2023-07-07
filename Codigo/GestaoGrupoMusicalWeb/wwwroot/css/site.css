@@ -32,6 +32,7 @@ html {
 
 .form-select.input-validation-error {
     padding-right: 4.125rem;
+    border-bottom: 2px solid var(--bs-danger) !important;
     background-image: url("../icon/invalid_icon.svg"), url("../icon/select_icon.svg");
     background-position: right 0.55rem center, center right 2.25rem;
     background-size: 16px;
