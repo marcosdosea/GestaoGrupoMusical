@@ -17,14 +17,17 @@
                 <span asp-validation-for="Cpf" class="text-danger"></span>
             </div>
             <div class="col-lg-3">
-                <label asp-for="Sexo" class="control-label mb-2"></label>
+                <span class="control-label mb-2">@Html.DisplayNameFor(model => model.Sexo)</span>
                 <div class="d-flex justify-content-lg-between justify-content-around pb-1">
-                    <label>
-                        <input class="form-check-input" type="radio" asp-for="Sexo" value="M" /> Masculino
-                    </label>
-                    <label>
-                        <input class="form-check-input" type="radio" asp-for="Sexo" value="F" /> Feminino
-                    </label>
+                    @{
+                        foreach (var item in Model.SexoOptions)
+                        {
+                            <div>
+                                <input class="form-check-input" type="radio" value="@item.Value" asp-for="Sexo" id="@item.Key" />
+                                <label for="@item.Key">@item.Key</label>
+                            </div>
+                        }
+                    }
                 </div>
                 <span asp-validation-for="Sexo" class="text-danger"></span>
             </div>

@@ -31,6 +31,12 @@ namespace GestaoGrupoMusicalWeb.Models
             public string NomeGrupoMusical { get; set; } = string.Empty;
 
             public int IdGrupoMusical { get; set; }
+
+            public Dictionary<string, string> SexoOptions { get; set; } = new()
+            {
+                { "Masculino", "M" },
+                { "Feminino", "F" }
+            };
         }
 
         public AdministradorModel Administrador { get; set; } = new();
