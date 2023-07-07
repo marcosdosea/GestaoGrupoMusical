@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Service;
+using static GestaoGrupoMusicalWeb.Models.AdministradorGrupoMusicalViewModel;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -29,13 +30,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
         /// <param name="id">id do grupo o qual queremos ver os administradores</param>
         /// <param name="NomeGrupo">nome do grupo para por na view bag</param>
         /// <returns>lista de administradores</returns>
-        public async Task<ActionResult> Index(int id, string NomeGrupo)
+        public async Task<ActionResult> Index(int id, string nomeGrupo)
         {
             AdministradorGrupoMusicalViewModel administradorModel = new();
 
             administradorModel.ListaAdministrador = await _pessoaService.GetAllAdmGroup(id);
-
-            administradorModel.Administrador.ListaGrupoMusical = new SelectList(_grupoMusicalService.GetAllDTO(), "Id", "Nome");
+            administradorModel.Administrador.NomeGrupoMusical = nomeGrupo;
+            administradorModel.Administrador.IdGrupoMusical = id;
 
             return View(administradorModel);
         }
@@ -54,14 +55,14 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: AdministradorGrupoMusicalController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(AdministradorGrupoMusicalViewModel admViewModel, string nomeGrupo)
+        public ActionResult Create(AdministradorModel admViewModel)
         {
             if (ModelState.IsValid)
             {
                 var pessoa = _mapper.Map<Pessoa>(admViewModel);
                 _pessoaService.AddAdmGroup(pessoa);
             }
-            return RedirectToAction(nameof(Index), new { id=admViewModel.IdGrupoMusical, NomeGrupo=nomeGrupo});
+            return RedirectToAction(nameof(Index), new { id=admViewModel.IdGrupoMusical});
         }
 
         /// <summary>

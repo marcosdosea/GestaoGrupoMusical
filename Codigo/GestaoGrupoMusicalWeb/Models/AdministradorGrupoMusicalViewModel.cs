@@ -28,9 +28,9 @@ namespace GestaoGrupoMusicalWeb.Models
 
             [Required(ErrorMessage = "O campo {0} é obrigatório")]
             [Display(Name = "Grupo Musical")]
-            public string? IdGrupoMusical { get; set; }
+            public string NomeGrupoMusical { get; set; } = string.Empty;
 
-            public SelectList? ListaGrupoMusical { get; set; }
+            public int IdGrupoMusical { get; set; }
         }
 
         public AdministradorModel Administrador { get; set; } = new();
