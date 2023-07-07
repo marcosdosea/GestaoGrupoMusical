@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Core.DTO.AdministradorGrupoMusicalDTO>
+﻿@model AdministradorGrupoMusicalViewModel
 
 @{
     ViewData["Title"] = "Administradores do Grupo";
@@ -8,7 +8,7 @@
 <h1>@ViewBag.Nome</h1>
 
 <div>
-    @Html.Partial("Create", new GestaoGrupoMusicalWeb.Models.AdministradorGrupoMusicalViewModel())
+    <partial name="_Create" model="Model.Administrador" />
 </div>
 
 <table class="table">

@@ -33,6 +33,8 @@ namespace GestaoGrupoMusicalWeb.Models
             public SelectList? ListaGrupoMusical { get; set; }
         }
 
+        public AdministradorModel? Administrador { get; set; }
+
         public IEnumerable<AdministradorGrupoMusicalDTO>? ListaAdministrador { get; set; }
 
     }
