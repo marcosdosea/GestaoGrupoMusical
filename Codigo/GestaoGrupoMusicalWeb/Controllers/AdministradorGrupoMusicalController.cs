@@ -41,12 +41,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return View(administradorModel);
         }
 
-        // GET: AdministradorGrupoMusicalController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
         /// <summary>
         /// </summary>
         /// <param name="admViewModel">viewmodel de pessoa</param>
