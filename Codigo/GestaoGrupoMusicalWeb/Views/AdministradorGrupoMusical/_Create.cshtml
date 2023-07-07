@@ -3,22 +3,22 @@
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="NomeGrupoMusical" class="control-label"></label>
                 <input asp-for="NomeGrupoMusical" class="form-control" readonly/>
                 <span asp-validation-for="NomeGrupoMusical" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="Nome" class="control-label"></label>
                 <input asp-for="Nome" class="form-control" />
                 <span asp-validation-for="Nome" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="Cpf" class="control-label"></label>
                 <input asp-for="Cpf" class="form-control" />
                 <span asp-validation-for="Cpf" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="Sexo" class="control-label"></label>
                 <div class="d-flex justify-content-around">
                     <label>
@@ -30,7 +30,7 @@
                 </div>
                 <span asp-validation-for="Sexo" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="Email" class="control-label"></label>
                 <input asp-for="Email" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger"></span>
