@@ -32,19 +32,15 @@
             <input asp-for="Nome" class="form-control" />
             <span asp-validation-for="Nome" class="text-danger"></span>
         </div>
-        <div class="form-group mb-3">
+        <div class="row col-lg-3 mb-3">
             <label asp-for="Email" class="control-label"></label>
             <input asp-for="Email" class="form-control" />
             <span asp-validation-for="Email" class="text-danger"></span>
         </div>
-        <div class="form-group">
-            <input type="submit" value="Adicionar" class="btn btn-primary" />
-            <a asp-action="index" asp-controller="GrupoMusical" class="btn btn-secondary">Voltar</a>
-        </div>
         <div class="row">
-            <div class="d-flex justify-content-lg-end flex-column flex-lg-row">
-                <a class="btn btn-outline-secondary col-lg-5 mt-3 me-lg-3" asp-controller="InstrumentoMusical" asp-action="Index">Voltar</a>
-                <input class="btn btn-secondary col-lg-5 mt-3 ml-3" type="submit" value="Adicionar" />
+            <div class="d-flex flex-column-reverse flex-lg-row">
+                <a class="btn btn-outline-secondary col-lg-2 mt-3 me-lg-3" asp-action="index" asp-controller="GrupoMusical">Voltar</a>
+                <input class="btn btn-secondary col-lg-2 mt-3 ml-3" type="submit" value="Adicionar" />
             </div>
         </div>
     </form>
