@@ -34,8 +34,8 @@ namespace Service
         /// <returns>retorna o id referente a nova entidade criada</returns>
         public async Task<int> Create(Pessoa pessoa)
         {
-            _context.Pessoas.Add(pessoa);
-            _context.SaveChanges();
+            await _context.Pessoas.AddAsync(pessoa);
+            await _context.SaveChangesAsync();
 
             return pessoa.Id;
         }
