@@ -3,13 +3,15 @@
 
 <div class="container mb-4">
     <form asp-action="Create">
-        <div class="row col-lg-6 mb-3">
-            <label asp-for="NomeGrupoMusical" class="control-label"></label>
-            <input asp-for="NomeGrupoMusical" class="form-control" readonly />
-            <span asp-validation-for="NomeGrupoMusical" class="text-danger"></span>
+        <div class="row mb-3">
+            <div class="col-lg-6">
+                <label asp-for="NomeGrupoMusical" class="control-label"></label>
+                <input asp-for="NomeGrupoMusical" class="form-control" readonly />
+                <span asp-validation-for="NomeGrupoMusical" class="text-danger"></span>
+            </div>
         </div>
         <div class="row mb-3">
-            <div class="col-lg-3 p-0">
+            <div class="col-lg-3">
                 <label asp-for="Cpf" class="control-label"></label>
                 <input asp-for="Cpf" class="form-control" />
                 <span asp-validation-for="Cpf" class="text-danger"></span>
@@ -27,15 +29,19 @@
                 <span asp-validation-for="Sexo" class="text-danger"></span>
             </div>
         </div>
-        <div class="row col-lg-6 mb-3">
-            <label asp-for="Nome" class="control-label"></label>
-            <input asp-for="Nome" class="form-control" />
-            <span asp-validation-for="Nome" class="text-danger"></span>
+        <div class="row mb-3">
+            <div class="col-lg-6">
+                <label asp-for="Nome" class="control-label"></label>
+                <input asp-for="Nome" class="form-control" />
+                <span asp-validation-for="Nome" class="text-danger"></span>
+            </div>
         </div>
-        <div class="row col-lg-3 mb-3">
-            <label asp-for="Email" class="control-label"></label>
-            <input asp-for="Email" class="form-control" />
-            <span asp-validation-for="Email" class="text-danger"></span>
+        <div class="row mb-3">
+            <div class="col-lg-6">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
         </div>
         <input asp-for="IdGrupoMusical" type="hidden" />
         <div class="row">
