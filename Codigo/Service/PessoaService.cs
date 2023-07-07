@@ -123,7 +123,7 @@ namespace Service
                 }
                 else if (pessoaF.IdGrupoMusical == pessoa.IdGrupoMusical)
                 {
-                    var user = await _userManager.FindByNameAsync(pessoa.Cpf);
+                    var user = await _userManager.FindByNameAsync(pessoaF.Cpf);
 
                     if(user != null)
                     {
@@ -134,7 +134,28 @@ namespace Service
                         }
                         await _userManager.AddToRoleAsync(user, "ADMINISTRADOR GRUPO");
 
-                        await NotificarCadastroAdmGrupoAsync(pessoa);
+                        await NotificarCadastroAdmGrupoAsync(pessoaF);
+                    }
+                    else
+                    {
+                        user = CreateUser();
+
+                        await _userStore.SetUserNameAsync(user, pessoaF.Cpf, CancellationToken.None);
+                        var result = await _userManager.CreateAsync(user, pessoaF.Cpf);
+
+                        if (result.Succeeded)
+                        {
+                            bool roleExists = await _roleManager.RoleExistsAsync("ADMINISTRADOR GRUPO");
+                            if (!roleExists)
+                            {
+                                await _roleManager.CreateAsync(new IdentityRole("ADMINISTRADOR GRUPO"));
+                            }
+
+                            var userDb = await _userManager.FindByNameAsync(pessoaF.Cpf);
+                            await _userManager.AddToRoleAsync(userDb, "ADMINISTRADOR GRUPO");
+
+                            await NotificarCadastroAdmGrupoAsync(pessoaF);
+                        }
                     }
 
                     //id para adm de grupo == 3
