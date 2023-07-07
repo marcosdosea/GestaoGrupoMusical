@@ -15,7 +15,7 @@ namespace GestaoGrupoMusicalWeb.Models
             public string? Nome { get; set; }
 
             [Required(ErrorMessage = "O campo {0} é obrigatório.")]
-            [Display(Name = "E-mail")]
+            [Display(Name = "CPF")]
             [StringLength(15)]
             public string? Cpf { get; set; }
 
