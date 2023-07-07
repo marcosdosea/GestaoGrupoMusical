@@ -203,6 +203,11 @@ namespace Service
                 var pessoa = await _context.Pessoas.FindAsync(id);
                 if (pessoa != null)
                 {
+                    var user = await _userManager.FindByNameAsync(pessoa.Cpf);
+                    if(user != null)
+                    {
+                        await _userManager.RemoveFromRoleAsync(user, "ADMINISTRADOR GRUPO");
+                    }
                     pessoa.IdPapelGrupo = 1;
 
                     _context.Pessoas.Update(pessoa);
