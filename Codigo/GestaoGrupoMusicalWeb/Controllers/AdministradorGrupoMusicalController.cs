@@ -4,6 +4,7 @@ using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -25,12 +26,15 @@ namespace GestaoGrupoMusicalWeb.Controllers
         /// <param name="id">id do grupo o qual queremos ver os administradores</param>
         /// <param name="NomeGrupo">nome do grupo para por na view bag</param>
         /// <returns>lista de administradores</returns>
-        public ActionResult Index(int id, string NomeGrupo)
+        public async Task<ActionResult> Index(int id, string NomeGrupo)
         {
-            
-            var listaPessoas = _pessoaService.GetAllAdmGroup(id);
+            AdministradorGrupoMusicalViewModel administradorModel = new();
 
-            return View(listaPessoas);
+            administradorModel.ListaAdministrador = await _pessoaService.GetAllAdmGroup(id);
+
+            administradorModel.Administrador.ListaGrupoMusical = new SelectList();
+
+            return View(administradorModel);
         }
 
         // GET: AdministradorGrupoMusicalController/Create
