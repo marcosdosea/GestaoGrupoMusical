@@ -34,10 +34,6 @@
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input asp-for="IdGrupoMusical" class="form-control" value="@ViewBag.IdGrupoMusical" type="hidden"/>
-                <span asp-validation-for="IdGrupoMusical" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <input type="submit" value="Adicionar" class="btn btn-primary" />
                 <a asp-action="index" asp-controller="GrupoMusical" class="btn btn-secondary">Voltar</a>
             </div>
@@ -45,4 +41,3 @@
         </form>
     </div>
 </div>
-@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

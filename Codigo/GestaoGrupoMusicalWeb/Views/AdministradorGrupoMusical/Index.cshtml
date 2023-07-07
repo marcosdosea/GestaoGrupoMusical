@@ -11,3 +11,9 @@
 </div>
 
 <partial name="_TabelaAdministrador" model="Model.ListaAdministrador" />
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
