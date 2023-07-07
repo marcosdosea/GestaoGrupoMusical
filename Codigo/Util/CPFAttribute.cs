@@ -23,13 +23,18 @@ namespace Util
 
             var valueNoEspecial = Methods.RemoveSpecialsCaracts((string)value);
 
-
-
             var existe = dbContext.Pessoas.Any(p => p.Cpf == valueNoEspecial);
+            bool valido = Methods.ValidarCpf(valueNoEspecial.ToString());
             if (existe)
             {
                 return new ValidationResult(ErrorMessage);
             }
+            else if(!valido)
+            {
+                return new ValidationResult("CPF inválido");
+            }
+
+
 
             return ValidationResult.Success;
         }
