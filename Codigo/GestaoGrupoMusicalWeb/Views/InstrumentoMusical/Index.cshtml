@@ -6,26 +6,28 @@
 
 <div class="d-flex justify-content-between align-items-center">
     <h5>@ViewData["Title"]</h5>
-    <a role="button" class="btn btn-secondary" asp-controller="InstrumentoMusical" asp-action="Create">Novo Instrumento</a>
+    <a role="button" class="btn btn-secondary m-3" asp-controller="InstrumentoMusical" asp-action="Create">Novo Instrumento</a>
 </div>
 
 <div class="table-responsive-md">
     <table class="table table table-bordered mt-3">
-        <thead class="table-light">
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Patrimonio)
+        <thead>
+            <tr class="bg-danger opacity-75" >
+                <th class="px-3 border-0 w-25" >
+                    <span class="text-white">Patrimônio</span>
                 </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.NomeInstrumento)
+                <th class="px-3 border-0 w-25" >
+                    <span class="text-white">Instrumento</span>
                 </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Status)
+                <th class="px-3 border-0 w-25" >
+                    <span class="text-white">Status</span>
                 </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.NomeAssociado)
+                <th class="px-3 border-0 w-25" >
+                    <span class="text-white">Associado</span>
                 </th>
-                <th>Ações</th>
+                <th class="px-3 border-0 w-25" >
+                    <span class="text-white">Ações</span>
+                </th>
             </tr>
         </thead>
         <tbody>
