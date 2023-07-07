@@ -272,6 +272,11 @@ namespace Service
             
         }
 
+        public Task<bool> NotificarCadastroAdmGrupo(Pessoa pessoa)
+        {
+
+        }
+
         private UsuarioIdentity CreateUser()
         {
             try
