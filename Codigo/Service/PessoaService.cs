@@ -1,22 +1,28 @@
 ﻿using Core;
 using Core.DTO;
 using Core.Service;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 
 namespace Service
 {
     public class PessoaService : IPessoaService
     {
         private readonly GrupoMusicalContext _context;
+        private readonly UserManager<UsuarioIdentity> _userManager;
+        private readonly IUserStore<UsuarioIdentity> _userStore;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public PessoaService(GrupoMusicalContext context)
+        public PessoaService(GrupoMusicalContext context, 
+                            UserManager<UsuarioIdentity> userManager,
+                            IUserStore<UsuarioIdentity> userStore,
+                            RoleManager<IdentityRole> roleManager)
         {
             _context = context;
+            _userManager = userManager;
+            _userStore = userStore;
+            _roleManager = roleManager;
         }
 
         /// <summary>
@@ -93,6 +99,23 @@ namespace Service
                     pessoa.Telefone1 = "";
 
                     await Create(pessoa);
+
+                    var user = CreateUser();
+
+                    await _userStore.SetUserNameAsync(user, pessoa.Cpf, CancellationToken.None);
+                    var result = await _userManager.CreateAsync(user, pessoa.Cpf);
+
+                    if (result.Succeeded)
+                    {
+                        bool roleExists = await _roleManager.RoleExistsAsync("ADMINISTRADOR GRUPO");
+                        if (!roleExists)
+                        {
+                            await _roleManager.CreateAsync(new IdentityRole("ADMINISTRADOR GRUPO"));
+                        }
+
+                        var userDb = await _userManager.FindByNameAsync(pessoa.Cpf);
+                        await _userManager.AddToRoleAsync(userDb, "ADMINISTRADOR GRUPO");
+                    }
                 }
                 else if (pessoaF.IdGrupoMusical == pessoa.IdGrupoMusical)
                 {
@@ -235,6 +258,20 @@ namespace Service
             pessoaAssociada.DataSaida = DateTime.Now;
             Edit(pessoaAssociada);
             
+        }
+
+        private UsuarioIdentity CreateUser()
+        {
+            try
+            {
+                return Activator.CreateInstance<UsuarioIdentity>();
+            }
+            catch
+            {
+                throw new InvalidOperationException($"Can't create an instance of '{nameof(UsuarioIdentity)}'. " +
+                    $"Ensure that '{nameof(UsuarioIdentity)}' is not an abstract class and has a parameterless constructor, or alternatively " +
+                    $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
+            }
         }
     }
 }
