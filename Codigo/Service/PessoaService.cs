@@ -139,13 +139,17 @@ namespace Service
             try
             {
                 var pessoa = await _context.Pessoas.FindAsync(id);
-                pessoa.IdPapelGrupo = 1;
+                if (pessoa != null)
+                {
+                    pessoa.IdPapelGrupo = 1;
 
-                _context.Pessoas.Update(pessoa);
+                    _context.Pessoas.Update(pessoa);
 
-                _context.SaveChanges();
+                    _context.SaveChanges();
 
-                return true;
+                    return true;
+                }
+                return false;
             }
             catch
             {
