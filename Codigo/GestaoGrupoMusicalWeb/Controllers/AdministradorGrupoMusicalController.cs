@@ -27,12 +27,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         /// <returns>lista de administradores</returns>
         public ActionResult Index(int id, string NomeGrupo)
         {
-            //essas informações na viewbag serão utilizados
-            //na view para poder repassar para outros metodos
-            //como o create e delete
-            ViewBag.Nome = NomeGrupo;
-            ViewBag.IdGrupo = id;
-
+            
             var listaPessoas = _pessoaService.GetAllAdmGroup(id);
 
             return View(listaPessoas);
