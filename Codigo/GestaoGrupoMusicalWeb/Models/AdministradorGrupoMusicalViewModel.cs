@@ -4,9 +4,6 @@ namespace GestaoGrupoMusicalWeb.Models
 {
     public class AdministradorGrupoMusicalViewModel
     {
-        [Required(ErrorMessage = "O código do associado é obrigatótio.")]
-        [Key]
-        [Display(Name = "Código")]
         public int Id { get; set; }
 
         [Required(ErrorMessage = "O campo Nome é obrigatótio.")]
