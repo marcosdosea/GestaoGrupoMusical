@@ -5,58 +5,62 @@
 }
 
 <div class="d-flex justify-content-between align-items-center">
-<h5>@ViewData["Title"]</h5>
+    <h5>@ViewData["Title"]</h5>
     <a role="button" class="btn btn-secondary m-3" asp-controller="Ensaio" asp-action="Create">Novo Ensaio</a>
 </div>
 <table class="table">
     <thead>
         <tr class="bg-danger opacity-75">
-            <th class="px-3 border-0">
+            <th class="px-2 border-0">
                 <span class="text-white">Data hora início</span>
             </th>
-            <th class="px-3 border-0">
+            <th class="px-2 border-0">
                 <span class="text-white">Tipo</span>
             </th>
-            <th class="px-3 border-0">
+            <th class="px-2 border-0">
                 <span class="text-white">Local</span>
             </th>
-            <th class="px-3 border-0">
-               <span class="text-white">Presença Obrigatória</span>
+            <th class="px-2 border-0">
+                <span class="text-white">Presença Obrigatória</span>
             </th>
-             <th class="border-0 px-3">
+            <th class="border-0 px-2">
                 <span class="text-white">Açoes</span>
             </th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-            <tr class="border-bottom border-danger border-opacity-75 p-3 align-middle">
-            <td>
-                @Html.DisplayFor(modelItem => item.DataHoraInicio)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Tipo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Local)
-            </td>
+        @foreach (var item in Model)
+        {
+            <tr class="border-bottom border-danger border-opacity-75 p-2 align-middle">
+                <td class="p-2">
+                    @Html.DisplayFor(modelItem => item.DataHoraInicio)
+                </td>
+                <td class="p-2">
+                    @Html.DisplayFor(modelItem => item.Tipo)
+                </td>
+                <td class="p-2">
+                    @Html.DisplayFor(modelItem => item.Local)
+                </td>
                 @{
                     String presenca = String.Empty;
-                    if (item.PresencaObrigatoria == 1){
+                    if (item.PresencaObrigatoria == 1)
+                    {
                         presenca = "Sim";
-                    }else{
+                    }
+                    else
+                    {
                         presenca = "Não";
                     }
-            }
-            <td>
-                @Html.DisplayFor(modelItem => presenca)
-            </td>
-            <td class="d-flex justify-content-between border-0 p-3">
+                }
+                <td class="p-2">
+                    @Html.DisplayFor(modelItem => presenca)
+                </td>
+                <td class="d-flex justify-content-between border-0 p-2">
                     <a role="button" class="btn btn-secondary btn-sm" asp-controller="Ensaio" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"> </i> Editar </a>
                     <a role="button" class="btn btn-secondary btn-sm" asp-controller="Ensaio" asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-file"> </i> Detalhes </a>
                     <a role="button" class="btn btn-secondary btn-sm" asp-controller="Ensaio" asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-xmark"> </i> Excluir </a>
-             </td>
-        </tr>
-}
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
