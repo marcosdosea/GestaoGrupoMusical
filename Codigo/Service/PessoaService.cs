@@ -138,7 +138,7 @@ namespace Service
         {
             try
             {
-                var pessoa = _context.Pessoas.Find(id);
+                var pessoa = await _context.Pessoas.FindAsync(id);
                 pessoa.IdPapelGrupo = 1;
 
                 _context.Pessoas.Update(pessoa);
