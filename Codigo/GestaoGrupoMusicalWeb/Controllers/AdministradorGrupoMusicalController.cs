@@ -56,7 +56,15 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                var pessoa = _mapper.Map<Pessoa>(admViewModel);
+                Pessoa pessoa = new()
+                {
+                    Nome = admViewModel.Nome,
+                    Cpf = admViewModel.Cpf,
+                    Email = admViewModel.Email,
+                    Sexo = admViewModel.Sexo,
+                    IdGrupoMusical = admViewModel.IdGrupoMusical
+                };
+
                 _pessoaService.AddAdmGroup(pessoa);
             }
             return RedirectToAction(nameof(Index), new { id=admViewModel.IdGrupoMusical });
