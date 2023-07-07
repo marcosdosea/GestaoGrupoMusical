@@ -233,19 +233,5 @@ namespace Service
             
         }
 
-        /// <summary>
-        /// Faz uma busca e verifica se o CPF ja esta cadastrado no banco
-        /// </summary>
-        /// <param name="cpf"></param>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public bool VerificCPF(string cpf)
-        {
-            var quary = _context.Pessoas
-                .Where(p => p.Cpf == cpf);
-            if (quary != null)
-                return true;
-            return false;                
-        }
     }
 }
