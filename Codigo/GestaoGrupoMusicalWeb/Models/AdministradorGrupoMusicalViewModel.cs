@@ -11,7 +11,7 @@ namespace GestaoGrupoMusicalWeb.Models
             public int Id { get; set; }
 
             [Required(ErrorMessage = "O campo Nome é obrigatótio.")]
-            [StringLength(70, MinimumLength = 5, ErrorMessage = "O nome do associado deve ter entre 5 e 70 caracteres")]
+            [StringLength(70, MinimumLength = 5, ErrorMessage = "O nome deve ter entre 5 e 70 caracteres")]
             public string? Nome { get; set; }
 
             [Required(ErrorMessage = "O campo {0} é obrigatório.")]
