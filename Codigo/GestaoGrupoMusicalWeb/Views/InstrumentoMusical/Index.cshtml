@@ -43,9 +43,9 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.NomeAssociado)
                 </td>
-                <td>
+                    <td class="d-flex justify-content-between border-0 p-3">
                     <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb-2" asp-controller="InstrumentoMusical" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"> </i> Editar </a> |
-                        @Html.ActionLink("Excluir", "Delete", new { id=item.Id  }, new {@class="btn btn-secondary m-3 fa-solid fa-pen-to-square"}) |
+                    <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb-2" asp-controller="InstrumentoMusical" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-xmark"> </i> Excluir </a> |
                     @Html.ActionLink("Movimentar", "Movimentar", new { id=item.Id}, new {@class="btn btn-secondary m-3"})
                 </td>
             </tr>
