@@ -75,16 +75,14 @@ namespace GestaoGrupoMusicalWeb.Controllers
         /// de algum usuario
         /// </summary>
         /// <param name="id">id do usuario alvo</param>
-        /// <param name="nomeGrupo">nome do grupo para por na view bag</param>
         /// <returns>view com informações do usuario para confirmar</returns>
         // GET: PessoaController/RemoveAdmGroup/5
-        public ActionResult Delete(int id, string nomeGrupo)
+        public ActionResult Delete(int id)
         {
             var pessoa = _pessoaService.Get(id);
             var pessoaViewModel = _mapper.Map<PessoaViewModel>(pessoa);
 
             ViewBag.idGrupoMusical = pessoaViewModel.IdGrupoMusical;
-            ViewBag.nomeGrupo = nomeGrupo;
 
             return View(pessoaViewModel);
         }
@@ -94,7 +92,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
         /// </summary>
         /// <param name="id">id do usuario alvo</param>
         /// <param name="pessoaViewModel"></param>
-        /// <param name="nomeGrupo">nome do grupo para redirecionar para o index</param>
         /// <returns></returns>
         // POST: PessoaController/RemoveAdmGroup/5
         [HttpPost]
