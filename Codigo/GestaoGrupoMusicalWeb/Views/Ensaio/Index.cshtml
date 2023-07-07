@@ -11,19 +11,19 @@
 <table class="table">
     <thead>
         <tr class="bg-danger opacity-75">
-            <th class="px-2 border-0">
+            <th class="px-3 border-0">
                 <span class="text-white">Data hora início</span>
             </th>
-            <th class="px-2 border-0">
+            <th class="px-3 border-0">
                 <span class="text-white">Tipo</span>
             </th>
-            <th class="px-2 border-0">
+            <th class="px-3 border-0">
                 <span class="text-white">Local</span>
             </th>
-            <th class="px-2 border-0">
+            <th class="px-3 border-0">
                 <span class="text-white">Presença Obrigatória</span>
             </th>
-            <th class="border-0 px-2">
+            <th class="border-0 px-3">
                 <span class="text-white">Açoes</span>
             </th>
         </tr>
@@ -31,14 +31,14 @@
     <tbody>
         @foreach (var item in Model)
         {
-            <tr class="border-bottom border-danger border-opacity-75 p-2 align-middle">
-                <td class="p-2">
+            <tr class="border-bottom border-danger border-opacity-75 p-3 align-middle">
+                <td class="p-3">
                     @Html.DisplayFor(modelItem => item.DataHoraInicio)
                 </td>
-                <td class="p-2">
+                <td class="p-3">
                     @Html.DisplayFor(modelItem => item.Tipo)
                 </td>
-                <td class="p-2">
+                <td class="p-3">
                     @Html.DisplayFor(modelItem => item.Local)
                 </td>
                 @{
@@ -52,10 +52,10 @@
                         presenca = "Não";
                     }
                 }
-                <td class="p-2">
+                <td class="p-3">
                     @Html.DisplayFor(modelItem => presenca)
                 </td>
-                <td class="d-flex justify-content-between border-0 p-2">
+                <td class="d-flex justify-content-between border-0 p-3">
                     <a role="button" class="btn btn-secondary btn-sm" asp-controller="Ensaio" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"> </i> Editar </a>
                     <a role="button" class="btn btn-secondary btn-sm" asp-controller="Ensaio" asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-file"> </i> Detalhes </a>
                     <a role="button" class="btn btn-secondary btn-sm" asp-controller="Ensaio" asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-xmark"> </i> Excluir </a>
