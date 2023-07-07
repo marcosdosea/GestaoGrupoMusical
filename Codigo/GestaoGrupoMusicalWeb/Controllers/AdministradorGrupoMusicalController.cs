@@ -96,9 +96,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: PessoaController/RemoveAdmGroup/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, int idGrupoMusical)
+        public async Task<ActionResult> Delete(int id, int idGrupoMusical)
         {
-            _pessoaService.RemoveAdmGroup(id);
+            await _pessoaService.RemoveAdmGroup(id);
             return RedirectToAction(nameof(Index), new { id= idGrupoMusical });
         }
     }
