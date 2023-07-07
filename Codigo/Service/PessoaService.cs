@@ -119,6 +119,18 @@ namespace Service
                 }
                 else if (pessoaF.IdGrupoMusical == pessoa.IdGrupoMusical)
                 {
+                    var user = await _userManager.FindByNameAsync(pessoa.Cpf);
+
+                    if(user != null)
+                    {
+                        bool roleExists = await _roleManager.RoleExistsAsync("ADMINISTRADOR GRUPO");
+                        if (!roleExists)
+                        {
+                            await _roleManager.CreateAsync(new IdentityRole("ADMINISTRADOR GRUPO"));
+                        }
+                        await _userManager.AddToRoleAsync(user, "ADMINISTRADOR GRUPO");
+                    }
+
                     //id para adm de grupo == 3
                     pessoaF.IdPapelGrupo = 3;
                     Edit(pessoaF);
