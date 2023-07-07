@@ -4,6 +4,8 @@ using Core.Service;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using Email;
+using System.Diagnostics.Metrics;
 
 namespace Service
 {
@@ -272,9 +274,30 @@ namespace Service
             
         }
 
-        public Task<bool> NotificarCadastroAdmGrupo(Pessoa pessoa)
+        public async Task<bool> NotificarCadastroAdmGrupo(Pessoa pessoa)
         {
+            try
+            {
+                
+                EmailModel email = new()
+                {
+                    Assunto = "Batalá - Empréstimo de instrumento",
+                    Body = "<div style=\"text-align: center;\">\r\n    " +
+                    "<h1>Empréstimo de instrumento</h1>\r\n    " +
+                    $"<h2>Olá, {pessoa.Nome}, a sua senha para acesso.</h2>\r\n" +
+                    "<div style=\"font-size: large;\">\r\n        " +
+                    $"<dt style=\"font-weight: 700;\">Senha:</dt><dd>{pessoa.Cpf}</dd>"
+                };
 
+                email.To.Add(pessoa.Email);
+
+                await EmailService.Enviar(email);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         private UsuarioIdentity CreateUser()
