@@ -6,7 +6,7 @@
 
 <div class="d-flex justify-content-between align-items-center">
     <h5>@ViewData["Title"]</h5>
-    <a role="button" class="btn btn-primary" asp-controller="InstrumentoMusical" asp-action="Create">Novo Instrumento</a>
+    <a role="button" class="btn btn-secondary" asp-controller="InstrumentoMusical" asp-action="Create">Novo Instrumento</a>
 </div>
 
 <div class="table-responsive-md">
@@ -29,9 +29,9 @@
             </tr>
         </thead>
         <tbody>
-    @foreach (var item in Model) {
-            <tr>
-                <td>
+            @foreach (var item in Model) {
+                <tr>
+                    <td>
                     @Html.DisplayFor(modelItem => item.Patrimonio)
                 </td>
                 <td>
@@ -44,9 +44,9 @@
                     @Html.DisplayFor(modelItem => item.NomeAssociado)
                 </td>
                 <td>
-                    @Html.ActionLink("Editar", "Edit", new { id=item.Id }) |
-                    @Html.ActionLink("Excluir", "Delete", new { id=item.Id  }) |
-                    @Html.ActionLink("Movimentar", "Movimentar", new { id=item.Id  })
+                    @Html.ActionLink("Editar", "Edit", new { id=item.Id, @class="btn-secondary m-3 fa-solid fa-pen-to-square" }) |
+                    @Html.ActionLink("Excluir", "Delete", new { id=item.Id  }, new {@class="btn btn-secondary m-3"}) |
+                    @Html.ActionLink("Movimentar", "Movimentar", new { id=item.Id}, new {@class="btn btn-secondary m-3"})
                 </td>
             </tr>
     }
