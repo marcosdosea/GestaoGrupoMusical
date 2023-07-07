@@ -67,7 +67,9 @@
     </dl>
     
     <form asp-action="Delete">
-        <input type="submit" value="Excluir" class="btn btn-danger" /> |
-        <a asp-action="Index">Voltar</a>
+        <div>
+            <a class="btn btn-outline-secondary" role="button" asp-controller="Ensaio" asp-action="Index">Voltar</a>
+            <input type="submit" value="Excluir" class="btn btn-secondary ms-2" />
+        </div>
     </form>
 </div>
