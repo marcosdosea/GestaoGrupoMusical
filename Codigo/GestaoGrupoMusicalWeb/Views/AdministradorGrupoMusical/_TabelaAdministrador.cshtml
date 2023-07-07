@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<Core.DTO.AdministradorGrupoMusicalDTO>
 
 <table class="table">
-    <thead>
+    <thead class="bg-danger bg-opacity-75 text-white">
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Nome)
@@ -17,16 +17,21 @@
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
+            <tr class="border-bottom border-danger border-opacity-75">
+                <td class="py-3">
                     @Html.DisplayFor(modelItem => item.Nome)
                 </td>
-                <td>
+                <td class="py-3">
                     @Html.DisplayFor(modelItem => item.Cpf)
                 </td>
-                <td>
-                    @Html.ActionLink("Remover", "Delete", new { id=item.Id, nomeGrupo=ViewBag.Nome }) |
-                    @Html.ActionLink("Notificar", "", new { /* id=item.PrimaryKey */ })
+                <td class="py-3 border-0">
+                    <a class="btn btn-sm btn-secondary me-4" role="button" asp-action="Notificar" asp-route-Id="@item.Id">
+                        <i class="fa-solid fa-xmark"> </i>
+                        Notificar
+                    </a>
+                    <a class="btn btn-sm btn-secondary" role="button" asp-action="Delete" asp-route-Id="@item.Id">
+                        Excluir
+                    </a>
                 </td>
             </tr>
         }
