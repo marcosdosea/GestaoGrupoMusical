@@ -10,20 +10,20 @@
 </div>
 <table class="table">
     <thead>
-        <tr class="bg-danger opacity-75">
-            <th class="px-3 border-0">
+        <tr class="bg-danger bg-opacity-75 text-white">
+            <th>
                 <span class="text-white">Data hora início</span>
             </th>
-            <th class="px-3 border-0">
+            <th>
                 <span class="text-white">Tipo</span>
-            </th class="px-3 border-0">
+            </th>
             <th>
                 <span class="text-white">Local</span>
-            </th class="px-3 border-0">
+            </th>
             <th>
                <span class="text-white">Presença Obrigatória</span>
             </th>
-            <th></th>
+            <th>Ações</th>
         </tr>
     </thead>
     <tbody>
@@ -49,7 +49,7 @@
             <td>
                 @Html.DisplayFor(modelItem => presenca)
             </td>
-            <td class="d-flex justify-content-between border-0 p-3">
+            <td class="d-flex justify-content-between border-0 py-3">
                     <a role="button" class="btn btn-secondary btn-sm" asp-controller="Ensaio" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"> </i> Editar </a>
                     <a role="button" class="btn btn-secondary btn-sm" asp-controller="Ensaio" asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-file"> </i> Detalhes </a>
                     <a role="button" class="btn btn-secondary btn-sm" asp-controller="Ensaio" asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-xmark"> </i> Excluir </a>
