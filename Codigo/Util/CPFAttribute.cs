@@ -19,7 +19,6 @@ namespace Util
         {
             var serviceProvider = validationContext.GetRequiredService<IServiceProvider>();
             var dbContext = serviceProvider.GetRequiredService<GrupoMusicalContext>();
-            //string cpf = (string)value;
 
             var valueNoEspecial = Methods.RemoveSpecialsCaracts((string)value);
 
