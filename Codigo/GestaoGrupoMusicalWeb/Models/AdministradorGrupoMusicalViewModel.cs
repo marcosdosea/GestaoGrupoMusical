@@ -20,6 +20,7 @@ namespace GestaoGrupoMusicalWeb.Models
 
             [Required(ErrorMessage = "O campo {0} é obrigatório!")]
             [Display(Name = "E-mail")]
+            [EmailAddress (ErrorMessage = "{0} inválido")]
             public string Email { get; set; } = string.Empty;
 
             [Required(ErrorMessage = "O campo Sexo é obrigatório.")]
