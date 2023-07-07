@@ -18,7 +18,7 @@ namespace Core.Service
         IEnumerable<AssociadoDTO> GetAllAssociadoDTO();
 
         Task<bool> AddAdmGroup(Pessoa pessoa);
-        IAsyncEnumerable<AdministradorGrupoMusicalDTO> GetAllAdmGroup(int id);
+        Task<IEnumerable<AdministradorGrupoMusicalDTO>> GetAllAdmGroup(int id);
         Task<bool> RemoveAdmGroup(int id);
 
         Task<bool> ToCollaborator(int id);
