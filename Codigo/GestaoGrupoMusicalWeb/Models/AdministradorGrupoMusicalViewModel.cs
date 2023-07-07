@@ -14,12 +14,13 @@ namespace GestaoGrupoMusicalWeb.Models
             [StringLength(70, MinimumLength = 5, ErrorMessage = "O nome do associado deve ter entre 5 e 70 caracteres")]
             public string? Nome { get; set; }
 
-            [Required(ErrorMessage = "O campo de CPF é obrigatório.")]
+            [Required(ErrorMessage = "O campo {0} é obrigatório.")]
+            [Display(Name = "E-mail")]
             [StringLength(15)]
             public string? Cpf { get; set; }
 
-            [Required(ErrorMessage = "O e-mail é obrigatório!")]
-            [Display(Name = "Email")]
+            [Required(ErrorMessage = "O {0} é obrigatório!")]
+            [Display(Name = "E-mail")]
             public string? Email { get; set; }
 
             [Required(ErrorMessage = "O campo Sexo é obrigatório.")]
