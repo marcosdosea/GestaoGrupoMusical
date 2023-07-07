@@ -5,6 +5,7 @@ using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Service;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -12,11 +13,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
     {
 
         private readonly IPessoaService _pessoaService;
+        private readonly IGrupoMusicalService _grupoMusicalService;
         private readonly IMapper _mapper;
 
-        public AdministradorGrupoMusicalController(IPessoaService pessoaService, IMapper mapper)
+        public AdministradorGrupoMusicalController(IPessoaService pessoaService,IGrupoMusicalService grupoMusicalService, IMapper mapper)
         {
             _pessoaService = pessoaService;
+            _grupoMusicalService = grupoMusicalService;
             _mapper = mapper;
         }
 
@@ -32,7 +35,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             administradorModel.ListaAdministrador = await _pessoaService.GetAllAdmGroup(id);
 
-            administradorModel.Administrador.ListaGrupoMusical = new SelectList();
+            administradorModel.Administrador.ListaGrupoMusical = new SelectList(_grupoMusicalService.GetAllDTO(), "Id", "Nome");
 
             return View(administradorModel);
         }
