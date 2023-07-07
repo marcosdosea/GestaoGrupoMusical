@@ -12,7 +12,7 @@ html {
     box-shadow: none !important;
 }
 
-.input-validation-error {
+.form-control.input-validation-error {
     border-bottom: 2px solid var(--bs-danger) !important;
     padding-right: calc(1.5em + 0.75rem);
     background-image: url("../icon/invalid_icon.svg");
