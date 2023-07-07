@@ -306,11 +306,12 @@ namespace Service
                 
                 EmailModel email = new()
                 {
-                    Assunto = "Batalá - Empréstimo de instrumento",
+                    Assunto = "Batalá - Administrador do Grupo",
                     Body = "<div style=\"text-align: center;\">\r\n    " +
-                    "<h1>Empréstimo de instrumento</h1>\r\n    " +
+                    "<h1>Administrador do Grupo</h1>\r\n    " +
                     $"<h2>Olá, {pessoa.Nome}, a sua senha para acesso.</h2>\r\n" +
                     "<div style=\"font-size: large;\">\r\n        " +
+                    $"<dt style=\"font-weight: 700;\">Login:</dt><dd>{pessoa.Cpf}</dd>" +
                     $"<dt style=\"font-weight: 700;\">Senha:</dt><dd>{pessoa.Cpf}</dd>"
                 };
 
