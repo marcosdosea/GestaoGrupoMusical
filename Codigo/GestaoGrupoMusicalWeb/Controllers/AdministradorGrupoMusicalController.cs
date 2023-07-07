@@ -56,7 +56,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 var pessoa = _mapper.Map<Pessoa>(admViewModel);
                 _pessoaService.AddAdmGroup(pessoa);
             }
-            return RedirectToAction(nameof(Index), new { id=admViewModel.IdGrupoMusical});
+            return RedirectToAction(nameof(Index), new { id=admViewModel.IdGrupoMusical, NomeGrupo=admViewModel.NomeGrupoMusical});
         }
 
         /// <summary>

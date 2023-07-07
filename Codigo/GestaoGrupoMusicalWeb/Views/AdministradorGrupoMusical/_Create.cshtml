@@ -18,7 +18,6 @@
                 <input asp-for="Cpf" class="form-control" />
                 <span asp-validation-for="Cpf" class="text-danger"></span>
             </div>
-
             <div class="form-group">
                 <label asp-for="Sexo" class="control-label"></label>
                 <label>
@@ -29,33 +28,21 @@
                 </label>
                 <span asp-validation-for="Sexo" class="text-danger"></span>
             </div>
-
             <div class="form-group">
                 <label asp-for="Email" class="control-label"></label>
                 <input asp-for="Email" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
-
             <div class="form-group">
                 <input asp-for="IdGrupoMusical" class="form-control" value="@ViewBag.IdGrupoMusical" type="hidden"/>
                 <span asp-validation-for="IdGrupoMusical" class="text-danger"></span>
             </div>
-
-            <div class="form-group">
-                <input type="hidden" name="nomeGrupo" value="@ViewBag.Nome" />
-            </div>
-
-            
             <div class="form-group">
                 <input type="submit" value="Adicionar" class="btn btn-primary" />
-
                 <a asp-action="index" asp-controller="GrupoMusical" class="btn btn-secondary">Voltar</a>
             </div>
             <br>
         </form>
     </div>
 </div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
