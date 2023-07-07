@@ -119,7 +119,7 @@ namespace Service
         /// </summary>
         /// <param name="id">id do grupo musical</param>
         /// <returns>lista de DTO contendo todos os adm do grupo</returns>
-        public IAsyncEnumerable<AdministradorGrupoMusicalDTO> GetAllAdmGroup(int id)
+        public async Task<IEnumerable<AdministradorGrupoMusicalDTO>> GetAllAdmGroup(int id)
         {
             var AdmGroupList = from pessoa in _context.Pessoas
                                where pessoa.IdGrupoMusical == id && pessoa.IdPapelGrupo == 3
@@ -131,7 +131,7 @@ namespace Service
                                    Email = pessoa.Email
                                };
 
-            return AdmGroupList.AsAsyncEnumerable();
+            return await AdmGroupList.ToListAsync();
         }
 
         public async Task<bool> RemoveAdmGroup(int id)
