@@ -91,6 +91,7 @@ namespace Service
                 .Select(g =>
                 new EnsaioDTO
                 {
+                    Id = g.Id,
                     DataHoraInicio = g.DataHoraInicio,
                     Local = g.Local
                 }).AsNoTracking().ToListAsync();

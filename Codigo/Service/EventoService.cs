@@ -64,6 +64,7 @@ namespace Service
                 .Select(g =>
                 new EventoDTO
                 {
+                    Id = g.Id,
                     DataHoraInicio = g.DataHoraInicio,
                     Local = g.Local
                 });

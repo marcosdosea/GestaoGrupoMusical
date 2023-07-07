@@ -77,6 +77,8 @@ namespace Service
                 .Select(g =>
               new InformativoDTO
               {
+                  IdGrupoMusical = g.IdGrupoMusical,
+                  IdPessoa = g.IdPessoa,
                   Data = g.Data,
                   Mensagem = g.Mensagem
               }).AsNoTracking().ToListAsync();
