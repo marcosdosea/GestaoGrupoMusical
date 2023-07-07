@@ -28,14 +28,14 @@ namespace GestaoGrupoMusicalWeb.Controllers
         /// Este metodo lista todos os administradores de um determinado grupo
         /// </summary>
         /// <param name="id">id do grupo o qual queremos ver os administradores</param>
-        /// <param name="NomeGrupo">nome do grupo para por na view bag</param>
         /// <returns>lista de administradores</returns>
-        public async Task<ActionResult> Index(int id, string nomeGrupo)
+        public async Task<ActionResult> Index(int id)
         {
             AdministradorGrupoMusicalViewModel administradorModel = new();
 
             administradorModel.ListaAdministrador = await _pessoaService.GetAllAdmGroup(id);
-            administradorModel.Administrador.NomeGrupoMusical = nomeGrupo;
+            var grupoMusical = _grupoMusicalService.Get(id);
+            administradorModel.Administrador.NomeGrupoMusical = grupoMusical.Nome;
             administradorModel.Administrador.IdGrupoMusical = id;
 
             return View(administradorModel);
@@ -44,7 +44,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
         /// <summary>
         /// </summary>
         /// <param name="admViewModel">viewmodel de pessoa</param>
-        /// <param name="nomeGrupo">nome do grupo para passar para o index</param>
         /// <returns></returns>
         // POST: AdministradorGrupoMusicalController/Create
         [HttpPost]
@@ -56,7 +55,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 var pessoa = _mapper.Map<Pessoa>(admViewModel);
                 _pessoaService.AddAdmGroup(pessoa);
             }
-            return RedirectToAction(nameof(Index), new { id=admViewModel.IdGrupoMusical, NomeGrupo=admViewModel.NomeGrupoMusical});
+            return RedirectToAction(nameof(Index), new { id=admViewModel.IdGrupoMusical });
         }
 
         /// <summary>
@@ -88,10 +87,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: PessoaController/RemoveAdmGroup/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, int idGrupoMusical, string nomeGrupo)
+        public ActionResult Delete(int id, int idGrupoMusical)
         {
             _pessoaService.RemoveAdmGroup(id);
-            return RedirectToAction(nameof(Index), new { id= idGrupoMusical, NomeGrupo = nomeGrupo });
+            return RedirectToAction(nameof(Index), new { id= idGrupoMusical });
         }
     }
 }
