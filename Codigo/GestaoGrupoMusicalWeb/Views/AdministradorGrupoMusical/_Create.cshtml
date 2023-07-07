@@ -1,6 +1,6 @@
 ﻿@model GestaoGrupoMusicalWeb.Models.AdministradorGrupoMusicalViewModel.AdministradorModel
 
-<div class="row">
+<div class="row mt-4">
     <div class="col-md-4">
         <form asp-action="Create">
             <div class="form-group mb-3">
@@ -39,7 +39,12 @@
                 <input type="submit" value="Adicionar" class="btn btn-primary" />
                 <a asp-action="index" asp-controller="GrupoMusical" class="btn btn-secondary">Voltar</a>
             </div>
-            <br>
+            <div class="row">
+                <div class="d-flex justify-content-lg-end flex-column flex-lg-row">
+                    <a class="btn btn-outline-secondary col-lg-5 mt-3 me-lg-3" asp-controller="InstrumentoMusical" asp-action="Index">Voltar</a>
+                    <input class="btn btn-secondary col-lg-5 mt-3 ml-3" type="submit" value="Adicionar" />
+                </div>
+            </div>
         </form>
     </div>
 </div>
