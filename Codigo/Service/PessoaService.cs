@@ -207,7 +207,7 @@ namespace Service
 
                     _context.Pessoas.Update(pessoa);
 
-                    _context.SaveChanges();
+                    await _context.SaveChangesAsync();
 
                     return true;
                 }
