@@ -233,5 +233,14 @@ namespace Service
             
         }
 
+        public async Task<bool> GetCPF(string cpf)
+        {
+            var query = _context.Set<Pessoa>().AsNoTracking().FirstOrDefault(p => p.Cpf == cpf);
+            if(query != null)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }
