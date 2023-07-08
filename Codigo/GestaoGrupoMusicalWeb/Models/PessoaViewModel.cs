@@ -91,8 +91,13 @@ namespace GestaoGrupoMusicalWeb.Models
         public SelectList? ListaGrupoMusical { get; set; }
         public SelectList? ListaPapelGrupo { get; set; }
         public SelectList? ListaManequim { get; set; }
+        public Dictionary<string, char> sexoPessoa { get; } = new()
+        {
+            { "Masculino", 'M' },
+            { "Feminino", 'F' }
+        };
 
-     
+
 
     }
    
