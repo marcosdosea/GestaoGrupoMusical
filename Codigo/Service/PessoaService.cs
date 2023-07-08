@@ -344,5 +344,6 @@ namespace Service
                     $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
             }
         }
+
     }
 }
