@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
+using Util;
 
 namespace GestaoGrupoMusicalWeb.Models
 {
@@ -10,6 +11,7 @@ namespace GestaoGrupoMusicalWeb.Models
         [Display(Name = "Código")]
         public int Id { get; set; }
 
+        [CPF(ErrorMessage = "Esse CPF já esta Cadastrado no Sistema")]
         [Required(ErrorMessage = "O campo de CPF é obrigatório.")]
         [RegularExpression(@"^\d{3}\.\d{3}\.\d{3}-\d{2}$", ErrorMessage = "CPF inválido")]
         [StringLength(15)]

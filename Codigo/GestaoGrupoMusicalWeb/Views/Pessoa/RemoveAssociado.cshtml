@@ -94,6 +94,7 @@
             <input asp-for="MotivoSaida" class="form-control"  />
             <span asp-validation-for="MotivoSaida" class="text-danger"></span>
         </div>
+        <input type="hidden" name="Cpf" value="@Model.Cpf"/>
         <input type="submit" value="Excluir" class="btn btn-danger" /> |
         <a asp-action="Index">Voltar</a>
     </form>
