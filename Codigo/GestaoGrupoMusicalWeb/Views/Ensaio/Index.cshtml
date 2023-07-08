@@ -1,81 +1,66 @@
-﻿@model IEnumerable<GestaoGrupoMusicalWeb.Models.EnsaioViewModel>
+﻿@model IEnumerable<Core.DTO.EnsaioIndexDTO>
 
 @{
     ViewData["Title"] = "Ensaios";
 }
 
-<p>
-    <a asp-action="Create">Novo Ensaio</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.IdGrupoMusical)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Tipo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DataHoraInicio)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DataHoraFim)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PresencaObrigatoria)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Local)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Repertorio)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdColaboradorResponsavel)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdRegente)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdGrupoMusical)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Tipo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DataHoraInicio)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DataHoraFim)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PresencaObrigatoria)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Local)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Repertorio)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdColaboradorResponsavel)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdRegente)
-            </td>
-            <td>
-                @Html.ActionLink("Editar", "Edit", new {  id=item.Id  }) |
-                @Html.ActionLink("Detalhes", "Details", new { id=item.Id  }) |
-                @Html.ActionLink("Excluir", "Delete", new {  id=item.Id  })
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="d-flex justify-content-between align-items-center">
+    <h5>@ViewData["Title"]</h5>
+    <a role="button" class="btn btn-secondary m-3" asp-controller="Ensaio" asp-action="Create">Novo Ensaio</a>
+</div>
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr class="bg-danger bg-opacity-75 text-white">
+                <th>
+                    <span class="text-white">Data hora início</span>
+                </th>
+                <th>
+                    <span class="text-white">Tipo</span>
+                </th>
+                <th>
+                    <span class="text-white">Local</span>
+                </th>
+                <th>
+                    <span class="text-white">Presença Obrigatória</span>
+                </th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr class="border-bottom border-danger border-opacity-75 p-3 align-middle">
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DataHoraInicio)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Tipo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Local)
+                    </td>
+                    @{
+                        String presenca = String.Empty;
+                        if (item.PresencaObrigatoria == 1)
+                        {
+                            presenca = "Sim";
+                        }
+                        else
+                        {
+                            presenca = "Não";
+                        }
+                    }
+                    <td>
+                        @Html.DisplayFor(modelItem => presenca)
+                    </td>
+                    <td class="d-flex justify-content-between border-0 flex-wrap py-3">
+                        <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb-2" asp-controller="Ensaio" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"> </i> Editar </a>
+                        <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb-2" asp-controller="Ensaio" asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-file"> </i> Detalhes </a>
+                        <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb-2" asp-controller="Ensaio" asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-xmark"> </i> Excluir </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
