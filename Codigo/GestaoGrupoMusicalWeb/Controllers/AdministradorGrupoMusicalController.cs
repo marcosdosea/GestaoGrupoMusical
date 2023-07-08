@@ -101,5 +101,15 @@ namespace GestaoGrupoMusicalWeb.Controllers
             await _pessoaService.RemoveAdmGroup(id);
             return RedirectToAction(nameof(Index), new { id= idGrupoMusical });
         }
+
+        public async Task<ActionResult> Notificar(int id)
+        {
+            var pessoa = _pessoaService.Get(id);
+            if (pessoa.IdPapelGrupo == 3)
+            {
+                await _pessoaService.NotificarCadastroAdmGrupoAsync(pessoa);
+            }
+            return RedirectToAction(nameof(Index), new { id = pessoa.IdGrupoMusical });
+        }
     }
 }
