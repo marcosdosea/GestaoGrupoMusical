@@ -8,6 +8,11 @@ html {
   }
 }
 
+.img-login {
+    width: 100%;
+    height: 100%;
+}
+
 .btn {
     box-shadow: none !important;
 }
