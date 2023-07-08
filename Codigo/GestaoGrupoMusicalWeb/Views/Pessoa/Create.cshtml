@@ -6,14 +6,12 @@
 
 <h1>Adicionar novo Associado</h1>
 
-<h4>Adicionar</h4>
-<hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Cpf" class="control-label"></label>
+                <label asp-for="Cpf" class="control-label">CPF</label>
                 <input asp-for ="Cpf" id="campoCpf" class="form-control" />
                 <span asp-validation-for="Cpf" class="text-danger"></span>
             </div>
@@ -29,7 +27,7 @@
                 <span asp-validation-for="Sexo" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Cep" class="control-label"></label>
+                <label asp-for="Cep" class="control-label">CEP</label>
                 <input asp-for="Cep" id="campoCep" class="form-control" />
                 <span asp-validation-for="Cep" class="text-danger"></span>
             </div>
@@ -69,7 +67,7 @@
                 <span asp-validation-for="Telefone2" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
+                <label asp-for="Email" class="control-label">E-mail</label>
                 <input asp-for="Email" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
