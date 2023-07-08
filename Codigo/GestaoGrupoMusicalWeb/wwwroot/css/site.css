@@ -13,6 +13,13 @@ html {
     height: 100%;
 }
 
+@media (min-width: 1800px) {
+    .img-login {
+        width: 70%;
+        height: 100%;
+    }
+}
+
 .btn {
     box-shadow: none !important;
 }
