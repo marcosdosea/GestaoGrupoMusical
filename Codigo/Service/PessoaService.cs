@@ -233,7 +233,7 @@ namespace Service
             
         }
 
-        public bool GetCPF(int id,string cpf)
+        public bool GetCPFExistente(int id,string cpf)
         {
             var query = _context.Set<Pessoa>().AsNoTracking().FirstOrDefault(p => p.Id == id && p.Cpf == cpf);
             if(query != null)
