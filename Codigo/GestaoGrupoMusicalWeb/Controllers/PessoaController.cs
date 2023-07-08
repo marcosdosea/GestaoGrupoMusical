@@ -110,9 +110,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             pessoaViewModel.Cpf = pessoaViewModel.Cpf.Replace("-", string.Empty).Replace(".", string.Empty);
             pessoaViewModel.Cep = pessoaViewModel.Cep.Replace("-", string.Empty);
-            var cpf = _pessoaService.GetCPF(pessoaViewModel.Cpf);
+            var cpf = _pessoaService.GetCPF(id,pessoaViewModel.Cpf);
             
-            if(cpf == pessoaViewModel.)
+            if(cpf)
             {
                 ModelState.Remove("Cpf");
             }

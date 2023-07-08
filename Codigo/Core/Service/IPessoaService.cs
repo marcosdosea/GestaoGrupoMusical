@@ -17,7 +17,7 @@ namespace Core.Service
         IEnumerable<Pessoa> GetAll();
         IEnumerable<AssociadoDTO> GetAllAssociadoDTO();
 
-        string GetCPF(string cpf);
+        bool GetCPF(int id, string cpf);
 
         Task<bool> AddAdmGroup(Pessoa pessoa);
         IAsyncEnumerable<AdministradorGrupoMusicalDTO> GetAllAdmGroup(int id);
