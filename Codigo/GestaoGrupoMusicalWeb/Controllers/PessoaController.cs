@@ -110,6 +110,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             pessoaViewModel.Cpf = pessoaViewModel.Cpf.Replace("-", string.Empty).Replace(".", string.Empty);
             pessoaViewModel.Cep = pessoaViewModel.Cep.Replace("-", string.Empty);
+            var cpf = _pessoaService.Get(id);
+            
+            if(cpf.Cpf == pessoaViewModel.Cpf)
+            {
+                ModelState.Remove("Cpf");
+            }
 
             if (ModelState.IsValid)
             {
@@ -144,9 +150,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, PessoaViewModel pessoaViewModel)
         {
-            
-
-
             return RedirectToAction(nameof(Index));
         }
 
