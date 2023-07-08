@@ -25,6 +25,13 @@ html {
     }
 }
 
+@media (max-height: 500px) {
+    .img-login {
+        display: none !important;
+    }
+}
+
+
 .btn {
     box-shadow: none !important;
 }
