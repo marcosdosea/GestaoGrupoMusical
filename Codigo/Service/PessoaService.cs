@@ -233,14 +233,14 @@ namespace Service
             
         }
 
-        public boolGetCPF(string cpf)
+        public string GetCPF(string cpf)
         {
             var query = _context.Set<Pessoa>().AsNoTracking().FirstOrDefault(p => p.Cpf == cpf);
             if(query != null)
             {
-                return true;
+                return cpf;
             }
-            return false;
+            return cpf;
         }
     }
 }
