@@ -30,13 +30,13 @@
         @foreach (var item in Model)
         {
             <tr class="border-bottom border-danger border-opacity-75 p-3 align-middle">
-                <td>
+                <td class ="p-3">
                     @Html.DisplayFor(modelItem => item.Id)
                 </td>
-                <td>
+                <td class="p-3">
                     @Html.DisplayFor(modelItem => item.Nome)
                 </td>
-                <td>
+                <td class="p-3">
                     @{
                         var result = "";
 
@@ -51,7 +51,7 @@
                     }
                     @result
                 </td>
-                <td>
+                <td class="p-3">
                     @Html.ActionLink("Editar", "Edit", new {  id=item.Id }) |
                     @Html.ActionLink("Excluir", "RemoveAssociado", new {  id=item.Id  })
                 </td>
