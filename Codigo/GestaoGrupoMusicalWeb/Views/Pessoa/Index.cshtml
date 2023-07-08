@@ -52,8 +52,8 @@
                     @result
                 </td>
                 <td class="p-3">
-                    @Html.ActionLink("Editar", "Edit", new {  id=item.Id }) |
-                    @Html.ActionLink("Excluir", "RemoveAssociado", new {  id=item.Id  })
+                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="Pessoa" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"></i> Editar</a>
+                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="Pessoa" asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-xmark"> </i> Excluir</a>
                 </td>
             </tr>
         }
