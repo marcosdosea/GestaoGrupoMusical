@@ -72,8 +72,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
             else
             {
-
-
                 IEnumerable<Papelgrupo> listaPapelGrupo = _pessoaService.GetAllPapelGrupo();
                 IEnumerable<Grupomusical> listaGrupoMusical = _grupoMusical.GetAll();
                 IEnumerable<Manequim> listaManequim = _manequim.GetAll();
@@ -117,6 +115,17 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 var pessoa = _mapper.Map<Pessoa>(pessoaViewModel);
                 _pessoaService.Edit(pessoa);
+            }
+            else
+            {
+                IEnumerable<Papelgrupo> listaPapelGrupo = _pessoaService.GetAllPapelGrupo();
+                IEnumerable<Grupomusical> listaGrupoMusical = _grupoMusical.GetAll();
+                IEnumerable<Manequim> listaManequim = _manequim.GetAll();
+
+                pessoaViewModel.ListaGrupoMusical = new SelectList(listaGrupoMusical, "Id", "Nome", null);
+                pessoaViewModel.ListaPapelGrupo = new SelectList(listaPapelGrupo, "IdPapelGrupo", "Nome", null);
+                pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", null);
+                return View("Edit", pessoaViewModel);
             }
             return RedirectToAction(nameof(Index));
         }
