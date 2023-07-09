@@ -5,23 +5,20 @@
     ViewData["Pessoa"] = "Associado";
     ViewData["Create"] = "Cadastro";
 }
-<nav>
-    <ol class="breadcrumb">
-        <strong>
-            <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Pessoa"]</a>
-            <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Create"]</spn>
-        </strong>
-    </ol>
-</nav>
-<br />
-
-<div class="col-md-7 opacity-75">
-    <h5 class="p-3 bg-danger text-white">Novo Associado</h5>
-    <hr />
-</div>
 
 <div class="row">
     <div class="col-md-7">
+        <h5 class="p-3 bg-danger  opacity-75 text-white">Novo Associado</h5>
+        <nav>
+            <ol class="breadcrumb">
+                <strong>
+                    <a class="text-danger text-opacity-75 px-3" asp-action="Index">@ViewData["Pessoa"]</a>
+                    <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Create"]</spn>
+                </strong>
+            </ol>
+        </nav>
+        <hr />
+        <br />
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="container">
@@ -145,7 +142,8 @@
                         <span asp-validation-for="Rua" class="text-danger"></span>
                     </div>
                 </div>
-            </div
+            </div>
+
             <div class="container">
                 <div class="row">
                     <div class="form-group col-5">
