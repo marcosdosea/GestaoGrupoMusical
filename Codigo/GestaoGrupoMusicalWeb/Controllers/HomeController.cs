@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using Core;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -13,18 +15,30 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IEnsaioService _ensaioService;
         private readonly IInformativoService _informativoService;
         private readonly IMapper _mapper;
+        private readonly UserManager<UsuarioIdentity> _roleManager;
 
-        public HomeController(ILogger<HomeController> logger, IEventoService evento, IEnsaioService ensaioService, IInformativoService informativoService,IMapper mapper)
+        public HomeController(ILogger<HomeController> logger, 
+                              IEventoService evento, 
+                              IEnsaioService ensaioService, 
+                              IInformativoService informativoService,
+                              UserManager<UsuarioIdentity> roleManager,
+                              IMapper mapper)
         {
             _logger = logger;
             _evento = evento;
             _ensaioService = ensaioService;
             _informativoService = informativoService;
+            _roleManager = roleManager;
             _mapper = mapper;
         }
 
         public async Task<IActionResult> Index()
         {
+            if(User.IsInRole("ADMINISTRADOR SISTEMA"))
+            {
+                return RedirectToAction(nameof(Index), "GrupoMusical");
+            }
+
             var listaEvento = _evento.GetAllDTO();
             var EventoViewDTO = _mapper.Map<List<EventoViewModelDTO>>(listaEvento);
             var listaEnsaio = await _ensaioService.GetAllDTO();
