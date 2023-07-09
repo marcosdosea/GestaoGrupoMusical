@@ -19,7 +19,7 @@
                     <br />
                     <div class="form-group">
                         <label asp-for="Nome" class="control-label"></label>
-                        <input asp-for="Nome" class="form-control bg-light" placeholder="Meu Nome" />
+                        <input asp-for="Nome" class="form-control bg-light" />
                         <span asp-validation-for="Nome" class="text-danger"></span>
                     </div>
                 </div>
@@ -29,7 +29,7 @@
                 <div class="row">
                     <div class="form-group col-auto">
                         <label asp-for="Cpf" class="control-label">CPF</label>
-                        <input asp-for="Cpf" id="campoCpf" class="form-control bg-light" placeholder="000.000.000-00" />
+                        <input asp-for="Cpf" id="campoCpf" class="form-control bg-light" />
                         <span asp-validation-for="Cpf" class="text-danger"></span>
                     </div>
                     <div class="form-group col-auto">
@@ -37,7 +37,7 @@
                         <input asp-for="DataNascimento" class="form-control bg-light" />
                         <span asp-validation-for="DataNascimento" class="text-danger"></span>
                     </div>
-                    <div class="col-auto">
+                    <div class="form-group col-auto">
                         <label asp-for="Sexo" class="control-label row"></label>
                         @{
                             foreach (var item in Model.sexoPessoa)
@@ -55,17 +55,17 @@
                 <div class="row">
                     <div class="form-group">
                         <label asp-for="Email" class="control-label">E-mail</label>
-                        <input asp-for="Email" class="form-control bg-light" placeholder="exemplo@gmail.com" />
+                        <input asp-for="Email" class="form-control bg-light" />
                         <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
                     <div class="form-group col-4">
                         <label asp-for="Telefone1" class="control-label"></label>
-                        <input asp-for="Telefone1" id="campoTelefone1" class="form-control bg-light" placeholder="(99) 99999-9999" />
+                        <input asp-for="Telefone1" id="campoTelefone1" class="form-control bg-light" />
                         <span asp-validation-for="Telefone1" class="text-danger"></span>
                     </div>
                     <div class="form-group col-4">
                         <label asp-for="Telefone2" class="control-label"></label>
-                        <input asp-for="Telefone2" id="campoTelefone2" class="form-control bg-light" placeholder="(99) 99999-9999" />
+                        <input asp-for="Telefone2" id="campoTelefone2" class="form-control bg-light" />
                         <span asp-validation-for="Telefone2" class="text-danger"></span>
                     </div>
                     <div class="form-group col-4">
@@ -124,12 +124,12 @@
                     <br />
                     <div class="form-group col-3">
                         <label asp-for="Cep" class="control-label">CEP</label>
-                        <input asp-for="Cep" id="campoCep" class="form-control bg-light" placeholder="00000-000" />
+                        <input asp-for="Cep" id="campoCep" class="form-control bg-light" />
                         <span asp-validation-for="Cep" class="text-danger"></span>
                     </div>
                     <div class="form-group col-sm">
                         <label asp-for="Rua" class="control-label"></label>
-                        <input asp-for="Rua" class="form-control bg-light" placeholder="Rua"/>
+                        <input asp-for="Rua" class="form-control bg-light" />
                         <span asp-validation-for="Rua" class="text-danger"></span>
                     </div>
                 </div>
@@ -141,17 +141,17 @@
                 <div class="row">
                     <div class="form-group col-5">
                         <label asp-for="Bairro" class="control-label"></label>
-                        <input asp-for="Bairro" class="form-control bg-light" placeholder="Bairro"/>
+                        <input asp-for="Bairro" class="form-control bg-light" />
                         <span asp-validation-for="Bairro" class="text-danger"></span>
                     </div>
                     <div class="form-group col-5">
                         <label asp-for="Cidade" class="control-label"></label>
-                        <input asp-for="Cidade" class="form-control bg-light" placeholder="Cidade"/>
+                        <input asp-for="Cidade" class="form-control bg-light" />
                         <span asp-validation-for="Cidade" class="text-danger"></span>
                     </div>
                     <div class="form-group col-sm">
                         <label asp-for="Estado" class="control-label"></label>
-                        <input asp-for="Estado" class="form-control bg-light" placeholder="Estado"/>
+                        <input asp-for="Estado" class="form-control bg-light" />
                         <span asp-validation-for="Estado" class="text-danger"></span>
                     </div>
                 </div>
