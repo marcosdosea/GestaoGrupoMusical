@@ -42,7 +42,7 @@ namespace GestaoGrupoMusicalWeb.Models
         public string? Bairro { get; set; }
 
         [StringLength(70)]
-        [Display(Name = "Cidade", Prompt = "Rua")]
+        [Display(Name = "Cidade", Prompt = "Cidade")]
         public string? Cidade { get; set; }
 
         [Required(ErrorMessage = "O campo Estado é obrigatório.")]
