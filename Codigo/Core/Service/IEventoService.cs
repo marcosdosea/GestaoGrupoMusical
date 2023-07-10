@@ -10,5 +10,6 @@ namespace Core.Service
         Evento Get(int id);
         IEnumerable<Evento> GetAll();
         IEnumerable<EventoDTO> GetAllDTO();
+        IEnumerable<EventoIndexDTO> GetAllIndexDTO();
     }
 }

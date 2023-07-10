@@ -1,77 +1,49 @@
-﻿@model IEnumerable<GestaoGrupoMusicalWeb.Models.EventoViewModel>
+﻿@model IEnumerable<Core.DTO.EventoIndexDTO>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Eventos";
 }
 
-
-
-<p>
-    <a asp-action="Create">Novo Evento</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdGrupoMusical)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DataHoraInicio)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DataHoraFim)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Local)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Repertorio)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdColaboradorResponsavel)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdRegente)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdGrupoMusical)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DataHoraInicio)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DataHoraFim)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Local)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Repertorio)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdColaboradorResponsavel)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdRegente)
-            </td>
-            <td>
-                @Html.ActionLink("Editar", "Edit", new { id=item.Id }) |
-                    @Html.ActionLink("Detalhes", "Details", new {  id=item.Id }) |
-                    @Html.ActionLink("Excluir", "Delete", new {  id=item.Id })
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="d-flex justify-content-between align-items-center">
+    <h5>@ViewData["Title"]</h5>
+    <a role="button" class="btn btn-secondary m-3" asp-controller="Evento" asp-action="Create">Novo Evento</a>
+</div>
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr class="bg-danger bg-opacity-75 text-white">
+                <th class="p-3">
+                    @Html.DisplayNameFor(model => model.DataHoraInicio)
+                </th>
+                <th class="p-3">
+                    @Html.DisplayNameFor(model => model.Local)
+                </th>
+                <th class="p-3">
+                    @Html.DisplayNameFor(model => model.Repertorio)
+                </th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr class="border-bottom border-danger border-opacity-75 p-3 align-middle">
+                    <td class="p-3">
+                        @Html.DisplayFor(modelItem => item.DataHoraInicio)
+                    </td>
+                    <td class="p-3">
+                        @Html.DisplayFor(modelItem => item.Local)
+                    </td>
+                    <td class="p-3">
+                        @Html.DisplayFor(modelItem => item.Repertorio)
+                    </td>
+                    <td class="d-flex justify-content-between border-0 flex-wrap py-3">
+                        <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb-2" asp-controller="Evento" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"> </i> Editar </a>
+                        <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb-2" asp-controller="Evento" asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-file"> </i> Detalhes </a>
+                        <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb-2" asp-controller="Evento" asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-xmark"> </i> Excluir </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

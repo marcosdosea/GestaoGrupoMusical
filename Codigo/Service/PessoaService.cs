@@ -1,22 +1,30 @@
 ﻿using Core;
 using Core.DTO;
 using Core.Service;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Email;
+using System.Diagnostics.Metrics;
 
 namespace Service
 {
     public class PessoaService : IPessoaService
     {
         private readonly GrupoMusicalContext _context;
+        private readonly UserManager<UsuarioIdentity> _userManager;
+        private readonly IUserStore<UsuarioIdentity> _userStore;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public PessoaService(GrupoMusicalContext context)
+        public PessoaService(GrupoMusicalContext context, 
+                            UserManager<UsuarioIdentity> userManager,
+                            IUserStore<UsuarioIdentity> userStore,
+                            RoleManager<IdentityRole> roleManager)
         {
             _context = context;
+            _userManager = userManager;
+            _userStore = userStore;
+            _roleManager = roleManager;
         }
 
         /// <summary>
@@ -26,8 +34,8 @@ namespace Service
         /// <returns>retorna o id referente a nova entidade criada</returns>
         public async Task<int> Create(Pessoa pessoa)
         {
-            _context.Pessoas.Add(pessoa);
-            _context.SaveChanges();
+            await _context.Pessoas.AddAsync(pessoa);
+            await _context.SaveChangesAsync();
 
             return pessoa.Id;
         }
@@ -92,10 +100,64 @@ namespace Service
                     pessoa.IsentoPagamento = 1;
                     pessoa.Telefone1 = "";
 
-                    Create(pessoa);
+                    await Create(pessoa);
+
+                    var user = CreateUser();
+
+                    await _userStore.SetUserNameAsync(user, pessoa.Cpf, CancellationToken.None);
+                    var result = await _userManager.CreateAsync(user, pessoa.Cpf);
+
+                    if (result.Succeeded)
+                    {
+                        bool roleExists = await _roleManager.RoleExistsAsync("ADMINISTRADOR GRUPO");
+                        if (!roleExists)
+                        {
+                            await _roleManager.CreateAsync(new IdentityRole("ADMINISTRADOR GRUPO"));
+                        }
+
+                        var userDb = await _userManager.FindByNameAsync(pessoa.Cpf);
+                        await _userManager.AddToRoleAsync(userDb, "ADMINISTRADOR GRUPO");
+
+                        await NotificarCadastroAdmGrupoAsync(pessoa);
+                    }
                 }
                 else if (pessoaF.IdGrupoMusical == pessoa.IdGrupoMusical)
                 {
+                    var user = await _userManager.FindByNameAsync(pessoaF.Cpf);
+
+                    if(user != null)
+                    {
+                        bool roleExists = await _roleManager.RoleExistsAsync("ADMINISTRADOR GRUPO");
+                        if (!roleExists)
+                        {
+                            await _roleManager.CreateAsync(new IdentityRole("ADMINISTRADOR GRUPO"));
+                        }
+                        await _userManager.AddToRoleAsync(user, "ADMINISTRADOR GRUPO");
+
+                        await NotificarCadastroAdmGrupoAsync(pessoaF);
+                    }
+                    else
+                    {
+                        user = CreateUser();
+
+                        await _userStore.SetUserNameAsync(user, pessoaF.Cpf, CancellationToken.None);
+                        var result = await _userManager.CreateAsync(user, pessoaF.Cpf);
+
+                        if (result.Succeeded)
+                        {
+                            bool roleExists = await _roleManager.RoleExistsAsync("ADMINISTRADOR GRUPO");
+                            if (!roleExists)
+                            {
+                                await _roleManager.CreateAsync(new IdentityRole("ADMINISTRADOR GRUPO"));
+                            }
+
+                            var userDb = await _userManager.FindByNameAsync(pessoaF.Cpf);
+                            await _userManager.AddToRoleAsync(userDb, "ADMINISTRADOR GRUPO");
+
+                            await NotificarCadastroAdmGrupoAsync(pessoaF);
+                        }
+                    }
+
                     //id para adm de grupo == 3
                     pessoaF.IdPapelGrupo = 3;
                     Edit(pessoaF);
@@ -119,7 +181,7 @@ namespace Service
         /// </summary>
         /// <param name="id">id do grupo musical</param>
         /// <returns>lista de DTO contendo todos os adm do grupo</returns>
-        public IAsyncEnumerable<AdministradorGrupoMusicalDTO> GetAllAdmGroup(int id)
+        public async Task<IEnumerable<AdministradorGrupoMusicalDTO>> GetAllAdmGroup(int id)
         {
             var AdmGroupList = from pessoa in _context.Pessoas
                                where pessoa.IdGrupoMusical == id && pessoa.IdPapelGrupo == 3
@@ -131,21 +193,30 @@ namespace Service
                                    Email = pessoa.Email
                                };
 
-            return AdmGroupList.AsAsyncEnumerable();
+            return await AdmGroupList.ToListAsync();
         }
 
         public async Task<bool> RemoveAdmGroup(int id)
         {
             try
             {
-                var pessoa = _context.Pessoas.Find(id);
-                pessoa.IdPapelGrupo = 1;
+                var pessoa = await _context.Pessoas.FindAsync(id);
+                if (pessoa != null)
+                {
+                    var user = await _userManager.FindByNameAsync(pessoa.Cpf);
+                    if(user != null)
+                    {
+                        await _userManager.RemoveFromRoleAsync(user, "ADMINISTRADOR GRUPO");
+                    }
+                    pessoa.IdPapelGrupo = 1;
 
-                _context.Pessoas.Update(pessoa);
+                    _context.Pessoas.Update(pessoa);
 
-                _context.SaveChanges();
+                    await _context.SaveChangesAsync();
 
-                return true;
+                    return true;
+                }
+                return false;
             }
             catch
             {
@@ -231,6 +302,47 @@ namespace Service
             pessoaAssociada.DataSaida = DateTime.Now;
             Edit(pessoaAssociada);
             
+        }
+
+        public async Task<bool> NotificarCadastroAdmGrupoAsync(Pessoa pessoa)
+        {
+            try
+            {
+                
+                EmailModel email = new()
+                {
+                    Assunto = "Batalá - Administrador do Grupo",
+                    Body = "<div style=\"text-align: center;\">\r\n    " +
+                    "<h1>Administrador do Grupo</h1>\r\n    " +
+                    $"<h2>Olá, {pessoa.Nome}, a sua senha para acesso.</h2>\r\n" +
+                    "<div style=\"font-size: large;\">\r\n        " +
+                    $"<dt style=\"font-weight: 700;\">Login:</dt><dd>{pessoa.Cpf}</dd>" +
+                    $"<dt style=\"font-weight: 700;\">Senha:</dt><dd>{pessoa.Cpf}</dd>"
+                };
+
+                email.To.Add(pessoa.Email);
+
+                await EmailService.Enviar(email);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private UsuarioIdentity CreateUser()
+        {
+            try
+            {
+                return Activator.CreateInstance<UsuarioIdentity>();
+            }
+            catch
+            {
+                throw new InvalidOperationException($"Can't create an instance of '{nameof(UsuarioIdentity)}'. " +
+                    $"Ensure that '{nameof(UsuarioIdentity)}' is not an abstract class and has a parameterless constructor, or alternatively " +
+                    $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
+            }
         }
 
         public bool GetCPFExistente(int id,string cpf)
