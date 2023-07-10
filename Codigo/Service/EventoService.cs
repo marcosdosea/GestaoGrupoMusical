@@ -71,5 +71,20 @@ namespace Service
 
             return query.AsNoTracking();
         }
+        
+        public IEnumerable<EventoIndexDTO> GetAllIndexDTO()
+        {
+            var query = _context.Eventos
+                .OrderBy(g => g.DataHoraInicio).
+                Select(g => new EventoIndexDTO
+                {
+                    Id = g.Id,
+                    DataHoraInicio = g.DataHoraInicio,
+                    Local = g.Local,
+                    Repertorio = g.Repertorio
+                }
+                ).AsNoTracking();
+            return query;
+        }
     }
 }

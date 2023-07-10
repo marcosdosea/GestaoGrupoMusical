@@ -1,0 +1,57 @@
+﻿@model GestaoGrupoMusicalWeb.Models.AdministradorGrupoMusicalViewModel.AdministradorModel
+
+
+<div class="container mb-4 mt-4">
+    <form asp-action="Create">
+        <div class="row mb-3">
+            <div class="col-lg-6">
+                <label asp-for="NomeGrupoMusical" class="control-label"></label>
+                <input asp-for="NomeGrupoMusical" class="form-control" readonly />
+                <span asp-validation-for="NomeGrupoMusical" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-lg-3">
+                <label asp-for="Cpf" class="control-label"></label>
+                <input asp-for="Cpf" class="form-control" />
+                <span asp-validation-for="Cpf" class="text-danger"></span>
+            </div>
+            <div class="col-lg-3">
+                <span class="control-label mb-2">@Html.DisplayNameFor(model => model.Sexo)</span>
+                <div class="d-flex justify-content-lg-between justify-content-around pb-1">
+                    @{
+                        foreach (var item in Model.SexoOptions)
+                        {
+                            <div>
+                                <input class="form-check-input" type="radio" value="@item.Value" asp-for="Sexo" id="@item.Key" />
+                                <label for="@item.Key">@item.Key</label>
+                            </div>
+                        }
+                    }
+                </div>
+                <span asp-validation-for="Sexo" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-lg-6">
+                <label asp-for="Nome" class="control-label"></label>
+                <input asp-for="Nome" class="form-control" />
+                <span asp-validation-for="Nome" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-lg-6">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+        </div>
+        <input asp-for="IdGrupoMusical" type="hidden" />
+        <div class="row">
+            <div class="d-flex flex-column-reverse flex-lg-row">
+                <a class="btn btn-outline-secondary col-lg-2 mt-3 me-lg-3" asp-action="index" asp-controller="GrupoMusical">Voltar</a>
+                <input class="btn btn-secondary col-lg-2 mt-3 ml-3" type="submit" value="Adicionar" />
+            </div>
+        </div>
+    </form>
+</div>
