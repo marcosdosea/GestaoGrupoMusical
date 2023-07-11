@@ -6,50 +6,52 @@
 
 <div class="d-flex justify-content-between align-items-center">
     <h5>@ViewData["Title"]</h5>
-    <a role="button" class="btn btn-primary" asp-controller="InstrumentoMusical" asp-action="Create">Novo Instrumento</a>
+    <a role="button" class="btn btn-secondary m-3" asp-controller="InstrumentoMusical" asp-action="Create">Novo Instrumento</a>
 </div>
 
 <div class="table-responsive-md">
-    <table class="table table table-bordered mt-3">
-        <thead class="table-light">
-            <tr>
+    <table class="table">
+        <thead>
+            <tr class="bg-danger opacity-75" >
                 <th>
-                    @Html.DisplayNameFor(model => model.Patrimonio)
+                    <span class="text-white">Patrimônio</span>
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.NomeInstrumento)
+                    <span class="text-white">Instrumento</span>
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Status)
+                    <span class="text-white">Status</span>
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.NomeAssociado)
+                    <span class="text-white">Associado</span>
                 </th>
-                <th>Ações</th>
+                <th>
+                    <span class="text-white">Ações</span>
+                </th>
             </tr>
         </thead>
         <tbody>
-    @foreach (var item in Model) {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Patrimonio)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.NomeInstrumento)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Status)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.NomeAssociado)
-                </td>
-                <td>
-                    @Html.ActionLink("Editar", "Edit", new { id=item.Id }) |
-                    @Html.ActionLink("Excluir", "Delete", new { id=item.Id  }) |
-                    @Html.ActionLink("Movimentar", "Movimentar", new { id=item.Id  })
-                </td>
-            </tr>
-    }
+            @foreach (var item in Model) {
+                <tr class="border-bottom border-danger border-opacity-75 p-3 align-middle">
+                    <td class="p-3" >
+                        @item.Patrimonio
+                    </td>
+                    <td class="p-3" >
+                        @item.NomeInstrumento
+                    </td>
+                    <td class="p-3">
+                        @item.Status
+                    </td>
+                    <td class="p-3">
+                        @item.NomeAssociado
+                    </td>
+                    <td class="d-flex flex-wrap justify-content-between border-0 p-3">
+                        <a role="button" class="btn btn-secondary btn-sm px-3 my-2" asp-controller="InstrumentoMusical" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"> </i> Editar </a>
+                        <a role="button" class="btn btn-secondary btn-sm px-3 my-2" asp-controller="InstrumentoMusical" asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-xmark"> </i> Excluir </a>
+                        <a role="button" class="btn btn-secondary btn-sm px-3 my-2" asp-controller="InstrumentoMusical" asp-action="Movimentar" asp-route-id="@item.Id"><i class="fa-solid fa-arrow-right-arrow-left"></i> Movimentar </a>
+                    </td>
+                </tr>
+            }
         </tbody>
     </table>
 </div>
