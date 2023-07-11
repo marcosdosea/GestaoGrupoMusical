@@ -8,6 +8,30 @@ html {
   }
 }
 
+@media (min-width: 1501px) and (max-width: 1900px) {
+    .img-login {
+        width: 250px;
+        height: 460px;
+    }
+    .img-login img {
+        width: 100%;
+        height: 100%;
+    }
+}
+
+@media (max-width: 1500px){
+    .img-login {
+        display: none !important;
+    }
+}
+
+@media (max-height: 500px) {
+    .img-login {
+        display: none !important;
+    }
+}
+
+
 .btn {
     box-shadow: none !important;
 }
