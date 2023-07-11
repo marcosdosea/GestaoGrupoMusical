@@ -11,12 +11,14 @@
         <div class="form-group position-relative">
             <label asp-for="Cpf" class="control-label fs-5"></label>
 
-            <div class="input-group-prepend position-absolute top-50 ms-1 mt-1">
-                <i class="fa-regular fa-user" style="color: #6c757d;"></i>
-            </div>
+            <div class="input-group align-items-end overflow-hidden bg-white">
+                <div class="input-group-icon p-2 border-bottom border-dark">
+                    <i class="fa-regular fa-user" style="color: #6c757d;"></i>
+                </div>
 
-            <input asp-for="Cpf" id="campoCpf" class="form-control fs-5 ps-4" />
-            <span asp-validation-for="Cpf" class="text-danger"></span>
+                <input asp-for="Cpf" id="campoCpf" class="form-control fs-5 ps-4"/>
+                <span asp-validation-for="Cpf" class="text-danger"></span>
+            </div>
         </div>
         <div class="form-group position-relative">
             <label asp-for="Senha" class="control-label fs-5"></label>
@@ -27,6 +29,11 @@
 
             <input asp-for="Senha" class="form-control fs-5  ps-4" />
             <span asp-validation-for="Senha" class="text-danger"></span>
+        </div>
+
+        <div class="input-group fs-6">
+            <input type="checkbox" class="form-check-input me-2" id="rememberMe" >
+            <label class="form-check-label" for="rememberMe">Permanecer Conectado</label>
         </div>
 
         <button class="w-100 btn btn-lg btn-secondary mt-4" type="submit">Entrar</button>
