@@ -10,6 +10,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.ConstrainedExecution;
 using System.Security.Cryptography;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Service.Tests
 {
@@ -24,7 +26,7 @@ namespace Service.Tests
         {
             //Arrange
             var builder = new DbContextOptionsBuilder<GrupoMusicalContext>();
-            builder.UseInMemoryDatabase("Pessoas");
+            builder.UseInMemoryDatabase("GrupoMusical");
             var options = builder.Options;
 
             _context = new GrupoMusicalContext(options);
@@ -106,8 +108,8 @@ namespace Service.Tests
 
             _context.AddRange(pessoas);
             _context.SaveChanges();
-
-            _pessoaService = new PessoaService(_context);
+            // TODO: criar os objetos UserManager, UserStore e RoleManager para o construtor abaixo (o de PessoaService)
+            _pessoaService = new PessoaService(_context, null, null, null); 
         }
 
         [TestMethod()]
