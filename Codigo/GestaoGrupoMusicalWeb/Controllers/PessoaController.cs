@@ -72,8 +72,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
             else
             {
-
-
                 IEnumerable<Papelgrupo> listaPapelGrupo = _pessoaService.GetAllPapelGrupo();
                 IEnumerable<Grupomusical> listaGrupoMusical = _grupoMusical.GetAll();
                 IEnumerable<Manequim> listaManequim = _manequim.GetAll();
@@ -112,11 +110,28 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             pessoaViewModel.Cpf = pessoaViewModel.Cpf.Replace("-", string.Empty).Replace(".", string.Empty);
             pessoaViewModel.Cep = pessoaViewModel.Cep.Replace("-", string.Empty);
+            var cpf = _pessoaService.GetCPFExistente(id,pessoaViewModel.Cpf);
+            
+            if(cpf)
+            {
+                ModelState.Remove("Cpf");
+            }
 
             if (ModelState.IsValid)
             {
                 var pessoa = _mapper.Map<Pessoa>(pessoaViewModel);
                 _pessoaService.Edit(pessoa);
+            }
+            else
+            {
+                IEnumerable<Papelgrupo> listaPapelGrupo = _pessoaService.GetAllPapelGrupo();
+                IEnumerable<Grupomusical> listaGrupoMusical = _grupoMusical.GetAll();
+                IEnumerable<Manequim> listaManequim = _manequim.GetAll();
+
+                pessoaViewModel.ListaGrupoMusical = new SelectList(listaGrupoMusical, "Id", "Nome", null);
+                pessoaViewModel.ListaPapelGrupo = new SelectList(listaPapelGrupo, "IdPapelGrupo", "Nome", null);
+                pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", null);
+                return View("Edit", pessoaViewModel);
             }
             return RedirectToAction(nameof(Index));
         }
@@ -135,9 +150,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, PessoaViewModel pessoaViewModel)
         {
-            
-
-
             return RedirectToAction(nameof(Index));
         }
 

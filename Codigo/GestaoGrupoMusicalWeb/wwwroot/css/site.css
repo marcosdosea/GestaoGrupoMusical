@@ -36,7 +36,7 @@ html {
     box-shadow: none !important;
 }
 
-.input-validation-error {
+.form-control.input-validation-error {
     border-bottom: 2px solid var(--bs-danger) !important;
     padding-right: calc(1.5em + 0.75rem);
     background-image: url("../icon/invalid_icon.svg");
@@ -56,6 +56,7 @@ html {
 
 .form-select.input-validation-error {
     padding-right: 4.125rem;
+    border-bottom: 2px solid var(--bs-danger) !important;
     background-image: url("../icon/invalid_icon.svg"), url("../icon/select_icon.svg");
     background-position: right 0.55rem center, center right 2.25rem;
     background-size: 16px;

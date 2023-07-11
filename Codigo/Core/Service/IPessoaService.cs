@@ -17,8 +17,10 @@ namespace Core.Service
         IEnumerable<Pessoa> GetAll();
         IEnumerable<AssociadoDTO> GetAllAssociadoDTO();
 
+        bool GetCPFExistente(int id, string cpf);
+
         Task<bool> AddAdmGroup(Pessoa pessoa);
-        IAsyncEnumerable<AdministradorGrupoMusicalDTO> GetAllAdmGroup(int id);
+        Task<IEnumerable<AdministradorGrupoMusicalDTO>> GetAllAdmGroup(int id);
         Task<bool> RemoveAdmGroup(int id);
 
         Task<bool> ToCollaborator(int id);
@@ -26,6 +28,8 @@ namespace Core.Service
 
         IEnumerable<Papelgrupo> GetAllPapelGrupo();
         void RemoverAssociado(Pessoa pessoa, String? motivoSaida);
+
+        Task<bool> NotificarCadastroAdmGrupoAsync(Pessoa pessoa);
 
     }
 }

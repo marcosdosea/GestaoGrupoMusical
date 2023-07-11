@@ -32,7 +32,6 @@
 
     <form asp-action="Delete">
         <input type="hidden" name="idGrupoMusical" value="@ViewBag.idGrupoMusical" />
-        <input type="hidden" name="nomeGrupo" value="@ViewBag.nomeGrupo" />
         <input type="submit" value="Remover" class="btn btn-danger" /> |
         <a asp-action="Index" asp-route-id="@ViewBag.idGrupoMusical" asp-route-NomeGrupo="@ViewBag.nomeGrupo">Cancelar</a>
     </form>

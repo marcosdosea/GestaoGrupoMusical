@@ -28,9 +28,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: EventoController
         public ActionResult Index()
         {
-            var listaEvento = _evento.GetAll();
-            var listaEventoModel = _mapper.Map<List<EventoViewModel>>(listaEvento);
-            return View(listaEventoModel);
+            var listaEvento =  _evento.GetAllIndexDTO();
+            return View(listaEvento);
         }
 
         // GET: EventoController/Details/5
