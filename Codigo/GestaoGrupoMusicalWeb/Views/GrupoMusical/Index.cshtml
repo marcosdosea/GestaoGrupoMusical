@@ -22,7 +22,7 @@
                     <span class="text-white">Nome</span>
                 </th>
                 <th>Ações</th>
-                <th></th>
+                
             </tr>
         </thead>
         <tbody>
@@ -35,12 +35,13 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.Name)
                     </td>
-                    <td>
-                        <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb2" asp-controller="GrupoMusical" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"> </i> Editar</a>
-                        <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb2" asp-controller="GrupoMusical" asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-file"> </i> Detalhes</a>
-                        <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb2" asp-controller="GrupoMusical" asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-xmark"> </i> Excluir</a>
-                        <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb2" asp-controller="AdministradorGrupoMusical" asp-action="Index" asp-route-id="@item.Id"><i class="fa-solid fa-lock-open"></i> Administradores</a>
+                    <td class="d-flex border-0 flex-wrap py-3">
+                        <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb2 m-3" asp-controller="GrupoMusical" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"> </i> Editar</a>
+                        <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb2 m-3" asp-controller="GrupoMusical" asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-file"> </i> Detalhes</a>
+                        <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb2 m-3" asp-controller="GrupoMusical" asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-xmark"> </i> Excluir</a>
+                        <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb2 m-3" asp-controller="AdministradorGrupoMusical" asp-action="Index" asp-route-id="@item.Id"><i class="fa-solid fa-lock-open"></i> Administradores</a>
                     </td>
+ 
                 </tr>
             }
         </tbody>
