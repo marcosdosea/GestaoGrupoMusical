@@ -15,31 +15,34 @@
     <table class="table">
         <thead>
             <tr class="bg-danger bg-opacity-75 text-white">
-                <th>
+                <th class="border-0 w-25">
                     <span class="text-white">Código</span>
                 </th>
-                <th>
+                <th class="border-0 w-25">
                     <span class="text-white">Nome</span>
                 </th>
-                <th>                         </th>
-                <th>Ações</th>
+
+                <th class=" border-0 w-15">
+                    <span class="text-white">Ações</span>
+                </th>
             </tr>
         </thead>
         <tbody>
             @foreach (var item in Model)
             {
-                <tr class="border-bottom border-danger border-opacity-75 p-3 align-middle">
+                <tr class="border-bottom border-danger border-opacity-75 px-3 align-middle">
                     <td>
                         @Html.DisplayFor(modelItem => item.Id)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Name)
                     </td>
-                    <td class="d-flex justify-content border-0 flex-wrap py-3">
-                        <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb2 mx-3" asp-controller="GrupoMusical" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"> </i> Editar</a>
-                        <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb2 mr-3" asp-controller="GrupoMusical" asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-file"> </i> Detalhes</a>
-                        <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb2 mr-3" asp-controller="GrupoMusical" asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-xmark"> </i> Excluir</a>
-                        <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb2 mr-3" asp-controller="AdministradorGrupoMusical" asp-action="Index" asp-route-id="@item.Id"><i class="fa-solid fa-lock-open"></i> Administradores</a>
+
+                    <td class="d-flex justify-content-between border-0 flex-wrap py-3">
+                        <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb-2 " asp-controller="GrupoMusical" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"> </i> Editar</a>
+                        <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb-2" asp-controller="GrupoMusical" asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-file"> </i> Detalhes</a>
+                        <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb-2" asp-controller="GrupoMusical" asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-xmark"> </i> Excluir</a>
+                        <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb-2" asp-controller="AdministradorGrupoMusical" asp-action="Index" asp-route-id="@item.Id"><i class="fa-solid fa-lock-open"></i> Administradores</a>
                     </td>
                 </tr>
             }
