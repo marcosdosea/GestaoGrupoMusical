@@ -22,6 +22,8 @@ html {
 }
 
 .form-control {
+    --bs-bg-opacity: 1;
+    background-color: rgba(var(--bs-light-rgb), var(--bs-bg-opacity)) !important;
     color: var(--bs-dark);
     border-top: 0px;
     border-left: 0px;
