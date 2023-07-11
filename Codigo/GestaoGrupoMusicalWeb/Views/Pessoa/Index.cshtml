@@ -52,7 +52,7 @@
                 </td>
                 <td class="p-3">
                     <a role="button" class="btn btn-secondary btn-sm mb-2 mb-lg-0" asp-controller="Pessoa" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"></i> Editar</a>
-                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="Pessoa" asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-xmark"> </i> Excluir</a>
+                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="Pessoa" asp-action="RemoveAssociado" asp-route-id="@item.Id"><i class="fa-solid fa-xmark"> </i> Excluir</a>
                 </td>
             </tr>
         }
