@@ -34,10 +34,45 @@ namespace Service
         /// <returns>retorna o id referente a nova entidade criada</returns>
         public async Task<int> Create(Pessoa pessoa)
         {
-            await _context.Pessoas.AddAsync(pessoa);
-            await _context.SaveChangesAsync();
-
-            return pessoa.Id;
+            /* using var transaction = _context.Database.BeginTransaction();
+             try
+             {
+                 await _context.Pessoas.AddAsync(pessoa);
+                 await _context.SaveChangesAsync();
+                 return 200;
+             }
+             catch(DbUpdateException ex)
+             {
+                 /*Erro do servidor
+                 Console.WriteLine($"Erro ao atualizar o banco de dados: {ex.Message}");
+                 await transaction.RollbackAsync();
+                 return 500;
+             }*/
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    await _context.Pessoas.AddAsync(pessoa);
+                    if (GetCPFExistenteCreate(pessoa.Cpf).Equals(false))
+                    {
+                        await _context.SaveChangesAsync();
+                        await transaction.CommitAsync();
+                        return 200;
+                    }
+                    else
+                    {
+                        await transaction.RollbackAsync();
+                        return 400;
+                    }
+                   
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    Console.WriteLine($"Erro ao inserir pessoa: {ex.Message}");
+                    return 500;
+                }
+            }
         }
 
         /// <summary>
@@ -349,6 +384,16 @@ namespace Service
         {
             var query = _context.Set<Pessoa>().AsNoTracking().FirstOrDefault(p => p.Id == id && p.Cpf == cpf);
             if(query != null)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public bool GetCPFExistenteCreate(string cpf)
+        {
+            var query = _context.Set<Pessoa>().Any(p => p.Cpf ==cpf);
+            if (query != null)
             {
                 return true;
             }
