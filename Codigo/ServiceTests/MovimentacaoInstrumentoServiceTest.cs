@@ -61,7 +61,14 @@ namespace ServiceTests
             _context.AddRange(movimentacoesInstrumentos);
             _context.SaveChanges();
 
-            _movimentacaoInstrumento = new MovimentacaoInstrumentoService(_context);
+        _movimentacaoInstrumento = new MovimentacaoInstrumentoService(_context);
         }
+
+        [TestMethod]
+        public void CreateTest()
+        {
+            
+        }
+
     }
 }
