@@ -5,10 +5,11 @@ using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using static GestaoGrupoMusicalWeb.Controllers.BaseController;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
-    public class PessoaController : Controller
+    public class PessoaController : BaseController
     {
         private readonly IPessoaService _pessoaService;
         private readonly IMapper _mapper;
@@ -68,7 +69,19 @@ namespace GestaoGrupoMusicalWeb.Controllers
             if (ModelState.IsValid)
             {
                 var pessoaModel = _mapper.Map<Pessoa>(pessoaViewModel);
-                await _pessoaService.Create(pessoaModel);
+                switch(await _pessoaService.Create(pessoaModel))
+                {
+                    case 200:
+                        Notificar("Associado <b>Cadastrado</b> com <b>Sucesso</b>", Notifica.Sucesso);
+                        return RedirectToAction(nameof(Index));
+                    case 500:
+                        Notificar("Desculpe, ocorreu um <b>Erro</b> durante o <b>Cadastro</b> do associado, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                        return RedirectToAction(nameof(Index));
+                    case 400:
+                        Notificar("Já existe um associado com esse Cpf, <b>Alerta<b>", Notifica.Alerta);
+                        return View("Create", pessoaViewModel);
+                }
+
             }
             else
             {
