@@ -4,35 +4,32 @@
 }
 <div class="d-flex justify-content-between align-items-center">
     <form asp-controller="Identity" asp-action="Autenticar" class="justify-content-center col px-5 m-0">
-        <div class="">
-            <div class="d-flex justify-content-center m-0 mb-4">
-                <img src="~/assets/logo_batalase_SF.png" alt="Logo do batalá - SE" class="img-fluid mw-75">
-            </div>
-
-            <div class="form-group position-relative">
-                <label asp-for="Cpf" class="control-label fs-5"></label>
-
-                <div class="input-group-prepend position-absolute top-50 ms-1 mt-1">
-                    <i class="fa-regular fa-user" style="color: #6c757d;"></i>
-                </div>
-
-                <input asp-for="Cpf" id="campoCpf" class="form-control fs-5 ps-4" />
-                <span asp-validation-for="Cpf" class="text-danger"></span>
-            </div>
-            <div class="form-group position-relative">
-                <label asp-for="Senha" class="control-label fs-5"></label>
-
-                <div class="input-group-prepend position-absolute top-50 ms-1 mt-1">
-                    <i class="fa-solid fa-lock" style="color: #6c757d;"></i>
-                </div>
-
-                <input asp-for="Senha" class="form-control fs-5  ps-4" />
-                <span asp-validation-for="Senha" class="text-danger"></span>
-            </div>
-
-            <button class="w-100 btn btn-lg btn-secondary mt-4" type="submit">Entrar</button>
-            <a class="w-100 btn btn-lg btn-outline-secondary mt-2" role="button" asp-controller="Identity" asp-action="Cadastrar">Criar uma nova conta</a>
+        <div class="d-flex justify-content-center m-0 mb-4">
+            <img src="~/assets/logo_batalase_SF.png" alt="Logo do batalá - SE" class="img-fluid mw-75">
         </div>
+
+        <div class="form-group position-relative">
+            <label asp-for="Cpf" class="control-label fs-5"></label>
+
+            <div class="input-group-prepend position-absolute top-50 ms-1 mt-1">
+                <i class="fa-regular fa-user" style="color: #6c757d;"></i>
+            </div>
+
+            <input asp-for="Cpf" id="campoCpf" class="form-control fs-5 ps-4" />
+            <span asp-validation-for="Cpf" class="text-danger"></span>
+        </div>
+        <div class="form-group position-relative">
+            <label asp-for="Senha" class="control-label fs-5"></label>
+
+            <div class="input-group-prepend position-absolute top-50 ms-1 mt-1">
+                <i class="fa-solid fa-lock" style="color: #6c757d;"></i>
+            </div>
+
+            <input asp-for="Senha" class="form-control fs-5  ps-4" />
+            <span asp-validation-for="Senha" class="text-danger"></span>
+        </div>
+
+        <button class="w-100 btn btn-lg btn-secondary mt-4" type="submit">Entrar</button>
     </form>
 
     <div class="float-end img-login">
