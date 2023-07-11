@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using AspNetCore;
+using AutoMapper;
 using Core;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
@@ -9,7 +10,7 @@ using System.Net.WebSockets;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
-    public class GrupoMusicalController : Controller
+    public class GrupoMusicalController : BaseController
     {
         private readonly IGrupoMusicalService _grupoMusical;
         private readonly IMapper _mapper;
