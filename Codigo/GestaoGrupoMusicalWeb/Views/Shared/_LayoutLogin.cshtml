@@ -14,7 +14,7 @@
 
 <body class="bg-white">
     <main class="">
-        <div class="card position-absolute top-50 start-50 translate-middle ps-3 pe-0 col-10 col-md-6 col-lg-4
+        <div class="card position-absolute top-50 start-50 translate-middle pe-0 col-10 col-md-6 col-lg-4
                     shadow border-danger border-opacity-75 gray-login">
             @RenderBody()
         </div>
@@ -24,6 +24,7 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/simple-sidebar/dist/js/scripts.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>
