@@ -14,7 +14,7 @@ namespace Service.Tests
         private IMovimentacaoInstrumentoService _movimentacaoInstrumento;
 
         [TestInitialize]
-        private void Initialize()
+        public void Initialize()
         {
             // Arrange
             var builder = new DbContextOptionsBuilder<GrupoMusicalContext>();
@@ -81,7 +81,7 @@ namespace Service.Tests
 
             // Assert
             var movimentacoesInstrumento = _movimentacaoInstrumento.GetAllByIdInstrumento(2).GetAwaiter().GetResult();
-            Assert.AreEqual(2, movimentacoesInstrumento.ToArray().Length);
+            Assert.AreEqual(2, movimentacoesInstrumento.ToList().Count);
         }
 
     }
