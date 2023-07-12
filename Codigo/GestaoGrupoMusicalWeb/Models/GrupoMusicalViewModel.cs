@@ -8,14 +8,17 @@ namespace GestaoGrupoMusicalWeb.Models
         [Display(Name = "Codigo")]
         [Required]
         public int Id { get; set; }
+
         [Required(ErrorMessage = "O campo Nome é obrigatório")]
         [Display(Name = "Nome")]
         [StringLength(100, MinimumLength = 5, ErrorMessage = "O Campo Nome deve ter entre 5 a 100 caracteres")]
         public string Nome { get; set; } = null!;
+
         [Required]
         [Display(Name = " Razão Social")]
         [StringLength(100, MinimumLength = 5, ErrorMessage ="O campo Razão Social deve ter entre 5 a 100 caracteres")]
         public string RazaoSocial { get; set; } = null!;
+
         [Required]
         [Display(Name = "CNPJ")]
         [RegularExpression(@"^\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}$", ErrorMessage = "CNPJ inválido")]
