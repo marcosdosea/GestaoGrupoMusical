@@ -45,20 +45,23 @@ namespace Service
 
         public async Task<IEnumerable<InstrumentoMusicalDTO>> GetAllDTO()
         {
-            var query = await   (from instrumento in _context.Instrumentomusicals
-                                join movimentacao in _context.Movimentacaoinstrumentos
-                                on instrumento.Id equals movimentacao.IdInstrumentoMusical into intMovi
-                                from instrumentoMovi in intMovi.DefaultIfEmpty()
-                                select new InstrumentoMusicalDTO
-                                {
-                                    Id = instrumento.Id,
-                                    Patrimonio = instrumento.Patrimonio,
-                                    NomeInstrumento = instrumento.IdTipoInstrumentoNavigation.Nome,
-                                    Status = instrumento.Status,
-                                    NomeAssociado = instrumentoMovi.IdAssociadoNavigation.Nome
-                                }).AsNoTracking().Distinct().ToListAsync();
-    
-            foreach (var instrumento in query)
+            var query = await (from instrumento in _context.Instrumentomusicals
+                               join movimentacao in _context.Movimentacaoinstrumentos
+                               on instrumento.Id equals movimentacao.IdInstrumentoMusical into intMovi
+                               from instrumentoMovi in intMovi.DefaultIfEmpty()
+                               orderby instrumentoMovi.Data descending
+                               select new InstrumentoMusicalDTO
+                               {
+                                   Id = instrumento.Id,
+                                   Patrimonio = instrumento.Patrimonio,
+                                   NomeInstrumento = instrumento.IdTipoInstrumentoNavigation.Nome,
+                                   Status = instrumento.Status,
+                                   NomeAssociado = instrumentoMovi.IdAssociadoNavigation.Nome
+                               }).AsNoTracking().ToListAsync();
+
+            var list = query.DistinctBy(m => m.Patrimonio).OrderBy(m => m.Patrimonio);
+     
+            foreach (var instrumento in list)
             {
                 if (instrumento.Status == "DISPONIVEL")
                 {
@@ -67,7 +70,7 @@ namespace Service
                 instrumento.Status = instrumento.EnumStatus.Single(s => s.Key == instrumento.Status).Value;
             }
 
-            return query;
+            return list;
         }
 
         public async Task<IEnumerable<Tipoinstrumento>> GetAllTipoInstrumento()
