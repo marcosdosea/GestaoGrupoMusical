@@ -54,11 +54,15 @@ namespace Service
             using ( var transaction = _context.Database.BeginTransaction())
                 try
                 {
-                    
+                    _context.Remove(id);
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                    return 200;
                 }
                 catch (Exception ex)
                 {
-0;
+                    await transaction.RollbackAsync();
+                    return 500;
                 }
 
         }
@@ -68,10 +72,19 @@ namespace Service
         /// <param name="grupomusical"></param>
         public async Task<int> Edit(Grupomusical grupomusical)
         {
-            _context.Update(grupomusical);
-            _context.SaveChanges();
-
-            return 200;
+            using(var transaction = _context.Database.BeginTransaction())
+                try
+                {
+                    _context.Update(grupomusical);
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                    return 200;
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    return 500;
+                }
                 
         }
         /// <summary>
@@ -79,7 +92,7 @@ namespace Service
         /// </summary>
         /// <param name="id"></param>
         /// <returns> Retorna 1 grupo musical</returns>
-        public async  Task<Grupomusical> Get(int id)
+        public Grupomusical Get(int id)
         {
             return _context.Grupomusicals.Find(id);
         }
