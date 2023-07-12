@@ -131,7 +131,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             switch(await _grupoMusical.Delete(id))
             {
                 case 200:
-                    Notificar("Grupo <b> Editado </b> com <b> Sucesso </b> ", Notifica.Sucesso);
+                    Notificar("Grupo <b> Excluido </b> com <b> Sucesso </b> ", Notifica.Sucesso);
                     return RedirectToAction(nameof(Index));
                     break;
                 case 500:
