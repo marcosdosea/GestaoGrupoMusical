@@ -25,10 +25,20 @@
         <div class="row mb-3">
             <div>
                 <label asp-for="IdAssociado" class="control-label"></label>
-                <select asp-for="IdAssociado" asp-items="@Model.ListaAssociado" class="form-select">
-                    <option value=""></option>
-                </select>
-                <span asp-validation-for="IdAssociado" class="text-danger"></span>
+                    @if (Model.IdAssociado != 0)
+                    {
+                        <select asp-for="IdAssociado" asp-items="@Model.ListaAssociado" class="form-select" disabled>
+                            <option value=""></option>
+                        </select>
+                        <input asp-for="IdAssociado" type="hidden"/>
+                    }
+                    else
+                    {
+                        <select asp-for="IdAssociado" asp-items="@Model.ListaAssociado" class="form-select">
+                            <option value=""></option>
+                        </select>
+                    }
+                    <span asp-validation-for="IdAssociado" class="text-danger"></span>
             </div>
         </div>
         <div class="row mb-3">
