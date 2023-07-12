@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using Core;
 using Core.Service;
+using Microsoft.AspNetCore.Http;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Service;
 using System.Net.WebSockets;
-
+using AspNetCore;
+using System.Web;
 namespace GestaoGrupoMusicalWeb.Controllers
 {
     public class GrupoMusicalController : Controller
@@ -48,15 +50,33 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(GrupoMusicalViewModel grupoMusicalViewModel)
         {
-            grupoMusicalViewModel.Cnpj = grupoMusicalViewModel.Cnpj.Replace(".", string.Empty).Replace("-",string.Empty).Replace("/", string.Empty);
+            grupoMusicalViewModel.Cnpj = grupoMusicalViewModel.Cnpj.Replace(".", string.Empty).Replace("-", string.Empty).Replace("/", string.Empty);
             grupoMusicalViewModel.Cep = grupoMusicalViewModel.Cep.Replace("-", string.Empty);
             if (ModelState.IsValid)
             {
                 var grupoModel = _mapper.Map<Grupomusical>(grupoMusicalViewModel);
-                _grupoMusical.Create(grupoModel);
+
+
+                switch (_grupoMusical.Create(grupoModel))
+                {
+                    case 200:
+
+                        
+
+                        break;
+                    case 500:
+
+                        break;
+
+                }
+
+            }
+            else
+            {
+
             }
             return RedirectToAction(nameof(Index));
-            
+
         }
 
         // GET: GrupoMusicalController/Edit/5
