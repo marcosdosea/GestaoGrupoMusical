@@ -51,18 +51,16 @@ namespace Service
         {
 
             var grupo = await _context.Grupomusicals.FindAsync(id);
-            using ( var transaction = _context.Database.BeginTransaction())
+
                 try
                 {
                     
                     _context.Remove(grupo);
                     await _context.SaveChangesAsync();
-                    await transaction.CommitAsync();
                     return 200;
                 }
                 catch (Exception ex)
                 {
-                    await transaction.RollbackAsync();
                     return 500;
                 }
 
