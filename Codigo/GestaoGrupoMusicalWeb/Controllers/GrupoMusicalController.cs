@@ -77,9 +77,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 var grupoMusical = _mapper.Map<Grupomusical>(grupoMusicalViewModel);
                 _grupoMusical.Edit(grupoMusical);
-                Notificar("Sucesso: edições do grupo musical foram registradas!!", Notifica.Sucesso);
+                Notificar("Grupo Musical <b>editado</b> com <b>sucesso</b>", Notifica.Sucesso);
             }
-            return View();
+            return View(grupoMusicalViewModel);
         }
 
         // GET: GrupoMusicalController/Delete/5
