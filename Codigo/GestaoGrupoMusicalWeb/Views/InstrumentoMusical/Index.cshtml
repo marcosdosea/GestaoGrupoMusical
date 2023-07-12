@@ -12,21 +12,21 @@
 <div class="table-responsive-md">
     <table class="table">
         <thead>
-            <tr class="bg-danger opacity-75" >
+            <tr class="bg-danger bg-opacity-75 text-white">
                 <th>
-                    <span class="text-white">Patrimônio</span>
+                    @Html.DisplayNameFor(m => m.Patrimonio)
                 </th>
                 <th>
-                    <span class="text-white">Instrumento</span>
+                    @Html.DisplayNameFor(m => m.NomeInstrumento)
                 </th>
                 <th>
-                    <span class="text-white">Status</span>
+                    @Html.DisplayNameFor(m => m.Status)
                 </th>
                 <th>
-                    <span class="text-white">Associado</span>
+                    @Html.DisplayNameFor(m => m.NomeAssociado)
                 </th>
                 <th>
-                    <span class="text-white">Ações</span>
+                    <span>Ações</span>
                 </th>
             </tr>
         </thead>
