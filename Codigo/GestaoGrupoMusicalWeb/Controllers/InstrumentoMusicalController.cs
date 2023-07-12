@@ -227,7 +227,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             try
             {
-                await _movimentacaoInstrumento.Delete(id);
+                await _movimentacaoInstrumento.DeleteAsync(id);
                 return RedirectToAction(nameof(Movimentar), new { id = IdInstrumento });
             }
             catch
@@ -242,7 +242,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             try
             {
-                await _movimentacaoInstrumento.NotificarViaEmail(id);
+                await _movimentacaoInstrumento.NotificarViaEmailAsync(id);
                 return RedirectToAction(nameof(Movimentar), new { id = IdInstrumento });
             }
             catch

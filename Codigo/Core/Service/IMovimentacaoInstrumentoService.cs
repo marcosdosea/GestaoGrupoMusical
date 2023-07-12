@@ -21,8 +21,8 @@ namespace Core.Service
 
         Task<IEnumerable<MovimentacaoInstrumentoDTO>> GetAllByIdInstrumento(int idInstrumento);
 
-        Task<bool> Delete(int id);
+        Task<bool> DeleteAsync(int id);
 
-        Task<bool> NotificarViaEmail(int id);
+        Task<bool> NotificarViaEmailAsync(int id);
     }
 }
