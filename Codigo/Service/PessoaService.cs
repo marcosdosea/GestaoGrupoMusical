@@ -16,7 +16,7 @@ namespace Service
         private readonly IUserStore<UsuarioIdentity> _userStore;
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        public PessoaService(GrupoMusicalContext context, 
+        public PessoaService(GrupoMusicalContext context,
                             UserManager<UsuarioIdentity> userManager,
                             IUserStore<UsuarioIdentity> userStore,
                             RoleManager<IdentityRole> roleManager)
@@ -34,26 +34,43 @@ namespace Service
         /// <returns>retorna o id referente a nova entidade criada</returns>
         public async Task<int> Create(Pessoa pessoa)
         {
-            /* using var transaction = _context.Database.BeginTransaction();
-             try
-             {
-                 await _context.Pessoas.AddAsync(pessoa);
-                 await _context.SaveChangesAsync();
-                 return 200;
-             }
-             catch(DbUpdateException ex)
-             {
-                 /*Erro do servidor
-                 Console.WriteLine($"Erro ao atualizar o banco de dados: {ex.Message}");
-                 await transaction.RollbackAsync();
-                 return 500;
-             }*/
+
             using (var transaction = _context.Database.BeginTransaction())
-            {
                 try
                 {
                     await _context.Pessoas.AddAsync(pessoa);
-                    if (GetCPFExistenteCreate(pessoa.Cpf).Equals(false))
+                    if (pessoa.DataEntrada == null && pessoa.DataNascimento == null)
+                    {
+                        await _context.SaveChangesAsync();
+                        await transaction.CommitAsync();
+                        return 200;
+                    }
+                    else if (pessoa.DataNascimento != null)
+                    {
+                        int idade = Math.Abs(pessoa.DataNascimento.Value.Year - DateTime.Now.Year);
+                        if (pessoa.DataNascimento <= DateTime.Now && idade < 120)
+                        {
+                            if (pessoa.DataEntrada == null || pessoa.DataEntrada < DateTime.Now)
+                            {
+                                await _context.SaveChangesAsync();
+                                await transaction.CommitAsync();
+                                return 200;
+                            }
+                            else
+                            {
+                                // erro 400, data de entrada fora do escopo
+                                await transaction.RollbackAsync();
+                                return 400;
+                            }
+                        }
+                        else
+                        {
+                            // erro 401, data de nascimento está fora do escopo
+                            await transaction.RollbackAsync();
+                            return 401;
+                        }
+                    }
+                    else if (pessoa.DataEntrada == null || pessoa.DataEntrada < DateTime.Now)
                     {
                         await _context.SaveChangesAsync();
                         await transaction.CommitAsync();
@@ -61,18 +78,17 @@ namespace Service
                     }
                     else
                     {
+                        // erro 400, data de entrada fora do escopo
                         await transaction.RollbackAsync();
                         return 400;
                     }
-                   
                 }
                 catch (Exception ex)
                 {
                     await transaction.RollbackAsync();
-                    Console.WriteLine($"Erro ao inserir pessoa: {ex.Message}");
                     return 500;
                 }
-            }
+
         }
 
         /// <summary>
@@ -160,7 +176,7 @@ namespace Service
                 {
                     var user = await _userManager.FindByNameAsync(pessoaF.Cpf);
 
-                    if(user != null)
+                    if (user != null)
                     {
                         bool roleExists = await _roleManager.RoleExistsAsync("ADMINISTRADOR GRUPO");
                         if (!roleExists)
@@ -201,7 +217,7 @@ namespace Service
                 {
                     return false;
                 }
-                
+
 
                 return true;
             }
@@ -239,7 +255,7 @@ namespace Service
                 if (pessoa != null)
                 {
                     var user = await _userManager.FindByNameAsync(pessoa.Cpf);
-                    if(user != null)
+                    if (user != null)
                     {
                         await _userManager.RemoveFromRoleAsync(user, "ADMINISTRADOR GRUPO");
                     }
@@ -257,7 +273,7 @@ namespace Service
             {
                 return false;
             }
-            
+
 
         }
 
@@ -287,7 +303,7 @@ namespace Service
 
             //uma query pois pode ser que o id seja alterado futuramente
             var idPapel = _context.Papelgrupos
-                .Where(p=>p.Nome == "Colaborador")
+                .Where(p => p.Nome == "Colaborador")
                 .Select(p => p.IdPapelGrupo)
                 .First();
 
@@ -318,7 +334,7 @@ namespace Service
             //isso e para evitar que um adm de grupo seja
             //rebaixado a associado
             if (idPapel != null && idPapel.GetType() == typeof(int)
-                && pessoa != null && pessoa.IdPapelGrupo <= (idPapel+1))
+                && pessoa != null && pessoa.IdPapelGrupo <= (idPapel + 1))
             {
                 pessoa.IdPapelGrupo = idPapel;
                 Edit(pessoa);
@@ -336,14 +352,14 @@ namespace Service
             pessoaAssociada.Ativo = 0;
             pessoaAssociada.DataSaida = DateTime.Now;
             Edit(pessoaAssociada);
-            
+
         }
 
         public async Task<bool> NotificarCadastroAdmGrupoAsync(Pessoa pessoa)
         {
             try
             {
-                
+
                 EmailModel email = new()
                 {
                     Assunto = "Batalá - Administrador do Grupo",
@@ -380,19 +396,9 @@ namespace Service
             }
         }
 
-        public bool GetCPFExistente(int id,string cpf)
+        public bool GetCPFExistente(int id, string cpf)
         {
             var query = _context.Set<Pessoa>().AsNoTracking().FirstOrDefault(p => p.Id == id && p.Cpf == cpf);
-            if(query != null)
-            {
-                return true;
-            }
-            return false;
-        }
-
-        public bool GetCPFExistenteCreate(string cpf)
-        {
-            var query = _context.Set<Pessoa>().Any(p => p.Cpf ==cpf);
             if (query != null)
             {
                 return true;
