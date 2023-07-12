@@ -30,16 +30,16 @@ namespace Service
         public async Task<int> Create(Grupomusical grupomusical)
         {
 
-            using(var transaction = _context.Database.BeginTransaction())
+
                 try
                 {
                     await _context.Grupomusicals.AddAsync(grupomusical);
                     await _context.SaveChangesAsync();
-                    await  transaction.CommitAsync();
+
                     return 200;
                 }catch (Exception ex)
                 {
-                    await transaction.RollbackAsync();
+
                     return 500;
                 }
         }
