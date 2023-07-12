@@ -142,7 +142,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
             if(movimentacao != null && instrumento.Status == "EMPRESTADO")
             {
                 movimentacaoModel.IdAssociado = movimentacao.IdAssociado;
-                movimentacaoModel.IdColaborador = movimentacao.IdColaborador;
                 movimentacaoModel.Movimentacao = "DEVOLUCAO";
             }
 
@@ -163,42 +162,53 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             if (ModelState.IsValid)
             {
-                var movimentacao = new Movimentacaoinstrumento
+                var colaborador = await _pessoa.GetByCpf(User.Identity?.Name);
+
+                if (colaborador != null && (colaborador.IdPapelGrupo == 2 || colaborador.IdPapelGrupo == 3))
                 {
-                    Data = movimentacaoPost.Data,
-                    IdInstrumentoMusical = movimentacaoPost.IdInstrumentoMusical,
-                    IdAssociado = movimentacaoPost.IdAssociado,
-                    IdColaborador = movimentacaoPost.IdColaborador,
-                    TipoMovimento = movimentacaoPost.Movimentacao
-                };
-                switch (await _movimentacaoInstrumento.CreateAsync(movimentacao))
+
+                    var movimentacao = new Movimentacaoinstrumento
+                    {
+                        Data = movimentacaoPost.Data,
+                        IdInstrumentoMusical = movimentacaoPost.IdInstrumentoMusical,
+                        IdAssociado = movimentacaoPost.IdAssociado,
+                        IdColaborador = colaborador.Id,
+                        TipoMovimento = movimentacaoPost.Movimentacao
+                    };
+
+                    switch (await _movimentacaoInstrumento.CreateAsync(movimentacao))
+                    {
+                        case 200:
+                            if (movimentacao.TipoMovimento == "EMPRESTIMO")
+                            {
+                                Notificar("Instrumento <b>Emprestado</b> com <b>Sucesso</b>", Notifica.Sucesso);
+                            }
+                            else
+                            {
+                                Notificar("Instrumento <b>Devolvido</b> com <b>Sucesso</b>", Notifica.Sucesso);
+                            }
+                            return RedirectToAction(nameof(Movimentar));
+                        case 400:
+                            Notificar("Não é possível <b>Emprestar</b> um instrumento <b>Danificado</b>", Notifica.Alerta);
+                            break;
+                        case 401:
+                            if (movimentacao.TipoMovimento == "EMPRESTIMO")
+                            {
+                                Notificar("Não é possível <b>Emprestar</b> um instrumento que não está <b>Disponível</b>", Notifica.Alerta);
+                            }
+                            else
+                            {
+                                Notificar("Não é possível <b>Devolver</b> um instrumento que não está <b>Emprestado</b>", Notifica.Alerta);
+                            }
+                            break;
+                        case 500:
+                            Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Movimentação</b> do instrumento, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                            break;
+                    }
+                }
+                else
                 {
-                    case 200:
-                        if (movimentacao.TipoMovimento == "EMPRESTIMO")
-                        {
-                            Notificar("Instrumento <b>Emprestado</b> com <b>Sucesso</b>", Notifica.Sucesso);
-                        }
-                        else
-                        {
-                            Notificar("Instrumento <b>Devolvido</b> com <b>Sucesso</b>", Notifica.Sucesso);
-                        }
-                        return RedirectToAction(nameof(Movimentar));
-                    case 400:
-                        Notificar("Não é possível <b>Emprestar</b> um instrumento <b>Danificado</b>", Notifica.Alerta);
-                        break;
-                    case 401:
-                        if (movimentacao.TipoMovimento == "EMPRESTIMO")
-                        {
-                            Notificar("Não é possível <b>Emprestar</b> um instrumento que não está <b>Disponível</b>", Notifica.Alerta);
-                        }
-                        else
-                        {
-                            Notificar("Não é possível <b>Devolver</b> um instrumento que não está <b>Emprestado</b>", Notifica.Alerta);
-                        }
-                        break;
-                    case 500:
-                        Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Movimentação</b> do instrumento, se isso persistir entre em contato com o suporte", Notifica.Erro);
-                        break;
+                    Notificar("Desculpe, você não tem <b>permissão</b> para realizar essa <b>operação</b>", Notifica.Erro);
                 }
             }
             return View(movimentacaoPost);
