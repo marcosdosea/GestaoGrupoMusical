@@ -9,9 +9,9 @@ namespace Core.Service
 {
     public interface IGrupoMusicalService
     {
-        int Create(Grupomusical grupomusical);
-        void Edit(Grupomusical grupomusical);
-        void Delete(int id);
+        Task<int> Create (Grupomusical grupomusical);
+        Task<int> Edit(Grupomusical grupomusical);
+        Task<int> Delete(int id);
         Grupomusical Get(int id);
         IEnumerable<Grupomusical> GetAll();
         IEnumerable<GrupoMusicalDTO> GetAllDTO();
