@@ -50,11 +50,12 @@ namespace Service
          public async Task<int> Delete(int id)
         {
 
-
+            var grupo = await _context.Grupomusicals.FindAsync(id);
             using ( var transaction = _context.Database.BeginTransaction())
                 try
                 {
-                    _context.Remove(id);
+                    
+                    _context.Remove(grupo);
                     await _context.SaveChangesAsync();
                     await transaction.CommitAsync();
                     return 200;
