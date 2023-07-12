@@ -1,12 +1,9 @@
-﻿using AspNetCore;
-using AutoMapper;
+﻿using AutoMapper;
 using Core;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Service;
-using System.Net.WebSockets;
+
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -80,8 +77,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 var grupoMusical = _mapper.Map<Grupomusical>(grupoMusicalViewModel);
                 _grupoMusical.Edit(grupoMusical);
+                Notificar("Sucesso: edições do grupo musical foram registradas!!", Notifica.Sucesso);
             }
-            return RedirectToAction(nameof(Index));
+            return View();
         }
 
         // GET: GrupoMusicalController/Delete/5
