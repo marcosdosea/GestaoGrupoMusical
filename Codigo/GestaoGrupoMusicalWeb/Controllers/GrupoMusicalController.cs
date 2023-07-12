@@ -23,6 +23,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: GrupoMusicalController
         public ActionResult Index()
         {
+            /*if(idNotificacao == 200)
+            {
+                Notificar("Grupo Musical <b>editado</b> com <b>sucesso</b>", Notifica.Sucesso);
+            }*/
             var listaGrupoMusical = _grupoMusical.GetAllDTO();
             return View(listaGrupoMusical);
         }
@@ -71,15 +75,16 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, GrupoMusicalViewModel grupoMusicalViewModel)
         {
+            //var routesValues
             grupoMusicalViewModel.Cnpj = grupoMusicalViewModel.Cnpj.Replace(".", string.Empty).Replace("-", string.Empty).Replace("/", string.Empty);
             grupoMusicalViewModel.Cep = grupoMusicalViewModel.Cep.Replace("-", string.Empty);
             if (ModelState.IsValid)
             {
                 var grupoMusical = _mapper.Map<Grupomusical>(grupoMusicalViewModel);
                 _grupoMusical.Edit(grupoMusical);
-                Notificar("Grupo Musical <b>editado</b> com <b>sucesso</b>", Notifica.Sucesso);
+                Notificar("Grupo Musical <b>Editado</b> com <b>Sucesso</b>", Notifica.Sucesso);
             }
-            return View(grupoMusicalViewModel);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: GrupoMusicalController/Delete/5
