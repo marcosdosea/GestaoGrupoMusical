@@ -70,6 +70,5 @@ namespace GestaoGrupoMusicalWeb.Models
         [Display(Name =" Tipo da cave Pix")]
         [StringLength(15)]
         public string? ChavePixtipo { get; set; }
-
     }
 }
