@@ -31,5 +31,7 @@ namespace Core.Service
 
         Task<bool> NotificarCadastroAdmGrupoAsync(Pessoa pessoa);
 
+        Task<Pessoa?> GetByCpf(string? cpf);
+
     }
 }
