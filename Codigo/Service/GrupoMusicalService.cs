@@ -50,19 +50,15 @@ namespace Service
          public async Task<int> Delete(int id)
         {
 
-            var grupomusical = _context.Grupomusicals.Find(id);
+
             using ( var transaction = _context.Database.BeginTransaction())
                 try
                 {
-     
-                    _context.Remove(grupomusical);
-                    _context.SaveChanges();
-                    return 200;
+                    
                 }
                 catch (Exception ex)
                 {
-                    await transaction.RollbackAsync();
-                    return 500;
+0;
                 }
 
         }
@@ -83,7 +79,7 @@ namespace Service
         /// </summary>
         /// <param name="id"></param>
         /// <returns> Retorna 1 grupo musical</returns>
-        public Grupomusical Get(int id)
+        public async  Task<Grupomusical> Get(int id)
         {
             return _context.Grupomusicals.Find(id);
         }
