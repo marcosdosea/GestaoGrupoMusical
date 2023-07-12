@@ -12,6 +12,7 @@ namespace Core.Service
         /// 200 - Sucesso <para />
         /// 400 - Instrumento com status danificado <para />
         /// 401 - Ação de emprestimo/devolução para instrumento já emprestado/devolvido <para />
+        /// 402 - Ação de devolução inválida pois associado não corresponde ao mesmo do empréstimo <para />
         /// 500 - Erro interno
         /// </returns>
         Task<int> CreateAsync(Movimentacaoinstrumento movimentacao);
