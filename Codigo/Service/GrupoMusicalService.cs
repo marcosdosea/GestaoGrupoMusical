@@ -39,7 +39,7 @@ namespace Service
                     return 200;
                 }catch (Exception ex)
                 {
-                    transaction.Rollback();
+                    await transaction.RollbackAsync();
                     return 500;
                 }
         }
@@ -61,7 +61,8 @@ namespace Service
                 }
                 catch (Exception ex)
                 {
-                    transaction.r
+                    await transaction.RollbackAsync();
+                    return 500;
                 }
 
         }

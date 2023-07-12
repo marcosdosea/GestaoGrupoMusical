@@ -12,8 +12,8 @@ namespace Core.Service
         Task<int> Create (Grupomusical grupomusical);
         Task<int> Edit(Grupomusical grupomusical);
         Task<int> Delete(int id);
-        Grupomusical Get(int id);
-        IEnumerable<Grupomusical> GetAll();
-        IEnumerable<GrupoMusicalDTO> GetAllDTO();
+        Task<Grupomusical> Get(int id);
+        Task<IEnumerable<Grupomusical>> GetAll();
+        Task<IEnumerable<GrupoMusicalDTO>> GetAllDTO();
     }
 }

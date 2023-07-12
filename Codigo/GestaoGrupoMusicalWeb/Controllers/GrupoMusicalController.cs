@@ -1,17 +1,14 @@
 ﻿using AutoMapper;
 using Core;
 using Core.Service;
-using Microsoft.AspNetCore.Http;
 using GestaoGrupoMusicalWeb.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Service;
-using System.Net.WebSockets;
-using AspNetCore;
-using System.Web;
+using static GestaoGrupoMusicalWeb.Controllers.BaseController;
+
+
 namespace GestaoGrupoMusicalWeb.Controllers
 {
-    public class GrupoMusicalController : Controller
+    public class GrupoMusicalController : BaseController
     {
         private readonly IGrupoMusicalService _grupoMusical;
         private readonly IMapper _mapper;
@@ -61,19 +58,19 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 {
                     case 200:
 
-                        
-
+                        Notificar("Grupo <b> Cadastrado </b> com <b> Sucesso </b> ", Notifica.Sucesso);
+                        return RedirectToAction(nameof(Index));
                         break;
                     case 500:
-
+                        Notificar("<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Cadastro</b> do associado, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                        return RedirectToAction(nameof(Index));
                         break;
-
                 }
 
             }
             else
             {
-
+                return View(grupoMusicalViewModel);
             }
             return RedirectToAction(nameof(Index));
 
@@ -99,6 +96,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 var grupoMusical = _mapper.Map<Grupomusical>(grupoMusicalViewModel);
                 _grupoMusical.Edit(grupoMusical);
+
+
             }
             return RedirectToAction(nameof(Index));
         }
