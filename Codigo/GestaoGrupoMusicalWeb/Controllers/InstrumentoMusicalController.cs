@@ -149,7 +149,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
             movimentacaoModel.Patrimonio = instrumento.Patrimonio;
             movimentacaoModel.IdInstrumentoMusical = instrumento.Id;
             movimentacaoModel.NomeInstrumento = await _instrumentoMusical.GetNomeInstrumento(id);
-            movimentacaoModel.ListaAssociado = new SelectList(_pessoa.GetAll(), "Id", "Nome");
+
+            var listaPessoas = _pessoa.GetAll().ToList();
+            listaPessoas.Remove(listaPessoas.Single(p => p.Cpf == User.Identity?.Name));
+
+            movimentacaoModel.ListaAssociado = new SelectList(listaPessoas, "Id", "Nome");
             return View(movimentacaoModel);
         }
 
