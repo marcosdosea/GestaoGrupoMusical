@@ -226,16 +226,20 @@ namespace Service
 
         }
 
-        public IEnumerable<AssociadoDTO> GetAllAssociadoDTO()
+        public async Task<IEnumerable<AssociadoDTO>> GetAllAssociadoDTO()
         {
-            return from pessoa in _context.Pessoas
-                   select new AssociadoDTO
-                   {
-                       Id = pessoa.Id,
-                       Nome = pessoa.Nome,
-                       Ativo = pessoa.Ativo
-                   };
+            var query = from pessoa in _context.Pessoas
+                        where pessoa.IdPapelGrupo == 1
+                        select new AssociadoDTO
+                        {
+                            Id = pessoa.Id,
+                            Nome = pessoa.Nome,
+                            Ativo = pessoa.Ativo
+                        };
+
+            return await query.AsNoTracking().ToListAsync();
         }
+
         public IEnumerable<Papelgrupo> GetAllPapelGrupo()
         {
             return _context.Papelgrupos.AsNoTracking();

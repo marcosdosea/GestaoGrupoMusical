@@ -15,7 +15,7 @@ namespace Core.Service
         void Delete(int id);
         Pessoa Get(int id);
         IEnumerable<Pessoa> GetAll();
-        IEnumerable<AssociadoDTO> GetAllAssociadoDTO();
+        Task<IEnumerable<AssociadoDTO>> GetAllAssociadoDTO();
 
         bool GetCPFExistente(int id, string cpf);
 
