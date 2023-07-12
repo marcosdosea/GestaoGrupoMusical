@@ -59,7 +59,7 @@ namespace Service
                                    NomeAssociado = instrumentoMovi.IdAssociadoNavigation.Nome
                                }).AsNoTracking().ToListAsync();
 
-            var list = query.DistinctBy(m => m.Patrimonio).OrderBy(m => m.Patrimonio);
+            var list = query.DistinctBy(m => m.Patrimonio).OrderBy(m => m.NomeInstrumento);
      
             foreach (var instrumento in list)
             {
