@@ -40,7 +40,7 @@ namespace Service
                 {
                     await _context.Pessoas.AddAsync(pessoa);
                     if (pessoa.DataEntrada == null && pessoa.DataNascimento == null)
-                    {
+                    {//Mensagem de sucesso
                         await _context.SaveChangesAsync();
                         await transaction.CommitAsync();
                         return 200;
@@ -52,6 +52,7 @@ namespace Service
                         {
                             if (pessoa.DataEntrada == null || pessoa.DataEntrada < DateTime.Now)
                             {
+                                //Mensagem de sucesso
                                 await _context.SaveChangesAsync();
                                 await transaction.CommitAsync();
                                 return 200;
@@ -71,7 +72,7 @@ namespace Service
                         }
                     }
                     else if (pessoa.DataEntrada == null || pessoa.DataEntrada < DateTime.Now)
-                    {
+                    {//Mensagem de sucesso
                         await _context.SaveChangesAsync();
                         await transaction.CommitAsync();
                         return 200;
@@ -85,6 +86,7 @@ namespace Service
                 }
                 catch (Exception ex)
                 {
+                    //Aconteceu algum erro do servidor
                     await transaction.RollbackAsync();
                     return 500;
                 }
