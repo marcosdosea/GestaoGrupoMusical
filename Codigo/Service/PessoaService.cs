@@ -35,14 +35,12 @@ namespace Service
         public async Task<int> Create(Pessoa pessoa)
         {
 
-            using (var transaction = _context.Database.BeginTransaction())
                 try
                 {
                     await _context.Pessoas.AddAsync(pessoa);
                     if (pessoa.DataEntrada == null && pessoa.DataNascimento == null)
                     {//Mensagem de sucesso
                         await _context.SaveChangesAsync();
-                        await transaction.CommitAsync();
                         return 200;
                     }
                     else if (pessoa.DataNascimento != null)
@@ -54,40 +52,34 @@ namespace Service
                             {
                                 //Mensagem de sucesso
                                 await _context.SaveChangesAsync();
-                                await transaction.CommitAsync();
                                 return 200;
                             }
                             else
                             {
                                 // erro 400, data de entrada fora do escopo
-                                await transaction.RollbackAsync();
                                 return 400;
                             }
                         }
                         else
                         {
                             // erro 401, data de nascimento está fora do escopo
-                            await transaction.RollbackAsync();
                             return 401;
                         }
                     }
                     else if (pessoa.DataEntrada == null || pessoa.DataEntrada < DateTime.Now)
                     {//Mensagem de sucesso
                         await _context.SaveChangesAsync();
-                        await transaction.CommitAsync();
                         return 200;
                     }
                     else
                     {
                         // erro 400, data de entrada fora do escopo
-                        await transaction.RollbackAsync();
                         return 400;
                     }
                 }
                 catch (Exception ex)
                 {
                     //Aconteceu algum erro do servidor
-                    await transaction.RollbackAsync();
                     return 500;
                 }
 
