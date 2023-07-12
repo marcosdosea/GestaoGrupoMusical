@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using Core;
 using Core.DTO;
 using Core.Service;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Service
@@ -25,46 +27,55 @@ namespace Service
         /// </summary>
         /// <param name="grupomusical"></param>
         /// <returns>Id do Grupo Musical</returns>
-        public int Create(Grupomusical grupomusical)
+        public async Task<int> Create(Grupomusical grupomusical)
         {
 
             using(var transaction = _context.Database.BeginTransaction())
                 try
                 {
-                    _context.Add(grupomusical);
-                    _context.SaveChanges();
-                    transaction.Commit();
+                    await _context.Grupomusicals.AddAsync(grupomusical);
+                    await _context.SaveChangesAsync();
+                    await  transaction.CommitAsync();
                     return 200;
                 }catch (Exception ex)
                 {
                     transaction.Rollback();
                     return 500;
                 }
-
-
-            _context.Add(grupomusical);
-            _context.SaveChanges();
-            return grupomusical.Id;
         }
         /// <summary>
         /// Metodo para deletar o Grupo Musical
         /// </summary>
         /// <param name="id"></param>
-        public void Delete(int id)
+         public async Task<int> Delete(int id)
         {
+
             var grupomusical = _context.Grupomusicals.Find(id);
-            _context.Remove(grupomusical);
-            _context.SaveChanges();
+            using ( var transaction = _context.Database.BeginTransaction())
+                try
+                {
+     
+                    _context.Remove(grupomusical);
+                    _context.SaveChanges();
+                    return 200;
+                }
+                catch (Exception ex)
+                {
+                    transaction.r
+                }
+
         }
         /// <summary>
         /// Metodo usado para editar um Grupo Musical
         /// </summary>
         /// <param name="grupomusical"></param>
-        public void Edit(Grupomusical grupomusical)
+        public async Task<int> Edit(Grupomusical grupomusical)
         {
             _context.Update(grupomusical);
             _context.SaveChanges();
 
+            return 200;
+                
         }
         /// <summary>
         /// Pegar um Grupo Musical
