@@ -109,7 +109,7 @@ namespace Service
             }
         }
 
-        public async Task<bool> Delete(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
             try
             {
@@ -170,7 +170,7 @@ namespace Service
             return await query;
         }
 
-        public async Task<bool> NotificarViaEmail(int id)
+        public async Task<bool> NotificarViaEmailAsync(int id)
         {
             try
             {
