@@ -23,68 +23,71 @@ namespace Service
         }
 
         /// <summary>
-        /// Metodo usadoa para adicionar o Grupo Musical
+        /// Metodo usado para adicionar o Grupo Musical
         /// </summary>
         /// <param name="grupomusical"></param>
-        /// <returns>Id do Grupo Musical</returns>
+        /// <returns>200 caso seja sucesso ou 500 se ouver algum erro ao executar o metodo</returns>
         public async Task<int> Create(Grupomusical grupomusical)
         {
 
 
-                try
-                {
-                    await _context.Grupomusicals.AddAsync(grupomusical);
-                    await _context.SaveChangesAsync();
+            try
+            {
+                await _context.Grupomusicals.AddAsync(grupomusical);
+                await _context.SaveChangesAsync();
 
-                    return 200;
-                }catch (Exception ex)
-                {
+                return 200;
+            }
+            catch (Exception ex)
+            {
 
-                    return 500;
-                }
+                return 500;
+            }
         }
         /// <summary>
-        /// Metodo para deletar o Grupo Musical
+        /// Metodo usado para deletar um grupo musical
         /// </summary>
         /// <param name="id"></param>
-         public async Task<int> Delete(int id)
+        /// <returns>200 caso seja sucesso ou 500 se ouver algum erro ao executar o metodo</returns>
+        public async Task<int> Delete(int id)
         {
 
             var grupo = await _context.Grupomusicals.FindAsync(id);
 
-                try
-                {
-                    
-                    _context.Remove(grupo);
-                    await _context.SaveChangesAsync();
-                    return 200;
-                }
-                catch (Exception ex)
-                {
-                    return 500;
-                }
+            try
+            {
+
+                _context.Remove(grupo);
+                await _context.SaveChangesAsync();
+                return 200;
+            }
+            catch (Exception ex)
+            {
+                return 500;
+            }
 
         }
         /// <summary>
-        /// Metodo usado para editar um Grupo Musical
+        /// Metodo usado para editar um grupo musical
         /// </summary>
         /// <param name="grupomusical"></param>
+        /// <returns>200 caso seja sucesso ou 500 se ouver algum erro ao executar o metodo</returns>
         public async Task<int> Edit(Grupomusical grupomusical)
         {
 
-                try
-                {
-                    _context.Update(grupomusical);
-                    await _context.SaveChangesAsync();
+            try
+            {
+                _context.Update(grupomusical);
+                await _context.SaveChangesAsync();
 
-                    return 200;
-                }
-                catch
-                {
+                return 200;
+            }
+            catch
+            {
 
-                    return 500;
-                }
-                
+                return 500;
+            }
+
         }
         /// <summary>
         /// Pegar um Grupo Musical
@@ -118,7 +121,7 @@ namespace Service
                     {
                         Id = g.Id,
                         Name = g.Nome
-                    }) ;
+                    });
             return query.AsNoTracking();
         }
     }
