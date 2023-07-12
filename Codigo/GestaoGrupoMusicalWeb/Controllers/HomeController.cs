@@ -15,20 +15,17 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IEnsaioService _ensaioService;
         private readonly IInformativoService _informativoService;
         private readonly IMapper _mapper;
-        private readonly UserManager<UsuarioIdentity> _roleManager;
 
         public HomeController(ILogger<HomeController> logger, 
                               IEventoService evento, 
                               IEnsaioService ensaioService, 
                               IInformativoService informativoService,
-                              UserManager<UsuarioIdentity> roleManager,
                               IMapper mapper)
         {
             _logger = logger;
             _evento = evento;
             _ensaioService = ensaioService;
             _informativoService = informativoService;
-            _roleManager = roleManager;
             _mapper = mapper;
         }
 
