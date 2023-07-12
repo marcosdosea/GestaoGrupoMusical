@@ -354,5 +354,14 @@ namespace Service
             }
             return false;
         }
+
+        public async Task<Pessoa?> GetByCpf(string? cpf)
+        {
+            var query = (from pessoa in _context.Pessoas
+                        where pessoa.Cpf == cpf
+                        select pessoa).FirstOrDefaultAsync();
+
+            return await query;
+        }
     }
 }
