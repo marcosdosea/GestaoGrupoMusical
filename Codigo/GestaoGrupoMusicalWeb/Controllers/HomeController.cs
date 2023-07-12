@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
