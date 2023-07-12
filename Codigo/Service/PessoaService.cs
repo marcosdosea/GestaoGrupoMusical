@@ -49,8 +49,8 @@ namespace Service
                         if (pessoa.DataNascimento <= DateTime.Now && idade < 120)
                         {
                             if (pessoa.DataEntrada == null || pessoa.DataEntrada < DateTime.Now)
-                            {
-                                //Mensagem de sucesso
+                            {//mensagem de sucesso
+                               
                                 await _context.SaveChangesAsync();
                                 return 200;
                             }
@@ -67,7 +67,7 @@ namespace Service
                         }
                     }
                     else if (pessoa.DataEntrada == null || pessoa.DataEntrada < DateTime.Now)
-                    {//Mensagem de sucesso
+                    {
                         await _context.SaveChangesAsync();
                         return 200;
                     }
@@ -79,7 +79,7 @@ namespace Service
                 }
                 catch (Exception ex)
                 {
-                    //Aconteceu algum erro do servidor
+                    //Aconteceu algum erro do servidor ou interno
                     return 500;
                 }
 
