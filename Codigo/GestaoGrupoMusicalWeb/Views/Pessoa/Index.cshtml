@@ -1,5 +1,5 @@
 ﻿@model IEnumerable<Core.DTO.AssociadoDTO>
-
+<partial name="_Notificar">
 @{
     ViewData["Title"] = "Index";
 }
@@ -7,7 +7,7 @@
     <h1>Associados</h1>
     <a role="button" class="btn btn-secondary btn-sm" asp-action="Create">Novo Associado</a>
 </div>
-<partial name="_Notificar">
+
 <table class="table">
     <thead>
         <tr class="bg-danger opacity-75">
