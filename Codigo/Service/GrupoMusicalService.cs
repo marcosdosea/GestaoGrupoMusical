@@ -27,6 +27,21 @@ namespace Service
         /// <returns>Id do Grupo Musical</returns>
         public int Create(Grupomusical grupomusical)
         {
+
+            using(var transaction = _context.Database.BeginTransaction())
+                try
+                {
+                    _context.Add(grupomusical);
+                    _context.SaveChanges();
+                    transaction.Commit();
+                    return 200;
+                }catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    return 500;
+                }
+
+
             _context.Add(grupomusical);
             _context.SaveChanges();
             return grupomusical.Id;
