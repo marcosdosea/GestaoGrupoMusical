@@ -73,17 +73,17 @@ namespace Service
         /// <param name="grupomusical"></param>
         public async Task<int> Edit(Grupomusical grupomusical)
         {
-            using(var transaction = _context.Database.BeginTransaction())
+
                 try
                 {
                     _context.Update(grupomusical);
                     await _context.SaveChangesAsync();
-                    await transaction.CommitAsync();
+
                     return 200;
                 }
                 catch
                 {
-                    await transaction.RollbackAsync();
+
                     return 500;
                 }
                 
