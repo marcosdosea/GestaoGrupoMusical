@@ -11,12 +11,12 @@
         <div class="form-group position-relative">
             <label asp-for="Cpf" class="control-label fs-5"></label>
 
-            <div class="input-group align-items-end overflow-hidden bg-white">
-                <div class="input-group-icon p-2 border-bottom border-dark">
+            <div class="input-group align-items-center overflow-hidden bg-white border-bottom border-dark">
+                <div class="input-group-icon p-2">
                     <i class="fa-regular fa-user" style="color: #6c757d;"></i>
                 </div>
 
-                <input asp-for="Cpf" id="campoCpf" class="form-control fs-5 ps-4"/>
+                <input asp-for="Cpf" id="campoCpf" class="form-control fs-5 ps-1 border-0"/>
                 <span asp-validation-for="Cpf" class="text-danger"></span>
             </div>
         </div>
