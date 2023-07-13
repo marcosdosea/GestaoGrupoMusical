@@ -92,7 +92,6 @@ namespace Service
         public async Task<int> Edit(Pessoa pessoa)
         {
             //Criar excecao para data de nascimento, etc
-            _context.Update(pessoa);
             try
             {
                 _context.Pessoas.Update(pessoa);
