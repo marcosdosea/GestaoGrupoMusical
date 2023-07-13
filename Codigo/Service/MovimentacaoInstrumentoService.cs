@@ -109,22 +109,30 @@ namespace Service
             }
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<int> DeleteAsync(int id)
         {
             try
             {
                 var movimentacao = await _context.Movimentacaoinstrumentos.FindAsync(id);
                 if (movimentacao != null)
                 {
-                    _context.Movimentacaoinstrumentos.Remove(movimentacao);
-                    await _context.SaveChangesAsync();
-                    return true;
+                    var movimentacaoDb = await GetEmprestimoByIdInstrumento(movimentacao.IdInstrumentoMusical);
+                    if (movimentacaoDb != null)
+                    {
+                        if (movimentacaoDb.Id == movimentacao.Id)
+                        {
+                            return 400;
+                        }
+                         _context.Movimentacaoinstrumentos.Remove(movimentacao);
+                        await _context.SaveChangesAsync();
+                        return 200;
+                    }
                 }
-                return false;
+                return 404;
             }
             catch
             {
-                return false;
+                return 500;
             }
         }
 
