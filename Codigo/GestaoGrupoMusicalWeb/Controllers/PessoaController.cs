@@ -82,7 +82,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         return RedirectToAction(nameof(Index));
                     case 500:
                         Notificar("<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Cadastro</b> do associado, se isso persistir entre em contato com o suporte", Notifica.Erro);
-                        return RedirectToAction(nameof(Index));
+                        return RedirectToAction("Create", pessoaViewModel);
                     case 400:
                         mensagem = "<b>Alerta</b> ! Não foi possível cadastrar, a data de entrada deve ser menor que " + DateTime.Now;
                         Notificar(mensagem, Notifica.Alerta);
@@ -160,7 +160,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         return RedirectToAction(nameof(Index));
                     case 500:
                         Notificar("<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Editar</b> do associado, se isso persistir entre em contato com o suporte", Notifica.Erro);
-                        return RedirectToAction(nameof(Index));
+                        return RedirectToAction("Edit", pessoaViewModel);
                     case 400:
                         mensagem = "<b>Alerta</b> ! Não foi possível editar, a data de entrada deve ser menor que " + DateTime.Now;
                         Notificar(mensagem, Notifica.Alerta);
