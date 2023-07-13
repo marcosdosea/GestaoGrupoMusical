@@ -21,7 +21,7 @@ namespace Core.Service
         /// 500 - Erro interno
         /// </returns>
         Task<int> Create(Pessoa pessoa);
-        void Edit(Pessoa pessoa);
+        Task<int> Edit(Pessoa pessoa);
         void Delete(int id);
         Pessoa Get(int id);
         IEnumerable<Pessoa> GetAll();
