@@ -66,7 +66,7 @@ namespace GestaoGrupoMusicalWeb.Models
         public string? Telefone2 { get; set; }
 
         [Required(ErrorMessage = "O e-mail é obrigatório.")]
-        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "O email não está no formato inválido.")]
+        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "O email está no formato inválido.")]
         [Display(Name = "E-mail", Prompt = "exemplo@gmail.com")]
         public string? Email { get; set; }
 
