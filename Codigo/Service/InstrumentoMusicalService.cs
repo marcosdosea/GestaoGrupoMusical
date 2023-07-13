@@ -16,9 +16,21 @@ namespace Service
 
         public async Task<int> Create(Instrumentomusical instrumentoMusical)
         {
-            await _context.AddAsync(instrumentoMusical);
-            await _context.SaveChangesAsync();
-            return instrumentoMusical.Id;
+            if(instrumentoMusical.DataAquisicao > DateTime.Now)
+            {
+                return 100;
+            }
+            try
+            {
+                await _context.AddAsync(instrumentoMusical);
+                await _context.SaveChangesAsync();
+                return 200;
+            }
+            catch (Exception)
+            {
+                return 500;
+            }
+
         }
 
         public async Task Delete(int id)
