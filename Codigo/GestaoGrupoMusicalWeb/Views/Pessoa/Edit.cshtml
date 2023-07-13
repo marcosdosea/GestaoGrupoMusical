@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Editar associado";
     ViewData["Pessoa"] = "Associado";
-    ViewData["Create"] = "Editar";
+    ViewData["Edit"] = "Editar";
 }
 <partial name="_Notificar">
     <div class="row">
@@ -13,7 +13,7 @@
                 <ol class="breadcrumb px-3">
                     <strong>
                         <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Pessoa"]</a>
-                        <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Create"]</spn>
+                        <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Edit"]</spn>
                     </strong>
                 </ol>
             </nav>
