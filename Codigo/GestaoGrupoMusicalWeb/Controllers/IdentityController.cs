@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Core;
 using Core.Service;
+using Email;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using static GestaoGrupoMusicalWeb.Models.IdentityViewModel;
@@ -123,6 +125,28 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     $"Ensure that '{nameof(UsuarioIdentity)}' is not an abstract class and has a parameterless constructor, or alternatively " +
                     $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
             }
+        }
+        /// <summary>
+        /// Metodo para esquecer senha
+        /// </summary>
+        /// <returns></returns>
+        [AllowAnonymous]
+        public ActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        /// <summary>
+        /// Metodo post para solicitar resetar password
+        /// </summary>
+        /// <param name="cpf"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken] 
+        public async Task<ActionResult> ForgotPassword(string cpf)
+        {
+            return RedirectToAction();
         }
     }
 }
