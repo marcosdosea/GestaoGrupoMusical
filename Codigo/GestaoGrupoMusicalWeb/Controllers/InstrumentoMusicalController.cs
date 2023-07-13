@@ -138,6 +138,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             if(instrumento == null)
             {
+                Notificar($"O Id {id} não <b>Corresponde</b> a nenhuma <b>Movimentação</b>", Notifica.Erro);
                 return RedirectToAction(nameof(Index));
             }
 
@@ -236,7 +237,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     Notificar("Não é possível <b>Excluir</b> uma <b>Movimentação</b> de <b>Empréstimo</b> para um instrumento não <b>Devolvido</b>", Notifica.Alerta);
                 break;
                 case 404:
-                    Notificar($"O Id {id} não <b>Corresponde</b> a nenhuma <b>Movimentação</b> registrada", Notifica.Erro);
+                    Notificar($"O Id {id} não <b>Corresponde</b> a nenhuma <b>Movimentação</b>", Notifica.Erro);
                 break;
                 case 500:
                     Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Exclusão</b> da movimentação, se isso persistir entre em contato com o suporte", Notifica.Erro);
