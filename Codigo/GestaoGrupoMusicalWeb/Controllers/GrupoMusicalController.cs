@@ -9,7 +9,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 {
     [Authorize(Roles = "ADMINISTRADOR SISTEMA")]
     public class GrupoMusicalController : BaseController
-{
+    {
         private readonly IGrupoMusicalService _grupoMusical;
         private readonly IMapper _mapper;
 
