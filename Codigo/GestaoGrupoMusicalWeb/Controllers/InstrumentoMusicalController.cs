@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Data;
+using System.Diagnostics.Metrics;
+using System.Runtime.Intrinsics.X86;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -225,13 +227,20 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteMovimentacao(int id, int IdInstrumento)
         {
-            if(await _movimentacaoInstrumento.DeleteAsync(id))
+            switch(await _movimentacaoInstrumento.DeleteAsync(id))
             {
-                Notificar("Movimentação <b>Excluida</b> com <b>Sucesso</b>", Notifica.Sucesso);
-            }
-            else
-            {
-                Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Exclusão</b> da movimentação, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                case 200:
+                    Notificar("Movimentação <b>Excluida</b> com <b>Sucesso</b>", Notifica.Sucesso);
+                break;
+                case 400:
+                    Notificar("Não é possível <b>Excluir</b> uma <b>Movimentação</b> de <b>Empréstimo</b> para um instrumento não <b>Devolvido</b>", Notifica.Alerta);
+                break;
+                case 404:
+                    Notificar($"O Id {id} não <b>Corresponde</b> a nenhuma <b>Movimentação</b> registrada", Notifica.Erro);
+                break;
+                case 500:
+                    Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Exclusão</b> da movimentação, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                break;
             }
 
             return RedirectToAction(nameof(Movimentar), new { id = IdInstrumento });
