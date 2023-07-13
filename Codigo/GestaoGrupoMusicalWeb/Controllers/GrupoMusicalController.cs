@@ -2,12 +2,12 @@
 using Core;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using static GestaoGrupoMusicalWeb.Controllers.BaseController;
-
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
+    [Authorize(Roles = "ADMINISTRADOR SISTEMA")]
     public class GrupoMusicalController : BaseController
     {
         private readonly IGrupoMusicalService _grupoMusical;

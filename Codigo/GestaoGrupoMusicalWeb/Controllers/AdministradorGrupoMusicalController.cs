@@ -2,7 +2,7 @@
 using Core;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Service;
@@ -10,6 +10,7 @@ using static GestaoGrupoMusicalWeb.Models.AdministradorGrupoMusicalViewModel;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
+    [Authorize(Roles = "ADMINISTRADOR SISTEMA")]
     public class AdministradorGrupoMusicalController : Controller
     {
 
