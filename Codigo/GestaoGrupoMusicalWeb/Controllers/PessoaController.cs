@@ -134,13 +134,17 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: PessoaController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, PessoaViewModel pessoaViewModel)
+        public async Task<ActionResult> Edit(int id, PessoaViewModel pessoaViewModel)
         {
             pessoaViewModel.Cpf = pessoaViewModel.Cpf.Replace("-", string.Empty).Replace(".", string.Empty);
             pessoaViewModel.Cep = pessoaViewModel.Cep.Replace("-", string.Empty);
             var cpf = _pessoaService.GetCPFExistente(id,pessoaViewModel.Cpf);
-            
-            if(cpf)
+
+            IEnumerable<Papelgrupo> listaPapelGrupo = _pessoaService.GetAllPapelGrupo();
+            IEnumerable<Grupomusical> listaGrupoMusical = _grupoMusical.GetAll();
+            IEnumerable<Manequim> listaManequim = _manequim.GetAll();
+
+            if (cpf)
             {
                 ModelState.Remove("Cpf");
             }
@@ -148,14 +152,35 @@ namespace GestaoGrupoMusicalWeb.Controllers
             if (ModelState.IsValid)
             {
                 var pessoa = _mapper.Map<Pessoa>(pessoaViewModel);
-                _pessoaService.Edit(pessoa);
+                String mensagem = String.Empty;
+                switch (await _pessoaService.Edit(pessoa))
+                {
+                    case 200:
+                        Notificar("Associado <b>Editado</b> com <b>Sucesso</b>", Notifica.Sucesso);
+                        return RedirectToAction(nameof(Index));
+                    case 500:
+                        Notificar("<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Editar</b> do associado, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                        return RedirectToAction(nameof(Index));
+                    case 400:
+                        mensagem = "<b>Alerta</b> ! Não foi possível cadastrar, a data de entrada deve ser menor que " + DateTime.Now;
+                        Notificar(mensagem, Notifica.Alerta);
+
+                        pessoaViewModel.ListaGrupoMusical = new SelectList(listaGrupoMusical, "Id", "Nome", pessoaViewModel.IdGrupoMusical);
+                        pessoaViewModel.ListaPapelGrupo = new SelectList(listaPapelGrupo, "IdPapelGrupo", "Nome", pessoaViewModel.IdPapelGrupo);
+                        pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", pessoaViewModel.IdManequim);
+                        return View("Edit", pessoaViewModel);
+                    case 401:
+                        mensagem = "<b>Alerta</b> ! Não foi possível cadastrar, a data de nascimento deve ser menor que " + DateTime.Now + " e menor que 120 anos ";
+                        Notificar(mensagem, Notifica.Alerta);
+                        pessoaViewModel.ListaGrupoMusical = new SelectList(listaGrupoMusical, "Id", "Nome", pessoaViewModel.IdGrupoMusical);
+                        pessoaViewModel.ListaPapelGrupo = new SelectList(listaPapelGrupo, "IdPapelGrupo", "Nome", pessoaViewModel.IdPapelGrupo);
+                        pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", pessoaViewModel.IdManequim);
+                        return View("Edit", pessoaViewModel);
+
+                }
             }
             else
             {
-                IEnumerable<Papelgrupo> listaPapelGrupo = _pessoaService.GetAllPapelGrupo();
-                IEnumerable<Grupomusical> listaGrupoMusical = _grupoMusical.GetAll();
-                IEnumerable<Manequim> listaManequim = _manequim.GetAll();
-
                 pessoaViewModel.ListaGrupoMusical = new SelectList(listaGrupoMusical, "Id", "Nome", null);
                 pessoaViewModel.ListaPapelGrupo = new SelectList(listaPapelGrupo, "IdPapelGrupo", "Nome", null);
                 pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", null);
