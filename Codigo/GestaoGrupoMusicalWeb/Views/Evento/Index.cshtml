@@ -12,13 +12,13 @@
     <table class="table">
         <thead>
             <tr class="bg-danger bg-opacity-75 text-white">
-                <th class="p-3">
+                <th >
                     @Html.DisplayNameFor(model => model.DataHoraInicio)
                 </th>
-                <th class="p-3">
+                <th >
                     @Html.DisplayNameFor(model => model.Local)
                 </th>
-                <th class="p-3">
+                <th >
                     @Html.DisplayNameFor(model => model.Repertorio)
                 </th>
                 <th>Ações</th>
@@ -28,13 +28,13 @@
             @foreach (var item in Model)
             {
                 <tr class="border-bottom border-danger border-opacity-75 p-3 align-middle">
-                    <td class="p-3">
+                    <td >
                         @Html.DisplayFor(modelItem => item.DataHoraInicio)
                     </td>
-                    <td class="p-3">
+                    <td >
                         @Html.DisplayFor(modelItem => item.Local)
                     </td>
-                    <td class="p-3">
+                    <td >
                         @Html.DisplayFor(modelItem => item.Repertorio)
                     </td>
                     <td class="d-flex justify-content-between border-0 flex-wrap py-3">
