@@ -8,6 +8,10 @@ html {
   }
 }
 
+.pointer-cursor {
+    cursor: pointer;
+}
+
 @media (min-width: 1501px) and (max-width: 1900px) {
     .img-login {
         width: 250px;
