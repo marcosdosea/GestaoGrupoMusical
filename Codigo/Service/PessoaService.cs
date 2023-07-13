@@ -89,11 +89,59 @@ namespace Service
         /// Metodo que atualiza os dados de uma pessoa/associado
         /// </summary>
         /// <param name="pessoa">dados do associado</param>
-        public void Edit(Pessoa pessoa)
+        public async Task<int> Edit(Pessoa pessoa)
         {
             //Criar excecao para data de nascimento, etc
             _context.Update(pessoa);
-            _context.SaveChanges();
+            try
+            {
+                _context.Pessoas.Update(pessoa);
+                if (pessoa.DataEntrada == null && pessoa.DataNascimento == null)
+                {//Mensagem de sucesso
+                    await _context.SaveChangesAsync();
+                    return 200;
+                }
+                else if (pessoa.DataNascimento != null)
+                {
+                    int idade = Math.Abs(pessoa.DataNascimento.Value.Year - DateTime.Now.Year);
+                    if (pessoa.DataNascimento <= DateTime.Now && idade < 120)
+                    {
+                        if (pessoa.DataEntrada == null || pessoa.DataEntrada < DateTime.Now)
+                        {//mensagem de sucesso
+
+                            await _context.SaveChangesAsync();
+                            return 200;
+                        }
+                        else
+                        {
+                            // erro 400, data de entrada fora do escopo
+                            return 400;
+                        }
+                    }
+                    else
+                    {
+                        // erro 401, data de nascimento está fora do escopo
+                        return 401;
+                    }
+                }
+                else if (pessoa.DataEntrada == null || pessoa.DataEntrada < DateTime.Now)
+                {
+                    await _context.SaveChangesAsync();
+                    return 200;
+                }
+                else
+                {
+                    // erro 400, data de entrada fora do escopo
+                    return 400;
+                }
+            }
+            catch (Exception ex)
+            {
+                //Aconteceu algum erro do servidor ou interno
+                return 500;
+            }
+
+
         }
 
         /// <summary>
