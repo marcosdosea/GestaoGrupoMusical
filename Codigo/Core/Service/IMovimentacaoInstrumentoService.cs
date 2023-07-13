@@ -21,7 +21,17 @@ namespace Core.Service
 
         Task<IEnumerable<MovimentacaoInstrumentoDTO>> GetAllByIdInstrumento(int idInstrumento);
 
-        Task<bool> DeleteAsync(int id);
+        /// <summary>
+        /// Remove uma movimentação no banco de dados
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>
+        /// 200 - Sucesso <para />
+        /// 400 - Movimentação de emprestimo com instrumento não devolvido <para />
+        /// 404 - O id não corresponde a nenhuma movimentação <para />
+        /// 500 - Erro interno
+        /// </returns>
+        Task<int> DeleteAsync(int id);
 
         Task<bool> NotificarViaEmailAsync(int id);
     }
