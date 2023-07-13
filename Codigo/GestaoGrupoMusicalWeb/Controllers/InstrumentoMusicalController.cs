@@ -225,30 +225,31 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteMovimentacao(int id, int IdInstrumento)
         {
-            try
+            if(await _movimentacaoInstrumento.DeleteAsync(id))
             {
-                await _movimentacaoInstrumento.DeleteAsync(id);
-                return RedirectToAction(nameof(Movimentar), new { id = IdInstrumento });
+                Notificar("Movimentação <b>Excluida</b> com <b>Sucesso</b>", Notifica.Sucesso);
             }
-            catch
+            else
             {
-                return RedirectToAction(nameof(Movimentar), new { id = IdInstrumento });
+                Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Exclusão</b> da movimentação, se isso persistir entre em contato com o suporte", Notifica.Erro);
             }
+
+            return RedirectToAction(nameof(Movimentar), new { id = IdInstrumento });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> NotificarViaEmail(int id, int IdInstrumento)
         {
-            try
+            if(await _movimentacaoInstrumento.NotificarViaEmailAsync(id))
             {
-                await _movimentacaoInstrumento.NotificarViaEmailAsync(id);
-                return RedirectToAction(nameof(Movimentar), new { id = IdInstrumento });
+                Notificar("Notificação <b>Enviada</b> com <b>Sucesso</b>", Notifica.Sucesso);
             }
-            catch
+            else
             {
-                return RedirectToAction(nameof(Movimentar), new { id = IdInstrumento });
+                Notificar("Desculpe, ocorreu um <b>Erro</b> durante o <b>Envio</b> de notificação, se isso persistir entre em contato com o suporte", Notifica.Erro);
             }
+            return RedirectToAction(nameof(Movimentar), new { id = IdInstrumento });
         }
     }
 }
