@@ -104,7 +104,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
             else
             {
-                Notificar("Instrumento Musical <b>Emprestado</b> não é permitido <b>Editar</b>.", Notifica.Alerta);
+                Notificar("Não é permitido <b>Editar</b> os dados de instrumento <b>Emprestado</b>.", Notifica.Alerta);
                 return RedirectToAction(nameof(Index));
             }
         }
@@ -141,7 +141,17 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             var instrumentoMusical = await _instrumentoMusical.Get(id);
             var instrumentoMusicalModel = _mapper.Map<InstrumentoMusicalViewModel>(instrumentoMusical);
-            return View(instrumentoMusicalModel);
+
+            if (instrumentoMusicalModel.Status != "EMPRESTADO")
+            {
+                return View(instrumentoMusicalModel);
+            }
+            else
+            {
+                Notificar("Não é permitido <b>Deletar</b> os dados de um instrumento <b>Emprestado</b>.", Notifica.Alerta);
+                return RedirectToAction(nameof(Index));
+            }
+                
         }
 
         // POST: InstrumentoMusicalController/Delete/5
