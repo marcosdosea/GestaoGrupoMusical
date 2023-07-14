@@ -2,62 +2,65 @@
 @{
     ViewData["Title"] = "Autenticar";
 }
-<div class="d-flex justify-content-between align-items-center">
-    <form asp-controller="Identity" asp-action="Autenticar" class="col px-3 m-0">
-        <div class="d-flex justify-content-center m-0 mb-4 mt-2">
-            <img src="~/assets/logo_batalase_SF.png" alt="Logo do batalá - SE" class="img-fluid mw-75">
-        </div>
-
-        <div class="form-group d-flex flex-column">
-            <div class="d-flex justify-content-between">
-                <label asp-for="Cpf" class="control-label fs-5"></label>
-                <span asp-validation-for="Cpf" class="text-danger"></span>
+<div class="card position-absolute top-50 start-50 translate-middle pe-0 col-10 col-md-6 col-lg-4
+                    shadow border-danger border-opacity-75 gray-login">
+    <div class="d-flex justify-content-between align-items-center">
+        <form asp-controller="Identity" asp-action="Autenticar" class="col px-3 m-0">
+            <div class="d-flex justify-content-center m-0 mb-4 mt-2">
+                <img src="~/assets/logo_batalase_SF.png" alt="Logo do batalá - SE" class="img-fluid mw-75">
             </div>
 
-            <div class="input-group align-items-center overflow-hidden bg-white border-bottom border-dark">
-
-                <div class="input-group-icon p-2">
-                    <i class="fa-regular fa-user" style="color: #6c757d;"></i>
+            <div class="form-group d-flex flex-column">
+                <div class="d-flex justify-content-between">
+                    <label asp-for="Cpf" class="control-label fs-5"></label>
+                    <span asp-validation-for="Cpf" class="text-danger"></span>
                 </div>
 
-                <input asp-for="Cpf" id="campoCpf" class="form-control fs-5 ps-1 border-0"/>
+                <div class="input-group align-items-center overflow-hidden bg-white border-bottom border-dark">
+
+                    <div class="input-group-icon p-2">
+                        <i class="fa-regular fa-user" style="color: #6c757d;"></i>
+                    </div>
+
+                    <input asp-for="Cpf" id="campoCpf" class="form-control fs-5 ps-1 border-0"/>
                 
+                </div>
             </div>
-        </div>
-        <div class="form-group d-flex flex-column">
-            <div class="d-flex justify-content-between">
-                <label asp-for="Senha" class="control-label fs-5"></label>
-                <span asp-validation-for="Senha" class="text-danger"></span>
-            </div>
-
-            <div class="input-group align-items-center overflow-hidden bg-white border-bottom border-dark float-end">
-
-                <div class="d-flex align-items-center col">
-                    <i class="fa-solid fa-lock mx-2" style="color: #6c757d;"></i>
-                    <input asp-for="Senha" id="InputSenha" class="form-control fs-5  ps-1 border-0" />
+            <div class="form-group d-flex flex-column">
+                <div class="d-flex justify-content-between">
+                    <label asp-for="Senha" class="control-label fs-5"></label>
+                    <span asp-validation-for="Senha" class="text-danger"></span>
                 </div>
 
-                <i class="fas fa-eye mx-2 pointer-cursor data-bs-toggle=" tooltip" title="Mostrar senha" id="toggleSenha"></i>
+                <div class="input-group align-items-center overflow-hidden bg-white border-bottom border-dark float-end">
 
+                    <div class="d-flex align-items-center col">
+                        <i class="fa-solid fa-lock mx-2" style="color: #6c757d;"></i>
+                        <input asp-for="Senha" id="InputSenha" class="form-control fs-5  ps-1 border-0" />
+                    </div>
+
+                    <i class="fas fa-eye mx-2 pointer-cursor data-bs-toggle=" tooltip" title="Mostrar senha" id="toggleSenha"></i>
+
+                </div>
             </div>
+
+            <div class="input-group fs-6">
+                <input type="checkbox" class="form-check-input me-2" id="rememberMe" >
+                <label class="form-check-label" for="rememberMe">Permanecer Conectado</label>
+            </div>
+
+            <button class="w-100 btn btn-lg btn-secondary my-2" type="submit">Entrar</button>
+
+            <div class="d-flex justify-content-center align-items-end my-1">
+                <a asp-controller="" asp-action="">Esqueceu a senha? Clique aqui</a>
+            </div>
+        </form>
+
+        <div class="float-end img-login">
+            <img src="~/assets/imagem de bem vindo.png" class="float-end rounded-end">
         </div>
 
-        <div class="input-group fs-6">
-            <input type="checkbox" class="form-check-input me-2" id="rememberMe" >
-            <label class="form-check-label" for="rememberMe">Permanecer Conectado</label>
-        </div>
-
-        <button class="w-100 btn btn-lg btn-secondary my-2" type="submit">Entrar</button>
-
-        <div class="d-flex justify-content-center align-items-end my-1">
-            <a asp-controller="" asp-action="">Esqueceu a senha? Clique aqui</a>
-        </div>
-    </form>
-
-    <div class="float-end img-login">
-        <img src="~/assets/imagem de bem vindo.png" class="float-end rounded-end">
     </div>
-
 </div>
 @section Scripts {
     <script>
