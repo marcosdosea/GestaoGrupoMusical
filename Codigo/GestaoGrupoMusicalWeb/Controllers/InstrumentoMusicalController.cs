@@ -171,8 +171,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             var listaPessoas = _pessoa.GetAll().ToList();
             listaPessoas.Remove(listaPessoas.Single(p => p.Cpf == User.Identity?.Name));
-
-            movimentacaoModel.ListaAssociado = new SelectList(listaPessoas, "Id", "Nome");
+            if (listaPessoas.Any())
+            {
+                movimentacaoModel.ListaAssociado = new SelectList(listaPessoas, "Id", "Nome");
+            }
             return View(movimentacaoModel);
         }
 
