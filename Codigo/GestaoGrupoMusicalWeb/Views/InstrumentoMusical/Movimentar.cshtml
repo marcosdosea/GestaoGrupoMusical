@@ -45,15 +45,15 @@
             <div class="col-lg-6">
                 <label asp-for="Movimentacao" class="control-label"></label>
                 <div class="d-flex justify-content-around">
-                    @{
-                        foreach (var item in Model.MovimentacaoEnum)
-                        {
-                            <div>
-                                <label for="@item.Key">@item.Key</label>
-                                <input type="radio" value="@item.Value" asp-for="Movimentacao" id="@item.Key" />
-                            </div>
-                        }
+                @{
+                    foreach (var item in Model.MovimentacaoEnum)
+                    {
+                        <div>
+                            <label for="@item.Key">@item.Key</label>
+                            <input class="form-check-input" type="radio" value="@item.Value" asp-for="Movimentacao" id="@item.Key" />
+                        </div>
                     }
+                }
                 </div>
                 <span asp-validation-for="Movimentacao" class="text-danger"></span>
             </div>
