@@ -131,7 +131,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 var instrumentoMusical = _mapper.Map<Instrumentomusical>(instrumentoMusicalViewModel);
                 await _instrumentoMusical.Edit(instrumentoMusical);
-                Notificar("Instrumento Musical <b>Editado</b> com <b>Sucesso</b>", Notifica.Sucesso);
+                Notificar("Instrumento Musical <b>Editado</b> com <b>Sucesso</b>.", Notifica.Sucesso);
             }
             return RedirectToAction(nameof(Index));
         }
