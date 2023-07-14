@@ -5,10 +5,6 @@ using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.Data;
-using System.Diagnostics.Metrics;
-using System.Runtime.Intrinsics.X86;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -234,7 +230,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     Notificar("Movimentação <b>Excluida</b> com <b>Sucesso</b>", Notifica.Sucesso);
                 break;
                 case 400:
-                    Notificar("Não é possível <b>Excluir</b> uma <b>Movimentação</b> de <b>Empréstimo</b> para um instrumento não <b>Devolvido</b>", Notifica.Alerta);
+                    Notificar("Não é possível <b>Excluir</b> essa <b>Movimentação</b> de <b>Empréstimo</b> pois o instrumento não foi <b>Devolvido</b>", Notifica.Alerta);
                 break;
                 case 404:
                     Notificar($"O Id {id} não <b>Corresponde</b> a nenhuma <b>Movimentação</b>", Notifica.Erro);
@@ -251,14 +247,24 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> NotificarViaEmail(int id, int IdInstrumento)
         {
-            if(await _movimentacaoInstrumento.NotificarViaEmailAsync(id))
+            switch(await _movimentacaoInstrumento.NotificarViaEmailAsync(id))
             {
-                Notificar("Notificação <b>Enviada</b> com <b>Sucesso</b>", Notifica.Sucesso);
-            }
-            else
-            {
-                Notificar("Desculpe, ocorreu um <b>Erro</b> durante o <b>Envio</b> de notificação, se isso persistir entre em contato com o suporte", Notifica.Erro);
-            }
+                case 200:
+                    Notificar("Notificação <b>Enviada</b> com <b>Sucesso</b>", Notifica.Sucesso);
+                break;
+                case 401:
+                    Notificar("O instrumento <b>Não</b> está <b>Cadastrado</b> no sistema, por favor entre em contato com o suporte", Notifica.Erro);
+                break;
+                case 402:
+                    Notificar("O correspondente <b>Não</b> está <b>Cadastrado</b> no sistema, por favor entre em contato com o suporte", Notifica.Erro);
+                break;
+                case 404:
+                    Notificar($"O Id {id} não <b>Corresponde</b> a nenhuma <b>Movimentação</b>", Notifica.Erro);
+                break;
+                case 500:
+                    Notificar("Desculpe, ocorreu um <b>Erro</b> durante o <b>Envio</b> da notificação, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                    break;
+            }  
             return RedirectToAction(nameof(Movimentar), new { id = IdInstrumento });
         }
     }

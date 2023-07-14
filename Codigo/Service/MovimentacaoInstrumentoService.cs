@@ -178,7 +178,7 @@ namespace Service
             return await query;
         }
 
-        public async Task<bool> NotificarViaEmailAsync(int id)
+        public async Task<int> NotificarViaEmailAsync(int id)
         {
             try
             {
@@ -189,34 +189,42 @@ namespace Service
                     var associado = await _context.Pessoas.FindAsync(movimentacao.IdAssociado);
                     string tipoMovimentacao = movimentacao.TipoMovimento == "DEVOLUCAO" ? "Devolução" : "Empréstimo";
 
-                    if (associado != null && instrumento != null)
+                    if(associado == null)
                     {
-                        string? instrumentoNome = (await _context.Tipoinstrumentos.FindAsync(instrumento.IdTipoInstrumento))?.Nome;
-
-                        EmailModel email = new()
-                        {
-                            Assunto = $"Batalá - {tipoMovimentacao} de instrumento",
-                            Body = "<div style=\"text-align: center;\">\r\n    " +
-                                    $"<h1>{tipoMovimentacao} de instrumento</h1>\r\n    " +
-                                    $"<h2>Olá, {associado.Nome}, estamos aguardando a sua confirmação de {tipoMovimentacao}.</h2>\r\n" +
-                                    "<div style=\"font-size: large;\">\r\n        " +
-                                    $"<dt style=\"font-weight: 700;\">Instrumento:</dt><dd>{instrumentoNome}</dd>" +
-                                    $"<dt style=\"font-weight: 700;\">Data de {tipoMovimentacao}:</dt><dd>{movimentacao.Data:dd/MM/yyyy}</dd>\n</div>"
-                        };
-
-                        email.To.Add(associado.Email);
-
-                        await EmailService.Enviar(email);
-
-                        return true;
+                        return 402;
                     }
+
+                    if(instrumento == null)
+                    {
+                        return 401;
+                    }
+
+                    string? instrumentoNome = (await _context.Tipoinstrumentos.FindAsync(instrumento.IdTipoInstrumento))?.Nome;
+
+                    EmailModel email = new()
+                    {
+                        Assunto = $"Batalá - {tipoMovimentacao} de instrumento",
+                        Body = "<div style=\"text-align: center;\">\r\n    " +
+                                $"<h1>{tipoMovimentacao} de instrumento</h1>\r\n    " +
+                                $"<h2>Olá, {associado.Nome}, estamos aguardando a sua confirmação de {tipoMovimentacao}.</h2>\r\n" +
+                                "<div style=\"font-size: large;\">\r\n        " +
+                                $"<dt style=\"font-weight: 700;\">Instrumento:</dt><dd>{instrumentoNome}</dd>" +
+                                $"<dt style=\"font-weight: 700;\">Data de {tipoMovimentacao}:</dt><dd>{movimentacao.Data:dd/MM/yyyy}</dd>\n</div>"
+                    };
+
+                    email.To.Add(associado.Email);
+
+                    await EmailService.Enviar(email);
+
+                    return 200;
+                    
                 }
 
-                return false;
+                return 404;
             }
             catch
             {
-                return false;
+                return 500;
             }
         }
     }

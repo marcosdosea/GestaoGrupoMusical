@@ -33,6 +33,17 @@ namespace Core.Service
         /// </returns>
         Task<int> DeleteAsync(int id);
 
-        Task<bool> NotificarViaEmailAsync(int id);
+        /// <summary>
+        /// Envia uma notificação sobre o empréstimo/devolução de instrumento
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>
+        /// 200 - Sucesso <para />
+        /// 401 - Instrumento não está cadastrado no sistema <para />
+        /// 402 - Associado não está cadastrado no sistema <para />
+        /// 404 - O id não corresponde a nenhuma movimentação <para />
+        /// 500 - Erro interno
+        /// </returns>
+        Task<int> NotificarViaEmailAsync(int id);
     }
 }
