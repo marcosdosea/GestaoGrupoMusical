@@ -210,10 +210,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
                             {
                                 Notificar("Instrumento <b>Devolvido</b> com <b>Sucesso</b>", Notifica.Sucesso);
                             }
-                            return RedirectToAction(nameof(Movimentar));
+                            return RedirectToAction(nameof(Movimentar), new { id = movimentacaoPost.IdInstrumentoMusical });
                         case 400:
                             Notificar("Não é possível <b>Emprestar</b> um instrumento <b>Danificado</b>", Notifica.Alerta);
-                            break;
+                            return RedirectToAction(nameof(Movimentar), new { id = movimentacaoPost.IdInstrumentoMusical } );
                         case 401:
                             if (movimentacao.TipoMovimento == "EMPRESTIMO")
                             {
@@ -237,6 +237,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     Notificar("Desculpe, você não tem <b>permissão</b> para realizar essa <b>operação</b>", Notifica.Erro);
                 }
             }
+
             return View(movimentacaoPost);
         }
 
