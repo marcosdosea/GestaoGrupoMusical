@@ -162,7 +162,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         Notificar("<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Editar</b> do associado, se isso persistir entre em contato com o suporte", Notifica.Erro);
                         return RedirectToAction("Edit", pessoaViewModel);
                     case 400:
-                        mensagem = "<b>Alerta</b> ! Não foi possível editar, a data de entrada deve ser menor que " + DateTime.Now;
+                        mensagem = "<b>Alerta</b> ! Não foi possível editar, a data de entrada deve ser menor que " + DateTime.Now.ToShortDateString();
                         Notificar(mensagem, Notifica.Alerta);
 
                         pessoaViewModel.ListaGrupoMusical = new SelectList(listaGrupoMusical, "Id", "Nome", pessoaViewModel.IdGrupoMusical);
@@ -170,7 +170,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", pessoaViewModel.IdManequim);
                         return View("Edit", pessoaViewModel);
                     case 401:
-                        mensagem = "<b>Alerta</b> ! Não foi possível editar, a data de nascimento deve ser menor que " + DateTime.Now + " e menor que 120 anos ";
+                        mensagem = "<b>Alerta</b> ! Não foi possível editar, a data de nascimento deve ser menor que " + DateTime.Now.ToShortDateString() + " e menor que 120 anos ";
                         Notificar(mensagem, Notifica.Alerta);
                         pessoaViewModel.ListaGrupoMusical = new SelectList(listaGrupoMusical, "Id", "Nome", pessoaViewModel.IdGrupoMusical);
                         pessoaViewModel.ListaPapelGrupo = new SelectList(listaPapelGrupo, "IdPapelGrupo", "Nome", pessoaViewModel.IdPapelGrupo);
@@ -215,10 +215,21 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult RemoveAssociado(int id, PessoaViewModel pessoaViewModel)
+        public async Task<ActionResult> RemoveAssociado(int id, PessoaViewModel pessoaViewModel)
         {
             var pessoassociada = _pessoaService.Get(id);
-            _pessoaService.RemoverAssociado(pessoassociada, pessoaViewModel.MotivoSaida);
+            String mensagem = String.Empty;
+            switch (await _pessoaService.RemoverAssociado(pessoassociada, pessoaViewModel.MotivoSaida)){
+                case 200:
+                    mensagem = "Associado <b>Excluído</b> com <b>Sucesso</b>";
+                    Notificar(mensagem, Notifica.Sucesso);
+                    return RedirectToAction(nameof(Index));
+                case 500:
+                    mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Editar</b> do associado, se isso persistir entre em contato com o suporte";
+                    Notificar(mensagem, Notifica.Erro);
+                    return RedirectToAction("Delete", pessoassociada);
+
+            }
             return RedirectToAction(nameof(Index));
         }
 
