@@ -16,6 +16,13 @@ namespace GestaoGrupoMusicalWeb.Models
             public string Senha { get; set; } = string.Empty;
         }
 
+        public class ForgotPasswordViewModel
+        {
+            [Display(Name = "Email")]
+            [Required(ErrorMessage = "O campo {0} é obrigatório")]
+            public string Email { get; set; }
+        }
+
         public class CadastrarViewModel
         {
             public PessoaViewModel Pessoa { get; set; } = new();
