@@ -104,7 +104,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
             else
             {
-                Notificar("Não é permitido <b>Editar</b> os dados de instrumento <b>Emprestado</b>.", Notifica.Alerta);
+                Notificar("Não é permitido <b>Editar</b> os dados de um instrumento <b>Emprestado</b>.", Notifica.Alerta);
                 return RedirectToAction(nameof(Index));
             }
         }
