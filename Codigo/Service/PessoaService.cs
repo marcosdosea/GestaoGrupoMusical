@@ -177,6 +177,8 @@ namespace Service
 
         public async Task<bool> AddAdmGroup(Pessoa pessoa)
         {
+            using var transaction = _context.Database.BeginTransaction();
+
             try
             {
                 //faz uma consulta para tentar buscar a primeira pessoa com o cpf que foi digitado
@@ -252,18 +254,20 @@ namespace Service
 
                     //id para adm de grupo == 3
                     pessoaF.IdPapelGrupo = 3;
-                    Edit(pessoaF);
+                    await Edit(pessoaF);
                 }
                 else
                 {
+                    await transaction.RollbackAsync();
                     return false;
                 }
 
-
+                await transaction.CommitAsync();
                 return true;
             }
             catch
             {
+                await transaction.RollbackAsync();
                 return false;
             }
         }
