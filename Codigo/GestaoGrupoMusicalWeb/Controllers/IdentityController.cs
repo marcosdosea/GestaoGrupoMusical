@@ -148,7 +148,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             if (ModelState.IsValid)
             { 
-                //var user = await 
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                //a segunda condição é para caso seja necessario
+                //confirmar o email do usuario
+                if (user == null /*|| !(await _userManager.IsEmailConfirmedAsync(user))*/)
+                {
+                    
+                }
             }
             Notificar("<span class=\"fw-bold fs-5 mt-3\">Se o email estiver cadastrado será enviado um link para redefinir sua senha!</span>", Notifica.Sucesso);
             return View();
