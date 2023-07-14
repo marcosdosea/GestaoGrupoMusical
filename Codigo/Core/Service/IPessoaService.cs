@@ -47,7 +47,7 @@ namespace Core.Service
         Task<bool> RemoveCollaborator(int id);
 
         IEnumerable<Papelgrupo> GetAllPapelGrupo();
-        void RemoverAssociado(Pessoa pessoa, String? motivoSaida);
+        Task<int> RemoverAssociado(Pessoa pessoa, String? motivoSaida);
 
         Task<bool> NotificarCadastroAdmGrupoAsync(Pessoa pessoa);
 
