@@ -2,55 +2,73 @@
 
 @{
     ViewData["Title"] = "Adicionar Instrumento";
+    ViewData["InstrumentoMusical"] = "Instrumento";
+    ViewData["Create"] = "Novo";
 }
 <partial name="_Notificar">
-<h1>Novo Instrumento Musical</h1>
 
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-  
-            <div class="form-group">
-                <label asp-for="Patrimonio" class="control-label"></label>
-                <input asp-for="Patrimonio" class="form-control" />
-                <span asp-validation-for="Patrimonio" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DataAquisicao" class="control-label"></label>
-                <input asp-for="DataAquisicao" class="form-control" />
-                <span asp-validation-for="DataAquisicao" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <select asp-for="Status">
-                    <option value="DISPONIVEL">Disponível</option>
-                    <option value="DANIFICADO">Danificado</option>
-                </select>
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IdTipoInstrumento" class="control-label"></label>
-                <select asp-for="IdTipoInstrumento" asp-items="@Model.ListaInstrumentos" class="form-control"></select>
-                <span asp-validation-for="IdTipoInstrumento" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IdGrupoMusical" class="control-label"></label>
-                <input asp-for="IdGrupoMusical" class="form-control" />
-                <span asp-validation-for="IdGrupoMusical" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Adicionar" class="btn btn-primary" />
-            </div>
-        </form>
+    <div class="row">
+        <div class="col-md-6">
+            <h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">Novo Instrumento</h1>
+            <nav>
+                <ol class="breadcrumb px-3">
+                    <strong>
+                        <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["InstrumentoMusical"]</a>
+                        <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Create"]</spn>
+                    </strong>
+                </ol>
+            </nav>
+            <hr />
+            <br />
+
+
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="container">
+                    <div class="row d-flex justify-content-between">
+                        <div class="form-group col-auto">
+                            <label asp-for="Patrimonio" class="control-label"></label>
+                            <input asp-for="Patrimonio" class="form-control" />
+                            <span asp-validation-for="Patrimonio" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-auto">
+                            <label asp-for="DataAquisicao" class="control-label"></label>
+                            <input asp-for="DataAquisicao" class="form-control" />
+                            <span asp-validation-for="DataAquisicao" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Status" class="control-label"></label>
+                    <select asp-for="Status">
+                        <option value="DISPONIVEL">Disponível</option>
+                        <option value="DANIFICADO">Danificado</option>
+                    </select>
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="IdTipoInstrumento" class="control-label"></label>
+                    <select asp-for="IdTipoInstrumento" asp-items="@Model.ListaInstrumentos" class="form-control"></select>
+                    <span asp-validation-for="IdTipoInstrumento" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="IdGrupoMusical" class="control-label"></label>
+                    <input asp-for="IdGrupoMusical" class="form-control" />
+                    <span asp-validation-for="IdGrupoMusical" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Adicionar" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Voltar</a>
-</div>
+    <div>
+        <a asp-action="Index">Voltar</a>
+    </div>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+    }
