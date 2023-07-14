@@ -160,6 +160,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> Delete(int id, InstrumentoMusicalViewModel instrumentoMusicalViewModel)
         {
             await _instrumentoMusical.Delete(id);
+            Notificar("Instrumento Musical <b>Deletado</b> com <b>Sucesso</b>.", Notifica.Sucesso);
             return RedirectToAction(nameof(Index));
         }
 
