@@ -144,8 +144,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken] 
-        public async Task<ActionResult> ForgotPassword(string cpf)
+        public async Task<ActionResult> ForgotPassword(string email)
         {
+
             return RedirectToAction();
         }
     }
