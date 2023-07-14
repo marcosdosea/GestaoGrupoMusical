@@ -37,10 +37,6 @@
                             <span asp-validation-for="DataAquisicao" class="text-danger"></span>
 
                         </div>
-                    </div>
-                </div>
-                <div class="container">
-                    <div class="row d-flex justify-content-between">
                         <div class="form-group col-lg-2 col-md-5">
                             <label asp-for="IdTipoInstrumento" class="control-label"></label>
                             <select asp-for="IdTipoInstrumento" asp-items="@Model.ListaInstrumentos" class="form-select"></select>
@@ -56,16 +52,15 @@
                         </div>
                     </div>
                 </div>
-
                 <br />
-                @*                <div class="container">
-                <div class="form-group">
-                <label asp-for="IdGrupoMusical" class="control-label"></label>
-                <input asp-for="IdGrupoMusical" class="form-control" />
-                <span asp-validation-for="IdGrupoMusical" class="text-danger"></span>
+                <div class="container">
+                    <div class="form-group">
+                        <label asp-for="IdGrupoMusical" class="control-label"></label>
+                        <input asp-for="IdGrupoMusical" class="form-control" />
+                        <span asp-validation-for="IdGrupoMusical" class="text-danger"></span>
 
+                    </div>
                 </div>
-                </div>*@
                 <br />
                 <br />
                 <div class="container">
