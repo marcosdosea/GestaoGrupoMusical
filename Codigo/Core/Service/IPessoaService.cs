@@ -47,6 +47,14 @@ namespace Core.Service
         Task<bool> RemoveCollaborator(int id);
 
         IEnumerable<Papelgrupo> GetAllPapelGrupo();
+        /// <summary>
+        ///  Mudar o campo de ativo "Sim" para "Não",isso é um maneira de dizer que associado tá deletado
+        /// </summary>
+        /// <param name="pessoa"></param>
+        /// <returns>
+        /// 200 - Sucesso <para />
+        /// 500 - Erro interno
+        /// </returns>
         Task<int> RemoverAssociado(Pessoa pessoa, String? motivoSaida);
 
         Task<bool> NotificarCadastroAdmGrupoAsync(Pessoa pessoa);
