@@ -4,6 +4,7 @@ using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace GestaoGrupoMusicalWeb.Controllers
@@ -17,9 +18,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IMapper _mapper;
 
         public InstrumentoMusicalController(
-            IInstrumentoMusicalService instrumentoMusical, 
-            IPessoaService pessoa, 
-            IMovimentacaoInstrumentoService movimentacaoInstrumento, 
+            IInstrumentoMusicalService instrumentoMusical,
+            IPessoaService pessoa,
+            IMovimentacaoInstrumentoService movimentacaoInstrumento,
             IMapper mapper)
         {
             _instrumentoMusical = instrumentoMusical;
@@ -62,13 +63,32 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(InstrumentoMusicalViewModel instrumentoMusicalViewModel)
         {
+            
+            
+
             if (ModelState.IsValid)
             {
                 var instrumentoMusicalModel = _mapper.Map<Instrumentomusical>(instrumentoMusicalViewModel);
-                await _instrumentoMusical.Create(instrumentoMusicalModel);
+                switch (await _instrumentoMusical.Create(instrumentoMusicalModel))
+                {
+                    case 100:
+                        Notificar("A data de aquisição <b>" + instrumentoMusicalModel.DataAquisicao + "</b> é maior que a data de Hoje <b>"+ DateTime.Now +"</b>", Notifica.Alerta);
+                        break;
+                    case 500:
+                        Notificar("Falha ao <b>cadastrar<b> instrumento.", Notifica.Erro);
+                        break;
+                    case 200:
+                        Notificar("Instrumento <b>Cadastrado<b> com <b>Sucesso<b>.", Notifica.Sucesso);
+                        return RedirectToAction(nameof(Index));
+                }
+
             }
-            return RedirectToAction(nameof(Index));
+            IEnumerable<Tipoinstrumento> listaInstrumentos = await _instrumentoMusical.GetAllTipoInstrumento();
+            instrumentoMusicalViewModel.ListaInstrumentos = new SelectList(listaInstrumentos, "Id", "Nome", null);
+            return View(nameof(Create),instrumentoMusicalViewModel);
         }
+
+
 
         // GET: InstrumentoMusicalController/Edit/5
         public async Task<ActionResult> Edit(int id)
@@ -89,7 +109,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> Edit(int id, InstrumentoMusicalViewModel instrumentoMusicalViewModel)
         {
 
-            if(instrumentoMusicalViewModel.IsDanificado != null)
+            if (instrumentoMusicalViewModel.IsDanificado != null)
             {
                 if (instrumentoMusicalViewModel.IsDanificado == true)
                 {
@@ -100,7 +120,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     instrumentoMusicalViewModel.Status = "DISPONIVEL";
                 }
             }
-            
+
             if (ModelState.IsValid)
             {
                 var instrumentoMusical = _mapper.Map<Instrumentomusical>(instrumentoMusicalViewModel);
@@ -132,13 +152,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
             var instrumento = await _instrumentoMusical.Get(id);
             var movimentacao = await _movimentacaoInstrumento.GetEmprestimoByIdInstrumento(id);
 
-            if(instrumento == null)
+            if (instrumento == null)
             {
                 Notificar($"O Id {id} não <b>Corresponde</b> a nenhuma <b>Movimentação</b>", Notifica.Erro);
                 return RedirectToAction(nameof(Index));
             }
 
-            if(movimentacao != null && instrumento.Status == "EMPRESTADO")
+            if (movimentacao != null && instrumento.Status == "EMPRESTADO")
             {
                 movimentacaoModel.IdAssociado = movimentacao.IdAssociado;
                 movimentacaoModel.Movimentacao = "DEVOLUCAO";

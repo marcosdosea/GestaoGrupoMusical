@@ -46,6 +46,8 @@ html {
 }
 
 .form-control {
+    --bs-bg-opacity: 1;
+    background-color: rgba(var(--bs-light-rgb), var(--bs-bg-opacity)) !important;
     color: var(--bs-dark);
     border-top: 0px;
     border-left: 0px;
@@ -63,6 +65,8 @@ html {
 }
 
 .form-select {
+    --bs-bg-opacity: 1;
+    background-color: rgba(var(--bs-light-rgb), var(--bs-bg-opacity)) !important;
     color: var(--bs-dark);
     background-color: #fff;
     background-image: url("../icon/select_icon.svg");

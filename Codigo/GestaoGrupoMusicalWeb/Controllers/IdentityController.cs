@@ -107,7 +107,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [HttpPost]
         public async Task<IActionResult> Sair()
         {
-            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+            await _signInManager.SignOutAsync();
             return RedirectToAction("Autenticar");
         }
 
