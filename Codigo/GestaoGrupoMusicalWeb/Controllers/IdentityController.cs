@@ -11,7 +11,7 @@ using static GestaoGrupoMusicalWeb.Models.IdentityViewModel;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
-    public class IdentityController : Controller
+    public class IdentityController : BaseController
     {
         private readonly SignInManager<UsuarioIdentity> _signInManager;
         private readonly UserManager<UsuarioIdentity> _userManager;
