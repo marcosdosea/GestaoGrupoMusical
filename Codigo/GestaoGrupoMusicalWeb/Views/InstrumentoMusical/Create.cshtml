@@ -26,45 +26,58 @@
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="container">
                     <div class="row d-flex justify-content-between">
-                        <div class="form-group col-auto">
+                        <div class="form-group col-md-5">
                             <label asp-for="Patrimonio" class="control-label"></label>
                             <input asp-for="Patrimonio" class="form-control" />
                             <span asp-validation-for="Patrimonio" class="text-danger"></span>
                         </div>
-                        <div class="form-group col-auto">
+                        <div class="form-group col-md-6">
                             <label asp-for="DataAquisicao" class="control-label"></label>
                             <input asp-for="DataAquisicao" class="form-control" />
                             <span asp-validation-for="DataAquisicao" class="text-danger"></span>
                         </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label asp-for="Status" class="control-label"></label>
-                    <select asp-for="Status">
-                        <option value="DISPONIVEL">Disponível</option>
-                        <option value="DANIFICADO">Danificado</option>
-                    </select>
-                    <span asp-validation-for="Status" class="text-danger"></span>
+                <br />
+                <div class="container">
+                    <div class="row d-flex justify-content-between">
+                        <div class="form-group col-md-6">
+                            <label asp-for="IdTipoInstrumento" class="control-label"></label>
+                            <select asp-for="IdTipoInstrumento" asp-items="@Model.ListaInstrumentos" class="form-select"></select>
+                            <span asp-validation-for="IdTipoInstrumento" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-5">
+                            <label asp-for="Status" class="control-label"></label>
+                            <select asp-for="Status" class="form-select">
+                                <option value="DISPONIVEL">Disponível</option>
+                                <option value="DANIFICADO">Danificado</option>
+                            </select>
+                            <span asp-validation-for="Status" class="text-danger"></span>
+                        </div>
+                    </div>
                 </div>
+                <br />
+                @*                <div class="container">
                 <div class="form-group">
-                    <label asp-for="IdTipoInstrumento" class="control-label"></label>
-                    <select asp-for="IdTipoInstrumento" asp-items="@Model.ListaInstrumentos" class="form-control"></select>
-                    <span asp-validation-for="IdTipoInstrumento" class="text-danger"></span>
+                <label asp-for="IdGrupoMusical" class="control-label"></label>
+                <input asp-for="IdGrupoMusical" class="form-control" />
+                <span asp-validation-for="IdGrupoMusical" class="text-danger"></span>
+
                 </div>
-                <div class="form-group">
-                    <label asp-for="IdGrupoMusical" class="control-label"></label>
-                    <input asp-for="IdGrupoMusical" class="form-control" />
-                    <span asp-validation-for="IdGrupoMusical" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <input type="submit" value="Adicionar" class="btn btn-primary" />
+                </div>*@
+                <br />
+                <br />
+                <div class="container">
+                    <div class="row">
+                        <div class="col-5"></div>
+                        <a class="btn btn-light text-secondary border border-secondary d-grid gap-2 col-3 mx-auto" asp-action="Index"> Voltar </a>
+                        <input type="submit" value="Adicionar" class="btn btn-secondary d-grid gap-2 col-3 mx-auto" />
+                    </div>
                 </div>
             </form>
         </div>
-    </div>
 
-    <div>
-        <a asp-action="Index">Voltar</a>
+
     </div>
 
     @section Scripts {
