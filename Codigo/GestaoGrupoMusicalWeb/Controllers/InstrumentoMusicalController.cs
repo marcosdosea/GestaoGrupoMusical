@@ -170,11 +170,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
             movimentacaoModel.NomeInstrumento = await _instrumentoMusical.GetNomeInstrumento(id);
 
             var listaPessoas = _pessoa.GetAll().ToList();
-            var admLogado = listaPessoas.SingleOrDefault(p => p.Cpf == User.Identity?.Name);
-            if (admLogado != null)
-            {
-                listaPessoas.Remove(admLogado);
-            }
+            listaPessoas.Remove(listaPessoas.Single(p => p.Cpf == User.Identity?.Name));
+
             movimentacaoModel.ListaAssociado = new SelectList(listaPessoas, "Id", "Nome");
             return View(movimentacaoModel);
         }
