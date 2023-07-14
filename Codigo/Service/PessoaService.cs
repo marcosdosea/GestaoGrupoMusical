@@ -194,7 +194,11 @@ namespace Service
                     pessoa.IsentoPagamento = 1;
                     pessoa.Telefone1 = "";
 
-                    await Create(pessoa);
+                    if(await Create(pessoa) != 200)
+                    {
+                        await transaction.RollbackAsync();
+                        return false;
+                    }
 
                     var user = CreateUser();
 
@@ -254,7 +258,11 @@ namespace Service
 
                     //id para adm de grupo == 3
                     pessoaF.IdPapelGrupo = 3;
-                    await Edit(pessoaF);
+                    if(await Edit(pessoaF) != 200)
+                    {
+                        await transaction.RollbackAsync();
+                        return false;
+                    }
                 }
                 else
                 {
