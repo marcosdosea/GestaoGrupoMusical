@@ -35,7 +35,7 @@ namespace Core.Service
         void Delete(int id);
         Pessoa Get(int id);
         IEnumerable<Pessoa> GetAll();
-        IEnumerable<AssociadoDTO> GetAllAssociadoDTO();
+        Task<IEnumerable<AssociadoDTO>> GetAllAssociadoDTO();
 
         bool GetCPFExistente(int id, string cpf);
 
@@ -50,6 +50,8 @@ namespace Core.Service
         void RemoverAssociado(Pessoa pessoa, String? motivoSaida);
 
         Task<bool> NotificarCadastroAdmGrupoAsync(Pessoa pessoa);
+
+        Task<Pessoa?> GetByCpf(string? cpf);
 
     }
 }

@@ -6,8 +6,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.Data;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -156,13 +154,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             if (instrumento == null)
             {
+                Notificar($"O Id {id} não <b>Corresponde</b> a nenhuma <b>Movimentação</b>", Notifica.Erro);
                 return RedirectToAction(nameof(Index));
             }
 
             if (movimentacao != null && instrumento.Status == "EMPRESTADO")
             {
                 movimentacaoModel.IdAssociado = movimentacao.IdAssociado;
-                movimentacaoModel.IdColaborador = movimentacao.IdColaborador;
                 movimentacaoModel.Movimentacao = "DEVOLUCAO";
             }
 
@@ -170,7 +168,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
             movimentacaoModel.Patrimonio = instrumento.Patrimonio;
             movimentacaoModel.IdInstrumentoMusical = instrumento.Id;
             movimentacaoModel.NomeInstrumento = await _instrumentoMusical.GetNomeInstrumento(id);
-            movimentacaoModel.ListaAssociado = new SelectList(_pessoa.GetAll(), "Id", "Nome");
+
+            var listaPessoas = _pessoa.GetAll().ToList();
+            listaPessoas.Remove(listaPessoas.Single(p => p.Cpf == User.Identity?.Name));
+
+            movimentacaoModel.ListaAssociado = new SelectList(listaPessoas, "Id", "Nome");
             return View(movimentacaoModel);
         }
 
@@ -183,44 +185,59 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             if (ModelState.IsValid)
             {
-                var movimentacao = new Movimentacaoinstrumento
+                var colaborador = await _pessoa.GetByCpf(User.Identity?.Name);
+
+                if (colaborador != null && (colaborador.IdPapelGrupo == 2 || colaborador.IdPapelGrupo == 3))
                 {
-                    Data = movimentacaoPost.Data,
-                    IdInstrumentoMusical = movimentacaoPost.IdInstrumentoMusical,
-                    IdAssociado = movimentacaoPost.IdAssociado,
-                    IdColaborador = movimentacaoPost.IdColaborador,
-                    TipoMovimento = movimentacaoPost.Movimentacao
-                };
-                switch (await _movimentacaoInstrumento.CreateAsync(movimentacao))
+
+                    var movimentacao = new Movimentacaoinstrumento
+                    {
+                        Data = movimentacaoPost.Data,
+                        IdInstrumentoMusical = movimentacaoPost.IdInstrumentoMusical,
+                        IdAssociado = movimentacaoPost.IdAssociado,
+                        IdColaborador = colaborador.Id,
+                        TipoMovimento = movimentacaoPost.Movimentacao
+                    };
+
+                    switch (await _movimentacaoInstrumento.CreateAsync(movimentacao))
+                    {
+                        case 200:
+                            if (movimentacao.TipoMovimento == "EMPRESTIMO")
+                            {
+                                Notificar("Instrumento <b>Emprestado</b> com <b>Sucesso</b>", Notifica.Sucesso);
+                            }
+                            else
+                            {
+                                Notificar("Instrumento <b>Devolvido</b> com <b>Sucesso</b>", Notifica.Sucesso);
+                            }
+                            return RedirectToAction(nameof(Movimentar), new { id = movimentacaoPost.IdInstrumentoMusical });
+                        case 400:
+                            Notificar("Não é possível <b>Emprestar</b> um instrumento <b>Danificado</b>", Notifica.Alerta);
+                            return RedirectToAction(nameof(Movimentar), new { id = movimentacaoPost.IdInstrumentoMusical } );
+                        case 401:
+                            if (movimentacao.TipoMovimento == "EMPRESTIMO")
+                            {
+                                Notificar("Não é possível <b>Emprestar</b> um instrumento que não está <b>Disponível</b>", Notifica.Alerta);
+                            }
+                            else
+                            {
+                                Notificar("Não é possível <b>Devolver</b> um instrumento que não está <b>Emprestado</b>", Notifica.Alerta);
+                            }
+                            break;
+                        case 402:
+                                Notificar("Esse <b>Associado</b> não corresponde ao <b>Empréstimo</b> desse <b>Instrumento</b>", Notifica.Erro);
+                            break;
+                        case 500:
+                                Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Movimentação</b> do instrumento, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                            break;
+                    }
+                }
+                else
                 {
-                    case 200:
-                        if (movimentacao.TipoMovimento == "EMPRESTIMO")
-                        {
-                            Notificar("Instrumento <b>Emprestado</b> com <b>Sucesso</b>", Notifica.Sucesso);
-                        }
-                        else
-                        {
-                            Notificar("Instrumento <b>Devolvido</b> com <b>Sucesso</b>", Notifica.Sucesso);
-                        }
-                        return RedirectToAction(nameof(Movimentar));
-                    case 400:
-                        Notificar("Não é possível <b>Emprestar</b> um instrumento <b>Danificado</b>", Notifica.Alerta);
-                        break;
-                    case 401:
-                        if (movimentacao.TipoMovimento == "EMPRESTIMO")
-                        {
-                            Notificar("Não é possível <b>Emprestar</b> um instrumento que não está <b>Disponível</b>", Notifica.Alerta);
-                        }
-                        else
-                        {
-                            Notificar("Não é possível <b>Devolver</b> um instrumento que não está <b>Emprestado</b>", Notifica.Alerta);
-                        }
-                        break;
-                    case 500:
-                        Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Movimentação</b> do instrumento, se isso persistir entre em contato com o suporte", Notifica.Erro);
-                        break;
+                    Notificar("Desculpe, você não tem <b>permissão</b> para realizar essa <b>operação</b>", Notifica.Erro);
                 }
             }
+
             return View(movimentacaoPost);
         }
 
@@ -228,30 +245,48 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteMovimentacao(int id, int IdInstrumento)
         {
-            try
+            switch(await _movimentacaoInstrumento.DeleteAsync(id))
             {
-                await _movimentacaoInstrumento.Delete(id);
-                return RedirectToAction(nameof(Movimentar), new { id = IdInstrumento });
+                case 200:
+                    Notificar("Movimentação <b>Excluida</b> com <b>Sucesso</b>", Notifica.Sucesso);
+                break;
+                case 400:
+                    Notificar("Não é possível <b>Excluir</b> essa <b>Movimentação</b> de <b>Empréstimo</b> pois o instrumento não foi <b>Devolvido</b>", Notifica.Alerta);
+                break;
+                case 404:
+                    Notificar($"O Id {id} não <b>Corresponde</b> a nenhuma <b>Movimentação</b>", Notifica.Erro);
+                break;
+                case 500:
+                    Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Exclusão</b> da movimentação, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                break;
             }
-            catch
-            {
-                return RedirectToAction(nameof(Movimentar), new { id = IdInstrumento });
-            }
+
+            return RedirectToAction(nameof(Movimentar), new { id = IdInstrumento });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> NotificarViaEmail(int id, int IdInstrumento)
         {
-            try
+            switch(await _movimentacaoInstrumento.NotificarViaEmailAsync(id))
             {
-                await _movimentacaoInstrumento.NotificarViaEmail(id);
-                return RedirectToAction(nameof(Movimentar), new { id = IdInstrumento });
-            }
-            catch
-            {
-                return RedirectToAction(nameof(Movimentar), new { id = IdInstrumento });
-            }
+                case 200:
+                    Notificar("Notificação <b>Enviada</b> com <b>Sucesso</b>", Notifica.Sucesso);
+                break;
+                case 401:
+                    Notificar("O instrumento <b>Não</b> está <b>Cadastrado</b> no sistema, por favor entre em contato com o suporte", Notifica.Erro);
+                break;
+                case 402:
+                    Notificar("O correspondente <b>Não</b> está <b>Cadastrado</b> no sistema, por favor entre em contato com o suporte", Notifica.Erro);
+                break;
+                case 404:
+                    Notificar($"O Id {id} não <b>Corresponde</b> a nenhuma <b>Movimentação</b>", Notifica.Erro);
+                break;
+                case 500:
+                    Notificar("Desculpe, ocorreu um <b>Erro</b> durante o <b>Envio</b> da notificação, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                    break;
+            }  
+            return RedirectToAction(nameof(Movimentar), new { id = IdInstrumento });
         }
     }
 }

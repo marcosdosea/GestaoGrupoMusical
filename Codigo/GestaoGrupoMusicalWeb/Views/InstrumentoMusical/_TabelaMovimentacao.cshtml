@@ -1,9 +1,9 @@
 ﻿@model IEnumerable<Core.DTO.MovimentacaoInstrumentoDTO>
 
-<div class="table-responsive-md">
-    <table class="table table table-bordered mt-3">
-        <thead class="table-light">
-            <tr>
+<div class="table-responsive">
+    <table class="table mt-3">
+        <thead>
+            <tr class="bg-danger bg-opacity-75 text-white">
                 <th>
                     @Html.DisplayNameFor(model => model.Cpf)
                 </th>
@@ -25,7 +25,7 @@
         <tbody>
             @foreach (var item in Model)
             {
-                <tr>
+                <tr class="border-bottom border-danger border-opacity-75 align-middle">
                     <td>
                         @item.Cpf
                     </td>
@@ -41,18 +41,19 @@
                     <td>
                         @item.Status
                     </td>
-                    <td>
-                        <form id="@(item.Id + "_delete")" asp-controller="InstrumentoMusical" asp-action="DeleteMovimentacao" asp-route-Id="@item.Id" asp-route-IdInstrumento="@item.IdInstrumento" method="post">
-                            <a role="button" class="link-primary"
-                               onclick="(() => {confirm('Deseja excluir a movimentação?') ? document.getElementById('@(item.Id + "_delete")').submit() : null})()">
-                                Excluir
+                    <td class="py-3 border-0 d-flex flex-column flex-lg-row gap-3">
+                        <form id="@(item.Id + "_notificar")" asp-controller="InstrumentoMusical" asp-action="NotificarViaEmail" asp-route-Id="@item.Id" asp-route-IdInstrumento="@item.IdInstrumento" method="post">
+                            <a role="button" class="btn btn-sm btn-secondary"
+                               onclick="(() => {confirm('Deseja notificar a movimentação?') ? document.getElementById('@(item.Id + "_notificar")').submit() : null})()">
+                                <i class="fa-solid fa-envelope"></i>
+                                Notificar
                             </a>
                         </form>
-                        |
-                        <form id="@(item.Id + "_notificar")" asp-controller="InstrumentoMusical" asp-action="NotificarViaEmail" asp-route-Id="@item.Id" asp-route-IdInstrumento="@item.IdInstrumento" method="post">
-                            <a role="button" class="link-primary"
-                               onclick="(() => {confirm('Deseja notificar a movimentação?') ? document.getElementById('@(item.Id + "_notificar")').submit() : null})()">
-                                Notificar
+                        <form id="@(item.Id + "_delete")" asp-controller="InstrumentoMusical" asp-action="DeleteMovimentacao" asp-route-Id="@item.Id" asp-route-IdInstrumento="@item.IdInstrumento" method="post">
+                            <a role="button" class="btn btn-sm btn-secondary"
+                               onclick="(() => {confirm('Deseja excluir a movimentação?') ? document.getElementById('@(item.Id + "_delete")').submit() : null})()">
+                                <i class="fa-solid fa-xmark"> </i>
+                                Excluir
                             </a>
                         </form>
                     </td>

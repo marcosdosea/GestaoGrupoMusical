@@ -95,6 +95,7 @@ html {
 }
 
 .form-check-input:checked {
-    background-color: var(--bs-success);
-    border-color: var(--bs-success);
+    border-color: rgba(var(--bs-danger-rgb), 0.75);
+    background-color: rgba(var(--bs-danger-rgb), 0.75);
+    background-clip: padding-box
 }
