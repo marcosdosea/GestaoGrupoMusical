@@ -144,8 +144,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken] 
-        public async Task<ActionResult> ForgotPassword(string email)
+        public async Task<ActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
+            if (ModelState.IsValid)
+            { 
+                //var user = await 
+            }
             Notificar("<span class=\"fw-bold fs-5 mt-3\">Se o email estiver cadastrado será enviado um link para redefinir sua senha!</span>", Notifica.Sucesso);
             return View();
         }
