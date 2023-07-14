@@ -65,9 +65,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(InstrumentoMusicalViewModel instrumentoMusicalViewModel)
         {
-            
-            
-
             if (ModelState.IsValid)
             {
                 var instrumentoMusicalModel = _mapper.Map<Instrumentomusical>(instrumentoMusicalViewModel);
@@ -97,12 +94,19 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             var instrumentoMusical = await _instrumentoMusical.Get(id);
             var instrumentoMusicalModel = _mapper.Map<InstrumentoMusicalViewModel>(instrumentoMusical);
+            if (instrumentoMusicalModel.Status != "EMPRESTADO")
+            {
+                IEnumerable<Tipoinstrumento> listaInstrumentos = await _instrumentoMusical.GetAllTipoInstrumento();
 
-            IEnumerable<Tipoinstrumento> listaInstrumentos = await _instrumentoMusical.GetAllTipoInstrumento();
+                instrumentoMusicalModel.ListaInstrumentos = new SelectList(listaInstrumentos, "Id", "Nome", null);
 
-            instrumentoMusicalModel.ListaInstrumentos = new SelectList(listaInstrumentos, "Id", "Nome", null);
-
-            return View(instrumentoMusicalModel);
+                return View(instrumentoMusicalModel);
+            }
+            else
+            {
+                Notificar("Instrumento Musical <b>Emprestado</b>. Não é permitido <b>Editar</b> os seus dados.", Notifica.Alerta);
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         // POST: InstrumentoMusicalController/Edit/5
