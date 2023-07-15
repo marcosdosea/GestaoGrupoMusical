@@ -11,7 +11,7 @@ namespace Core.Service
     public interface IPessoaService
     {
         /// <summary>
-        /// Cadastra uma movimentação no banco de dados
+        /// Cadastra uma pessoa no banco de dados
         /// </summary>
         /// <param name="pessoa"></param>
         /// <returns>
@@ -21,11 +21,21 @@ namespace Core.Service
         /// 500 - Erro interno
         /// </returns>
         Task<int> Create(Pessoa pessoa);
-        void Edit(Pessoa pessoa);
+        /// <summary>
+        /// Edita uma pessoa no banco de dados
+        /// </summary>
+        /// <param name="pessoa"></param>
+        /// <returns>
+        /// 200 - Sucesso <para />
+        /// 400 - Data de entrada fora do escopo,ou seja, passa do dia atual<para />
+        /// 401 - Data de nascimento fora do escopo, ou seja, ou passar do dia atual ou idade passa de 120 anos <para />
+        /// 500 - Erro interno
+        /// </returns>
+        Task<int> Edit(Pessoa pessoa);
         void Delete(int id);
         Pessoa Get(int id);
         IEnumerable<Pessoa> GetAll();
-        IEnumerable<AssociadoDTO> GetAllAssociadoDTO();
+        Task<IEnumerable<AssociadoDTO>> GetAllAssociadoDTO();
 
         bool GetCPFExistente(int id, string cpf);
 
@@ -40,6 +50,8 @@ namespace Core.Service
         void RemoverAssociado(Pessoa pessoa, String? motivoSaida);
 
         Task<bool> NotificarCadastroAdmGrupoAsync(Pessoa pessoa);
+
+        Task<Pessoa?> GetByCpf(string? cpf);
 
     }
 }

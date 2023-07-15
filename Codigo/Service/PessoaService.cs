@@ -89,11 +89,58 @@ namespace Service
         /// Metodo que atualiza os dados de uma pessoa/associado
         /// </summary>
         /// <param name="pessoa">dados do associado</param>
-        public void Edit(Pessoa pessoa)
+        public async Task<int> Edit(Pessoa pessoa)
         {
             //Criar excecao para data de nascimento, etc
-            _context.Update(pessoa);
-            _context.SaveChanges();
+            try
+            {
+                _context.Pessoas.Update(pessoa);
+                if (pessoa.DataEntrada == null && pessoa.DataNascimento == null)
+                {//Mensagem de sucesso
+                    await _context.SaveChangesAsync();
+                    return 200;
+                }
+                else if (pessoa.DataNascimento != null)
+                {
+                    int idade = Math.Abs(pessoa.DataNascimento.Value.Year - DateTime.Now.Year);
+                    if (pessoa.DataNascimento <= DateTime.Now && idade < 120)
+                    {
+                        if (pessoa.DataEntrada == null || pessoa.DataEntrada < DateTime.Now)
+                        {//mensagem de sucesso
+
+                            await _context.SaveChangesAsync();
+                            return 200;
+                        }
+                        else
+                        {
+                            // erro 400, data de entrada fora do escopo
+                            return 400;
+                        }
+                    }
+                    else
+                    {
+                        // erro 401, data de nascimento está fora do escopo
+                        return 401;
+                    }
+                }
+                else if (pessoa.DataEntrada == null || pessoa.DataEntrada < DateTime.Now)
+                {
+                    await _context.SaveChangesAsync();
+                    return 200;
+                }
+                else
+                {
+                    // erro 400, data de entrada fora do escopo
+                    return 400;
+                }
+            }
+            catch (Exception ex)
+            {
+                //Aconteceu algum erro do servidor ou interno
+                return 500;
+            }
+
+
         }
 
         /// <summary>
@@ -130,6 +177,8 @@ namespace Service
 
         public async Task<bool> AddAdmGroup(Pessoa pessoa)
         {
+            using var transaction = _context.Database.BeginTransaction();
+
             try
             {
                 //faz uma consulta para tentar buscar a primeira pessoa com o cpf que foi digitado
@@ -145,7 +194,11 @@ namespace Service
                     pessoa.IsentoPagamento = 1;
                     pessoa.Telefone1 = "";
 
-                    await Create(pessoa);
+                    if(await Create(pessoa) != 200)
+                    {
+                        await transaction.RollbackAsync();
+                        return false;
+                    }
 
                     var user = CreateUser();
 
@@ -205,18 +258,24 @@ namespace Service
 
                     //id para adm de grupo == 3
                     pessoaF.IdPapelGrupo = 3;
-                    Edit(pessoaF);
+                    if(await Edit(pessoaF) != 200)
+                    {
+                        await transaction.RollbackAsync();
+                        return false;
+                    }
                 }
                 else
                 {
+                    await transaction.RollbackAsync();
                     return false;
                 }
 
-
+                await transaction.CommitAsync();
                 return true;
             }
             catch
             {
+                await transaction.RollbackAsync();
                 return false;
             }
         }
@@ -271,16 +330,20 @@ namespace Service
 
         }
 
-        public IEnumerable<AssociadoDTO> GetAllAssociadoDTO()
+        public async Task<IEnumerable<AssociadoDTO>> GetAllAssociadoDTO()
         {
-            return from pessoa in _context.Pessoas
-                   select new AssociadoDTO
-                   {
-                       Id = pessoa.Id,
-                       Nome = pessoa.Nome,
-                       Ativo = pessoa.Ativo
-                   };
+            var query = from pessoa in _context.Pessoas
+                        where pessoa.IdPapelGrupo == 1
+                        select new AssociadoDTO
+                        {
+                            Id = pessoa.Id,
+                            Nome = pessoa.Nome,
+                            Ativo = pessoa.Ativo
+                        };
+
+            return await query.AsNoTracking().ToListAsync();
         }
+
         public IEnumerable<Papelgrupo> GetAllPapelGrupo()
         {
             return _context.Papelgrupos.AsNoTracking();
@@ -398,6 +461,15 @@ namespace Service
                 return true;
             }
             return false;
+        }
+
+        public async Task<Pessoa?> GetByCpf(string? cpf)
+        {
+            var query = (from pessoa in _context.Pessoas
+                        where pessoa.Cpf == cpf
+                        select pessoa).FirstOrDefaultAsync();
+
+            return await query;
         }
     }
 }

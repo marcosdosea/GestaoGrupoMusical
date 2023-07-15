@@ -16,7 +16,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IInformativoService _informativoService;
         private readonly IMapper _mapper;
 
-        public HomeController(ILogger<HomeController> logger, IEventoService evento, IEnsaioService ensaioService, IInformativoService informativoService,IMapper mapper)
+        public HomeController(ILogger<HomeController> logger, 
+                              IEventoService evento, 
+                              IEnsaioService ensaioService, 
+                              IInformativoService informativoService,
+                              IMapper mapper)
         {
             _logger = logger;
             _evento = evento;
@@ -27,6 +31,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         public async Task<IActionResult> Index()
         {
+            if(User.IsInRole("ADMINISTRADOR SISTEMA"))
+            {
+                return RedirectToAction(nameof(Index), "GrupoMusical");
+            }
+
             var listaEvento = _evento.GetAllDTO();
             var EventoViewDTO = _mapper.Map<List<EventoViewModelDTO>>(listaEvento);
             var listaEnsaio = await _ensaioService.GetAllDTO();

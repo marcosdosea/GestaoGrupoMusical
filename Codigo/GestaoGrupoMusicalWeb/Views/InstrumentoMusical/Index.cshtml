@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Instrumentos Musicais";
 }
-
+<partial name="_Notificar" />
 <div class="d-flex justify-content-between align-items-center">
     <h5>@ViewData["Title"]</h5>
     <a role="button" class="btn btn-secondary m-3" asp-controller="InstrumentoMusical" asp-action="Create">Novo Instrumento</a>
@@ -12,40 +12,40 @@
 <div class="table-responsive-md">
     <table class="table">
         <thead>
-            <tr class="bg-danger opacity-75" >
+            <tr class="bg-danger bg-opacity-75 text-white">
                 <th>
-                    <span class="text-white">Patrimônio</span>
+                    @Html.DisplayNameFor(m => m.Patrimonio)
                 </th>
                 <th>
-                    <span class="text-white">Instrumento</span>
+                    @Html.DisplayNameFor(m => m.NomeInstrumento)
                 </th>
                 <th>
-                    <span class="text-white">Status</span>
+                    @Html.DisplayNameFor(m => m.Status)
                 </th>
                 <th>
-                    <span class="text-white">Associado</span>
+                    @Html.DisplayNameFor(m => m.NomeAssociado)
                 </th>
                 <th>
-                    <span class="text-white">Ações</span>
+                    <span>Ações</span>
                 </th>
             </tr>
         </thead>
         <tbody>
             @foreach (var item in Model) {
-                <tr class="border-bottom border-danger border-opacity-75 p-3 align-middle">
-                    <td class="p-3" >
+                <tr class="border-bottom border-danger border-opacity-75 align-middle">
+                    <td>
                         @item.Patrimonio
                     </td>
-                    <td class="p-3" >
+                    <td>
                         @item.NomeInstrumento
                     </td>
-                    <td class="p-3">
+                    <td>
                         @item.Status
                     </td>
-                    <td class="p-3">
+                    <td>
                         @item.NomeAssociado
                     </td>
-                    <td class="d-flex flex-wrap justify-content-between border-0 p-3">
+                    <td class="d-flex flex-wrap justify-content-between border-0">
                         <a role="button" class="btn btn-secondary btn-sm px-3 my-2" asp-controller="InstrumentoMusical" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"> </i> Editar </a>
                         <a role="button" class="btn btn-secondary btn-sm px-3 my-2" asp-controller="InstrumentoMusical" asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-xmark"> </i> Excluir </a>
                         <a role="button" class="btn btn-secondary btn-sm px-3 my-2" asp-controller="InstrumentoMusical" asp-action="Movimentar" asp-route-id="@item.Id"><i class="fa-solid fa-arrow-right-arrow-left"></i> Movimentar </a>
