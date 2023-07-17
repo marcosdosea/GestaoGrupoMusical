@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Util;
 
 namespace GestaoGrupoMusicalWeb.Models
 {
@@ -20,6 +21,7 @@ namespace GestaoGrupoMusicalWeb.Models
         public string RazaoSocial { get; set; } = null!;
 
         [Required]
+        [CNPJ]
         [Display(Name = "CNPJ")]
         [RegularExpression(@"^\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}$", ErrorMessage = "CNPJ inválido")]
         [StringLength(18, MinimumLength = 18, ErrorMessage ="O campo CNPJ deve ter 14 caracteres")]
