@@ -92,6 +92,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             grupoMusicalViewModel.Cnpj = grupoMusicalViewModel.Cnpj.Replace(".", string.Empty).Replace("-", string.Empty).Replace("/", string.Empty);
             grupoMusicalViewModel.Cep = grupoMusicalViewModel.Cep.Replace("-", string.Empty);
+
+            var existe = _grupoMusical.GetCNPJExistente(id, grupoMusicalViewModel.Cnpj);
+            if (existe)
+            {
+                ModelState.Remove("CNPJ");
+            }
             if (ModelState.IsValid)
             {
                 var grupoMusical = _mapper.Map<Grupomusical>(grupoMusicalViewModel);
@@ -105,6 +111,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         Notificar("<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Cadastro</b> do associado, se isso persistir entre em contato com o suporte", Notifica.Erro);
                         return RedirectToAction(nameof(Index));
                 }
+            }
+            else
+            {
+                return View(grupoMusicalViewModel);
             }
             return RedirectToAction(nameof(Index));
         }
