@@ -44,5 +44,14 @@ namespace Core.Service
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
         IEnumerable<GrupoMusicalDTO> GetAllDTO();
+
+        /// <summary>
+        /// Informar se cnpj a esxiste no banco 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cnpj"></param>
+        /// <returns></returns>
+        bool GetCNPJExistente(int id, string cnpj);
+
     }
 }
