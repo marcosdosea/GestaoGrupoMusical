@@ -225,7 +225,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     Notificar(mensagem, Notifica.Sucesso);
                     return RedirectToAction(nameof(Index));
                 case 500:
-                    mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Editar</b> do associado, se isso persistir entre em contato com o suporte";
+                    mensagem = "<b>Erro</b> !";
                     Notificar(mensagem, Notifica.Erro);
                     return RedirectToAction("Delete", pessoassociada);
 
