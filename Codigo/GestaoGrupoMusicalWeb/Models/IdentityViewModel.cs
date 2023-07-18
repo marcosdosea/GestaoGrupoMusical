@@ -26,8 +26,8 @@ namespace GestaoGrupoMusicalWeb.Models
 
         public class ResetPasswordViewModel
         {
-            public int UserId { get; set; }
-            public string Code { get; set; }
+            public string UserId { get; set; } = string.Empty;
+            public string Code { get; set; } = string.Empty;
 
             [Display(Name = "Nova Senha")]
             [Required(ErrorMessage = "Campo obrigatório")]
