@@ -173,14 +173,63 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         //[AllowAnonymous]
-        public ActionResult ResetPassword(/*int userId, string code*/)
+        public ActionResult ResetPassword(string userId, string code)
         {
-            /*ResetPasswordViewModel resetPasswordModel = new();
+            ResetPasswordViewModel resetPasswordModel = new();
 
             resetPasswordModel.UserId = userId;
-            resetPasswordModel.Code = code;*/
+            resetPasswordModel.Code = code;
 
-            return View(/*resetPasswordModel*/);
+            return View(resetPasswordModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel resetPasswordModel)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                return View(resetPasswordModel);
+            }
+            else if (resetPasswordModel.Code == null || resetPasswordModel.UserId == null) { 
+                // TODO
+                // criar uma notificação dizendo que ocorreu um erro ao tentar resetar senha
+                // NÃO DIZER QUAL FOI O ERRO OU O MOTIVO
+
+                return View();
+            }
+
+            var user = await _userManager.FindByIdAsync(resetPasswordModel.UserId);
+
+            //caso usuario nao seja encontrado
+            if (user == null)
+            {
+                // TODO
+                // criar uma notificação dizendo que ocorreu um erro ao tentar resetar senha
+                // NÃO DIZER QUAL FOI O ERRO OU O MOTIVO
+                return View();
+            }
+
+            var result = await _userManager.ResetPasswordAsync(user,resetPasswordModel.Code, resetPasswordModel.Password);
+
+            //caso haja sucesso em redefinir senha
+            if (result.Succeeded)
+            {
+                // TODO
+                // apresentar uma notificação de senha redefinida com sucesso
+                return View();
+            }
+            else 
+            {
+                // TODO
+                // criar uma notificação dizendo que ocorreu um erro ao tentar resetar senha
+                // NÃO DIZER QUAL FOI O ERRO OU O MOTIVO
+                return View();
+            }
+
+
+            return View();
         }
     }
 }
