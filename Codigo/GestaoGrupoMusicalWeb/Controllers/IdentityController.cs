@@ -164,6 +164,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 //gera o token para redefinir senha
                 string code = await _userManager.GeneratePasswordResetTokenAsync(user);
 
+                //gera link para a view da controladora ja passando codigo e id do usuario
                 var callbackUrl = Url.Action("ResetPassword", "Identity", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
 
             }
@@ -174,7 +175,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [AllowAnonymous]
         public ActionResult ResetPassword(int userId, string code)
         {
-            return View();
+            ResetPasswordViewModel resetPasswordModel = new();
+
+            resetPasswordModel.UserId = userId;
+            resetPasswordModel.Code = code;
+
+            return View(resetPasswordModel);
         }
     }
 }
