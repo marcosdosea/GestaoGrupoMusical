@@ -45,7 +45,8 @@ namespace GestaoGrupoMusicalWeb
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
                 options.Lockout.MaxFailedAccessAttempts = 5;
                 options.Lockout.AllowedForNewUsers = true;
-            }).AddEntityFrameworkStores<IdentityContext>();
+            }).AddEntityFrameworkStores<IdentityContext>()
+              .AddDefaultTokenProviders();
 
             builder.Services.ConfigureApplicationCookie(options =>
             {
