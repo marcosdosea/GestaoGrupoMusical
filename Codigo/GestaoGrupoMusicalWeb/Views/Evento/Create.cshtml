@@ -7,7 +7,7 @@
 
 <div class="row">
 
-    <div class="col-md-6">
+    <div class="col-md-10 col-lg-6">
         <h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">@ViewData["Title"]</h1>
         <nav>
             <ol class="breadcrumb px-3">
@@ -20,13 +20,6 @@
         <form asp-action="Create">
             <div class="container">
                 <div class="row">
-                    <div class="form-group">
-                        <label asp-for="IdGrupoMusical" class="control-label"></label>
-                        <select asp-for="IdGrupoMusical" asp-items="@Model.ListaGrupoMusical" class="form-select">
-                            <option value=""></option>
-                        </select>
-                        <span asp-validation-for="IdGrupoMusical" class="text-danger"></span>
-                    </div>
                     <div class="container">
                         <div class="row d-flex justify-content-between">
                             <div class="form-group col-md-6">
@@ -72,6 +65,13 @@
                                 <span asp-validation-for="IdRegente" class="text-danger"></span>
                             </div>
                         </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="IdGrupoMusical" class="control-label"></label>
+                        <select asp-for="IdGrupoMusical" asp-items="@Model.ListaGrupoMusical" class="form-select">
+                            <option value=""></option>
+                        </select>
+                        <span asp-validation-for="IdGrupoMusical" class="text-danger"></span>
                     </div>
                 </div>
             </div>
