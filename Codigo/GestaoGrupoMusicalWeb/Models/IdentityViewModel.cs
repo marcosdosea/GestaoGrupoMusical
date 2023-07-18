@@ -37,6 +37,7 @@ namespace GestaoGrupoMusicalWeb.Models
             [Display(Name = "Confirmar Senha")]
             [Required(ErrorMessage = "Campo obrigatório")]
             [RegularExpression(@"^.{8,16}$", ErrorMessage = "Mínimo de 8 caracteres e no máximo 16")]
+            [Compare("Password", ErrorMessage = "Senhas não são iguais")]
             public string ConfirmePassword { get; set; } = string.Empty;
         }
 
