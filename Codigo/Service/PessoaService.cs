@@ -403,12 +403,13 @@ namespace Service
             }
         }
 
-        public void RemoverAssociado(Pessoa pessoaAssociada, String? motivoSaida)
+        public async Task<int> RemoverAssociado(Pessoa pessoaAssociada, String? motivoSaida)
         {
             pessoaAssociada.MotivoSaida = motivoSaida;
             pessoaAssociada.Ativo = 0;
             pessoaAssociada.DataSaida = DateTime.Now;
-            Edit(pessoaAssociada);
+            return await Edit(pessoaAssociada);
+            
 
         }
 
