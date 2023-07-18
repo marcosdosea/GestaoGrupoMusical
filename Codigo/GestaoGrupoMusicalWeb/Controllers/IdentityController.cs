@@ -153,12 +153,19 @@ namespace GestaoGrupoMusicalWeb.Controllers
             if (ModelState.IsValid)
             { 
                 var user = await _userManager.FindByEmailAsync(model.Email);
+
                 //a segunda condição é para caso seja necessario
                 //confirmar o email do usuario
                 if (user == null /*|| !(await _userManager.IsEmailConfirmedAsync(user))*/)
                 {
                     return View();
                 }
+
+                //gera o token para redefinir senha
+                string code = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+
             }
             
             return View();
