@@ -51,12 +51,6 @@
 
 </div>
 @section Scripts {
-    <script>
-        $(document).ready(function () {
-            $("#campoCpf").inputmask("999.999.999-99"); 
-        });
-
-    </script>
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
