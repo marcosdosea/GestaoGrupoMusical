@@ -142,6 +142,7 @@
     </dl>
     
     <form asp-action="Delete">
+        <input type="hidden" name="CNPJ" value=" @Model.Cnpj" />
         <input type="submit" value="Sim" class="btn btn-danger" /> |
         <a asp-action="Index">Não</a>
     </form>
