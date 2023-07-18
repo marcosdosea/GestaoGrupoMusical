@@ -85,12 +85,7 @@ namespace GestaoGrupoMusicalWeb.Models
         [Required(ErrorMessage = "O campo isento de pagamento é obrigatório.")]
         [Display(Name = "Isento de pagamento")]
         public sbyte IsentoPagamento { get; set; }
-        [Required(ErrorMessage = "O campo Grupo Musical é obrigatório.")]
-        [Display(Name = "Grupo Musical")]
-        public int IdGrupoMusical { get; set; }
-        [Required(ErrorMessage = "O campo Papel no grupo é obrigatório.")]
-        [Display(Name = "Papel no grupo")]
-        public int IdPapelGrupo { get; set; }
+
         [Required(ErrorMessage = "O campo Tamanho da roupa é obrigatório.")]
         [Display(Name = "Tamanho da roupa")]
         public int IdManequim { get; set; }
