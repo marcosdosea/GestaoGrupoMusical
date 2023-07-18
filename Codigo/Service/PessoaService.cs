@@ -3,9 +3,7 @@ using Core.DTO;
 using Core.Service;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
 using Email;
-using System.Diagnostics.Metrics;
 
 namespace Service
 {
