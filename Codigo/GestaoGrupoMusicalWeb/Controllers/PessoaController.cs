@@ -75,7 +75,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 String mensagem = String.Empty;
               
 
-                switch (await _pessoaService.Create(pessoaModel))
+                switch (await _pessoaService.AddAssociadoAsync(pessoaModel))
                 {
                     case 200:
                         Notificar("Associado <b>Cadastrado</b> com <b>Sucesso</b>", Notifica.Sucesso);
@@ -94,6 +94,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     case 401:
                         mensagem = "<b>Alerta</b> ! Não foi possível cadastrar, a data de nascimento deve ser menor que " + DateTime.Now + " e menor que 120 anos ";
                         Notificar(mensagem, Notifica.Alerta);
+                        pessoaViewModel.ListaGrupoMusical = new SelectList(listaGrupoMusical, "Id", "Nome", pessoaViewModel.IdGrupoMusical);
+                        pessoaViewModel.ListaPapelGrupo = new SelectList(listaPapelGrupo, "IdPapelGrupo", "Nome", pessoaViewModel.IdPapelGrupo);
+                        pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", pessoaViewModel.IdManequim);
+                        return View("Create", pessoaViewModel);
+                    case 450:
+                        mensagem = "Ocorreu um <b>Erro</b> durante a liberação de acesso ao <b>Associado</b>, se isso persistir entre em contato com o suporte";
+                        Notificar(mensagem, Notifica.Erro);
                         pessoaViewModel.ListaGrupoMusical = new SelectList(listaGrupoMusical, "Id", "Nome", pessoaViewModel.IdGrupoMusical);
                         pessoaViewModel.ListaPapelGrupo = new SelectList(listaPapelGrupo, "IdPapelGrupo", "Nome", pessoaViewModel.IdPapelGrupo);
                         pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", pessoaViewModel.IdManequim);
