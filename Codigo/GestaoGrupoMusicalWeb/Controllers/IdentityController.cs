@@ -40,7 +40,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [HttpGet]
         public async Task<IActionResult> Autenticar()
         {
-            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+            await _signInManager.SignOutAsync();
             return View();
         }
 
