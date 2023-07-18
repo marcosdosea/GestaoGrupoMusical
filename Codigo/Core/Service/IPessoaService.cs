@@ -53,5 +53,8 @@ namespace Core.Service
 
         Task<Pessoa?> GetByCpf(string? cpf);
 
+        Task<int> AddAssociadoAsync(Pessoa pessoa);
+
+        Task<bool> NotificarCadastroAssociadoAsync(Pessoa pessoa);
     }
 }
