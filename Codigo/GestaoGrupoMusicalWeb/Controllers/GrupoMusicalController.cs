@@ -91,7 +91,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> Edit(int id, GrupoMusicalViewModel grupoMusicalViewModel)
         {
             grupoMusicalViewModel.Cnpj = grupoMusicalViewModel.Cnpj.Replace(".", string.Empty).Replace("-", string.Empty).Replace("/", string.Empty);
-            grupoMusicalViewModel.Cep = grupoMusicalViewModel.Cep.Replace("-", string.Empty);
+            if (grupoMusicalViewModel.Cep != null)
+                grupoMusicalViewModel.Cep = grupoMusicalViewModel.Cep.Replace("-", string.Empty);
 
             var existe = _grupoMusical.GetCNPJExistente(id, grupoMusicalViewModel.Cnpj);
             if (existe)
@@ -102,7 +103,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 var grupoMusical = _mapper.Map<Grupomusical>(grupoMusicalViewModel);
 
-                switch(await _grupoMusical.Edit(grupoMusical))
+                switch (await _grupoMusical.Edit(grupoMusical))
                 {
                     case 200:
                         Notificar("Grupo Musical <b>Editado</b> com <b>Sucesso</b>", Notifica.Sucesso);
@@ -130,10 +131,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: GrupoMusicalController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async  Task<ActionResult> Delete(int id, GrupoMusicalViewModel grupoMusicalViewModel)
+        public async Task<ActionResult> Delete(int id, GrupoMusicalViewModel grupoMusicalViewModel)
         {
-            
-            switch(await _grupoMusical.Delete(id))
+
+            switch (await _grupoMusical.Delete(id))
             {
                 case 200:
                     Notificar("Grupo <b> Excluido </b> com <b> Sucesso </b> ", Notifica.Sucesso);
