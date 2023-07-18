@@ -19,8 +19,7 @@
 
             //Expressão regular para validar o CEP.
             var validacep = /^[0-9]{8}$/;
-
-            //Valida o formato do CEP.
+          
             if (validacep.test(cep)) {
 
                 //Preenche os campos com "..." enquanto consulta webservice.
@@ -37,22 +36,20 @@
                         $("#campoBairro").val(dados.bairro);
                         $("#campoCidade").val(dados.localidade);
                         $("#campoEstado").val(dados.uf);
-                    } //end if.
+                    } 
                     else {
                         //CEP pesquisado não foi encontrado.
                         limpa_formulário_cep();
-                        //alert("CEP não encontrado.");
                         $("#mensagemCep").text("CEP não encontrado")
                     }
                 });
-            } //end if.
+            } 
             else {
                 //cep é inválido.
                 limpa_formulário_cep();
-                //alert("Formato de CEP inválido.");
                 $("#mensagemCep").text("Formato de CEP inválido")
             }
-        } //end if.
+        }
         else {
             //cep sem valor, limpa formulário.
             limpa_formulário_cep();
