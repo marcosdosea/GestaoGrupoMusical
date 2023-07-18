@@ -50,8 +50,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
             IEnumerable<Grupomusical> listaGrupoMusical = _grupoMusical.GetAll();
             IEnumerable<Manequim> listaManequim = _manequim.GetAll();
 
-            pessoaViewModel.ListaGrupoMusical = new SelectList(listaGrupoMusical, "Id", "Nome", null);
-            pessoaViewModel.ListaPapelGrupo = new SelectList(listaPapelGrupo, "IdPapelGrupo", "Nome", null);
             pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", null);
 
             return View(pessoaViewModel);
@@ -114,8 +112,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
             else
             {          
-                pessoaViewModel.ListaGrupoMusical = new SelectList(listaGrupoMusical, "Id", "Nome", null);
-                pessoaViewModel.ListaPapelGrupo = new SelectList(listaPapelGrupo, "IdPapelGrupo", "Nome", null);
                 pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", null);
                 return View("Create", pessoaViewModel);
             }
@@ -185,8 +181,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
             else
             {
-                pessoaViewModel.ListaGrupoMusical = new SelectList(listaGrupoMusical, "Id", "Nome", null);
-                pessoaViewModel.ListaPapelGrupo = new SelectList(listaPapelGrupo, "IdPapelGrupo", "Nome", null);
                 pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", null);
                 return View("Edit", pessoaViewModel);
             }

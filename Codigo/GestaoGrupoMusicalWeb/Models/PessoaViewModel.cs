@@ -89,9 +89,6 @@ namespace GestaoGrupoMusicalWeb.Models
         [Required(ErrorMessage = "O campo Tamanho da roupa é obrigatório.")]
         [Display(Name = "Tamanho da roupa")]
         public int IdManequim { get; set; }
-
-        public SelectList? ListaGrupoMusical { get; set; }
-        public SelectList? ListaPapelGrupo { get; set; }
         public SelectList? ListaManequim { get; set; }
         public Dictionary<string, char> sexoPessoa { get; } = new()
         {
