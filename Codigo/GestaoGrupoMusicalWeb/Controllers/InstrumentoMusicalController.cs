@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using NuGet.Protocol;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -167,6 +168,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
             MovimentacaoInstrumentoViewModel movimentacaoModel = new();
             var instrumento = await _instrumentoMusical.Get(id);
             var movimentacao = await _movimentacaoInstrumento.GetEmprestimoByIdInstrumento(id);
+            if (instrumento.Status.Equals("EMPRESTADO"))
+            {
+                Notificar("Não é permitido fazer uma <b>movimentação</b> de um instrumento <b>Emprestado</b>", Notifica.Alerta);
+                return RedirectToAction(nameof(Index));
+            }
 
             if (instrumento == null)
             {
