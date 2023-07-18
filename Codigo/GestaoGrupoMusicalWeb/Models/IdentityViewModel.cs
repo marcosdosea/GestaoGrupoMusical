@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Reflection.Metadata;
 
 namespace GestaoGrupoMusicalWeb.Models
 {
@@ -21,6 +22,22 @@ namespace GestaoGrupoMusicalWeb.Models
             [Display(Name = "Email")]
             [Required(ErrorMessage = "O campo {0} é obrigatório")]
             public string Email { get; set; }
+        }
+
+        public class ResetPasswordViewModel
+        {
+            public int UserId { get; set; }
+            public string Code { get; set; }
+
+            [Display(Name = "Nova Senha")]
+            [Required(ErrorMessage = "Campo obrigatório")]
+            [RegularExpression(@"[\p{Ll}\p{Lu}\p{Lt}\p{Lo}\p{Nd}\p{Pc}\p{Pd}\p{Ps}\p{Pe}\p{Pi}\p{Pf}\p{Po}]", ErrorMessage = "Senha deve conter no mínimo 8 caracteres,\nno máximo 16 e ao menos 1 caracter especial")]
+            public string Password { get; set; } = string.Empty;
+
+            [Display(Name = "Confirmar Senha")]
+            [Required(ErrorMessage = "Campo obrigatório")]
+            [RegularExpression(@"[\p{Ll}\p{Lu}\p{Lt}\p{Lo}\p{Nd}\p{Pc}\p{Pd}\p{Ps}\p{Pe}\p{Pi}\p{Pf}\p{Po}]", ErrorMessage = "Senha deve conter no mínimo 8 caracteres,\nno máximo 16 e ao menos 1 caracter especial")]
+            public string ConfirmePassword { get; set; } = string.Empty;
         }
 
         public class CadastrarViewModel
