@@ -124,5 +124,15 @@ namespace Service
                     });
             return query.AsNoTracking();
         }
+
+        public bool GetCNPJExistente(int id, string cnpj)
+        {
+            var query =   _context.Set<Grupomusical>().AsNoTracking().FirstOrDefault( p => p.Id == id && p.Cnpj == cnpj);
+            if(query != null)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }
