@@ -164,10 +164,16 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 //gera o token para redefinir senha
                 string code = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                var callbackUrl = Url.Action("ResetPassword", "Identity", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
 
             }
             
+            return View();
+        }
+
+        [AllowAnonymous]
+        public ActionResult ResetPassword(int userId, string code)
+        {
             return View();
         }
     }
