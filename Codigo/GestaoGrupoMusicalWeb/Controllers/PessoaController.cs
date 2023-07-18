@@ -71,7 +71,14 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             if (ModelState.IsValid)
             {
+                var colaborador = await _pessoaService.GetByCpf(User.Identity?.Name);
+                if (colaborador == null)
+                {
+                    return RedirectToAction("Sair", "Identity");
+                }
                 var pessoaModel = _mapper.Map<Pessoa>(pessoaViewModel);
+                pessoaModel.IdPapelGrupo = 1;
+                pessoaModel.IdGrupoMusical = colaborador.IdGrupoMusical;
                 String mensagem = String.Empty;
               
 
@@ -152,14 +159,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             if (ModelState.IsValid)
             {
-                var colaborador = await _pessoaService.GetByCpf(User.Identity?.Name);
-                if(colaborador == null)
-                {
-                    return RedirectToAction("Sair", "Identity");
-                }
                 var pessoa = _mapper.Map<Pessoa>(pessoaViewModel);
-                pessoa.IdPapelGrupo = 1;
-                pessoa.IdGrupoMusical = colaborador.IdGrupoMusical;
                 String mensagem = String.Empty;
                 switch (await _pessoaService.Edit(pessoa))
                 {
