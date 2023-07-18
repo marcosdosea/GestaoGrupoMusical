@@ -133,8 +133,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(int id, PessoaViewModel pessoaViewModel)
         {
-            pessoaViewModel.Cpf = pessoaViewModel.Cpf.Replace("-", string.Empty).Replace(".", string.Empty);
-            pessoaViewModel.Cep = pessoaViewModel.Cep.Replace("-", string.Empty);
             var cpf = _pessoaService.GetCPFExistente(id,pessoaViewModel.Cpf);
 
             IEnumerable<Papelgrupo> listaPapelGrupo = _pessoaService.GetAllPapelGrupo();

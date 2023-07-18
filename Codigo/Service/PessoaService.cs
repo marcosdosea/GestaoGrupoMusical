@@ -98,6 +98,9 @@ namespace Service
             //Criar excecao para data de nascimento, etc
             try
             {
+                pessoa.Cpf = pessoa.Cpf.Replace("-", string.Empty).Replace(".", string.Empty);
+                pessoa.Cep = pessoa.Cep.Replace("-", string.Empty);
+
                 _context.Pessoas.Update(pessoa);
                 if (pessoa.DataEntrada == null && pessoa.DataNascimento == null)
                 {//Mensagem de sucesso
