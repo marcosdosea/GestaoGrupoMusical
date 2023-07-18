@@ -165,7 +165,21 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 string code = await _userManager.GeneratePasswordResetTokenAsync(user);
 
                 //gera link para a view da controladora ja passando codigo e id do usuario
-                //var callbackUrl = Url.Action("ResetPassword", "Identity", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                var callbackUrl = Url.Action("ResetPassword", "Identity", new { userId = user.Id, token = code }, /*protocol:*/ Request.Scheme);
+
+                //enviar email com o link
+                EmailModel email = new()
+                {
+                    Assunto = "Batalá - Redefinição de Senha",
+                    Body = "<div style=\"text-align: center;\">\r\n    " +
+                    "<h1>Redefinição de Senha</h1>\r\n    " +
+                    $"<h2>Olá, aqui está o link para redefinir sua senha:</h2>\r\n" +
+                    $"<a href=\"{callbackUrl}\" style=\"font-weight: 600;\">Clique Aqui</a>"
+                };
+
+                email.To.Add(model.Email);
+
+                await EmailService.Enviar(email);
 
             }
             
@@ -173,12 +187,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         //[AllowAnonymous]
-        public ActionResult ResetPassword(string userId, string code)
+        public ActionResult ResetPassword(string userId, string token)
         {
             ResetPasswordViewModel resetPasswordModel = new();
 
             resetPasswordModel.UserId = userId;
-            resetPasswordModel.Code = code;
+            resetPasswordModel.Code = token;
 
             return View(resetPasswordModel);
         }
@@ -192,7 +206,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 return View(resetPasswordModel);
             }
-            else if (resetPasswordModel.Code == null || resetPasswordModel.UserId == null) { 
+            else if (resetPasswordModel.Code == null || resetPasswordModel.UserId == null)
+            { 
                 // TODO
                 // criar uma notificação dizendo que ocorreu um erro ao tentar resetar senha
                 // NÃO DIZER QUAL FOI O ERRO OU O MOTIVO
@@ -227,9 +242,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 // NÃO DIZER QUAL FOI O ERRO OU O MOTIVO
                 return View();
             }
-
-
-            return View();
         }
     }
 }
