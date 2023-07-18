@@ -65,9 +65,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         public async Task<ActionResult> Create(InstrumentoMusicalViewModel instrumentoMusicalViewModel)
         {
-            
-            
-
             if (ModelState.IsValid)
             {
                 var instrumentoMusicalModel = _mapper.Map<Instrumentomusical>(instrumentoMusicalViewModel);
@@ -98,12 +95,19 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             var instrumentoMusical = await _instrumentoMusical.Get(id);
             var instrumentoMusicalModel = _mapper.Map<InstrumentoMusicalViewModel>(instrumentoMusical);
+            if (instrumentoMusicalModel.Status != "EMPRESTADO")
+            {
+                IEnumerable<Tipoinstrumento> listaInstrumentos = await _instrumentoMusical.GetAllTipoInstrumento();
 
-            IEnumerable<Tipoinstrumento> listaInstrumentos = await _instrumentoMusical.GetAllTipoInstrumento();
+                instrumentoMusicalModel.ListaInstrumentos = new SelectList(listaInstrumentos, "Id", "Nome", null);
 
-            instrumentoMusicalModel.ListaInstrumentos = new SelectList(listaInstrumentos, "Id", "Nome", null);
-
-            return View(instrumentoMusicalModel);
+                return View(instrumentoMusicalModel);
+            }
+            else
+            {
+                Notificar("Não é permitido <b>Editar</b> os dados de um instrumento <b>Emprestado</b>.", Notifica.Alerta);
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         // POST: InstrumentoMusicalController/Edit/5
@@ -129,6 +133,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 var instrumentoMusical = _mapper.Map<Instrumentomusical>(instrumentoMusicalViewModel);
                 await _instrumentoMusical.Edit(instrumentoMusical);
+                Notificar("Instrumento Musical <b>Editado</b> com <b>Sucesso</b>.", Notifica.Sucesso);
             }
             return RedirectToAction(nameof(Index));
         }
@@ -139,7 +144,17 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             var instrumentoMusical = await _instrumentoMusical.Get(id);
             var instrumentoMusicalModel = _mapper.Map<InstrumentoMusicalViewModel>(instrumentoMusical);
-            return View(instrumentoMusicalModel);
+
+            if (instrumentoMusicalModel.Status != "EMPRESTADO")
+            {
+                return View(instrumentoMusicalModel);
+            }
+            else
+            {
+                Notificar("Não é permitido <b>Deletar</b> os dados de um instrumento <b>Emprestado</b>.", Notifica.Alerta);
+                return RedirectToAction(nameof(Index));
+            }
+                
         }
 
         // POST: InstrumentoMusicalController/Delete/5
@@ -149,6 +164,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> Delete(int id, InstrumentoMusicalViewModel instrumentoMusicalViewModel)
         {
             await _instrumentoMusical.Delete(id);
+            Notificar("Instrumento Musical <b>Deletado</b> com <b>Sucesso</b>.", Notifica.Sucesso);
             return RedirectToAction(nameof(Index));
         }
 
