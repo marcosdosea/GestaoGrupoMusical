@@ -130,7 +130,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         /// Metodo para esquecer senha
         /// </summary>
         /// <returns></returns>
-        [AllowAnonymous]
+        //[AllowAnonymous]
         public ActionResult ForgotPassword()
         {
             return View();
@@ -142,7 +142,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         /// <param name="cpf"></param>
         /// <returns></returns>
         [HttpPost]
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [ValidateAntiForgeryToken] 
         public async Task<ActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
@@ -165,22 +165,22 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 string code = await _userManager.GeneratePasswordResetTokenAsync(user);
 
                 //gera link para a view da controladora ja passando codigo e id do usuario
-                var callbackUrl = Url.Action("ResetPassword", "Identity", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                //var callbackUrl = Url.Action("ResetPassword", "Identity", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
 
             }
             
             return View();
         }
 
-        [AllowAnonymous]
-        public ActionResult ResetPassword(int userId, string code)
+        //[AllowAnonymous]
+        public ActionResult ResetPassword(/*int userId, string code*/)
         {
-            ResetPasswordViewModel resetPasswordModel = new();
+            /*ResetPasswordViewModel resetPasswordModel = new();
 
             resetPasswordModel.UserId = userId;
-            resetPasswordModel.Code = code;
+            resetPasswordModel.Code = code;*/
 
-            return View(resetPasswordModel);
+            return View(/*resetPasswordModel*/);
         }
     }
 }
