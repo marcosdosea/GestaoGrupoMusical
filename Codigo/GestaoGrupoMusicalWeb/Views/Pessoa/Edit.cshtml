@@ -35,13 +35,13 @@
                 </div>
 
                 <div class="container">
-                    <div class="row">
-                        <div class="form-group col-auto">
+                    <div class="row d-flex d-flex-sm-warp">
+                        <div class="form-group col-xl">
                             <label asp-for="Cpf" class="control-label">CPF</label>
                             <input asp-for="Cpf" id="campoCpf" class="form-control" />
                             <span asp-validation-for="Cpf" class="text-danger"></span>
                         </div>
-                        <div class="form-group col-auto">
+                        <div class="form-group col-sm">
                             <label asp-for="DataNascimento" class="control-label"></label>
                             <input asp-for="DataNascimento" class="form-control" />
                             <span asp-validation-for="DataNascimento" class="text-danger"></span>
@@ -67,30 +67,29 @@
                 </div>
 
                 <div class="container">
-                    <div class="row">
+                    <div class="row d-flex d-flex-sm-warp">
                         <div class="form-group">
                             <label asp-for="Email" class="control-label">E-mail</label>
                             <input asp-for="Email" class="form-control" />
                             <span asp-validation-for="Email" class="text-danger"></span>
                         </div>
-                        <div class="form-group col-4">
+                        <div class="form-group col-xxl">
                             <label asp-for="Telefone1" class="control-label"></label>
                             <input asp-for="Telefone1" id="campoTelefone1" class="form-control" />
                             <span asp-validation-for="Telefone1" class="text-danger"></span>
                         </div>
-                        <div class="form-group col-4">
+                        <div class="form-group col-xl">
                             <label asp-for="Telefone2" class="control-label"></label>
                             <input asp-for="Telefone2" id="campoTelefone2" class="form-control" />
                             <span asp-validation-for="Telefone2" class="text-danger"></span>
                         </div>
-                        <div class="form-group col-4">
+                        <div class="form-group col-xl">
                             <label asp-for="DataEntrada" class="control-label"></label>
                             <input asp-for="DataEntrada" class="form-control" />
                             <span asp-validation-for="DataEntrada" class="text-danger"></span>
                         </div>
                     </div>
                 </div>
-
                 <div class="container">
                     <div class="row">
                         <div class="form-group col-sm">
@@ -102,7 +101,7 @@
                             <span asp-validation-for="Ativo" class="text-danger"></span>
                         </div>
 
-                        <div class="form-group col-sm">
+                        <div class="form-group col-xl">
                             <label class="control-label" asp-for="IsentoPagamento"></label>
                             <select asp-for="IsentoPagamento" class="form-select">
                                 <option value="1">Sim</option>
@@ -127,7 +126,7 @@
                         <h2 class="fs-5">Endereço</h2>
                         <hr />
                         <br />
-                        <div class="form-group col-3">
+                        <div class="form-group col-xl">
                             <label asp-for="Cep" class="control-label">CEP</label>
                             <input asp-for="Cep" id="campoCep" class="form-control" />
                             <span asp-validation-for="Cep" class="text-danger"></span>
@@ -142,17 +141,17 @@
 
                 <div class="container">
                     <div class="row">
-                        <div class="form-group col-5">
+                        <div class="form-group col-xl">
                             <label asp-for="Bairro" class="control-label"></label>
                             <input asp-for="Bairro" class="form-control" />
                             <span asp-validation-for="Bairro" class="text-danger"></span>
                         </div>
-                        <div class="form-group col-5">
+                        <div class="form-group col-sm">
                             <label asp-for="Cidade" class="control-label"></label>
                             <input asp-for="Cidade" class="form-control" />
                             <span asp-validation-for="Cidade" class="text-danger"></span>
                         </div>
-                        <div class="form-group col-sm">
+                        <div class="form-group col-sm-4">
                             <label asp-for="Estado" class="control-label"></label>
                             <input asp-for="Estado" class="form-control" />
                             <span asp-validation-for="Estado" class="text-danger"></span>
@@ -162,10 +161,10 @@
                 <br />
                 <br />
                 <div class="container">
-                    <div class="row">
-                        <div class="col-5"></div>
-                        <a class="btn btn-light text-secondary border border-secondary d-grid gap-2 col-3 mx-auto" asp-action="Index"> Voltar </a>
-                        <input type="submit" value="Salvar" class="btn btn-secondary d-grid gap-2 col-3 mx-auto" />
+                    <div class="row d-flex flex-column-reverse d-grig gap-2 mx-auto d-flex flex-sm-column-reverse flex-xl-row">
+                        <div class="col-5 d-none d-sm-block"></div>
+                        <a class="btn btn-light text-secondary border border-secondary d-grid gap-2 col-sm" asp-action="Index"> Voltar </a>
+                        <input type="submit" value="Salvar" class="btn btn-secondary d-grid gap-2 col-sm " />
                     </div>
                 </div>
             </form>
