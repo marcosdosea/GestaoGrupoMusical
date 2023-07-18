@@ -37,7 +37,11 @@ namespace Service
 
                 try
                 {
+                    pessoa.Cpf = pessoa.Cpf.Replace("-", string.Empty).Replace(".", string.Empty);
+                    pessoa.Cep = pessoa.Cep.Replace("-", string.Empty);
+
                     await _context.Pessoas.AddAsync(pessoa);
+
                     if (pessoa.DataEntrada == null && pessoa.DataNascimento == null)
                     {//Mensagem de sucesso
                         await _context.SaveChangesAsync();
