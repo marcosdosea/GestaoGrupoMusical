@@ -146,7 +146,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken] 
         public async Task<ActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
-            Notificar("<span class=\"fw-bold fs-5 mt-3\">Se o email estiver" +
+            Notificar("<span class=\"fw-bold fs-5 mt-3\">Se o email estiver " +
                 "cadastrado será enviado um link para redefinir sua senha!</span>",
                 Notifica.Sucesso);
 
@@ -202,17 +202,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<IActionResult> ResetPassword(ResetPasswordViewModel resetPasswordModel)
         {
 
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || resetPasswordModel.Code == null || resetPasswordModel.UserId == null)
             {
+                Notificar("<b>Erro</b> ao tentar alterar senha!", Notifica.Erro);
                 return View(resetPasswordModel);
-            }
-            else if (resetPasswordModel.Code == null || resetPasswordModel.UserId == null)
-            { 
-                // TODO
-                // criar uma notificação dizendo que ocorreu um erro ao tentar resetar senha
-                // NÃO DIZER QUAL FOI O ERRO OU O MOTIVO
-
-                return View();
             }
 
             var user = await _userManager.FindByIdAsync(resetPasswordModel.UserId);
@@ -223,7 +216,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 // TODO
                 // criar uma notificação dizendo que ocorreu um erro ao tentar resetar senha
                 // NÃO DIZER QUAL FOI O ERRO OU O MOTIVO
-                return View();
+                Notificar("<b>Erro</b> ao tentar alterar senha!", Notifica.Erro);
+                return View(resetPasswordModel);
             }
 
             var result = await _userManager.ResetPasswordAsync(user,resetPasswordModel.Code, resetPasswordModel.Password);
@@ -233,6 +227,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 // TODO
                 // apresentar uma notificação de senha redefinida com sucesso
+                Notificar("<b>Senha alterada com sucesso!</b>", Notifica.Sucesso);
                 return View();
             }
             else 
@@ -240,7 +235,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 // TODO
                 // criar uma notificação dizendo que ocorreu um erro ao tentar resetar senha
                 // NÃO DIZER QUAL FOI O ERRO OU O MOTIVO
-                return View();
+                Notificar("<b>Erro</b> ao tentar alterar senha!", Notifica.Erro);
+                return View(resetPasswordModel);
             }
         }
     }
