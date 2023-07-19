@@ -46,7 +46,7 @@ namespace GestaoGrupoMusicalWeb.Models
 
         [Required(ErrorMessage ="O campo Estado é obrigatório")]
         [Display(Name = "Estado")]
-        [StringLength(2, MinimumLength = 2)]
+        [StringLength(2, MinimumLength = 2, ErrorMessage = "O Campo Estado deve ter 2 dígitos")]
         public string Estado { get; set; } = null!;
 
         [Display(Name ="Pais")]
