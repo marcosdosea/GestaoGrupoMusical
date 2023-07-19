@@ -343,6 +343,8 @@ namespace Service
 
                 var user = CreateUser();
 
+                user.Email = pessoa.Email;
+
                 await _userStore.SetUserNameAsync(user, pessoa.Cpf, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, pessoa.Cpf);
 
