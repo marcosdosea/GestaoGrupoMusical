@@ -4,8 +4,8 @@ namespace Core.Service
 {
     public interface IEnsaioService
     {
-        Task<bool> Create(Ensaio ensaio);
-        Task<bool> Edit(Ensaio ensaio);
+        Task<int> Create(Ensaio ensaio);
+        Task<int> Edit(Ensaio ensaio);
         Task<bool> Delete(int id);
         Task<Ensaio> Get(int id);
         Task<IEnumerable<Ensaio>> GetAll();
