@@ -31,12 +31,12 @@ namespace GestaoGrupoMusicalWeb.Models
 
             [Display(Name = "Nova Senha")]
             [Required(ErrorMessage = "Campo obrigatório")]
-            [RegularExpression(@"^.{8,16}$", ErrorMessage = "Mínimo de 8 caracteres e no máximo 16")]
+            [RegularExpression(@"^.{6,}$", ErrorMessage = "Mínimo de 6 caracteres")]
             public string Password { get; set; } = string.Empty;
 
             [Display(Name = "Confirmar Senha")]
             [Required(ErrorMessage = "Campo obrigatório")]
-            [RegularExpression(@"^.{8,16}$", ErrorMessage = "Mínimo de 8 caracteres e no máximo 16")]
+            [RegularExpression(@"^.{6,}$", ErrorMessage = "Mínimo de 6 caracteres")]
             [Compare("Password", ErrorMessage = "Senhas não são iguais")]
             public string ConfirmePassword { get; set; } = string.Empty;
         }
