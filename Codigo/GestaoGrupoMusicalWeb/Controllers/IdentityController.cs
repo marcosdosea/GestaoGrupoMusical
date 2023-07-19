@@ -204,8 +204,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             if (!ModelState.IsValid || resetPasswordModel.Code == null || resetPasswordModel.UserId == null)
             {
-                Notificar("<b>Erro</b> ao tentar alterar senha!", Notifica.Erro);
-                return View(resetPasswordModel);
+                return RedirectToAction("PasswordChanged", new { change = false });
             }
 
             var user = await _userManager.FindByIdAsync(resetPasswordModel.UserId);
@@ -216,8 +215,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 // TODO
                 // criar uma notificação dizendo que ocorreu um erro ao tentar resetar senha
                 // NÃO DIZER QUAL FOI O ERRO OU O MOTIVO
-                Notificar("<b>Erro</b> ao tentar alterar senha!", Notifica.Erro);
-                return View(resetPasswordModel);
+                return RedirectToAction("PasswordChanged", new { change = false });
             }
 
             var result = await _userManager.ResetPasswordAsync(user,resetPasswordModel.Code, resetPasswordModel.Password);
@@ -227,17 +225,27 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 // TODO
                 // apresentar uma notificação de senha redefinida com sucesso
-                Notificar("<b>Senha alterada com sucesso!</b>", Notifica.Sucesso);
-                return View();
+                return RedirectToAction("PasswordChanged", new { change = true });
             }
             else 
             {
                 // TODO
                 // criar uma notificação dizendo que ocorreu um erro ao tentar resetar senha
                 // NÃO DIZER QUAL FOI O ERRO OU O MOTIVO
-                Notificar("<b>Erro</b> ao tentar alterar senha!", Notifica.Erro);
-                return View(resetPasswordModel);
+                return RedirectToAction("PasswordChanged", new { change = false });
             }
+        }
+
+        public IActionResult PasswordChanged(bool change) {
+            if(change)
+            {
+                Notificar("<b>Senha alterada com sucesso!</b>", Notifica.Sucesso);
+            }
+            else
+            {
+                Notificar("<b>Erro</b> ao tentar alterar senha!", Notifica.Erro);
+            }
+            return View();
         }
     }
 }
