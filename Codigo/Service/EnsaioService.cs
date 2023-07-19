@@ -51,24 +51,24 @@ namespace Service
         /// </summary>
         /// <param name="id"></param>
         /// <returns>Verdadeiro(<see langword="true" />) se deletou com sucesso ou Falso(<see langword="false" />) se houve algum erro.</returns>
-        public async Task<bool> Delete(int id)
+        public async Task<int> Delete(int id)
         {
             try
             {
                 _context.Ensaios.Remove(await Get(id));
                 await _context.SaveChangesAsync();
-                return true;
+                return 200;
             }
             catch
             {
-                return false;
+                return 500;
             }
         }
         /// <summary>
         /// Edita um Ensaio do banco de dados
         /// </summary>
         /// <param name="ensaio"></param>
-        /// <returns>Verdadeiro(<see langword="true" />) se deletou com sucesso ou Falso(<see langword="false" />) se houve algum erro.</returns>
+        /// <returns>retorna um inteiro.</returns>
         public async Task<int> Edit(Ensaio ensaio)
         {
 
