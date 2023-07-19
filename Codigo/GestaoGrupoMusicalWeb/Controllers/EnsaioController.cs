@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
-    public class EnsaioController : Controller
+    public class EnsaioController : BaseController
     {
         private readonly IEnsaioService _ensaio;
         private readonly IMapper _mapper;
@@ -52,15 +52,32 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(EnsaioViewModel ensaioViewModel)
         {
-            if (ModelState.IsValid)
-            {
-                if (await _ensaio.Create(_mapper.Map<Ensaio>(ensaioViewModel)))
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-            }
             ensaioViewModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
             ensaioViewModel.ListaGrupoMusical = new SelectList(_grupoMusical.GetAll(), "Id", "Nome");
+            if (ModelState.IsValid)
+            {
+                string mensagem = string.Empty;
+                switch(await _ensaio.Create(_mapper.Map<Ensaio>(ensaioViewModel)))
+                {
+                    case 200:
+                        mensagem = "Ensaio <b>Cadastrado</b> com <b>Sucesso</b>";
+                        Notificar(mensagem, Notifica.Sucesso);
+                        return RedirectToAction(nameof(Index));
+                    case 400:
+                        mensagem = "Alerta ! A <b>data de início</b> deve ser menor que a data de <b>fim</b>";
+                        Notificar(mensagem, Notifica.Alerta);
+                        return View("Create", ensaioViewModel);
+                    case 401:
+                        mensagem = "Alerta ! A <b>data de início</b> deve ser maior que a data de hoje " + DateTime.Now.ToString();
+                        Notificar(mensagem, Notifica.Alerta);
+                        return View("Create", ensaioViewModel);
+                    case 500:
+                        mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Cadastro</b> de ensaio, se isso persistir entre em contato com o suporte";
+                        Notificar(mensagem, Notifica.Erro);
+                        return RedirectToAction("Create", ensaioViewModel);
+
+                }
+            }
 
             return View(ensaioViewModel);
         }
@@ -82,16 +99,33 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(EnsaioViewModel ensaioViewModel)
         {
-            if (ModelState.IsValid)
-            {
-                if (await _ensaio.Edit(_mapper.Map<Ensaio>(ensaioViewModel)))
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-            }
             ensaioViewModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
             ensaioViewModel.ListaGrupoMusical = new SelectList(_grupoMusical.GetAll(), "Id", "Nome");
+            if (ModelState.IsValid)
+            {
+                string mensagem = string.Empty;
+                switch (await _ensaio.Create(_mapper.Map<Ensaio>(ensaioViewModel)))
+                {
+                    case 200:
+                        mensagem = "Ensaio <b>Editado</b> com <b>Sucesso</b>";
+                        Notificar(mensagem, Notifica.Sucesso);
+                        return RedirectToAction(nameof(Index));
+                    case 400:
+                        mensagem = "Alerta ! A <b>data de início</b> deve ser menor que a data de <b>fim</b>";
+                        Notificar(mensagem, Notifica.Alerta);
+                        return View("Create", ensaioViewModel);
+                    case 401:
+                        mensagem = "Alerta ! A <b>data de início</b> deve ser maior que a data de hoje " + DateTime.Now.ToString();
+                        Notificar(mensagem, Notifica.Alerta);
+                        return View("Create", ensaioViewModel);
+                    case 500:
+                        mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Editar</b> de ensaio, se isso persistir entre em contato com o suporte";
+                        Notificar(mensagem, Notifica.Erro);
+                        return RedirectToAction("Create", ensaioViewModel);
 
+
+                }
+            }
             return View(ensaioViewModel);
         }
 
