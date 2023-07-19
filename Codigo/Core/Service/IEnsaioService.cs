@@ -7,7 +7,7 @@ namespace Core.Service
         /// <summary>
         /// Cadastra uma ensaio no banco de dados
         /// </summary>
-        /// <param name="pessoa"></param>
+        /// <param name="ensaio"></param>
         /// <returns>
         /// 200 - Sucesso <para />
         /// 400 - Data de inicio fora do escopo,ou seja, é menor que a data de hoje <para />
@@ -18,7 +18,7 @@ namespace Core.Service
         /// <summary>
         /// Editar uma ensaio no banco de dados
         /// </summary>
-        /// <param name="pessoa"></param>
+        /// <param name="ensaio"></param>
         /// <returns>
         /// 200 - Sucesso <para />
         /// 400 - Data de inicio fora do escopo,ou seja, é menor que a data de hoje <para />
@@ -26,7 +26,15 @@ namespace Core.Service
         /// 500 - Erro interno
         /// </returns>
         Task<int> Edit(Ensaio ensaio);
-        Task<bool> Delete(int id);
+        /// <summary>
+        /// Excluir uma ensaio no banco de dados
+        /// </summary>
+        /// <param name="ensaio"></param>
+        /// <returns>
+        /// 200 - Sucesso <para />
+        /// 500 - Erro interno
+        /// </returns>
+        Task<int> Delete(int id);
         Task<Ensaio> Get(int id);
         Task<IEnumerable<Ensaio>> GetAll();
         Task<IEnumerable<EnsaioDTO>> GetAllDTO();
