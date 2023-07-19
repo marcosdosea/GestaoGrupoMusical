@@ -1,127 +1,187 @@
 ﻿@model GestaoGrupoMusicalWeb.Models.GrupoMusicalViewModel
 
 @{
-    ViewData["Title"] = $"Editar Grupo Musical {Model.Nome}";
+    ViewData["Title"] = "Editar Grupo Musical";
+    ViewData["Grupo"] = "Grupo Musical";
+    ViewData["Edit"] = "Editar";
 }
-
 <partial name="_Notificar">
-<h1>@ViewData["Title"]</h1>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Nome" class="control-label"></label>
-                <input asp-for="Nome" class="form-control" />
-                <span asp-validation-for="Nome" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="RazaoSocial" class="control-label"></label>
-                <input asp-for="RazaoSocial" class="form-control" />
-                <span asp-validation-for="RazaoSocial" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Cnpj" class="control-label"></label>
-                <input asp-for="Cnpj" id="campoCnpj" class="form-control" />
-                <span asp-validation-for="Cnpj" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Cep" class="control-label"></label>
-                <input asp-for="Cep" id="campoCep" class="form-control" />
-                <span asp-validation-for="Cep" id="mensagemCep" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Rua" class="control-label"></label>
-                <input asp-for="Rua" id="campoRua" class="form-control" />
-                <span asp-validation-for="Rua" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Bairro" class="control-label"></label>
-                <input asp-for="Bairro" id="campoBairro" class="form-control" />
-                <span asp-validation-for="Bairro" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Cidade" class="control-label"></label>
-                <input asp-for="Cidade" id="campoCidade" class="form-control" />
-                <span asp-validation-for="Cidade" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Estado" class="control-label"></label>
-                <input asp-for="Estado" id="campoEstado" class="form-control" />
-                <span asp-validation-for="Estado" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Pais" class="control-label"></label>
-                <input asp-for="Pais" class="form-control" />
-                <span asp-validation-for="Pais" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Youtube" class="control-label"></label>
-                <input asp-for="Youtube" class="form-control" />
-                <span asp-validation-for="Youtube" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Instagram" class="control-label"></label>
-                <input asp-for="Instagram" class="form-control" />
-                <span asp-validation-for="Instagram" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Facebook" class="control-label"></label>
-                <input asp-for="Facebook" class="form-control" />
-                <span asp-validation-for="Facebook" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Telefone1" class="control-label"></label>
-                <input asp-for="Telefone1" id="campoTelefone1" class="form-control" />
-                <span asp-validation-for="Telefone1" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Telefone2" class="control-label"></label>
-                <input asp-for="Telefone2" id="campoTelefone2" class="form-control" />
-                <span asp-validation-for="Telefone2" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Banco" class="control-label"></label>
-                <input asp-for="Banco" class="form-control" />
-                <span asp-validation-for="Banco" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Agencia" class="control-label"></label>
-                <input asp-for="Agencia" class="form-control" />
-                <span asp-validation-for="Agencia" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NumeroContaBanco" class="control-label"></label>
-                <input asp-for="NumeroContaBanco" class="form-control" />
-                <span asp-validation-for="NumeroContaBanco" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ChavePix" class="control-label"></label>
-                <input asp-for="ChavePix" class="form-control" />
-                <span asp-validation-for="ChavePix" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ChavePixtipo" class="control-label"></label>
-                <input asp-for="ChavePixtipo" class="form-control" />
-                <span asp-validation-for="ChavePixtipo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Salvar" class="btn btn-primary" />
-            </div>
-        </form>
+    <div class="row">
+        <div class="col-md-8">
+            <h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">Editar Grupo Musical</h1>
+            <nav>
+                <ol class="breadcrumb px-3">
+                    <strong>
+                        <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Grupo"]</a>
+                        <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Edit"]</spn>
+                    </strong>
+                </ol>
+            </nav>
+            <hr />
+            <br />
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="container">
+                    <div class="row">
+                        <h2 class="fs-5">Dados do Grupo</h2>
+                        <hr />
+                        <br />
+
+                        <div class="form-group">
+                            <label asp-for="Nome" class="control-label"></label>
+                            <input asp-for="Nome" class="form-control" />
+                            <span asp-validation-for="Nome" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="RazaoSocial" class="control-label"></label>
+                            <input asp-for="RazaoSocial" class="form-control" />
+                            <span asp-validation-for="RazaoSocial" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="row">
+                        <div class="form-group col-xl">
+                            <label asp-for="Cnpj" class="control-label"></label>
+                            <input asp-for="Cnpj" id="campoCnpj" class="form-control" />
+                            <span asp-validation-for="Cnpj" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-xl">
+                            <label asp-for="Telefone1" class="control-label"></label>
+                            <input asp-for="Telefone1" id="campoTelefone1" class="form-control" />
+                            <span asp-validation-for="Telefone1" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-xl">
+                            <label asp-for="Telefone2" class="control-label"></label>
+                            <input asp-for="Telefone2" id="campoTelefone2" class="form-control" />
+                            <span asp-validation-for="Telefone2" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="row">
+                        <div class="form-group col-xl-4">
+                            <label asp-for="Cep" class="control-label"></label>
+                            <input asp-for="Cep" id="campoCep" class="form-control" />
+                            <span asp-validation-for="Cep" id="mensagemCep" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-xl">
+                            <label asp-for="Rua" class="control-label"></label>
+                            <input asp-for="Rua" id="campoRua" class="form-control" />
+                            <span asp-validation-for="Rua" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-xl">
+                            <label asp-for="Bairro" class="control-label"></label>
+                            <input asp-for="Bairro" id="campoBairro" class="form-control" />
+                            <span asp-validation-for="Bairro" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="row">
+                        <div class="form-group col-xl-5">
+                            <label asp-for="Cidade" class="control-label"></label>
+                            <input asp-for="Cidade" id="campoCidade" class="form-control" />
+                            <span asp-validation-for="Cidade" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-xl-5">
+                            <label asp-for="Pais" class="control-label"></label>
+                            <input asp-for="Pais" class="form-control" />
+                            <span asp-validation-for="Pais" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-xl">
+                            <label asp-for="Estado" class="control-label"></label>
+                            <input asp-for="Estado" id="campoEstado" class="form-control" />
+                            <span asp-validation-for="Estado" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <br />
+                <div class="container">
+                    <div class="row">
+
+                        <h2 class="fs-5">Redes Sociais</h2>
+                        <hr />
+                        <br />
+                        <div class="form-group">
+                            <label asp-for="Email" class="control-label"></label>
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Youtube" class="control-label"></label>
+                            <input asp-for="Youtube" class="form-control" />
+                            <span asp-validation-for="Youtube" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Instagram" class="control-label"></label>
+                            <input asp-for="Instagram" class="form-control" />
+                            <span asp-validation-for="Instagram" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Facebook" class="control-label"></label>
+                            <input asp-for="Facebook" class="form-control" />
+                            <span asp-validation-for="Facebook" class="text-danger"></span>
+                        </div>
+
+                    </div>
+                </div>
+                <br />
+                <br />
+                <div class="container">
+                    <div class="row">
+                        <h2 class="fs-5">Informações Bancárias</h2>
+                        <hr />
+                        <br />
+                        <div class="form-group col-xl">
+                            <label asp-for="Banco" class="control-label"></label>
+                            <input asp-for="Banco" class="form-control" />
+                            <span asp-validation-for="Banco" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="row">
+                        <div class="form-group col-xl">
+                            <label asp-for="NumeroContaBanco" class="control-label"></label>
+                            <input asp-for="NumeroContaBanco" class="form-control" />
+                            <span asp-validation-for="NumeroContaBanco" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-xl">
+                            <label asp-for="Agencia" class="control-label"></label>
+                            <input asp-for="Agencia" class="form-control" />
+                            <span asp-validation-for="Agencia" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-xl">
+                            <label asp-for="ChavePixtipo" class="control-label"></label>
+                            <input asp-for="ChavePixtipo" class="form-control" />
+                            <span asp-validation-for="ChavePixtipo" class="text-danger"></span>
+                        </div>
+                        <div class="form-group ">
+                            <label asp-for="ChavePix" class="control-label"></label>
+                            <input asp-for="ChavePix" class="form-control" />
+                            <span asp-validation-for="ChavePix" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <br />
+                <br />
+                <div class="container">
+                    <div class="row d-flex flex-column-reverse d-grig gap-2 mx-auto d-flex flex-sm-column-reverse flex-xl-row">
+                        <div class="col-5 d-none d-sm-block"></div>
+                        <a class="btn btn-light text-secondary border border-secondary d-grid gap-2 col-sm" asp-action="Index"> Voltar </a>
+                        <input type="submit" value="Salvar" class="btn btn-secondary d-grid gap-2 col-sm " />
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Voltar</a>
-</div>
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+    }
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
