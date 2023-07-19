@@ -17,17 +17,33 @@ namespace Service
         /// </summary>
         /// <param name="ensaio"></param>
         /// <returns>Verdadeiro(<see langword="true" />) se cadastrou com sucesso ou Falso(<see langword="false" />) se houve algum erro.</returns>
-        public async Task<bool> Create(Ensaio ensaio)
+        public async Task<int> Create(Ensaio ensaio)
         {
             try
             {
                 await _context.Ensaios.AddAsync(ensaio);
-                await _context.SaveChangesAsync();
-                return true;
+                if (ensaio.DataHoraFim > ensaio.DataHoraInicio)
+                {
+                    if(ensaio.DataHoraInicio >= DateTime.Now)
+                    {
+                        await _context.SaveChangesAsync();
+                        return 200;
+                    }
+                    else
+                    {
+                        return 401;
+                    }
+                   
+                }
+                else 
+                {
+                    return 400;
+                }
+             
             }
             catch
             {
-                return false;
+                return 500;
             }
         }
         /// <summary>
@@ -53,17 +69,34 @@ namespace Service
         /// </summary>
         /// <param name="ensaio"></param>
         /// <returns>Verdadeiro(<see langword="true" />) se deletou com sucesso ou Falso(<see langword="false" />) se houve algum erro.</returns>
-        public async Task<bool> Edit(Ensaio ensaio)
+        public async Task<int> Edit(Ensaio ensaio)
         {
-            try
+
+             try
             {
                 _context.Ensaios.Update(ensaio);
-                await _context.SaveChangesAsync();
-                return true;
+                if (ensaio.DataHoraFim > ensaio.DataHoraInicio)
+                {
+                    if(ensaio.DataHoraInicio >= DateTime.Now)
+                    {
+                        await _context.SaveChangesAsync();
+                        return 200;
+                    }
+                    else
+                    {
+                        return 401;
+                    }
+                   
+                }
+                else 
+                {
+                    return 400;
+                }
+             
             }
             catch
             {
-                return false;
+                return 500;
             }
         }
         /// <summary>
