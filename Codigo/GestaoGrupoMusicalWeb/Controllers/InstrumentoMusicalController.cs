@@ -330,7 +330,26 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 return RedirectToAction("Sair", "Identity");
             }
 
-            return View();
+            var movimentacoes = await _movimentacaoInstrumento.MovimentacoesByIdAssociadoAsync(associado.Id);
+
+            return View(movimentacoes);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ConfirmarMovimentacao()
+        {
+            var associado = await _pessoa.GetByCpf(User.Identity?.Name);
+            if (associado == null)
+            {
+                return RedirectToAction("Sair", "Identity");
+            }
+
+            var movimentacoes = await _movimentacaoInstrumento.MovimentacoesByIdAssociadoAsync(associado.Id);
+
+            Console.WriteLine("Caiu aqui");
+
+            return View(movimentacoes);
         }
     }
 }
