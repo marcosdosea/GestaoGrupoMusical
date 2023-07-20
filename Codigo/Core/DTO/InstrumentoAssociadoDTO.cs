@@ -4,18 +4,27 @@ namespace Core.DTO
 {
     public class InstrumentoAssociadoDTO
     {
-        public int Id { get; set; }
 
-        [Display(Name = "Instrumento")]
-        public string NomeInstrumento { get; set; } = string.Empty;
+        public class MovimentacaoAssociado
+        {
+            public int Id { get; set; }
 
-        public DateTime Data { get; set; }
+            [Display(Name = "Instrumento")]
+            public string NomeInstrumento { get; set; } = string.Empty;
 
-        [Display(Name = "Movimentação")]
-        public string Movimentacao { get; set; } = string.Empty;
+            public DateTime Data { get; set; }
 
-        public string NomeStatus { get; set; } = string.Empty;
+            [Display(Name = "Status")]
+            public string NomeStatus { get; set; } = string.Empty;
 
-        public bool Status { get; set; }
+            public bool Status { get; set; }
+        }
+
+        public class MovimentacoesAssociado
+        {
+            public IEnumerable<MovimentacaoAssociado>? Emprestimos { get; set; }
+
+            public IEnumerable<MovimentacaoAssociado>? Devolucoes { get; set; }
+        }
     }
 }
