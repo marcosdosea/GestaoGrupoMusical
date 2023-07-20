@@ -3,6 +3,7 @@ using Core.DTO;
 using Core.Service;
 using Email;
 using Microsoft.EntityFrameworkCore;
+using static Core.DTO.InstrumentoAssociadoDTO;
 
 namespace Service
 {
@@ -178,36 +179,43 @@ namespace Service
             return await query;
         }
 
-        public async Task<IEnumerable<InstrumentoAssociadoDTO>> MovimentacoesByIdAssociadoAsync(int idAssociado)
+        public async Task<MovimentacoesAssociado> MovimentacoesByIdAssociadoAsync(int idAssociado)
         {
-            var query = await (
-                                from movimentacao in _context.Movimentacaoinstrumentos
-                                where movimentacao.IdAssociado == idAssociado
-                                orderby movimentacao.Data descending
-                                select new InstrumentoAssociadoDTO
-                                {
-                                    Id = movimentacao.Id,
-                                    Movimentacao = movimentacao.TipoMovimento,
-                                    Data = movimentacao.Data,
-                                    NomeInstrumento = movimentacao.IdInstrumentoMusicalNavigation.IdTipoInstrumentoNavigation.Nome,
-                                    NomeStatus = movimentacao.ConfirmacaoAssociado == 1 ? "Confirmado" : "Aguardando Confirmação",
-                                    Status = movimentacao.ConfirmacaoAssociado == 1
-                                }
-                               ).AsNoTracking().ToListAsync();
+            var devolucao = (from movimentacao in _context.Movimentacaoinstrumentos
+                             where movimentacao.IdAssociado == idAssociado
+                             where movimentacao.TipoMovimento == "DEVOLUCAO"
+                             orderby movimentacao.Data descending
+                             select new MovimentacaoAssociado
+                             {
+                                 Id = movimentacao.Id,
+                                 Data = movimentacao.Data,
+                                 NomeInstrumento = movimentacao.IdInstrumentoMusicalNavigation.IdTipoInstrumentoNavigation.Nome,
+                                 NomeStatus = movimentacao.ConfirmacaoAssociado == 1 ? "Confirmado" : "Aguardando Confirmação",
+                                 Status = movimentacao.ConfirmacaoAssociado == 1
+                             }
+                            ).AsNoTracking();
 
-            foreach (var movimentacao in query)
+            var emprestimo = (from movimentacao in _context.Movimentacaoinstrumentos
+                             where movimentacao.IdAssociado == idAssociado
+                             where movimentacao.TipoMovimento == "EMPRESTIMO"
+                             orderby movimentacao.Data descending
+                             select new MovimentacaoAssociado
+                             {
+                                 Id = movimentacao.Id,
+                                 Data = movimentacao.Data,
+                                 NomeInstrumento = movimentacao.IdInstrumentoMusicalNavigation.IdTipoInstrumentoNavigation.Nome,
+                                 NomeStatus = movimentacao.ConfirmacaoAssociado == 1 ? "Confirmado" : "Aguardando Confirmação",
+                                 Status = movimentacao.ConfirmacaoAssociado == 1
+                             }
+                            ).AsNoTracking();
+
+            MovimentacoesAssociado movimentacoes = new()
             {
-                if (movimentacao.Movimentacao == "DEVOLUCAO")
-                {
-                    movimentacao.Movimentacao = "Devolução";
-                }
-                else
-                {
-                    movimentacao.Movimentacao = "Empréstimo";
-                }
-            }
+                Devolucoes = await devolucao.ToListAsync(),
+                Emprestimos = await emprestimo.ToListAsync(),
+            };
 
-            return query;
+            return movimentacoes;
         }
 
         public async Task<int> ConfirmarMovimentacaoAsync(int idMovimentacao, int idAssociado)
