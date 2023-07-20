@@ -178,6 +178,38 @@ namespace Service
             return await query;
         }
 
+        public async Task<IEnumerable<InstrumentoAssociadoDTO>> MovimentacoesByIdAssociadoAsync(int idAssociado)
+        {
+            var query = await (
+                                from movimentacao in _context.Movimentacaoinstrumentos
+                                where movimentacao.IdAssociado == idAssociado
+                                orderby movimentacao.Data descending
+                                select new InstrumentoAssociadoDTO
+                                {
+                                    Id = movimentacao.Id,
+                                    Movimentacao = movimentacao.TipoMovimento,
+                                    Data = movimentacao.Data,
+                                    NomeInstrumento = movimentacao.IdInstrumentoMusicalNavigation.IdTipoInstrumentoNavigation.Nome,
+                                    NomeStatus = movimentacao.ConfirmacaoAssociado == 1 ? "Confirmado" : "Aguardando Confirmação",
+                                    Status = movimentacao.ConfirmacaoAssociado == 1
+                                }
+                               ).AsNoTracking().ToListAsync();
+
+            foreach (var movimentacao in query)
+            {
+                if (movimentacao.Movimentacao == "DEVOLUCAO")
+                {
+                    movimentacao.Movimentacao = "Devolução";
+                }
+                else
+                {
+                    movimentacao.Movimentacao = "Empréstimo";
+                }
+            }
+
+            return query;
+        }
+
         public async Task<int> NotificarViaEmailAsync(int id)
         {
             try
