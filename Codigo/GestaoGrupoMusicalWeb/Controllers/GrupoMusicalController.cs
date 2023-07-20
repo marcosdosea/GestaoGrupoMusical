@@ -39,7 +39,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: GrupoMusicalController/Create
         public ActionResult Create()
         {
-            return View();
+            GrupoMusicalViewModel grupoMusicalViewModel = new();
+            return View(grupoMusicalViewModel);
         }
 
         // POST: GrupoMusicalController/Create

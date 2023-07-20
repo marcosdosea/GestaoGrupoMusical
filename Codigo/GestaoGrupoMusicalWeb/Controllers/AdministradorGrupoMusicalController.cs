@@ -3,6 +3,7 @@ using Core;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Service;
@@ -19,11 +20,15 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IGrupoMusicalService _grupoMusicalService;
         private readonly IMapper _mapper;
 
-        public AdministradorGrupoMusicalController(IPessoaService pessoaService,IGrupoMusicalService grupoMusicalService, IMapper mapper)
+        private readonly UserManager<UsuarioIdentity> _userManager;
+
+        public AdministradorGrupoMusicalController(IPessoaService pessoaService,IGrupoMusicalService grupoMusicalService,
+                                                   IMapper mapper, UserManager<UsuarioIdentity> userManager)
         {
             _pessoaService = pessoaService;
             _grupoMusicalService = grupoMusicalService;
             _mapper = mapper;
+            _userManager = userManager;
         }
 
         /// <summary>
@@ -81,9 +86,14 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Cadastro</b> do administrador do grupo musical, se isso persistir entre em contato com o suporte";
                         Notificar(mensagem, Notifica.Erro);
                         return RedirectToAction(nameof(Index));
-
-                }
             }
+             switch (await RequestPasswordReset(_userManager, pessoa.Email))
+                {
+                    case 200:
+                        Notificar("<b>Sucesso!</b> Administrador cadastrado e email para redefinição enviado.", Notifica.Sucesso); break;
+                    default:
+                        Notificar("<b>Erro!</b> Não foi possível enviar o email para redefinição de senha.", Notifica.Erro); break;
+                }
             return RedirectToAction(nameof(Index), new { id=admViewModel.IdGrupoMusical });
         }
 

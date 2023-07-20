@@ -150,35 +150,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             if (ModelState.IsValid)
             { 
-                var user = await _userManager.FindByEmailAsync(model.Email);
-
-                //a segunda condição é para caso seja necessario
-                //confirmar o email do usuario
-                if (user == null /*|| !(await _userManager.IsEmailConfirmedAsync(user))*/)
-                {
-                    return View();
-                }
-
-                //gera o token para redefinir senha
-                string code = await _userManager.GeneratePasswordResetTokenAsync(user);
-
-                //gera link para a view da controladora ja passando codigo e id do usuario
-                var callbackUrl = Url.Action("ResetPassword", "Identity", new { userId = user.Id, token = code }, /*protocol:*/ Request.Scheme);
-
-                //enviar email com o link
-                EmailModel email = new()
-                {
-                    Assunto = "Batalá - Redefinição de Senha",
-                    Body = "<div style=\"text-align: center;\">\r\n    " +
-                    "<h1>Redefinição de Senha</h1>\r\n    " +
-                    $"<h2>Olá, aqui está o link para redefinir sua senha:</h2>\r\n" +
-                    $"<a href=\"{callbackUrl}\" style=\"font-weight: 600;\">Clique Aqui</a>"
-                };
-
-                email.To.Add(model.Email);
-
-                await EmailService.Enviar(email);
-
+                RequestPasswordReset(_userManager, model.Email);
             }
             
             return View();
