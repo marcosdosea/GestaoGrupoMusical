@@ -73,9 +73,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
                 await _pessoaService.AddAdmGroup(pessoa);
 
-                int ret = await RequestPasswordReset(_userManager, pessoa.Email);
-
-                switch (ret)
+                switch (await RequestPasswordReset(_userManager, pessoa.Email))
                 {
                     case 200:
                         Notificar("<b>Sucesso!</b> Administrador cadastrado e email para redefinição enviado.", Notifica.Sucesso); break;
