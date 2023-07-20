@@ -37,7 +37,11 @@ namespace Service
 
                 try
                 {
+                    pessoa.Cpf = pessoa.Cpf.Replace("-", string.Empty).Replace(".", string.Empty);
+                    pessoa.Cep = pessoa.Cep.Replace("-", string.Empty);
+
                     await _context.Pessoas.AddAsync(pessoa);
+
                     if (pessoa.DataEntrada == null && pessoa.DataNascimento == null)
                     {//Mensagem de sucesso
                         await _context.SaveChangesAsync();
@@ -94,6 +98,9 @@ namespace Service
             //Criar excecao para data de nascimento, etc
             try
             {
+                pessoa.Cpf = pessoa.Cpf.Replace("-", string.Empty).Replace(".", string.Empty);
+                pessoa.Cep = pessoa.Cep.Replace("-", string.Empty);
+
                 _context.Pessoas.Update(pessoa);
                 if (pessoa.DataEntrada == null && pessoa.DataNascimento == null)
                 {//Mensagem de sucesso
@@ -203,6 +210,9 @@ namespace Service
                     var user = CreateUser();
 
                     await _userStore.SetUserNameAsync(user, pessoa.Cpf, CancellationToken.None);
+
+                    user.Email = pessoa.Email;
+
                     var result = await _userManager.CreateAsync(user, pessoa.Cpf);
 
                     if (result.Succeeded)
@@ -239,6 +249,9 @@ namespace Service
                         user = CreateUser();
 
                         await _userStore.SetUserNameAsync(user, pessoaF.Cpf, CancellationToken.None);
+
+                        user.Email = pessoaF.Email;
+
                         var result = await _userManager.CreateAsync(user, pessoaF.Cpf);
 
                         if (result.Succeeded)

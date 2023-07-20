@@ -45,7 +45,14 @@ namespace GestaoGrupoMusicalWeb
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
                 options.Lockout.MaxFailedAccessAttempts = 5;
                 options.Lockout.AllowedForNewUsers = true;
-            }).AddEntityFrameworkStores<IdentityContext>();
+            }).AddEntityFrameworkStores<IdentityContext>()
+              .AddDefaultTokenProviders();
+
+            //Configure tokens life
+            builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
+                //sets a 2 hour lifetime of the generated token to reset password/email/phone number
+                options.TokenLifespan = TimeSpan.FromHours(2)
+            );
 
             builder.Services.ConfigureApplicationCookie(options =>
             {
