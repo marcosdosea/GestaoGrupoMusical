@@ -49,10 +49,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 return 400;
             }
 
+            string code = "";
+
             try
             {
                 //gera o token para redefinir senha
-                string code = await _userManager.GeneratePasswordResetTokenAsync(user);
+                code = await _userManager.GeneratePasswordResetTokenAsync(user);
             }
             catch(Exception ex)
             {
