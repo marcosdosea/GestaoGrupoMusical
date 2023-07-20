@@ -337,7 +337,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> ConfirmarMovimentacao()
+        public async Task<ActionResult> ConfirmarMovimentacao(int idMovimentacao)
         {
             var associado = await _pessoa.GetByCpf(User.Identity?.Name);
             if (associado == null)
@@ -345,11 +345,26 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 return RedirectToAction("Sair", "Identity");
             }
 
-            var movimentacoes = await _movimentacaoInstrumento.MovimentacoesByIdAssociadoAsync(associado.Id);
+            switch(await _movimentacaoInstrumento.ConfirmarMovimentacaoAsync(idMovimentacao, associado.Id))
+            {
+                case 200:
+                    Notificar("Notificação <b>Enviada</b> com <b>Sucesso</b>", Notifica.Sucesso);
+                    break;
+                case 400:
+                    Notificar("O <b>Associado</b> não corresponde ao mesmo do <b>Empréstimo</b>", Notifica.Erro);
+                    break;
+                case 401:
+                    Notificar("O <b>Associado</b> não corresponde ao mesmo da <b>Devolução</b>", Notifica.Erro);
+                    break;
+                case 404:
+                    Notificar($"O Id {idMovimentacao} não <b>Corresponde</b> a nenhuma <b>Movimentação</b>", Notifica.Erro);
+                    break;
+                case 500:
+                    Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Confirmação</b>, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                    break;
+            }
 
-            Console.WriteLine("Caiu aqui");
-
-            return View(movimentacoes);
+            return RedirectToAction(nameof(Movimentacoes));
         }
     }
 }
