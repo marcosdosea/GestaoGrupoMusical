@@ -37,7 +37,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             TempData["alertText"] = mensagem;
         }
 
-        private async Task<int> RequestPasswordReset(UserManager<UsuarioIdentity> _userManager, string userEmail)
+        public async Task<int> RequestPasswordReset(UserManager<UsuarioIdentity> _userManager, string userEmail)
         {
             var user = await _userManager.FindByEmailAsync(userEmail);
 
