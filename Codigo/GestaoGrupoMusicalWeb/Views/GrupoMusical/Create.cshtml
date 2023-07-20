@@ -156,10 +156,10 @@
                         <div class="form-group col-xl">
                             <label asp-for="ChavePixtipo" class="control-label"></label>
                             <Select asp-for="ChavePixtipo" class="form-select">
-                                <option value="chave aleatoria">Chave aleatória</option>
-                                <option value="cpf">CPF</option>
-                                <option value="email">E-mail</option>
-                                <option value="celular">Celular</option>
+                                @foreach(var item in Model.TipoChave)
+                                {
+                                    <option value="@item.Value">@item.Key</option>
+                                }
                             </Select>
                             <span asp-validation-for="ChavePixtipo" class="text-danger"></span>
                         </div>

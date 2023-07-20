@@ -102,11 +102,11 @@ namespace GestaoGrupoMusicalWeb.Models
 
         public Dictionary<string, string> TipoChave { get; } = new()
         {
-            { "CPF", "cpf"},
             { "Chave aleatória", "chave aleatoria"},
+            { "CPF", "cpf"},
             { "Celular", "celular" },
             { "E-mail", "email" }
         };
-        
+
     }
 }
