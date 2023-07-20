@@ -56,6 +56,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(EventoViewModel eventoModel)
         {
+
+            int idGrupo = _grupoMusical.GetByIdGrupo(User.Identity.Name);
+            eventoModel.IdGrupoMusical = idGrupo;
+
             if (ModelState.IsValid)
             {
                 var evento = _mapper.Map<Evento>(eventoModel);

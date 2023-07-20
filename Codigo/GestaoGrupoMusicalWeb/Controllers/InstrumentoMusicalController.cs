@@ -72,7 +72,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 switch (await _instrumentoMusical.Create(instrumentoMusicalModel))
                 {
                     case 100:
-                        Notificar("A data de aquisição <b>" + instrumentoMusicalModel.DataAquisicao + "</b> é maior que a data de Hoje <b>"+ DateTime.Now +"</b>", Notifica.Alerta);
+                        Notificar("A data de aquisição <b>" + instrumentoMusicalModel.DataAquisicao.ToShortDateString() + "</b> é maior que a data de Hoje <b>"+ DateTime.Now.ToShortDateString() +"</b>", Notifica.Alerta);
                         break;
                     case 500:
                         Notificar("Falha ao <b>cadastrar<b> instrumento.", Notifica.Erro);

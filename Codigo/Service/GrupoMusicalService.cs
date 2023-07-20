@@ -125,6 +125,14 @@ namespace Service
             return query.AsNoTracking();
         }
 
+        public int GetByIdGrupo(string cpf)
+        {
+            var query = _context.Pessoas
+                 .Where(g => g.Cpf == cpf)
+                 .Select(g => g.IdGrupoMusical).FirstOrDefault();
+            return query;
+        }
+
         public bool GetCNPJExistente(int id, string cnpj)
         {
             var query =   _context.Set<Grupomusical>().AsNoTracking().FirstOrDefault( p => p.Id == id && p.Cnpj == cnpj);
