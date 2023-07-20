@@ -76,11 +76,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     case 400:
                         mensagem = "<b>Alerta</b> ! Infelizemente não foi possível <b>cadastrar</b>, o usuário faz parte de outro grupo musical";
                         Notificar(mensagem, Notifica.Alerta);
-                        return RedirectToAction("Index", admViewModel);
+                        return RedirectToAction(nameof(Index));
                     case 500:
                         mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Cadastro</b> do administrador do grupo musical, se isso persistir entre em contato com o suporte";
                         Notificar(mensagem, Notifica.Erro);
-                        return RedirectToAction("Index", admViewModel);
+                        return RedirectToAction(nameof(Index));
 
                 }
             }
