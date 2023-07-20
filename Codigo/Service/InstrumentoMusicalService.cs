@@ -39,10 +39,19 @@ namespace Service
             await _context.SaveChangesAsync();
         }
 
-        public async Task Edit(Instrumentomusical instrumentoMusical)
+        public async Task<int> Edit(Instrumentomusical instrumentoMusical)
         {
-            _context.Update(instrumentoMusical);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Update(instrumentoMusical);
+                await _context.SaveChangesAsync();
+                return 200;
+            }
+            catch
+            {
+                return 500;
+            }
+
         }
 
         public async Task<Instrumentomusical?> Get(int id)

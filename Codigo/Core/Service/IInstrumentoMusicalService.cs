@@ -5,7 +5,7 @@ namespace Core.Service
     public interface IInstrumentoMusicalService
     {
         Task<int> Create(Instrumentomusical instrumentoMusical);
-        Task Edit(Instrumentomusical instrumentoMusical);
+        Task<int> Edit(Instrumentomusical instrumentoMusical);
         Task Delete(int id);
         Task<Instrumentomusical?> Get(int id);
         Task<IEnumerable<Instrumentomusical>> GetAll();
