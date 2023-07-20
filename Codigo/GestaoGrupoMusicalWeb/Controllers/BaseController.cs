@@ -36,7 +36,15 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
             TempData["alertText"] = mensagem;
         }
-
+        /// <summary>
+        /// Este método tem o tralho de gerar um token para
+        /// redefinição de senha do usuário identity, gera
+        /// uma url para redefinir a senha e encaminha isso
+        /// para o email cadastrado (se existir usuario com ele).
+        /// </summary>
+        /// <param name="_userManager">UserManager do identity</param>
+        /// <param name="userEmail">Email do usuario</param>
+        /// <returns>200: Sucesso; 400: usuario não encontrado; 500: problema na geração do token</returns>
         public async Task<int> RequestPasswordReset(UserManager<UsuarioIdentity> _userManager, string userEmail)
         {
             var user = await _userManager.FindByEmailAsync(userEmail);
@@ -58,7 +66,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
             catch(Exception ex)
             {
-                //ero na geração do token
+                //erro na geração do token
                 return 500;
             }
 
