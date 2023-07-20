@@ -125,11 +125,11 @@ namespace Service
             return query.AsNoTracking();
         }
 
-        public Task<int> GetByIdGrupo(string cpf)
+        public int GetByIdGrupo(string cpf)
         {
             var query = _context.Pessoas
                  .Where(g => g.Cpf == cpf)
-                 .Select(g => g.IdGrupoMusical).FirstOrDefaultAsync();
+                 .Select(g => g.IdGrupoMusical).FirstOrDefault();
             return query;
         }
 
