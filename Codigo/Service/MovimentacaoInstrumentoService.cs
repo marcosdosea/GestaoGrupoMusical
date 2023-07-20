@@ -210,6 +210,35 @@ namespace Service
             return query;
         }
 
+        public async Task<int> ConfirmarMovimentacaoAsync(int idMovimentacao, int idAssociado)
+        {
+            try
+            {
+                var movimentacao = await _context.Movimentacaoinstrumentos.FindAsync(idMovimentacao);
+
+                if(movimentacao == null)
+                {
+                    return 404;
+                }
+
+                if(movimentacao.IdAssociado != idAssociado)
+                {
+                    return movimentacao.TipoMovimento == "DEVOLUCAO" ? 401 : 400;
+                }
+
+                movimentacao.ConfirmacaoAssociado = 1;
+
+                _context.Update(movimentacao);
+                await _context.SaveChangesAsync();
+
+                return 200;
+            }
+            catch
+            {
+                return 500;
+            }
+        }
+
         public async Task<int> NotificarViaEmailAsync(int id)
         {
             try
