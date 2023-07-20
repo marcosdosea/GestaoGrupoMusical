@@ -6,12 +6,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Service;
+using static GestaoGrupoMusicalWeb.Controllers.BaseController;
 using static GestaoGrupoMusicalWeb.Models.AdministradorGrupoMusicalViewModel;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
     [Authorize(Roles = "ADMINISTRADOR SISTEMA")]
-    public class AdministradorGrupoMusicalController : Controller
+    public class AdministradorGrupoMusicalController : BaseController
     {
 
         private readonly IPessoaService _pessoaService;
@@ -65,8 +66,23 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     Sexo = admViewModel.Sexo,
                     IdGrupoMusical = admViewModel.IdGrupoMusical
                 };
+                String mensagem = String .Empty;
+                switch(await _pessoaService.AddAdmGroup(pessoa))
+                {
+                    case 200:
+                        mensagem = "Administrador do grupo musical <b>Cadastrado</b> com <b>Sucesso</b>";
+                        Notificar(mensagem, Notifica.Sucesso);
+                        return RedirectToAction(nameof(Index));
+                    case 400:
+                        mensagem = "<b>Alerta</b> ! Infelizemente não foi possível <b>cadastrar</b>, o usuário faz parte de outro grupo musical";
+                        Notificar(mensagem, Notifica.Alerta);
+                        return RedirectToAction("Index", admViewModel);
+                    case 500:
+                        mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Cadastro</b> do administrador do grupo musical, se isso persistir entre em contato com o suporte";
+                        Notificar(mensagem, Notifica.Erro);
+                        return RedirectToAction("Index", admViewModel);
 
-                await _pessoaService.AddAdmGroup(pessoa);
+                }
             }
             return RedirectToAction(nameof(Index), new { id=admViewModel.IdGrupoMusical });
         }
