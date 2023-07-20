@@ -22,8 +22,10 @@ namespace Core.DTO
 
         public class MovimentacoesAssociado
         {
+            [Display(Name = "Empréstimos")]
             public IEnumerable<MovimentacaoAssociado>? Emprestimos { get; set; }
 
+            [Display(Name = "Devoluções")]
             public IEnumerable<MovimentacaoAssociado>? Devolucoes { get; set; }
         }
     }
