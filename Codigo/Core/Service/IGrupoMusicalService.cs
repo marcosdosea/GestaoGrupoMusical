@@ -53,5 +53,11 @@ namespace Core.Service
         /// <returns></returns>
         bool GetCNPJExistente(int id, string cnpj);
 
+        /// <summary>
+        /// Busacar id do Grupo apartir da pessoas que esta logada 
+        /// </summary>
+        /// <param name="cpf"></param>
+        /// <returns>Id do grupo</returns>
+        Task<int> GetByIdGrupo(string cpf);
     }
 }
