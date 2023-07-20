@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<Core.DTO.InstrumentoAssociadoDTO>
 @{
     Layout = "_LayoutAssociado";
-    ViewData["Title"] = "Movimentações de Instrumento";
+    ViewData["Title"] = "Movimentação de Instrumentos";
 }
 
 <h1 class="fs-5">@ViewData["Title"]</h1>
@@ -44,7 +44,7 @@
                     @if (!item.Status)
                     {
                         <td class="py-3 border-0 d-flex flex-column flex-lg-row gap-3">
-                            <form id="@(item.Id + "_confirmar")" asp-controller="InstrumentoMusical" asp-action="ConfirmarMovimentacao" asp-route-Id="@item.Id" method="post">
+                            <form id="@(item.Id + "_confirmar")" asp-controller="InstrumentoMusical" asp-action="ConfirmarMovimentacao" asp-route-idMovimentacao="@item.Id" method="post">
                                 <a role="button" class="btn btn-sm btn-secondary"
                                    onclick="(() => {confirm('Deseja notificar a movimentação?') ? document.getElementById('@(item.Id + "_confirmar")').submit() : null})()">
                                     <i class="fa-solid fa-envelope"></i>
