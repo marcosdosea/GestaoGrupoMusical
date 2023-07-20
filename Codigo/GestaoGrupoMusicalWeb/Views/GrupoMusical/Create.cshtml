@@ -155,7 +155,12 @@
                         </div>
                         <div class="form-group col-xl">
                             <label asp-for="ChavePixtipo" class="control-label"></label>
-                            <input asp-for="ChavePixtipo" class="form-control" />
+                            <Select asp-for="ChavePixtipo" class="form-select">
+                                <option value="chave aleatoria">Chave aleatória</option>
+                                <option value="cpf">CPF</option>
+                                <option value="email">E-mail</option>
+                                <option value="celular">Celular</option>
+                            </Select>
                             <span asp-validation-for="ChavePixtipo" class="text-danger"></span>
                         </div>
                         <div class="form-group ">
