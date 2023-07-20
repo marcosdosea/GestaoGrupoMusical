@@ -1,4 +1,5 @@
 ﻿using Core.DTO;
+using static Core.DTO.InstrumentoAssociadoDTO;
 
 namespace Core.Service
 {
@@ -46,7 +47,7 @@ namespace Core.Service
         /// </returns>
         Task<int> NotificarViaEmailAsync(int id);
 
-        Task<IEnumerable<InstrumentoAssociadoDTO>> MovimentacoesByIdAssociadoAsync(int idAssociado);
+        Task<MovimentacoesAssociado> MovimentacoesByIdAssociadoAsync(int idAssociado);
 
         /// <summary>
         /// Confirmar um empréstimo/devolução de instrumento
