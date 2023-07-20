@@ -11,7 +11,7 @@ using static GestaoGrupoMusicalWeb.Models.AdministradorGrupoMusicalViewModel;
 namespace GestaoGrupoMusicalWeb.Controllers
 {
     [Authorize(Roles = "ADMINISTRADOR SISTEMA")]
-    public class AdministradorGrupoMusicalController : Controller
+    public class AdministradorGrupoMusicalController : BaseController
     {
 
         private readonly IPessoaService _pessoaService;
