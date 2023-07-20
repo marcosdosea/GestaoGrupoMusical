@@ -45,5 +45,7 @@ namespace Core.Service
         /// 500 - Erro interno
         /// </returns>
         Task<int> NotificarViaEmailAsync(int id);
+
+        Task<IEnumerable<InstrumentoAssociadoDTO>> MovimentacoesByIdAssociadoAsync(int idAssociado);
     }
 }
