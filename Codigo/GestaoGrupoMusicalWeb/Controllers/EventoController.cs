@@ -54,7 +54,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: EventoController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public  ActionResult Create(EventoViewModel eventoModel)
+        public ActionResult Create(EventoViewModel eventoModel)
         {
 
             int idGrupo = _grupoMusical.GetByIdGrupo(User.Identity.Name);
