@@ -85,19 +85,19 @@ namespace GestaoGrupoMusicalWeb.Models
         public string? Banco { get; set; }
 
         [Display(Name = "Agência", Prompt = "Agência")]
-        [StringLength(15, MinimumLength = 5, ErrorMessage = "O campo Agência deve ter de 5 a 15 caracteres")]
+        [StringLength(15)]
         public string? Agencia { get; set; }
 
         [Display(Name = "Número da Conta", Prompt = "Número da Conta bancária")]
-        [StringLength(15, MinimumLength = 5, ErrorMessage = "O campo Numero da conta deve ter de 5 a 15 caracteres")]
+        [StringLength(15)]
         public string? NumeroContaBanco { get; set; }
 
         [Display(Name = "Chave Pix", Prompt = "Chave pix")]
-        [StringLength(100, MinimumLength = 5, ErrorMessage = "O campo Chave pix deve ter de 5 a 100 caracteres")]
+        [StringLength(100)]
         public string? ChavePix { get; set; }
 
         [Display(Name =" Tipo da cave Pix")]
-        [StringLength(15, MinimumLength = 5, ErrorMessage = "O campo tipo da Chave pix deve ter de 5 a 15 caracteres")]
+        [StringLength(15)]
         public string? ChavePixtipo { get; set; }
     }
 }
