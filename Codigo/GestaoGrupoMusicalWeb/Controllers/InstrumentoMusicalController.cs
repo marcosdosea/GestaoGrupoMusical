@@ -4,13 +4,11 @@ using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NuGet.Protocol;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
-    [Authorize(Roles = "ADMINISTRADOR GRUPO")]
     public class InstrumentoMusicalController : BaseController
     {
         private readonly IInstrumentoMusicalService _instrumentoMusical;
@@ -32,6 +30,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: InstrumentoMusicalController
+        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         public async Task<ActionResult> Index()
         {
             var listaInstrumentoMusical = await _instrumentoMusical.GetAllDTO();
@@ -40,6 +39,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
 
         // GET: InstrumentoMusicalController/Details/5
+        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         public async Task<ActionResult> Details(int id)
         {
             var instrumentoMusical = await _instrumentoMusical.Get(id);
@@ -48,6 +48,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: InstrumentoMusicalController/Create
+        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         public async Task<ActionResult> Create()
         {
             InstrumentoMusicalViewModel instrumentoMusicalViewModel = new InstrumentoMusicalViewModel();
@@ -62,6 +63,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: InstrumentoMusicalController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         public async Task<ActionResult> Create(InstrumentoMusicalViewModel instrumentoMusicalViewModel)
         {
             if (ModelState.IsValid)
@@ -89,6 +91,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
 
         // GET: InstrumentoMusicalController/Edit/5
+        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         public async Task<ActionResult> Edit(int id)
         {
             var instrumentoMusical = await _instrumentoMusical.Get(id);
@@ -111,6 +114,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: InstrumentoMusicalController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         public async Task<ActionResult> Edit(int id, InstrumentoMusicalViewModel instrumentoMusicalViewModel)
         {
 
@@ -136,6 +140,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: InstrumentoMusicalController/Delete/5
+        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         public async Task<ActionResult> Delete(int id)
         {
             var instrumentoMusical = await _instrumentoMusical.Get(id);
@@ -156,6 +161,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: InstrumentoMusicalController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         public async Task<ActionResult> Delete(int id, InstrumentoMusicalViewModel instrumentoMusicalViewModel)
         {
             await _instrumentoMusical.Delete(id);
@@ -163,6 +169,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         public async Task<ActionResult> Movimentar(int id)
         {
             MovimentacaoInstrumentoViewModel movimentacaoModel = new();
@@ -200,6 +207,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         public async Task<ActionResult> Movimentar(MovimentacaoInstrumentoViewModel movimentacaoPost)
         {
             movimentacaoPost.ListaAssociado = new SelectList(_pessoa.GetAll(), "Id", "Nome");
@@ -265,6 +273,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         public async Task<ActionResult> DeleteMovimentacao(int id, int IdInstrumento)
         {
             switch(await _movimentacaoInstrumento.DeleteAsync(id))
@@ -288,6 +297,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         public async Task<ActionResult> NotificarViaEmail(int id, int IdInstrumento)
         {
             switch(await _movimentacaoInstrumento.NotificarViaEmailAsync(id))
@@ -309,6 +319,18 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     break;
             }  
             return RedirectToAction(nameof(Movimentar), new { id = IdInstrumento });
+        }
+
+        [Authorize(Roles = "ASSOCIADO")]
+        public async Task<ActionResult> Movimentacoes()
+        {
+            var associado = await _pessoa.GetByCpf(User.Identity?.Name);
+            if(associado == null)
+            {
+                return RedirectToAction("Sair", "Identity");
+            }
+
+            return View();
         }
     }
 }

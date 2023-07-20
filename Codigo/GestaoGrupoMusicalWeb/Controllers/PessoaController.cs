@@ -2,13 +2,13 @@
 using Core;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using static GestaoGrupoMusicalWeb.Controllers.BaseController;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
+    [Authorize(Roles = "ADMINISTRADOR GRUPO")]
     public class PessoaController : BaseController
     {
         private readonly IPessoaService _pessoaService;
@@ -50,8 +50,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
             IEnumerable<Grupomusical> listaGrupoMusical = _grupoMusical.GetAll();
             IEnumerable<Manequim> listaManequim = _manequim.GetAll();
 
-            pessoaViewModel.ListaGrupoMusical = new SelectList(listaGrupoMusical, "Id", "Nome", null);
-            pessoaViewModel.ListaPapelGrupo = new SelectList(listaPapelGrupo, "IdPapelGrupo", "Nome", null);
             pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", null);
 
             return View(pessoaViewModel);
@@ -68,11 +66,18 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             if (ModelState.IsValid)
             {
+                var colaborador = await _pessoaService.GetByCpf(User.Identity?.Name);
+                if (colaborador == null)
+                {
+                    return RedirectToAction("Sair", "Identity");
+                }
                 var pessoaModel = _mapper.Map<Pessoa>(pessoaViewModel);
+                pessoaModel.IdPapelGrupo = 1;
+                pessoaModel.IdGrupoMusical = colaborador.IdGrupoMusical;
                 String mensagem = String.Empty;
               
 
-                switch (await _pessoaService.Create(pessoaModel))
+                switch (await _pessoaService.AddAssociadoAsync(pessoaModel))
                 {
                     case 200:
                         Notificar("Associado <b>Cadastrado</b> com <b>Sucesso</b>", Notifica.Sucesso);
@@ -84,15 +89,18 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         mensagem = "<b>Alerta</b> ! Não foi possível cadastrar, a data de entrada deve ser menor que " + DateTime.Now.ToShortDateString();
                         Notificar(mensagem, Notifica.Alerta);
                        
-                        pessoaViewModel.ListaGrupoMusical = new SelectList(listaGrupoMusical, "Id", "Nome", pessoaViewModel.IdGrupoMusical);
-                        pessoaViewModel.ListaPapelGrupo = new SelectList(listaPapelGrupo, "IdPapelGrupo", "Nome", pessoaViewModel.IdPapelGrupo);
                         pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", pessoaViewModel.IdManequim);
                         return View("Create", pessoaViewModel);
                     case 401:
                         mensagem = "<b>Alerta</b> ! Não foi possível cadastrar, a data de nascimento deve ser menor que " + DateTime.Now.ToShortDateString() + " e menor que 120 anos ";
                         Notificar(mensagem, Notifica.Alerta);
-                        pessoaViewModel.ListaGrupoMusical = new SelectList(listaGrupoMusical, "Id", "Nome", pessoaViewModel.IdGrupoMusical);
-                        pessoaViewModel.ListaPapelGrupo = new SelectList(listaPapelGrupo, "IdPapelGrupo", "Nome", pessoaViewModel.IdPapelGrupo);
+
+                        pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", pessoaViewModel.IdManequim);
+                        return View("Create", pessoaViewModel);
+                    case 450:
+                        mensagem = "Ocorreu um <b>Erro</b> durante a liberação de acesso ao <b>Associado</b>, se isso persistir entre em contato com o suporte";
+                        Notificar(mensagem, Notifica.Erro);
+
                         pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", pessoaViewModel.IdManequim);
                         return View("Create", pessoaViewModel);
 
@@ -101,8 +109,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
             else
             {          
-                pessoaViewModel.ListaGrupoMusical = new SelectList(listaGrupoMusical, "Id", "Nome", null);
-                pessoaViewModel.ListaPapelGrupo = new SelectList(listaPapelGrupo, "IdPapelGrupo", "Nome", null);
                 pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", null);
                 return View("Create", pessoaViewModel);
             }
@@ -119,8 +125,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
             IEnumerable<Grupomusical> listaGrupoMusical = _grupoMusical.GetAll();
             IEnumerable<Manequim> listaManequim = _manequim.GetAll();
 
-            pessoaViewModel.ListaGrupoMusical = new SelectList(listaGrupoMusical, "Id", "Nome", pessoaViewModel.IdGrupoMusical);
-            pessoaViewModel.ListaPapelGrupo = new SelectList(listaPapelGrupo, "IdPapelGrupo", "Nome", pessoaViewModel.IdPapelGrupo);
             pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", pessoaViewModel.IdManequim);
 
 
@@ -160,15 +164,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         mensagem = "<b>Alerta</b> ! Não foi possível editar, a data de entrada deve ser menor que " + DateTime.Now.ToShortDateString();
                         Notificar(mensagem, Notifica.Alerta);
 
-                        pessoaViewModel.ListaGrupoMusical = new SelectList(listaGrupoMusical, "Id", "Nome", pessoaViewModel.IdGrupoMusical);
-                        pessoaViewModel.ListaPapelGrupo = new SelectList(listaPapelGrupo, "IdPapelGrupo", "Nome", pessoaViewModel.IdPapelGrupo);
                         pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", pessoaViewModel.IdManequim);
                         return View("Edit", pessoaViewModel);
                     case 401:
                         mensagem = "<b>Alerta</b> ! Não foi possível editar, a data de nascimento deve ser menor que " + DateTime.Now.ToShortDateString() + " e menor que 120 anos ";
                         Notificar(mensagem, Notifica.Alerta);
-                        pessoaViewModel.ListaGrupoMusical = new SelectList(listaGrupoMusical, "Id", "Nome", pessoaViewModel.IdGrupoMusical);
-                        pessoaViewModel.ListaPapelGrupo = new SelectList(listaPapelGrupo, "IdPapelGrupo", "Nome", pessoaViewModel.IdPapelGrupo);
                         pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", pessoaViewModel.IdManequim);
                         return View("Edit", pessoaViewModel);
 
@@ -176,8 +176,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
             else
             {
-                pessoaViewModel.ListaGrupoMusical = new SelectList(listaGrupoMusical, "Id", "Nome", null);
-                pessoaViewModel.ListaPapelGrupo = new SelectList(listaPapelGrupo, "IdPapelGrupo", "Nome", null);
                 pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", null);
                 return View("Edit", pessoaViewModel);
             }

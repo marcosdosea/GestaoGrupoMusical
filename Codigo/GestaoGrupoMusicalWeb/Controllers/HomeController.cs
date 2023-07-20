@@ -31,7 +31,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         public async Task<IActionResult> Index()
         {
-            if(User.IsInRole("ADMINISTRADOR SISTEMA"))
+            
+            if (User.IsInRole("ASSOCIADO"))
+            {
+                return RedirectToAction("Movimentacoes", "InstrumentoMusical");
+            }
+            else if(User.IsInRole("ADMINISTRADOR SISTEMA"))
             {
                 return RedirectToAction(nameof(Index), "GrupoMusical");
             }

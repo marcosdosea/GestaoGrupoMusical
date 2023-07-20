@@ -61,5 +61,17 @@ namespace Core.Service
 
         Task<Pessoa?> GetByCpf(string? cpf);
 
+        /// <summary>
+        /// Cadastra um Associado no banco de dados
+        /// </summary>
+        /// <param name="pessoa"></param>
+        /// <returns>
+        /// 200 - Sucesso <para />
+        /// 450 - Erro durante o cadastro identity <para />
+        /// 500 - Erro interno
+        /// </returns>
+        Task<int> AddAssociadoAsync(Pessoa pessoa);
+
+        Task<bool> NotificarCadastroAssociadoAsync(Pessoa pessoa);
     }
 }

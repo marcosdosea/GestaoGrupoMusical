@@ -50,29 +50,13 @@
                             <label asp-for="Sexo" class="control-label"></label>
                             <div class="d-flex justify-content-around">
                                 @{
-                                    if (Model.Sexo == "F")
+                                    foreach (var item in Model.sexoPessoa)
                                     {
                                         <div>
-                                            <label asp-for="Sexo">Masculino</label>
-                                            <input type="radio" value="M" asp-for="Sexo" />
-                                        </div>
-                                        <div>
-                                            <label asp-for="Sexo">Feminino</label>
-                                            <input type="radio" value="F" asp-for="Sexo" checked />
+                                            <label for="@item.Key">@item.Key</label>
+                                            <input class="form-check-input" type="radio" value="@item.Value" asp-for="Sexo" id="@item.Key" />
                                         </div>
                                     }
-                                    else
-                                    {
-                                        <div>
-                                            <label asp-for="Sexo">Masculino</label>
-                                            <input type="radio" value="M" asp-for="Sexo" checked />
-                                        </div>
-                                        <div>
-                                            <label asp-for="Sexo">Feminino</label>
-                                            <input type="radio" value="F" asp-for="Sexo" />
-                                        </div>
-                                    }
-
                                 }
                             </div>
                             <span asp-validation-for="Sexo" class="text-danger"></span>
@@ -106,20 +90,9 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="container">
                     <div class="row">
-                        <div class="form-group col-xxl">
-                            <label asp-for="IdPapelGrupo" class="control-label"></label>
-                            <select asp-items="@Model.ListaPapelGrupo" asp-for="IdPapelGrupo" class="form-select"></select>
-                            <span asp-validation-for="IdPapelGrupo" class="text-danger"></span>
-                        </div>
-                        <div hidden class="form-group col-5">
-                            <label hidden asp-for="IdGrupoMusical" class="control-label"></label>
-                            <select hidden asp-items="@Model.ListaGrupoMusical" asp-for="IdGrupoMusical" class="form-select"></select>
-                            <span asp-validation-for="IdGrupoMusical" class="text-danger"></span>
-                        </div>
-                        <div class="form-group col-xl">
+                        <div class="form-group col-sm">
                             <label class="control-label" asp-for="Ativo"></label>
                             <select asp-for="Ativo" class="form-select">
                                 <option value="1">Sim</option>

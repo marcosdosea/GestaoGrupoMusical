@@ -42,7 +42,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [HttpGet]
         public async Task<IActionResult> Autenticar()
         {
-            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+            await _signInManager.SignOutAsync();
             return View();
         }
 
@@ -72,8 +72,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [HttpPost]
         public async Task<IActionResult> Cadastrar(CadastrarViewModel model)
         {
-            model.Pessoa.IdPapelGrupo = 3;
-            model.Pessoa.IdGrupoMusical = 1;
             model.Pessoa.IdManequim = 1;
             model.Pessoa.Cpf = model.Pessoa.Cpf.Replace("-", string.Empty).Replace(".", string.Empty);
             model.Pessoa.Cep = model.Pessoa.Cep.Replace("-", string.Empty);

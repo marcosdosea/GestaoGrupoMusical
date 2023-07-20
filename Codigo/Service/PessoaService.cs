@@ -3,9 +3,7 @@ using Core.DTO;
 using Core.Service;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
 using Email;
-using System.Diagnostics.Metrics;
 
 namespace Service
 {
@@ -343,6 +341,53 @@ namespace Service
 
         }
 
+        public async Task<int> AddAssociadoAsync(Pessoa pessoa)
+        {
+            using var transaction = _context.Database.BeginTransaction();
+
+            try
+            {
+                int createResult = await Create(pessoa);
+                if (createResult != 200)
+                {
+                    await transaction.RollbackAsync();
+                    return createResult;
+                }
+
+                var user = CreateUser();
+
+                user.Email = pessoa.Email;
+
+                await _userStore.SetUserNameAsync(user, pessoa.Cpf, CancellationToken.None);
+                var result = await _userManager.CreateAsync(user, pessoa.Cpf);
+
+                if (result.Succeeded)
+                {
+                    bool roleExists = await _roleManager.RoleExistsAsync("ASSOCIADO");
+                    if (!roleExists)
+                    {
+                        await _roleManager.CreateAsync(new IdentityRole("ASSOCIADO"));
+                    }
+
+                    var userDb = await _userManager.FindByNameAsync(pessoa.Cpf);
+                    await _userManager.AddToRoleAsync(userDb, "ASSOCIADO");
+
+                    await NotificarCadastroAssociadoAsync(pessoa);
+
+                    await transaction.CommitAsync();
+                    return createResult;
+                }
+
+                await transaction.RollbackAsync();
+                return 450;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                return 500;
+            }
+        }
+
         public async Task<IEnumerable<AssociadoDTO>> GetAllAssociadoDTO()
         {
             var query = from pessoa in _context.Pessoas
@@ -436,6 +481,33 @@ namespace Service
                     Assunto = "Batalá - Administrador do Grupo",
                     Body = "<div style=\"text-align: center;\">\r\n    " +
                     "<h1>Administrador do Grupo</h1>\r\n    " +
+                    $"<h2>Olá, {pessoa.Nome}, a sua senha para acesso.</h2>\r\n" +
+                    "<div style=\"font-size: large;\">\r\n        " +
+                    $"<dt style=\"font-weight: 700;\">Login:</dt><dd>{pessoa.Cpf}</dd>" +
+                    $"<dt style=\"font-weight: 700;\">Senha:</dt><dd>{pessoa.Cpf}</dd>"
+                };
+
+                email.To.Add(pessoa.Email);
+
+                await EmailService.Enviar(email);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> NotificarCadastroAssociadoAsync(Pessoa pessoa)
+        {
+            try
+            {
+
+                EmailModel email = new()
+                {
+                    Assunto = "Batalá - Acesso como Associado",
+                    Body = "<div style=\"text-align: center;\">\r\n    " +
+                    "<h1>Associado</h1>\r\n    " +
                     $"<h2>Olá, {pessoa.Nome}, a sua senha para acesso.</h2>\r\n" +
                     "<div style=\"font-size: large;\">\r\n        " +
                     $"<dt style=\"font-weight: 700;\">Login:</dt><dd>{pessoa.Cpf}</dd>" +
