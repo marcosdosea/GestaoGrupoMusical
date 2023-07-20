@@ -71,8 +71,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     Sexo = admViewModel.Sexo,
                     IdGrupoMusical = admViewModel.IdGrupoMusical
                 };
-                String mensagem = String .Empty;
-                switch(await _pessoaService.AddAdmGroup(pessoa))
+                String mensagem = String.Empty;
+                switch (await _pessoaService.AddAdmGroup(pessoa))
                 {
                     case 200:
                         mensagem = "Administrador do grupo musical <b>Cadastrado</b> com <b>Sucesso</b>";
@@ -86,15 +86,17 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Cadastro</b> do administrador do grupo musical, se isso persistir entre em contato com o suporte";
                         Notificar(mensagem, Notifica.Erro);
                         return RedirectToAction(nameof(Index));
-            }
-             switch (await RequestPasswordReset(_userManager, pessoa.Email))
+                }
+                switch (await RequestPasswordReset(_userManager, pessoa.Email))
                 {
                     case 200:
                         Notificar("<b>Sucesso!</b> Administrador cadastrado e email para redefinição enviado.", Notifica.Sucesso); break;
                     default:
                         Notificar("<b>Erro!</b> Não foi possível enviar o email para redefinição de senha.", Notifica.Erro); break;
                 }
-            return RedirectToAction(nameof(Index), new { id=admViewModel.IdGrupoMusical });
+              
+            }
+            return RedirectToAction(nameof(Index), new { id = admViewModel.IdGrupoMusical });
         }
 
         /// <summary>
