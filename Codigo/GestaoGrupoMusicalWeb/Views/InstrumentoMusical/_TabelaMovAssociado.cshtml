@@ -4,16 +4,16 @@
     <table class="table mt-3">
         <thead>
             <tr class="bg-danger bg-opacity-75 text-white">
-                <th>
+                <th class="col-md-3">
                     @Html.DisplayNameFor(model => model.Data)
                 </th>
-                <th>
+                <th class="col-md-3">
                     @Html.DisplayNameFor(model => model.NomeInstrumento)
                 </th>
-                <th>
+                <th class="col-md-3">
                     @Html.DisplayNameFor(model => model.Status)
                 </th>
-                <th>Ações</th>
+                <th class="col-md-3">Ações</th>
             </tr>
         </thead>
         <tbody>
@@ -34,8 +34,10 @@
                         <td class="py-3 border-0 d-flex flex-column flex-lg-row gap-3">
                             <form id="@(item.Id + "_confirmar")" asp-controller="InstrumentoMusical" asp-action="ConfirmarMovimentacao" asp-route-idMovimentacao="@item.Id" method="post">
                                 <a role="button" class="btn btn-sm btn-secondary"
-                                   onclick="(() => {confirm('Deseja notificar a movimentação?') ? document.getElementById('@(item.Id + "_confirmar")').submit() : null})()">
-                                    <i class="fa-solid fa-envelope"></i>
+                                   data-bs-toggle="modal" data-bs-target="#associadoMovimentacaoModal"
+                                   @*onclick="(() => {confirm('Deseja notificar a movimentação?') ? document.getElementById('@(item.Id + "_confirmar")').submit() : null})()"*@
+                                   onclick="showModal('@(item.Id + "_confirmar")', 'associadoMovimentacaoModal')">
+                                    <i class="fa-solid fa-check"></i>
                                     Confirmar
                                 </a>
                             </form>
