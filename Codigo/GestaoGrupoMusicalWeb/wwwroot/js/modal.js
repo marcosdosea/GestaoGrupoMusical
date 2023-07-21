@@ -1,7 +1,9 @@
 function showModal(formId, modalId) {
-    form = $(`#${formId}`);
-    modal = $(`#${modalId}`);
-
-    console.log(form.html());
-    console.log(modal.html());
+    if (typeof (formId) === "string" && typeof (modalId) === "string") {
+        form = $(`#${formId}`);
+        modal = $(`#${modalId}`);
+        if (form != null && modal != null) {
+            modal.find("form").attr("action", form.attr("action"));
+        }
+    }
 }
