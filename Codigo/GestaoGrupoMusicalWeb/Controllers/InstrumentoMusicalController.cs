@@ -72,7 +72,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 switch (await _instrumentoMusical.Create(instrumentoMusicalModel))
                 {
                     case 100:
-                        Notificar("A data de aquisição <b>" + instrumentoMusicalModel.DataAquisicao.ToShortDateString() + "</b> é maior que a data de Hoje <b>"+ DateTime.Now.ToShortDateString() +"</b>", Notifica.Alerta);
+                        Notificar("A data de aquisição <b>" + instrumentoMusicalModel.DataAquisicao.ToShortDateString() + "</b> é maior que a data de Hoje <b>" + DateTime.Now.ToShortDateString() + "</b>", Notifica.Alerta);
                         break;
                     case 500:
                         Notificar("Falha ao <b>cadastrar<b> instrumento.", Notifica.Erro);
@@ -85,7 +85,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
             IEnumerable<Tipoinstrumento> listaInstrumentos = await _instrumentoMusical.GetAllTipoInstrumento();
             instrumentoMusicalViewModel.ListaInstrumentos = new SelectList(listaInstrumentos, "Id", "Nome", null);
-            return View(nameof(Create),instrumentoMusicalViewModel);
+            return View(nameof(Create), instrumentoMusicalViewModel);
         }
 
 
@@ -132,6 +132,16 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             if (ModelState.IsValid)
             {
+                if (await _instrumentoMusical.Edit(_mapper.Map<Instrumentomusical>(instrumentoMusicalViewModel)) == 500)
+                {
+                    Notificar("Falha ao <b>Editar</b> instrumento.", Notifica.Erro);
+                    return RedirectToAction(nameof(Edit));
+                }
+                if (instrumentoMusicalViewModel.DataAquisicao > DateTime.Now)
+                {
+                    Notificar("A data de aquisição <b>" + instrumentoMusicalViewModel.DataAquisicao.ToShortDateString() + "</b> é maior que a data de Hoje <b>" + DateTime.Now.ToShortDateString() + "</b>", Notifica.Alerta);
+                    return RedirectToAction(nameof(Edit));
+                }
                 var instrumentoMusical = _mapper.Map<Instrumentomusical>(instrumentoMusicalViewModel);
                 await _instrumentoMusical.Edit(instrumentoMusical);
                 Notificar("Instrumento Musical <b>Editado</b> com <b>Sucesso</b>.", Notifica.Sucesso);
@@ -155,7 +165,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 Notificar("Não é permitido <b>Deletar</b> os dados de um instrumento <b>Emprestado</b>.", Notifica.Alerta);
                 return RedirectToAction(nameof(Index));
             }
-                
+
         }
 
         // POST: InstrumentoMusicalController/Delete/5
@@ -243,7 +253,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                             return RedirectToAction(nameof(Movimentar), new { id = movimentacaoPost.IdInstrumentoMusical });
                         case 400:
                             Notificar("Não é possível <b>Emprestar</b> um instrumento <b>Danificado</b>", Notifica.Alerta);
-                            return RedirectToAction(nameof(Movimentar), new { id = movimentacaoPost.IdInstrumentoMusical } );
+                            return RedirectToAction(nameof(Movimentar), new { id = movimentacaoPost.IdInstrumentoMusical });
                         case 401:
                             if (movimentacao.TipoMovimento == "EMPRESTIMO")
                             {
@@ -255,10 +265,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
                             }
                             break;
                         case 402:
-                                Notificar("Esse <b>Associado</b> não corresponde ao <b>Empréstimo</b> desse <b>Instrumento</b>", Notifica.Erro);
+                            Notificar("Esse <b>Associado</b> não corresponde ao <b>Empréstimo</b> desse <b>Instrumento</b>", Notifica.Erro);
                             break;
                         case 500:
-                                Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Movimentação</b> do instrumento, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                            Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Movimentação</b> do instrumento, se isso persistir entre em contato com o suporte", Notifica.Erro);
                             break;
                     }
                 }
@@ -276,20 +286,20 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         public async Task<ActionResult> DeleteMovimentacao(int id, int IdInstrumento)
         {
-            switch(await _movimentacaoInstrumento.DeleteAsync(id))
+            switch (await _movimentacaoInstrumento.DeleteAsync(id))
             {
                 case 200:
                     Notificar("Movimentação <b>Excluida</b> com <b>Sucesso</b>", Notifica.Sucesso);
-                break;
+                    break;
                 case 400:
                     Notificar("Não é possível <b>Excluir</b> essa <b>Movimentação</b> de <b>Empréstimo</b> pois o instrumento não foi <b>Devolvido</b>", Notifica.Alerta);
-                break;
+                    break;
                 case 404:
                     Notificar($"O Id {id} não <b>Corresponde</b> a nenhuma <b>Movimentação</b>", Notifica.Erro);
-                break;
+                    break;
                 case 500:
                     Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Exclusão</b> da movimentação, se isso persistir entre em contato com o suporte", Notifica.Erro);
-                break;
+                    break;
             }
 
             return RedirectToAction(nameof(Movimentar), new { id = IdInstrumento });
@@ -300,24 +310,24 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         public async Task<ActionResult> NotificarViaEmail(int id, int IdInstrumento)
         {
-            switch(await _movimentacaoInstrumento.NotificarViaEmailAsync(id))
+            switch (await _movimentacaoInstrumento.NotificarViaEmailAsync(id))
             {
                 case 200:
                     Notificar("Notificação <b>Enviada</b> com <b>Sucesso</b>", Notifica.Sucesso);
-                break;
+                    break;
                 case 401:
                     Notificar("O instrumento <b>Não</b> está <b>Cadastrado</b> no sistema, por favor entre em contato com o suporte", Notifica.Erro);
-                break;
+                    break;
                 case 402:
                     Notificar("O correspondente <b>Não</b> está <b>Cadastrado</b> no sistema, por favor entre em contato com o suporte", Notifica.Erro);
-                break;
+                    break;
                 case 404:
                     Notificar($"O Id {id} não <b>Corresponde</b> a nenhuma <b>Movimentação</b>", Notifica.Erro);
-                break;
+                    break;
                 case 500:
                     Notificar("Desculpe, ocorreu um <b>Erro</b> durante o <b>Envio</b> da notificação, se isso persistir entre em contato com o suporte", Notifica.Erro);
                     break;
-            }  
+            }
             return RedirectToAction(nameof(Movimentar), new { id = IdInstrumento });
         }
 
@@ -325,7 +335,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> Movimentacoes()
         {
             var associado = await _pessoa.GetByCpf(User.Identity?.Name);
-            if(associado == null)
+            if (associado == null)
             {
                 return RedirectToAction("Sair", "Identity");
             }
