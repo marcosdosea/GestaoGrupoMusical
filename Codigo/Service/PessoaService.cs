@@ -180,12 +180,13 @@ namespace Service
             return _context.Pessoas.AsNoTracking();
         }
 
-        public async Task<bool> AddAdmGroup(Pessoa pessoa)
+        public async Task<int> AddAdmGroup(Pessoa pessoa)
         {
             using var transaction = _context.Database.BeginTransaction();
 
             try
             {
+                pessoa.Cpf = pessoa.Cpf.Replace(".", String.Empty).Replace("-", String.Empty);
                 //faz uma consulta para tentar buscar a primeira pessoa com o cpf que foi digitado
                 var pessoaF = _context.Pessoas.FirstOrDefault(p => p.Cpf == pessoa.Cpf);
 
@@ -202,7 +203,7 @@ namespace Service
                     if(await Create(pessoa) != 200)
                     {
                         await transaction.RollbackAsync();
-                        return false;
+                        return 500;//nao foi possivel criar a pessoa
                     }
 
                     var user = CreateUser();
@@ -272,22 +273,22 @@ namespace Service
                     if(await Edit(pessoaF) != 200)
                     {
                         await transaction.RollbackAsync();
-                        return false;
+                        return 500;//o usuario já possui cadastro em um grupo musical, não foi possiveç alterar ele para adm grupo musical
                     }
                 }
                 else
                 {
                     await transaction.RollbackAsync();
-                    return false;
+                    return 400;//erro 400, o usuario associado a outro grupo musical
                 }
 
                 await transaction.CommitAsync();
-                return true;
+                return 200;
             }
             catch
             {
                 await transaction.RollbackAsync();
-                return false;
+                return 500;//erro 500, do servidor
             }
         }
         /// <summary>

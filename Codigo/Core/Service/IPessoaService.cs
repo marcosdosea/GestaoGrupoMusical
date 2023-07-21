@@ -38,8 +38,16 @@ namespace Core.Service
         Task<IEnumerable<AssociadoDTO>> GetAllAssociadoDTO();
 
         bool GetCPFExistente(int id, string cpf);
-
-        Task<bool> AddAdmGroup(Pessoa pessoa);
+        /// <summary>
+        /// Cadastrar um associado ou não do grupo musical como  administrador do sistema
+        /// </summary>
+        /// <param name="pessoa"></param>
+        /// <returns>
+        /// 200 - Sucesso <para />
+        /// 400 - O associado faz parte de outro grupo musical
+        /// 500 - Erro interno
+        /// </returns>
+        Task<int> AddAdmGroup(Pessoa pessoa);
         Task<IEnumerable<AdministradorGrupoMusicalDTO>> GetAllAdmGroup(int id);
         Task<bool> RemoveAdmGroup(int id);
 

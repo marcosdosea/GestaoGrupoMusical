@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Service;
+using static GestaoGrupoMusicalWeb.Controllers.BaseController;
 using static GestaoGrupoMusicalWeb.Models.AdministradorGrupoMusicalViewModel;
 
 namespace GestaoGrupoMusicalWeb.Controllers
@@ -70,9 +71,22 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     Sexo = admViewModel.Sexo,
                     IdGrupoMusical = admViewModel.IdGrupoMusical
                 };
-
-                await _pessoaService.AddAdmGroup(pessoa);
-
+                String mensagem = String.Empty;
+                switch (await _pessoaService.AddAdmGroup(pessoa))
+                {
+                    case 200:
+                        mensagem = "Administrador do grupo musical <b>Cadastrado</b> com <b>Sucesso</b>";
+                        Notificar(mensagem, Notifica.Sucesso);
+                        return RedirectToAction(nameof(Index));
+                    case 400:
+                        mensagem = "<b>Alerta</b> ! Infelizemente não foi possível <b>cadastrar</b>, o usuário faz parte de outro grupo musical";
+                        Notificar(mensagem, Notifica.Alerta);
+                        return RedirectToAction(nameof(Index));
+                    case 500:
+                        mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Cadastro</b> do administrador do grupo musical, se isso persistir entre em contato com o suporte";
+                        Notificar(mensagem, Notifica.Erro);
+                        return RedirectToAction(nameof(Index));
+                }
                 switch (await RequestPasswordReset(_userManager, pessoa.Email))
                 {
                     case 200:
@@ -80,8 +94,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     default:
                         Notificar("<b>Erro!</b> Não foi possível enviar o email para redefinição de senha.", Notifica.Erro); break;
                 }
+              
             }
-            return RedirectToAction(nameof(Index), new { id=admViewModel.IdGrupoMusical });
+            return RedirectToAction(nameof(Index), new { id = admViewModel.IdGrupoMusical });
         }
 
         /// <summary>
