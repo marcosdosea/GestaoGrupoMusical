@@ -14,17 +14,20 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IInstrumentoMusicalService _instrumentoMusical;
         private readonly IPessoaService _pessoa;
         private readonly IMovimentacaoInstrumentoService _movimentacaoInstrumento;
+        private readonly IGrupoMusicalService _grupoMusical;
         private readonly IMapper _mapper;
 
         public InstrumentoMusicalController(
             IInstrumentoMusicalService instrumentoMusical,
             IPessoaService pessoa,
             IMovimentacaoInstrumentoService movimentacaoInstrumento,
+            IGrupoMusicalService grupoMusical,
             IMapper mapper)
         {
             _instrumentoMusical = instrumentoMusical;
             _pessoa = pessoa;
             _movimentacaoInstrumento = movimentacaoInstrumento;
+            _grupoMusical = grupoMusical;
             _mapper = mapper;
 
         }
@@ -66,6 +69,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         public async Task<ActionResult> Create(InstrumentoMusicalViewModel instrumentoMusicalViewModel)
         {
+
+            int idGrupo = _grupoMusical.GetIdGrupo(User.Identity.Name);
+            instrumentoMusicalViewModel.IdGrupoMusical = idGrupo;
             if (ModelState.IsValid)
             {
                 var instrumentoMusicalModel = _mapper.Map<Instrumentomusical>(instrumentoMusicalViewModel);
