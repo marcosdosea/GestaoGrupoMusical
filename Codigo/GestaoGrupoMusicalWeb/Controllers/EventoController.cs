@@ -57,7 +57,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public ActionResult Create(EventoViewModel eventoModel)
         {
 
-            int idGrupo = _grupoMusical.GetByIdGrupo(User.Identity.Name);
+            int idGrupo = _grupoMusical.GetIdGrupo(User.Identity.Name);
             eventoModel.IdGrupoMusical = idGrupo;
 
             if (ModelState.IsValid)
