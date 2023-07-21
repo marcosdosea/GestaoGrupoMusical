@@ -76,7 +76,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             var evento = _evento.Get(id);
             var eventoModel = _mapper.Map<EventoViewModel>(evento);
-            eventoModel.ListaGrupoMusical = new SelectList(_grupoMusical.GetAll(), "Id", "Nome");
             eventoModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome"); 
 
             return View(eventoModel);
@@ -90,11 +89,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
             if (ModelState.IsValid)
             {
                 var evento = _mapper.Map<Evento>(eventoModel);
-                _evento.Create(evento);
+                _evento.Edit(evento);
+                return RedirectToAction(nameof(Index));
             }
-            eventoModel.ListaGrupoMusical = new SelectList(_grupoMusical.GetAll(), "Id", "Nome");
             eventoModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome"); 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Edit", eventoModel);
         }
 
         // GET: EventoController/Delete/5
