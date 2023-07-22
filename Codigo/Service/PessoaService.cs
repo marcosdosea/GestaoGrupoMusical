@@ -559,7 +559,7 @@ namespace Service
             return await query;
         }
 
-        public async Task<IEnumerable<Pessoa>> GetAllByGroup(string cpf)
+        public async Task<IEnumerable<AssociadoDTO>> GetAllAssociadoDTOByGroup(string cpf)
         {
             if (cpf == null)
             {
@@ -580,7 +580,13 @@ namespace Service
 
             var query = from pessoaQ in _context.Pessoas
                         where pessoaQ.IdGrupoMusical == idGrupo
-                        select pessoaQ;
+                        && pessoaQ.IdPapelGrupo == 1            //retorna apenas associados
+                        select new AssociadoDTO
+                        {
+                            Id = pessoaQ.Id,
+                            Nome = pessoaQ.Nome,
+                            Ativo = pessoaQ.Ativo
+                        };
 
             return query;
         }
