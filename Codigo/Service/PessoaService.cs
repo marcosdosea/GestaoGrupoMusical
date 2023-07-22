@@ -561,10 +561,28 @@ namespace Service
 
         public async Task<IEnumerable<Pessoa>> GetAllByGroup(string cpf)
         {
-            var pessoa = await GetByCpf(cpf);
-            int idGrupo = pessoa.IdGrupoMusical;
+            if (cpf == null)
+            {
+                return null;
+            }
 
-            throw new NotImplementedException();
+            int idGrupo;
+
+            try
+            {
+                var pessoa = await GetByCpf(cpf);
+                idGrupo = pessoa.IdGrupoMusical;
+            }
+            catch
+            {
+                return null;
+            }
+
+            var query = from pessoaQ in _context.Pessoas
+                        where pessoaQ.IdGrupoMusical == idGrupo
+                        select pessoaQ;
+
+            return query;
         }
     }
 }
