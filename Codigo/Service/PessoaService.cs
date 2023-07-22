@@ -558,5 +558,13 @@ namespace Service
 
             return await query;
         }
+
+        public async Task<IEnumerable<Pessoa>> GetAllByGroup(string cpf)
+        {
+            var pessoa = await GetByCpf(cpf);
+            int idGrupo = pessoa.IdGrupoMusical;
+
+            throw new NotImplementedException();
+        }
     }
 }
