@@ -2,12 +2,19 @@
 
 @{
     ViewData["Title"] = "Excluir Instrumento";
+    ViewData["Index"] = "Instrumentos Musicais";
 }
 
 
 <div class="row">
     <div class="col-md-7">
         <h1 class="bg-danger bg-opacity-75 p-3 text-white fs-5">Excluir Instrumento</h1>
+        <br>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a asp-action="Index">@ViewData["Index"]</a></li>
+            </ol>
+        </nav>
         <br>
         <h3 class="fs-4">Tem certeza de que deseja excluir este instrumento?</h3>
 
