@@ -81,5 +81,13 @@ namespace Core.Service
         Task<int> AddAssociadoAsync(Pessoa pessoa);
 
         Task<bool> NotificarCadastroAssociadoAsync(Pessoa pessoa);
+
+        /// <summary>
+        /// Retorna todos os associados que pertecem ao
+        /// mesmo grupo musical da pessoal que está autenticado
+        /// </summary>
+        /// <param name="cpf">cpf da pessoa que está autentica</param>
+        /// <returns>todas as pessoas que estão no mesmo grupo musical</returns>
+        Task<IEnumerable<AssociadoDTO>> GetAllAssociadoDTOByGroup(String cpf);
     }
 }
