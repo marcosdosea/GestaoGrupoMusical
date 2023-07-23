@@ -8,34 +8,8 @@
 
 <h1 class="fs-5 my-3">@Html.DisplayNameFor(m => m.Emprestimos)</h1>
 
-<partial name="_TabelaMovAssociado" model="Model.Emprestimos" />
+<partial name="_TabelaEmprestimosAssociado" model="Model.Emprestimos" />
 
 <h1 class="fs-5 my-3">@Html.DisplayNameFor(m => m.Devolucoes)</h1>
 
-<partial name="_TabelaMovAssociado" model="Model.Devolucoes" />
-
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#associadoMovimentacaoModal">
-    Launch demo modal
-</button>
-
-<!-- Modal -->
-<div class="modal fade" id="associadoMovimentacaoModal" tabindex="-1" aria-labelledby="associadoMovimentacaoLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="associadoMovimentacaoLabel">Modal title</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                ...
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Não</button>
-                <form method="post">
-                    <button type="submit" class="btn btn-secondary">Sim</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+<partial name="_TabelaDevolucoesAssociado" model="Model.Devolucoes" />
