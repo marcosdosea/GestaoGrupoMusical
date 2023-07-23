@@ -239,7 +239,7 @@ namespace Service
                 _context.Update(movimentacao);
                 await _context.SaveChangesAsync();
 
-                return 200;
+                return movimentacao.TipoMovimento == "DEVOLUCAO" ? 201 : 200;
             }
             catch
             {

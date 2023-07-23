@@ -358,7 +358,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
             switch(await _movimentacaoInstrumento.ConfirmarMovimentacaoAsync(idMovimentacao, associado.Id))
             {
                 case 200:
-                    Notificar("Notificação <b>Enviada</b> com <b>Sucesso</b>", Notifica.Sucesso);
+                    Notificar("Empréstimo <b>Confirmado</b> com <b>Sucesso</b>", Notifica.Sucesso);
+                    break;
+                case 201:
+                    Notificar("Devolução <b>Confirmada</b> com <b>Sucesso</b>", Notifica.Sucesso);
                     break;
                 case 400:
                     Notificar("O <b>Associado</b> não corresponde ao mesmo do <b>Empréstimo</b>", Notifica.Erro);
