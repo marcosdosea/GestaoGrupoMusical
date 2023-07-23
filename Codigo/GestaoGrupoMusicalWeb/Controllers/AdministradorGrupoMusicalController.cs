@@ -81,7 +81,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         switch (await RequestPasswordReset(_userManager, pessoa.Email))
                         {
                             case 200:
-                                mensagem = "<b>Sucesso!</b> Administrador cadastrado e email para redefinição enviado.";
+                                mensagem = "<b>Sucesso!</b> Administrador cadastrado e enviado email para redefinição de senha.";
                                 Notificar(mensagem, Notifica.Sucesso);
                                 break;
                             default:
@@ -95,10 +95,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         mensagem = "<b>Alerta</b> ! Infelizemente não foi possível <b>cadastrar</b>, o usuário faz parte de outro grupo musical";
                         Notificar(mensagem, Notifica.Alerta);
                         return RedirectToAction(nameof(Index));
+
                     case 500:
                         mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Cadastro</b> do administrador do grupo musical, se isso persistir entre em contato com o suporte";
                         Notificar(mensagem, Notifica.Erro);
                         return RedirectToAction(nameof(Index));
+
                 }
             }
             return RedirectToAction(nameof(Index), new { id = admViewModel.IdGrupoMusical });
