@@ -72,12 +72,25 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     IdGrupoMusical = admViewModel.IdGrupoMusical
                 };
                 String mensagem = String.Empty;
-                switch (await _pessoaService.AddAdmGroup(pessoa))
+
+                int retAddAdm = await _pessoaService.AddAdmGroup(pessoa);
+
+                switch (retAddAdm)
                 {
                     case 200:
-                        mensagem = "Administrador do grupo musical <b>Cadastrado</b> com <b>Sucesso</b>";
-                        Notificar(mensagem, Notifica.Sucesso);
+                        switch (await RequestPasswordReset(_userManager, pessoa.Email))
+                        {
+                            case 200:
+                                mensagem = "<b>Sucesso!</b> Administrador cadastrado e email para redefinição enviado.";
+                                Notificar(mensagem, Notifica.Sucesso);
+                                break;
+                            default:
+                                mensagem = "<b>Alerta!</b> Administrador cadastrado, mas não foi possível enviar o email para redefinição de senha.";
+                                Notificar(mensagem, Notifica.Alerta);
+                                break;
+                        }
                         return RedirectToAction(nameof(Index));
+
                     case 400:
                         mensagem = "<b>Alerta</b> ! Infelizemente não foi possível <b>cadastrar</b>, o usuário faz parte de outro grupo musical";
                         Notificar(mensagem, Notifica.Alerta);
@@ -87,14 +100,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         Notificar(mensagem, Notifica.Erro);
                         return RedirectToAction(nameof(Index));
                 }
-                switch (await RequestPasswordReset(_userManager, pessoa.Email))
-                {
-                    case 200:
-                        Notificar("<b>Sucesso!</b> Administrador cadastrado e email para redefinição enviado.", Notifica.Sucesso); break;
-                    default:
-                        Notificar("<b>Erro!</b> Não foi possível enviar o email para redefinição de senha.", Notifica.Erro); break;
-                }
-              
             }
             return RedirectToAction(nameof(Index), new { id = admViewModel.IdGrupoMusical });
         }
