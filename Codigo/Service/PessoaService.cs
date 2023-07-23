@@ -558,5 +558,37 @@ namespace Service
 
             return await query;
         }
+
+        public async Task<IEnumerable<AssociadoDTO>> GetAllAssociadoDTOByGroup(string cpf)
+        {
+            if (cpf == null)
+            {
+                return null;
+            }
+
+            int idGrupo;
+
+            try
+            {
+                var pessoa = await GetByCpf(cpf);
+                idGrupo = pessoa.IdGrupoMusical;
+            }
+            catch
+            {
+                return null;
+            }
+
+            var query = from pessoaQ in _context.Pessoas
+                        where pessoaQ.IdGrupoMusical == idGrupo
+                        && pessoaQ.IdPapelGrupo == 1            //retorna apenas associados
+                        select new AssociadoDTO
+                        {
+                            Id = pessoaQ.Id,
+                            Nome = pessoaQ.Nome,
+                            Ativo = pessoaQ.Ativo
+                        };
+
+            return query;
+        }
     }
 }
