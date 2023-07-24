@@ -16,7 +16,7 @@ namespace Service
 
         public async Task<int> Create(Instrumentomusical instrumentoMusical)
         {
-            if(instrumentoMusical.DataAquisicao > DateTime.Now)
+            if (instrumentoMusical.DataAquisicao > DateTime.Now)
             {
                 return 100;
             }
@@ -64,12 +64,13 @@ namespace Service
             return await _context.Instrumentomusicals.AsNoTracking().ToListAsync();
         }
 
-        public async Task<IEnumerable<InstrumentoMusicalDTO>> GetAllDTO()
+        public async Task<IEnumerable<InstrumentoMusicalDTO>> GetAllDTO(int idGrupo)
         {
-            var query = await (from instrumento in _context.Instrumentomusicals
-                               join movimentacao in _context.Movimentacaoinstrumentos
+            var query = await (from instrumento in _context.Instrumentomusicals join
+                               movimentacao in _context.Movimentacaoinstrumentos
                                on instrumento.Id equals movimentacao.IdInstrumentoMusical into intMovi
                                from instrumentoMovi in intMovi.DefaultIfEmpty()
+                               where instrumento.IdGrupoMusical == idGrupo
                                orderby instrumentoMovi.Data descending
                                select new InstrumentoMusicalDTO
                                {
@@ -80,8 +81,9 @@ namespace Service
                                    NomeAssociado = instrumentoMovi.IdAssociadoNavigation.Nome
                                }).AsNoTracking().ToListAsync();
 
+
             var list = query.DistinctBy(m => m.Patrimonio).OrderBy(m => m.NomeInstrumento);
-     
+
             foreach (var instrumento in list)
             {
                 if (instrumento.Status == "DISPONIVEL")
@@ -102,8 +104,8 @@ namespace Service
         public async Task<string> GetNomeInstrumento(int id)
         {
             var query = await (from instrumento in _context.Instrumentomusicals
-                        where instrumento.Id == id
-                        select new { instrumento.IdTipoInstrumentoNavigation.Nome }).AsNoTracking().SingleOrDefaultAsync();
+                               where instrumento.Id == id
+                               select new { instrumento.IdTipoInstrumentoNavigation.Nome }).AsNoTracking().SingleOrDefaultAsync();
 
             return query?.Nome ?? "";
         }

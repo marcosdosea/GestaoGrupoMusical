@@ -125,7 +125,7 @@ namespace Service
             return query.AsNoTracking();
         }
 
-        public int GetByIdGrupo(string cpf)
+        public int GetIdGrupo(string cpf)
         {
             var query = _context.Pessoas
                  .Where(g => g.Cpf == cpf)
