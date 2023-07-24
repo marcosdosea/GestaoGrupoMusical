@@ -94,14 +94,15 @@ namespace GestaoGrupoMusicalWeb.Models
 
         [Display(Name = "Chave Pix", Prompt = "Chave pix")]
         [StringLength(100)]
-        public string? ChavePix { get; set; }
+        public string? ChavePix { get; set; } = "Nenhuma forma escolhida";
 
         [Display(Name = " Tipo da cave Pix")]
         [StringLength(15)]
-        public string? ChavePixtipo { get; set; }
+        public string? ChavePixtipo { get; set; } = "Nenhuma forma escolhida";
 
         public Dictionary<string, string> TipoChave { get; } = new()
         {
+            { "Nenhuma forma escolhida", "Nenhuma forma escolhida"},
             { "Chave aleatória", "chave aleatoria"},
             { "CPF", "cpf"},
             { "Celular", "celular" },
