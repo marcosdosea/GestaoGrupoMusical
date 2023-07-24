@@ -66,11 +66,11 @@ namespace Service
 
         public async Task<IEnumerable<InstrumentoMusicalDTO>> GetAllDTO(int idGrupo)
         {
-            var query = await (from instrumento in _context.Instrumentomusicals
-                               join grupo in _context.Grupomusicals on instrumento.IdGrupoMusical equals idGrupo join 
+            var query = await (from instrumento in _context.Instrumentomusicals join
                                movimentacao in _context.Movimentacaoinstrumentos
                                on instrumento.Id equals movimentacao.IdInstrumentoMusical into intMovi
                                from instrumentoMovi in intMovi.DefaultIfEmpty()
+                               where instrumento.IdGrupoMusical == idGrupo
                                orderby instrumentoMovi.Data descending
                                select new InstrumentoMusicalDTO
                                {
