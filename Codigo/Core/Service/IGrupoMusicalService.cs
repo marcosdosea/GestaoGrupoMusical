@@ -58,6 +58,6 @@ namespace Core.Service
         /// </summary>
         /// <param name="cpf"></param>
         /// <returns>Id do grupo</returns>
-        int GetByIdGrupo(string cpf);
+        int GetIdGrupo(string cpf);
     }
 }
