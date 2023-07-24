@@ -6,7 +6,8 @@
     $("#campoCnpj").inputmask("99.999.999/9999-99");
 
     function limparCampo(idCampo) {
-        $(idCampo).val("")
+        $(idCampo).inputmask('remove');
+        $(idCampo).val("");
     }
     $("#selectPix").change(function () {
         // Código para aplicar a máscara de acordo com a opção selecionada em #selectPix
@@ -25,7 +26,6 @@
             limparCampo("#chavePix");
             $("#spanChavePix").text("");
             $("#chavePix").attr("placeholder", "email@exemplo.com");
-            $("#chavePix").inputmask("");
             var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             var inputEmail = $("#chavePix").val();
             if (!emailRegex.test(inputEmail)) {
@@ -37,11 +37,11 @@
             limparCampo("#chavePix");
             $("#spanChavePix").text("");
             $("#chavePix").attr("placeholder", "Chave aleatória");
-            $("#chavePix").inputmask("");
         } else {
-            $("#chavePix").attr("placeholder", "Sem chave pix definida");
-            $("#chavePix").inputmask("");
+            limparCampo("#chavePix");
+            $("#chavePix").attr("placeholder", "Sem chave pix definida");   
             $("#spanChavePix").text(""); 
         }
     });
+
 });
