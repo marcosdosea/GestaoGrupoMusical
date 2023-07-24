@@ -36,7 +36,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         public async Task<ActionResult> Index()
         {
-            var listaInstrumentoMusical = await _instrumentoMusical.GetAllDTO();
+            
+            var listaInstrumentoMusical = await _instrumentoMusical.GetAllDTO(_grupoMusical.GetIdGrupo(User.Identity.Name));
             return View(listaInstrumentoMusical);
         }
 
