@@ -14,12 +14,18 @@
         var valorSelecionado = $(this).val();
         if (valorSelecionado == "cpf") {
             limparCampo("#chavePix");
+            $("#spanChavePix").text("");
+            $("#chavePix").attr("placeholder", "000.000.000-00");
             $("#chavePix").inputmask("999.999.999-99");
         } else if (valorSelecionado == "celular") {
             limparCampo("#chavePix");
+            $("#spanChavePix").text("");
+            $("#chavePix").attr("placeholder", "(99)99999-9999");
             $("#chavePix").inputmask("(99)99999-9999");
         } else if (valorSelecionado == "email") {
             limparCampo("#chavePix");
+            $("#spanChavePix").text("");
+            $("#chavePix").attr("placeholder", "email@exemplo.com");
             $("#chavePix").inputmask("");
             var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             var inputEmail = $("#chavePix").val();
@@ -30,9 +36,12 @@
             }
         } else if (valorSelecionado == "chave aleatoria") {
             limparCampo("#chavePix");
+            $("#spanChavePix").text("");
+            $("#chavePix").attr("placeholder", "Chave aleatória");
             $("#chavePix").inputmask("");
         } else {
-            $("#chavePix").val("Nenhuma forma escolhida");
+            $("#chavePix").attr("placeholder", "Sem chave pix definida");
+            $("#chavePix").inputmask("");
             $("#spanChavePix").text(""); 
         }
     });
