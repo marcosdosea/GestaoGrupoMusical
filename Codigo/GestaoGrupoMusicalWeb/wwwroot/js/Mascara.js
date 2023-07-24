@@ -44,5 +44,4 @@
             $("#spanChavePix").text(""); 
         }
     });
-
 });
