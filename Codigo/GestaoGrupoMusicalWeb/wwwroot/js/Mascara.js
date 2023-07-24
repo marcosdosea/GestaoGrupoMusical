@@ -8,7 +8,6 @@
     function limparCampo(idCampo) {
         $(idCampo).val("")
     }
-
     $("#selectPix").change(function () {
         // Código para aplicar a máscara de acordo com a opção selecionada em #selectPix
         var valorSelecionado = $(this).val();
