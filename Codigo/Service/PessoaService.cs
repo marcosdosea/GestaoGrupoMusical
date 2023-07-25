@@ -597,5 +597,14 @@ namespace Service
 
             return pessoa.Nome;
         }
+
+        public async Task<string> GetNomeAssociadoByEmail(string email)
+        {
+            var pessoaF = await (from pessoa in _context.Pessoas
+                         where pessoa.Email == email
+                         select pessoa).FirstOrDefaultAsync();
+
+            return pessoaF.Nome;
+        }
     }
 }

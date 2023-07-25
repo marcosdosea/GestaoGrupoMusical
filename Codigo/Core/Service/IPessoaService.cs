@@ -95,5 +95,7 @@ namespace Core.Service
         /// <param name="cpf">cpf do associado</param>
         /// <returns>nome do associado</returns>
         Task<string> GetNomeAssociado(string cpf);
+
+        Task<string> GetNomeAssociadoByEmail(string email);
     }
 }
