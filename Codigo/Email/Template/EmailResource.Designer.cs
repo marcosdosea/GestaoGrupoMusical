@@ -62,7 +62,7 @@ namespace Email.Template {
         
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a &lt;/div&gt;
-        ///        &lt;div class=&quot;tamanhoDivMsg&quot;&gt;
+        ///        &lt;div style=&quot;margin: 0px auto;max-width: 600px;padding-bottom: 50px;&quot;&gt;
         ///            &lt;h2&gt;
         ///                Abraços,&lt;br&gt;
         ///                Equipe Batalá
@@ -72,8 +72,7 @@ namespace Email.Template {
         ///                automática e não é possível dar continuidade com seu atendimento por aqui.
         ///            &lt;/p&gt;
         ///        &lt;/div&gt;
-        ///        &lt;div class=&quot;espacamentoIcons&quot;&gt;
-        ///            &lt;img src=&quot;https://img.icons8.com/?size=512&amp;id=8818&amp;forma [o restante da cadeia de caracteres foi truncado]&quot;;.
+        ///        &lt;div style=&quot;display: flex;margin: 0px auto;max-width: 600p [o restante da cadeia de caracteres foi truncado]&quot;;.
         /// </summary>
         internal static string EmailPatternDown {
             get {
@@ -84,18 +83,17 @@ namespace Email.Template {
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a &lt;!DOCTYPE html&gt;
         ///&lt;html lang=&quot;pt-BR&quot;&gt;
-        ///
         ///&lt;head&gt;
-        ///    &lt;meta charset=&quot;UTF-8&quot;&gt;
-        ///    &lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=edge&quot;&gt;
-        ///    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+        ///    &lt;title&gt;Mensagem de E-mail&lt;/title&gt;
         ///    &lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.googleapis.com&quot;&gt;
         ///    &lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.gstatic.com&quot; crossorigin&gt;
         ///    &lt;link href=&quot;https://fonts.googleapis.com/css2?family=Roboto:wght@100&amp;display=swap&quot; rel=&quot;stylesheet&quot;&gt;
-        ///    &lt;title&gt;Mensagem de E-mail&lt;/title&gt;
         ///&lt;/head&gt;
         ///
-        ///&lt;body&gt; [o restante da cadeia de caracteres foi truncado]&quot;;.
+        ///&lt;body style=&quot;font-family: &apos;Roboto&apos;, sans-serif;
+        ///  font-weight: 900;&quot;&gt;
+        ///    &lt;div style=&quot;background-color: #e5e5e5;&quot;&gt;
+        ///        &lt;div style=&quot;margin: 0px auto;max-width: 600px [o restante da cadeia de caracteres foi truncado]&quot;;.
         /// </summary>
         internal static string EmailPatternTop {
             get {

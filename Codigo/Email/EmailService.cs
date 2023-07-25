@@ -1,5 +1,6 @@
 ﻿using System.Net.Mail;
 using System.Net;
+using Email.Template;
 
 namespace Email
 {
@@ -20,7 +21,21 @@ namespace Email
             }
 
             mail.Subject = mailModel.Subject;
-            mail.Body = mailModel.Body;
+
+            //centro do html do email
+            string bodyCenter = "<div style=\"padding-top: 2%;padding-bottom: 2%;background-color: #198754;\"" +
+                                    "<h2 style=\"color: #FFFFFF;text-align: center;\">" + mailModel.Assunto + "</h2>" +
+                                "</div>" +
+                                "<div>" +
+                                    "<h3 style=\"text-indent: 10px;\">Olá, " + mailModel.AddresseeName + "</h3>" +
+                                    "<p style=\"text-indent: 10px;\">" +
+                                        mailModel.Body +
+                                    "</p>"+
+                                "</div>";
+
+            //mail.Body = mailModel.Body;
+            mail.Body = EmailResource.EmailPatternTop + bodyCenter + EmailResource.EmailPatternDown;
+
             mail.IsBodyHtml = true;
 
             using (SmtpClient smtp = new())

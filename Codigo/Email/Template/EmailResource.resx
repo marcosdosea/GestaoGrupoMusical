@@ -119,7 +119,7 @@
   </resheader>
   <data name="EmailPatternDown" xml:space="preserve">
     <value>&lt;/div&gt;
-        &lt;div class="tamanhoDivMsg"&gt;
+        &lt;div style="margin: 0px auto;max-width: 600px;padding-bottom: 50px;"&gt;
             &lt;h2&gt;
                 Abraços,&lt;br&gt;
                 Equipe Batalá
@@ -129,107 +129,38 @@
                 automática e não é possível dar continuidade com seu atendimento por aqui.
             &lt;/p&gt;
         &lt;/div&gt;
-        &lt;div class="espacamentoIcons"&gt;
-            &lt;img src="https://img.icons8.com/?size=512&amp;id=8818&amp;format=png" width="50px" height="50px"
+        &lt;div style="display: flex;margin: 0px auto;max-width: 600px;justify-content: space-evenly;padding-bottom: 50px;"&gt;
+            &lt;img src="https://img.icons8.com/?size=512&amp;id=8818&amp;format=png" width="50px"
                 alt="Logo do facebook"&gt;
-            &lt;img src="https://img.icons8.com/?size=512&amp;id=60014&amp;format=png" width="50px" height="50px"
+            &lt;img src="https://img.icons8.com/?size=512&amp;id=60014&amp;format=png" width="50px"
                 alt="Logo do twitter"&gt;
-            &lt;img src="https://img.icons8.com/?size=512&amp;id=32309&amp;format=png" width="50px" height="50px"
+            &lt;img src="https://img.icons8.com/?size=512&amp;id=32309&amp;format=png"width="50px"
                 alt="Logo do instagram"&gt;
-            &lt;img src="https://img.icons8.com/?size=512&amp;id=37326&amp;format=png" width="50px" height="50px"
+            &lt;img src="https://img.icons8.com/?size=512&amp;id=37326&amp;format=png" width="50px"
                 alt="Logo do youTube"&gt;
         &lt;/div&gt;
     &lt;/div&gt;
-    &lt;style&gt;
-        * {
-            font-family: 'Roboto', sans-serif;
-            font-weight: 900;
-        }
-        .espacamentoIcons {
-            display: flex;
-            margin: 0px auto;
-            max-width: 600px;
-            justify-content: space-evenly;
-            padding-bottom: 50px;
-        }
-
-        .corFundo {
-            background-color: #e5e5e5;
-        }
-
-        .tamanhoDivInfo {
-            margin: 0px auto;
-            max-width: 600px;
-            background-color: #FFFFFF;
-            padding-bottom: 15px;
-        }
-
-        .tamanhoDivMsg {
-            margin: 0px auto;
-            max-width: 600px;
-            padding-bottom: 50px;
-        }
-
-        .alturaDiv {
-	    margin: 10px 0px 20px 0px;
-	    align-items: center;
-	    justify-content: center;
-	    display: flex;
-        }
-
-	.alturaDiv h1{
-	    color: black;
-	    margin-left: 10px;
-	}
-	.alturaDiv img{
-	    margin-right: 10px;
-	}
-
-        p,
-        h2,
-        h3 {
-            padding-left: 20px;
-        }
-        p{
-            max-width: 600px;
-            text-indent: 10px;
-        }
-
-        .titulo {
-	    padding-top: 2%;
-	    padding-bottom: 2%;
-            background-color: #198754;
-        }
-	.titulo h2 {
-            color: #FFFFFF;
-            text-align: center;
-        }
-    &lt;/style&gt;
 &lt;/body&gt;
-
 &lt;/html&gt;</value>
     <comment>Parte de baixo do email</comment>
   </data>
   <data name="EmailPatternTop" xml:space="preserve">
     <value>&lt;!DOCTYPE html&gt;
 &lt;html lang="pt-BR"&gt;
-
 &lt;head&gt;
-    &lt;meta charset="UTF-8"&gt;
-    &lt;meta http-equiv="X-UA-Compatible" content="IE=edge"&gt;
-    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Mensagem de E-mail&lt;/title&gt;
     &lt;link rel="preconnect" href="https://fonts.googleapis.com"&gt;
     &lt;link rel="preconnect" href="https://fonts.gstatic.com" crossorigin&gt;
     &lt;link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100&amp;display=swap" rel="stylesheet"&gt;
-    &lt;title&gt;Mensagem de E-mail&lt;/title&gt;
 &lt;/head&gt;
 
-&lt;body&gt;
-    &lt;div class="corFundo"&gt;
-        &lt;div class="tamanhoDivInfo"&gt;
-            &lt;div class="alturaDiv"&gt;
+&lt;body style="font-family: 'Roboto', sans-serif;
+  font-weight: 900;"&gt;
+    &lt;div style="background-color: #e5e5e5;"&gt;
+        &lt;div style="margin: 0px auto;max-width: 600px;background-color: #FFFFFF;padding-bottom: 15px;"&gt;
+            &lt;div style="margin: 10px 0px 20px 0px;align-items: center;justify-content: center;display: flex;"&gt;
                 &lt;img src="https://i.imgur.com/xRzPBmL.png" alt="Logo do Batalá"&gt;
-                &lt;h1 style="font-weight: bold;"&gt;
+                &lt;h1 style="font-weight: bold;color: black;margin-left: 10px;"&gt;
                     Batalá Sergipe
                 &lt;/h1&gt;
             &lt;/div&gt;</value>
