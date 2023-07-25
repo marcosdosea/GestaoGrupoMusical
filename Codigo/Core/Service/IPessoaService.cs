@@ -43,7 +43,8 @@ namespace Core.Service
         /// </summary>
         /// <param name="pessoa"></param>
         /// <returns>
-        /// 200 - Sucesso <para />
+        /// 200 - Associado não existia, mas foi criado como administrador de grupo musical
+        /// 201 - Associado existia e foi promovido
         /// 400 - O associado faz parte de outro grupo musical
         /// 401 - O associado já é um administrador daquele grupo musical
         /// 500 - O associado já possui cadastro em um grupo musical, não foi possivel alterar ele para adm grupo musical
