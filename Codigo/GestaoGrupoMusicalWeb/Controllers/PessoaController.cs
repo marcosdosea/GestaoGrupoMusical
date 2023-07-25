@@ -159,7 +159,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         return RedirectToAction(nameof(Index));
                     case 500:
                         Notificar("<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Editar</b> do associado, se isso persistir entre em contato com o suporte", Notifica.Erro);
-                        return RedirectToAction("Edit", pessoaViewModel);
+                        return View("Edit", pessoaViewModel);
                     case 400:
                         mensagem = "<b>Alerta</b> ! Não foi possível editar, a data de entrada deve ser menor que " + DateTime.Now.ToShortDateString();
                         Notificar(mensagem, Notifica.Alerta);
