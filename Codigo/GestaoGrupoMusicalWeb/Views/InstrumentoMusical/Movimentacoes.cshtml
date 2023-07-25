@@ -1,6 +1,15 @@
-﻿@{
+﻿@model Core.DTO.InstrumentoAssociadoDTO.MovimentacoesAssociado
+@{
     Layout = "_LayoutAssociado";
-    ViewData["Title"] = "Movimentações de Instrumento";
+    ViewData["Title"] = "Movimentação de Instrumentos";
 }
 
-<h1 class="fs-5">@ViewData["Title"]</h1>
+<partial name="_Notificar" />
+
+<h1 class="fs-5 my-3">@Html.DisplayNameFor(m => m.Emprestimos)</h1>
+
+<partial name="_TabelaEmprestimosAssociado" model="Model.Emprestimos" />
+
+<h1 class="fs-5 my-3">@Html.DisplayNameFor(m => m.Devolucoes)</h1>
+
+<partial name="_TabelaDevolucoesAssociado" model="Model.Devolucoes" />

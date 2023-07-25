@@ -1,4 +1,5 @@
 ﻿using Core.DTO;
+using static Core.DTO.InstrumentoAssociadoDTO;
 
 namespace Core.Service
 {
@@ -45,5 +46,22 @@ namespace Core.Service
         /// 500 - Erro interno
         /// </returns>
         Task<int> NotificarViaEmailAsync(int id);
+
+        Task<MovimentacoesAssociado> MovimentacoesByIdAssociadoAsync(int idAssociado);
+
+        /// <summary>
+        /// Confirmar um empréstimo/devolução de instrumento
+        /// </summary>
+        /// <param name="idMovimentacao"></param>
+        /// <param name="idAssociado"></param>
+        /// <returns>
+        /// 200 - Sucesso Empréstimo <para />
+        /// 201 - Sucesso Devolução <para />
+        /// 400 - Associado inválido para empréstimo <para />
+        /// 401 - Associado inválido para devolução <para />
+        /// 404 - O id não corresponde a nenhuma movimentação <para />
+        /// 500 - Erro interno
+        /// </returns>
+        Task<int> ConfirmarMovimentacaoAsync(int idMovimentacao, int idAssociado);
     }
 }

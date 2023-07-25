@@ -93,6 +93,12 @@ namespace Core.Service
         /// <returns>todas as pessoas que estão no mesmo grupo musical</returns>
         Task<IEnumerable<AssociadoDTO>> GetAllAssociadoDTOByGroup(String cpf);
         /// <summary>
+        /// Pegar Pessoas de um grupo musical e em ordem
+        /// </summary>
+        /// <param name="cpf"></param>
+        /// <returns>Uma lista de pessoas de um grupo em ordem alfabetica</returns>
+        IEnumerable<Pessoa> GetAllPessoasOrder(int idGrupo);
+        /// <summary>
         /// Retorna o nome do associado passando o cpf
         /// </summary>
         /// <param name="cpf">cpf do associado</param>
