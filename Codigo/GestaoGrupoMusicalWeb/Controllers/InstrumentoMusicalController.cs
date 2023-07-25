@@ -215,8 +215,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
             movimentacaoModel.IdInstrumentoMusical = instrumento.Id;
             movimentacaoModel.NomeInstrumento = await _instrumentoMusical.GetNomeInstrumento(id);
 
-            var listaPessoas = _pessoa.GetAll().ToList();
-            listaPessoas.Remove(listaPessoas.Single(p => p.Cpf == User.Identity?.Name));
+            int idGrupo = _grupoMusical.GetIdGrupo(User.Identity.Name);
+            var listaPessoas = _pessoa.GetAllPessoasOrder(idGrupo).ToList();
+           // listaPessoas.Remove(listaPessoas.Single(p => p.Cpf == User.Identity?.Name));
 
             movimentacaoModel.ListaAssociado = new SelectList(listaPessoas, "Id", "Nome");
             return View(movimentacaoModel);

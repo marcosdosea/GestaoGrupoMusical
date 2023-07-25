@@ -591,5 +591,12 @@ namespace Service
 
             return query;
         }
+        public IEnumerable<Pessoa> GetAllPessoasOrder(int idGrupo)
+        {
+            return _context.Pessoas.Where(g => g.IdGrupoMusical == idGrupo
+                && g.IdPapelGrupoNavigation.Nome == "Associado" && g.Ativo == 1)
+                .OrderBy(g => g.Nome).AsNoTracking();
+        }
+
     }
 }
