@@ -45,7 +45,8 @@ namespace Core.Service
         /// <returns>
         /// 200 - Sucesso <para />
         /// 400 - O associado faz parte de outro grupo musical
-        /// 500 - O usuario já possui cadastro em um grupo musical, não foi possivel alterar ele para adm grupo musical
+        /// 401 - O associado já é um administrador daquele grupo musical
+        /// 500 - O associado já possui cadastro em um grupo musical, não foi possivel alterar ele para adm grupo musical
         /// 501 - Erro na operação
         /// </returns>
         Task<int> AddAdmGroup(Pessoa pessoa);
