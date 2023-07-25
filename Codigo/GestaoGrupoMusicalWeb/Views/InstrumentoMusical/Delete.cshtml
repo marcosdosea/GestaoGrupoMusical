@@ -26,11 +26,11 @@
 
             <hr />
             <div class="row">
-                <dt class="col-sm-12 form-group">
+                <div class="col-sm-4 form-group">
                     <label asp-for="Id" class="control-label"></label>
                     <input asp-for="Id" value=@Model.Id id="campoRua" class="form-control" disable d />
                     <span asp-validation-for="Id" class="text-danger"></span>
-                </dt>
+                </div>
                 <dt class="col-sm-6">
                     @Html.DisplayNameFor(model => model.Patrimonio)
                 </dt>
