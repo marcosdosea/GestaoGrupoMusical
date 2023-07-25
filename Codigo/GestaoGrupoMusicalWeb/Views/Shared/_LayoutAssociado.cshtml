@@ -40,9 +40,11 @@
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle fs-5 text-light" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    @User.FindFirst("UserName")?.Value
-                                    <i class="fa-solid fa-circle-user"></i>
+                                <a class="nav-link dropdown-toggle fs-5 text-light d-flex align-items-center" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <div class="card-body">
+                                        <h5 class="card-title">@User.FindFirst("UserName")?.Value</h5>
+                                        <h6 class="card-subtitle mb-2 text-muted">Associado</h6>
+                                    </div>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" href="#!">

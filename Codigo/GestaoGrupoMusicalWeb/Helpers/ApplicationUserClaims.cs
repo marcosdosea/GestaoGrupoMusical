@@ -1,4 +1,5 @@
 ﻿using Core;
+using Core.Service;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
@@ -7,18 +8,23 @@ namespace GestaoGrupoMusicalWeb.Helpers
 {
     public class ApplicationUserClaims : UserClaimsPrincipalFactory<UsuarioIdentity, IdentityRole>
     {
+        private readonly IPessoaService _pessoaService;
+
         public ApplicationUserClaims(
             UserManager<UsuarioIdentity> userManager, 
             RoleManager<IdentityRole> roleManager,
-            IOptions<IdentityOptions> options)
+            IOptions<IdentityOptions> options,
+            IPessoaService pessoaService)
             : base(userManager, roleManager, options)
         {
+            _pessoaService = pessoaService;
         }
 
         protected override async Task<ClaimsIdentity> GenerateClaimsAsync(UsuarioIdentity user)
         {
             var identity = await base.GenerateClaimsAsync(user);
-            identity.AddClaim(new Claim("UserName","Teste"));
+            var pessoa = await _pessoaService.GetByCpf(identity.Name);
+            identity.AddClaim(new Claim("UserName", pessoa?.Nome.Split(" ")[0] ?? ""));
 
             return identity;
         }
