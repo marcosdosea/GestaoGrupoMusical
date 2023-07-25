@@ -590,5 +590,12 @@ namespace Service
 
             return query;
         }
+
+        public async Task<string> GetNomeAssociado(string cpf)
+        {
+            var pessoa = await GetByCpf(cpf);
+
+            return pessoa.Nome;
+        }
     }
 }

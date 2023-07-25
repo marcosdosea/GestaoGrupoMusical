@@ -89,5 +89,11 @@ namespace Core.Service
         /// <param name="cpf">cpf da pessoa que está autentica</param>
         /// <returns>todas as pessoas que estão no mesmo grupo musical</returns>
         Task<IEnumerable<AssociadoDTO>> GetAllAssociadoDTOByGroup(String cpf);
+        /// <summary>
+        /// Retorna o nome do associado passando o cpf
+        /// </summary>
+        /// <param name="cpf">cpf do associado</param>
+        /// <returns>nome do associado</returns>
+        Task<string> GetNomeAssociado(string cpf);
     }
 }
