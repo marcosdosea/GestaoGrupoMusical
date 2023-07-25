@@ -291,7 +291,7 @@ namespace Service
                 }
 
                 await transaction.CommitAsync();
-                return sucesso;
+                return sucesso; //200 - usuario nao existia; 201 - usuario existia e foi promovido
             }
             catch
             {
