@@ -26,4 +26,4 @@
 
 
 
-**Certifique-se de revisar o código e testar as alterações localmente antes de solicitar o merge.**
+**Certifique-se de revisar o código e testar as alterações localmente antes de solicitar/fazer o merge.**
