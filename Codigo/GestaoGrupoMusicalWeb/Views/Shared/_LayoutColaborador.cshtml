@@ -50,17 +50,20 @@
                         <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle fs-5 text-light" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="fa-solid fa-circle-user"></i>
+                                    <div class="card-body">
+                                        <h5 class="card-title">@User.FindFirst("UserName")?.Value</h5>
+                                        <h6 class="card-subtitle mb-2 text-muted text-capitalize">@User.FindFirst("UserRole")?.Value</h6>
+                                    </div>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="#!">
+                                    @*<a class="dropdown-item" href="#!">
                                         <i class="fa-solid fa-address-card"></i>
                                         Meus Dados
                                     </a>
                                     <a class="dropdown-item" href="#!">
                                         <i class="fa-solid fa-gear"></i>
                                         Configurações
-                                    </a>
+                                    </a>*@
                                     <div class="dropdown-divider"></div>
                                     <form asp-controller="Identity" asp-action="Sair">
                                         <button class="dropdown-item">
