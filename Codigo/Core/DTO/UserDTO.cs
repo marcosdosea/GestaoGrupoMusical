@@ -17,5 +17,6 @@ namespace Core.DTO
         public string? Telefone2 { get; set; }
         public string Email { get; set; } = string.Empty;
         public int IdGrupoMusical { get; set; }
+        public int IdPapelGrupo { get; set; }
     }
 }

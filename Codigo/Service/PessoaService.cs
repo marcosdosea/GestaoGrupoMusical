@@ -4,6 +4,7 @@ using Core.Service;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Email;
+using System.Security.Cryptography;
 
 namespace Service
 {
@@ -550,11 +551,29 @@ namespace Service
             return false;
         }
 
-        public async Task<Pessoa?> GetByCpf(string? cpf)
+        public async Task<UserDTO?> GetByCpf(string? cpf)
         {
             var query = (from pessoa in _context.Pessoas
                         where pessoa.Cpf == cpf
-                        select pessoa).FirstOrDefaultAsync();
+                        select new UserDTO
+                        {
+                           Id = pessoa.Id,
+                           Nome = pessoa.Nome,
+                           Papel = pessoa.IdPapelGrupoNavigation.Nome,
+                           Sexo = pessoa.Sexo,
+                           Cep = pessoa.Cep,
+                           Rua = pessoa.Rua,
+                           Bairro = pessoa.Bairro,
+                           Cidade = pessoa.Cidade,
+                           Estado = pessoa.Estado,
+                           DataNascimento = pessoa.DataNascimento,
+                           Telefone1 = pessoa.Telefone1,
+                           Telefone2 = pessoa.Telefone2,
+                           Email = pessoa.Email,
+                           IdGrupoMusical = pessoa.IdGrupoMusical,
+                           IdPapelGrupo = pessoa.IdPapelGrupo
+                        }
+                        ).FirstOrDefaultAsync();
 
             return await query;
         }

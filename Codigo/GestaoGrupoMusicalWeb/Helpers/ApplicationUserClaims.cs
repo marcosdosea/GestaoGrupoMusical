@@ -25,6 +25,7 @@ namespace GestaoGrupoMusicalWeb.Helpers
             var identity = await base.GenerateClaimsAsync(user);
             var pessoa = await _pessoaService.GetByCpf(identity.Name);
             identity.AddClaim(new Claim("UserName", pessoa?.Nome.Split(" ")[0] ?? ""));
+            identity.AddClaim(new Claim("UserRole", pessoa?.Papel.ToLower() ?? ""));
 
             return identity;
         }

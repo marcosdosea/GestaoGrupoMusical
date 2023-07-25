@@ -67,7 +67,7 @@ namespace Core.Service
 
         Task<bool> NotificarCadastroAdmGrupoAsync(Pessoa pessoa);
 
-        Task<Pessoa?> GetByCpf(string? cpf);
+        Task<UserDTO?> GetByCpf(string? cpf);
 
         /// <summary>
         /// Cadastra um Associado no banco de dados
