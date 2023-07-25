@@ -25,7 +25,7 @@
             <h3 class="fs-4">Tem certeza de que deseja excluir este instrumento?</h3>
 
             <hr />
-            <dl class="row bg-light border border-sencodary">
+            <div class="row">
                 <dt class="col-sm-12 form-group">
                     <label asp-for="Id" class="control-label"></label>
                     <input asp-for="Id" value=@Model.Id id="campoRua" class="form-control" disable d />
@@ -61,7 +61,7 @@
                 <dd class="col-sm-6">
                     @Html.DisplayFor(model => model.IdGrupoMusical)
                 </dd>
-            </dl>
+            </div>
 
             <form asp-action="Delete" class="row d-flex flex-wrap-reverse justify-content-end">
                 <a asp-action="Index" class="col-3 m-2 btn btn-outline-secondary order-1">Voltar</a>
