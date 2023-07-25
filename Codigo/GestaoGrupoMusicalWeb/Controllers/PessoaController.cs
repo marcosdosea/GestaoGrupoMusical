@@ -159,27 +159,21 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         return RedirectToAction(nameof(Index));
                     case 500:
                         Notificar("<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Editar</b> do associado, se isso persistir entre em contato com o suporte", Notifica.Erro);
-                        return View("Edit", pessoaViewModel);
+                        break;
                     case 400:
                         mensagem = "<b>Alerta</b> ! Não foi possível editar, a data de entrada deve ser menor que " + DateTime.Now.ToShortDateString();
                         Notificar(mensagem, Notifica.Alerta);
-
-                        pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", pessoaViewModel.IdManequim);
-                        return View("Edit", pessoaViewModel);
+                        break;
                     case 401:
                         mensagem = "<b>Alerta</b> ! Não foi possível editar, a data de nascimento deve ser menor que " + DateTime.Now.ToShortDateString() + " e menor que 120 anos ";
                         Notificar(mensagem, Notifica.Alerta);
-                        pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", pessoaViewModel.IdManequim);
-                        return View("Edit", pessoaViewModel);
+                        break;
 
                 }
             }
-            else
-            {
-                pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", null);
-                return View("Edit", pessoaViewModel);
-            }
-            return RedirectToAction(nameof(Index));
+
+            pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", pessoaViewModel.IdManequim);
+            return View("Edit", pessoaViewModel);
         }
 
         // GET: PessoaController/Delete/5
