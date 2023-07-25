@@ -27,7 +27,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: PessoaController
         public async Task<ActionResult> Index()
         {
-            var listaPessoasDTO = await _pessoaService.GetAllAssociadoDTO();
+            var listaPessoasDTO = await _pessoaService.GetAllAssociadoDTOByGroup(User.Identity.Name);
 
             return View(listaPessoasDTO);
         }
