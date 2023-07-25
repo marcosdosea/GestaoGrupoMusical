@@ -225,7 +225,7 @@ namespace Service
                         var userDb = await _userManager.FindByNameAsync(pessoa.Cpf);
                         await _userManager.AddToRoleAsync(userDb, "ADMINISTRADOR GRUPO");
 
-                        await NotificarCadastroAdmGrupoAsync(pessoa);
+                        //await NotificarCadastroAdmGrupoAsync(pessoa);
                     }
                 }
                 else if (pessoaF.IdGrupoMusical == pessoa.IdGrupoMusical)
@@ -241,7 +241,7 @@ namespace Service
                         }
                         await _userManager.AddToRoleAsync(user, "ADMINISTRADOR GRUPO");
 
-                        await NotificarCadastroAdmGrupoAsync(pessoaF);
+                       // await NotificarCadastroAdmGrupoAsync(pessoaF);
                     }
                     else
                     {
@@ -264,7 +264,7 @@ namespace Service
                             var userDb = await _userManager.FindByNameAsync(pessoaF.Cpf);
                             await _userManager.AddToRoleAsync(userDb, "ADMINISTRADOR GRUPO");
 
-                            await NotificarCadastroAdmGrupoAsync(pessoaF);
+                            //await NotificarCadastroAdmGrupoAsync(pessoaF);
                         }
                     }
 
