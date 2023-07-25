@@ -190,6 +190,7 @@ namespace Service
                 //faz uma consulta para tentar buscar a primeira pessoa com o cpf que foi digitado
                 var pessoaF = _context.Pessoas.FirstOrDefault(p => p.Cpf == pessoa.Cpf);
 
+                //caso nao exista algeum com o cpf indicado
                 if (pessoaF == null)
                 {
                     pessoa.IdManequim = 1;
@@ -228,10 +229,12 @@ namespace Service
                         await NotificarCadastroAdmGrupoAsync(pessoa);
                     }
                 }
+                //caso exista e seja do mesmo grupo musical
                 else if (pessoaF.IdGrupoMusical == pessoa.IdGrupoMusical)
                 {
                     var user = await _userManager.FindByNameAsync(pessoaF.Cpf);
 
+                    //se o user identity existir
                     if (user != null)
                     {
                         bool roleExists = await _roleManager.RoleExistsAsync("ADMINISTRADOR GRUPO");
@@ -243,6 +246,7 @@ namespace Service
 
                         await NotificarCadastroAdmGrupoAsync(pessoaF);
                     }
+                    //caso não user identity exista
                     else
                     {
                         user = CreateUser();
@@ -288,7 +292,7 @@ namespace Service
             catch
             {
                 await transaction.RollbackAsync();
-                return 500;//erro 500, do servidor
+                return 501;//erro 500, do servidor
             }
         }
         /// <summary>
