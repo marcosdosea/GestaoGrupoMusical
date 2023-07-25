@@ -32,7 +32,6 @@ namespace Email
                                         mailModel.Body +
                                     "</p>"+
                                 "</div><br>" +
-                                "<p align=\"center\"style=\"font-size:12pt; color: black;\">Caso não tenha sido você quem solicitou a redefinição ignore este email.</p>" +
                                 "<br><br>";
 
             //mail.Body = mailModel.Body;
