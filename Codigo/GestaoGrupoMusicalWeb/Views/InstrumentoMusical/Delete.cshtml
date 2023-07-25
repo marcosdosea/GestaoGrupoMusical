@@ -28,15 +28,14 @@
             <div class="row">
                 <div class="col-sm-4 form-group">
                     <label asp-for="Id" class="control-label"></label>
-                    <input asp-for="Id" value=@Model.Id id="campoRua" class="form-control" disable d />
+                    <input asp-for="Id" value=@Model.Id id="campoRua" class="form-control" disable />
                     <span asp-validation-for="Id" class="text-danger"></span>
                 </div>
-                <dt class="col-sm-6">
-                    @Html.DisplayNameFor(model => model.Patrimonio)
-                </dt>
-                <dd class="col-sm-6">
-                    @Html.DisplayFor(model => model.Patrimonio)
-                </dd>
+                <div class="col-sm-8">
+                    <label asp-for="Patrimonio" class="control-label"></label>
+                    <input asp-for="Patrimonio" value=@Model.Patrimonio id="campoRua" class="form-control" disable />
+                    <span asp-validation-for="Patrimonio" class="text-danger"></span>
+                </div>
                 <dt class="col-sm-6">
                     @Html.DisplayNameFor(model => model.DataAquisicao)
                 </dt>
