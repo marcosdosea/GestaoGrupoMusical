@@ -231,8 +231,8 @@ namespace Service
                     }
                     sucesso = 200; //usuario CRIADO como administrador de grupo musical
                 }
-                //caso exista e seja do mesmo grupo musical
-                else if (pessoaF.IdGrupoMusical == pessoa.IdGrupoMusical)
+                //caso exista, seja do mesmo grupo musical e não seja adm de grupo (3)
+                else if (pessoaF.IdGrupoMusical == pessoa.IdGrupoMusical && pessoaF.IdPapelGrupo != 3)
                 {
                     var user = await _userManager.FindByNameAsync(pessoaF.Cpf);
 
@@ -283,6 +283,11 @@ namespace Service
                     }
 
                     sucesso = 201; //usuario promovido a administrador de grupo musical
+                }
+               
+                else if (pessoaF.IdGrupoMusical == pessoa.IdGrupoMusical && pessoaF.IdPapelGrupo == 3)
+                {
+                    return 401; // usuario já é administrador de grupo musical
                 }
                 else
                 {
