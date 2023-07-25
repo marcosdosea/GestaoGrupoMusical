@@ -78,10 +78,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 Assunto = "Batalá - Redefinição de Senha",
                 AddresseeName = userName,
-                Body = "<div style=\"text-align: center;\">\r\n    " +
-                "<h1>Redefinição de Senha</h1>\r\n    " +
-                $"<h2>Olá, aqui está o link para redefinir sua senha:</h2>\r\n" +
-                $"<a href=\"{callbackUrl}\" style=\"font-weight: 600;\">Clique Aqui</a>"
+                Body = "Aqui está o link para redefinir sua senha:\r\n" +
+                $"<a href=\"{callbackUrl}\"\">Clique Aqui</a>"
             };
 
             email.To.Add(userEmail);
