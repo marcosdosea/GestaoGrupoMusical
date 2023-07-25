@@ -45,7 +45,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         /// <param name="_userManager">UserManager do identity</param>
         /// <param name="userEmail">Email do usuario</param>
         /// <returns>200: Sucesso; 400: usuario não encontrado; 500: problema na geração do token</returns>
-        public async Task<int> RequestPasswordReset(UserManager<UsuarioIdentity> _userManager, string userEmail)
+        public async Task<int> RequestPasswordReset(UserManager<UsuarioIdentity> _userManager, string userEmail, string userName)
         {
             var user = await _userManager.FindByEmailAsync(userEmail);
 
@@ -77,6 +77,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             EmailModel email = new()
             {
                 Assunto = "Batalá - Redefinição de Senha",
+                AddresseeName = userName,
                 Body = "<div style=\"text-align: center;\">\r\n    " +
                 "<h1>Redefinição de Senha</h1>\r\n    " +
                 $"<h2>Olá, aqui está o link para redefinir sua senha:</h2>\r\n" +

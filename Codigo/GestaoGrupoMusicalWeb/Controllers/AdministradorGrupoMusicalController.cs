@@ -78,7 +78,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 switch (retAddAdm)
                 {
                     case 200:
-                        switch (await RequestPasswordReset(_userManager, pessoa.Email))
+                        switch (await RequestPasswordReset(_userManager, pessoa.Email, pessoa.Nome))
                         {
                             case 200:
                                 mensagem = "<b>Sucesso!</b> Administrador cadastrado e enviado email para redefinição de senha.";
