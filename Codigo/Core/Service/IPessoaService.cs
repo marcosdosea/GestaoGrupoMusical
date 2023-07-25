@@ -45,7 +45,8 @@ namespace Core.Service
         /// <returns>
         /// 200 - Sucesso <para />
         /// 400 - O associado faz parte de outro grupo musical
-        /// 500 - Erro interno
+        /// 500 - O usuario já possui cadastro em um grupo musical, não foi possivel alterar ele para adm grupo musical
+        /// 501 - Erro na operação
         /// </returns>
         Task<int> AddAdmGroup(Pessoa pessoa);
         Task<IEnumerable<AdministradorGrupoMusicalDTO>> GetAllAdmGroup(int id);
