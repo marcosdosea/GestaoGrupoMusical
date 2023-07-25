@@ -228,6 +228,7 @@ namespace Service
 
                         await NotificarCadastroAdmGrupoAsync(pessoa);
                     }
+                    return 200; //usuario CRIADO como administrador de grupo musical
                 }
                 //caso exista e seja do mesmo grupo musical
                 else if (pessoaF.IdGrupoMusical == pessoa.IdGrupoMusical)
@@ -279,6 +280,8 @@ namespace Service
                         await transaction.RollbackAsync();
                         return 500;//o usuario já possui cadastro em um grupo musical, não foi possiveç alterar ele para adm grupo musical
                     }
+
+                    return 201; //usuario promovido a administrador de grupo musical
                 }
                 else
                 {
