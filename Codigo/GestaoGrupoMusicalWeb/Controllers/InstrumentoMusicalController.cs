@@ -347,7 +347,44 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 return RedirectToAction("Sair", "Identity");
             }
 
-            return View();
+            var movimentacoes = await _movimentacaoInstrumento.MovimentacoesByIdAssociadoAsync(associado.Id);
+
+            return View(movimentacoes);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ConfirmarMovimentacao(int idMovimentacao)
+        {
+            var associado = await _pessoa.GetByCpf(User.Identity?.Name);
+            if (associado == null)
+            {
+                return RedirectToAction("Sair", "Identity");
+            }
+
+            switch(await _movimentacaoInstrumento.ConfirmarMovimentacaoAsync(idMovimentacao, associado.Id))
+            {
+                case 200:
+                    Notificar("Empréstimo <b>Confirmado</b> com <b>Sucesso</b>", Notifica.Sucesso);
+                    break;
+                case 201:
+                    Notificar("Devolução <b>Confirmada</b> com <b>Sucesso</b>", Notifica.Sucesso);
+                    break;
+                case 400:
+                    Notificar("O <b>Associado</b> não corresponde ao mesmo do <b>Empréstimo</b>", Notifica.Erro);
+                    break;
+                case 401:
+                    Notificar("O <b>Associado</b> não corresponde ao mesmo da <b>Devolução</b>", Notifica.Erro);
+                    break;
+                case 404:
+                    Notificar($"O Id {idMovimentacao} não <b>Corresponde</b> a nenhuma <b>Movimentação</b>", Notifica.Erro);
+                    break;
+                case 500:
+                    Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Confirmação</b>, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                    break;
+            }
+
+            return RedirectToAction(nameof(Movimentacoes));
         }
     }
 }

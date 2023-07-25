@@ -1,0 +1,71 @@
+﻿@model IEnumerable<Core.DTO.InstrumentoAssociadoDTO.MovimentacaoAssociado>
+
+<div class="table-responsive">
+    <table class="table mt-3">
+        <thead>
+            <tr class="bg-danger bg-opacity-75 text-white">
+                <th class="col-md-3">
+                    @Html.DisplayNameFor(model => model.Data)
+                </th>
+                <th class="col-md-3">
+                    @Html.DisplayNameFor(model => model.NomeInstrumento)
+                </th>
+                <th class="col-md-3">
+                    @Html.DisplayNameFor(model => model.Status)
+                </th>
+                <th class="col-md-3">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr class="border-bottom border-danger border-opacity-75 align-middle">
+                    <td class="py-3">
+                        @item.Data.ToString("dd/MM/yyyy")
+                    </td>
+                    <td>
+                        @item.NomeInstrumento
+                    </td>
+                    <td>
+                        @item.NomeStatus
+                    </td>
+                    @if (!item.Status)
+                    {
+                        <td class="py-3 border-0 d-flex flex-column flex-lg-row gap-3">
+                            <form id="@(item.Id + "_confirmar")" asp-controller="InstrumentoMusical" asp-action="ConfirmarMovimentacao" asp-route-idMovimentacao="@item.Id" method="post">
+                                <a role="button" class="btn btn-sm btn-secondary"
+                                   data-bs-toggle="modal" data-bs-target="#associadoEmprestimoModal"
+                                   onclick="showModal('@(item.Id + "_confirmar")', 'associadoEmprestimoModal')">
+                                    <i class="fa-solid fa-check"></i>
+                                    Confirmar
+                                </a>
+                            </form>
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+    @if (!Model.Any())
+    {
+        <p class="text-center mt-4 mb-0">Desculpe, nenhum <b>Empréstimo</b> encontrado :(</p>
+    }
+</div>
+
+<div class="modal fade" id="associadoEmprestimoModal" tabindex="-1" aria-labelledby="associadoEmprestimoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="associadoEmprestimoLabel">Confirmar Empréstimo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Deseja <b>Confirmar</b> esse <b>Empréstimo</b>?
+            </div>
+            <form method="post" class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary col-3 me-4" data-bs-dismiss="modal">Não</button>
+                <button type="submit" class="btn btn-secondary col-3">Sim</button>
+            </form>
+        </div>
+    </div>
+</div>
