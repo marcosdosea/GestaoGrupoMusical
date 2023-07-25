@@ -72,7 +72,7 @@ namespace Email.Template {
         ///                automática e não é possível dar continuidade com seu atendimento por aqui.
         ///            &lt;/p&gt;
         ///        &lt;/div&gt;
-        ///        &lt;div style=&quot;display: flex;margin: 0px auto;max-width: 600p [o restante da cadeia de caracteres foi truncado]&quot;;.
+        ///&lt;div style=&quot;display: flex;margin: 0px auto;max-width: 600px;justif [o restante da cadeia de caracteres foi truncado]&quot;;.
         /// </summary>
         internal static string EmailPatternDown {
             get {

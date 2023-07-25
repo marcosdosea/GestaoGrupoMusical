@@ -129,16 +129,12 @@
                 automática e não é possível dar continuidade com seu atendimento por aqui.
             &lt;/p&gt;
         &lt;/div&gt;
-        &lt;div style="display: flex;margin: 0px auto;max-width: 600px;justify-content: space-evenly;padding-bottom: 50px;"&gt;
-            &lt;img src="https://img.icons8.com/?size=512&amp;id=8818&amp;format=png" width="50px"
-                alt="Logo do facebook"&gt;
-            &lt;img src="https://img.icons8.com/?size=512&amp;id=60014&amp;format=png" width="50px"
-                alt="Logo do twitter"&gt;
-            &lt;img src="https://img.icons8.com/?size=512&amp;id=32309&amp;format=png"width="50px"
-                alt="Logo do instagram"&gt;
-            &lt;img src="https://img.icons8.com/?size=512&amp;id=37326&amp;format=png" width="50px"
-                alt="Logo do youTube"&gt;
-        &lt;/div&gt;
+&lt;div style="display: flex;margin: 0px auto;max-width: 600px;justify-content: space-evenly;padding-bottom: 50px;"&gt;
+                &lt;img src="https://img.icons8.com/?size=512&amp;id=8818&amp;format=png" width="50px" alt="Logo do facebook"&gt;
+                &lt;img src="https://img.icons8.com/?size=512&amp;id=60014&amp;format=png" width="50px" alt="Logo do twitter"&gt;
+                &lt;img src="https://img.icons8.com/?size=512&amp;id=32309&amp;format=png"width="50px" alt="Logo do instagram"&gt;
+                &lt;img src="https://img.icons8.com/?size=512&amp;id=37326&amp;format=png" width="50px" alt="Logo do youTube"&gt;
+            &lt;/div&gt;
     &lt;/div&gt;
 &lt;/body&gt;
 &lt;/html&gt;</value>
@@ -157,8 +153,8 @@
 &lt;body style="font-family: 'Roboto', sans-serif;
   font-weight: 900;"&gt;
     &lt;div style="background-color: #e5e5e5;"&gt;
-        &lt;div style="margin: 0px auto;max-width: 600px;background-color: #FFFFFF;padding-bottom: 15px;"&gt;
-            &lt;div style="margin: 10px 0px 20px 0px;align-items: center;justify-content: center;display: flex;"&gt;
+        &lt;div style="margin: 0px auto;max-width: 600px;background-color: white;padding-bottom: 15px;"&gt;
+            &lt;div align="center" style="margin: 10px 0px 10px 0px;align-items: center;justify-content: center;display: flex; background-color: white;"&gt;
                 &lt;img src="https://i.imgur.com/xRzPBmL.png" alt="Logo do Batalá"&gt;
                 &lt;h1 style="font-weight: bold;color: black;margin-left: 10px;"&gt;
                     Batalá Sergipe
