@@ -542,6 +542,7 @@ namespace Service
 
         public bool GetCPFExistente(int id, string cpf)
         {
+            cpf = cpf.Replace("-", string.Empty).Replace(".", string.Empty);
             var query = _context.Set<Pessoa>().AsNoTracking().FirstOrDefault(p => p.Id == id && p.Cpf == cpf);
             if (query != null)
             {
