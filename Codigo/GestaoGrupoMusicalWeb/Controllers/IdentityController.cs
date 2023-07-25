@@ -150,7 +150,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             if (ModelState.IsValid)
             { 
-                RequestPasswordReset(_userManager, model.Email);
+                RequestPasswordReset(_userManager, model.Email, await _pessoaService.GetNomeAssociado(User.Identity.Name));
             }
             
             return View();
