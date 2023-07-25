@@ -94,6 +94,6 @@ namespace Core.Service
         /// </summary>
         /// <param name="cpf"></param>
         /// <returns>Uma lista de pessoas de um grupo em ordem alfabetica</returns>
-        Task<IEnumerable<Pessoa>> GetAllPessoasOrder(int idGrupo);
+        IEnumerable<Pessoa> GetAllPessoasOrder(int idGrupo);
     }
 }
