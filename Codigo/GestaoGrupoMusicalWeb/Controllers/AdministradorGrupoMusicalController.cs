@@ -89,20 +89,24 @@ namespace GestaoGrupoMusicalWeb.Controllers
                                 Notificar(mensagem, Notifica.Alerta);
                                 break;
                         }
-                        return RedirectToAction(nameof(Index));
+                        break;
+                    case 201:
+                        mensagem = "<b>Sucesso!</b> Associado promovido a <b>Administrador do Grupo Musical</b>.";
+                        Notificar(mensagem, Notifica.Sucesso);
+                        break;
 
                     case 400:
                         mensagem = "<b>Alerta</b> ! Infelizemente não foi possível <b>cadastrar</b>, o usuário faz parte de outro grupo musical";
                         Notificar(mensagem, Notifica.Alerta);
-                        return RedirectToAction(nameof(Index));
+                        break;
 
                     case 500:
                         mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Cadastro</b> do administrador do grupo musical, se isso persistir entre em contato com o suporte";
                         Notificar(mensagem, Notifica.Erro);
-                        return RedirectToAction(nameof(Index));
-
+                        break;
                 }
             }
+           //return RedirectToAction(nameof(Index));
             return RedirectToAction(nameof(Index), new { id = admViewModel.IdGrupoMusical });
         }
 
