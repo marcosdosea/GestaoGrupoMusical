@@ -81,27 +81,41 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         switch (await RequestPasswordReset(_userManager, pessoa.Email, pessoa.Nome))
                         {
                             case 200:
-                                mensagem = "<b>Sucesso!</b> Administrador cadastrado e enviado email para redefinição de senha.";
+                                mensagem = "<b>Sucesso</b>! Administrador cadastrado e enviado email para redefinição de senha.";
                                 Notificar(mensagem, Notifica.Sucesso);
                                 break;
                             default:
-                                mensagem = "<b>Alerta!</b> Administrador cadastrado, mas não foi possível enviar o email para redefinição de senha.";
+                                mensagem = "<b>Alerta</b>! Administrador cadastrado, mas não foi possível enviar o email para redefinição de senha.";
                                 Notificar(mensagem, Notifica.Alerta);
                                 break;
                         }
-                        return RedirectToAction(nameof(Index));
+                        break;
+
+                    case 201:
+                        mensagem = "<b>Sucesso</b>! Associado promovido a <b>Administrador do Grupo Musical</b>.";
+                        Notificar(mensagem, Notifica.Sucesso);
+                        break;
 
                     case 400:
-                        mensagem = "<b>Alerta</b> ! Infelizemente não foi possível <b>cadastrar</b>, o usuário faz parte de outro grupo musical";
+                        mensagem = "<b>Alerta</b>! Infelizemente não foi possível <b>cadastrar</b>, o usuário faz parte de outro grupo musical";
                         Notificar(mensagem, Notifica.Alerta);
-                        return RedirectToAction(nameof(Index));
+                        break;
+
+                    case 401:
+                        mensagem = "<b>Erro</b>! Associado já é um administrador deste grupo.";
+                        Notificar(mensagem, Notifica.Erro);
+                        break;
 
                     case 500:
-                        mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Cadastro</b> do administrador do grupo musical, se isso persistir entre em contato com o suporte";
+                        mensagem = "<b>Erro</b>! Desculpe, ocorreu um erro durante a <b>Promoção</b> do associado para administrador, se isso persistir entre em contato com o suporte";
                         Notificar(mensagem, Notifica.Erro);
-                        return RedirectToAction(nameof(Index));
-
+                        break;
+                    case 501:
+                        mensagem = "<b>Erro</b>! Desculpe, ocorreu um erro durante a <b>Operação</b>, se isso persistir entre em contato com o suporte";
+                        Notificar(mensagem, Notifica.Erro);
+                        break;
                 }
+                return RedirectToAction(nameof(Index));
             }
             return RedirectToAction(nameof(Index), new { id = admViewModel.IdGrupoMusical });
         }
