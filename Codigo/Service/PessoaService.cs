@@ -4,6 +4,8 @@ using Core.Service;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Email;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Service
 {
@@ -99,7 +101,14 @@ namespace Service
                 pessoa.Cpf = pessoa.Cpf.Replace("-", string.Empty).Replace(".", string.Empty);
                 pessoa.Cep = pessoa.Cep.Replace("-", string.Empty);
 
-                _context.Pessoas.Update(pessoa);
+                var pessoaDb = await _context.Pessoas.Where(p => p.Id == pessoa.Id).AsNoTracking().SingleOrDefaultAsync();
+                if (pessoaDb != null && pessoaDb.Cpf == pessoa.Cpf)
+                {
+                    pessoa.IdGrupoMusical = pessoaDb.IdGrupoMusical;
+                    pessoa.IdPapelGrupo = pessoaDb.IdPapelGrupo;
+
+                    _context.Pessoas.Update(pessoa);
+                }
                 if (pessoa.DataEntrada == null && pessoa.DataNascimento == null)
                 {//Mensagem de sucesso
                     await _context.SaveChangesAsync();
@@ -214,7 +223,7 @@ namespace Service
 
                     user.Email = pessoa.Email;
 
-                    var result = await _userManager.CreateAsync(user, pessoa.Cpf);
+                    var result = await _userManager.CreateAsync(user, await GenerateRandomPassword(30));
 
                     if (result.Succeeded)
                     {
@@ -226,8 +235,6 @@ namespace Service
 
                         var userDb = await _userManager.FindByNameAsync(pessoa.Cpf);
                         await _userManager.AddToRoleAsync(userDb, "ADMINISTRADOR GRUPO");
-
-                        //await NotificarCadastroAdmGrupoAsync(pessoa);
                     }
                     sucesso = 200; //usuario CRIADO como administrador de grupo musical
                 }
@@ -245,8 +252,6 @@ namespace Service
                             await _roleManager.CreateAsync(new IdentityRole("ADMINISTRADOR GRUPO"));
                         }
                         await _userManager.AddToRoleAsync(user, "ADMINISTRADOR GRUPO");
-
-                       // await NotificarCadastroAdmGrupoAsync(pessoaF);
                     }
                     //caso não user identity exista
                     else
@@ -257,7 +262,7 @@ namespace Service
 
                         user.Email = pessoaF.Email;
 
-                        var result = await _userManager.CreateAsync(user, pessoaF.Cpf);
+                        var result = await _userManager.CreateAsync(user, await GenerateRandomPassword(30));
 
                         if (result.Succeeded)
                         {
@@ -269,8 +274,6 @@ namespace Service
 
                             var userDb = await _userManager.FindByNameAsync(pessoaF.Cpf);
                             await _userManager.AddToRoleAsync(userDb, "ADMINISTRADOR GRUPO");
-
-                            //await NotificarCadastroAdmGrupoAsync(pessoaF);
                         }
                     }
 
@@ -373,7 +376,7 @@ namespace Service
                 user.Email = pessoa.Email;
 
                 await _userStore.SetUserNameAsync(user, pessoa.Cpf, CancellationToken.None);
-                var result = await _userManager.CreateAsync(user, pessoa.Cpf);
+                var result = await _userManager.CreateAsync(user, await GenerateRandomPassword(30));
 
                 if (result.Succeeded)
                 {
@@ -385,8 +388,6 @@ namespace Service
 
                     var userDb = await _userManager.FindByNameAsync(pessoa.Cpf);
                     await _userManager.AddToRoleAsync(userDb, "ASSOCIADO");
-
-                    await NotificarCadastroAssociadoAsync(pessoa);
 
                     await transaction.CommitAsync();
                     return createResult;
@@ -564,11 +565,29 @@ namespace Service
             return false;
         }
 
-        public async Task<Pessoa?> GetByCpf(string? cpf)
+        public async Task<UserDTO?> GetByCpf(string? cpf)
         {
             var query = (from pessoa in _context.Pessoas
                         where pessoa.Cpf == cpf
-                        select pessoa).FirstOrDefaultAsync();
+                        select new UserDTO
+                        {
+                           Id = pessoa.Id,
+                           Nome = pessoa.Nome,
+                           Papel = pessoa.IdPapelGrupoNavigation.Nome,
+                           Sexo = pessoa.Sexo,
+                           Cep = pessoa.Cep,
+                           Rua = pessoa.Rua,
+                           Bairro = pessoa.Bairro,
+                           Cidade = pessoa.Cidade,
+                           Estado = pessoa.Estado,
+                           DataNascimento = pessoa.DataNascimento,
+                           Telefone1 = pessoa.Telefone1,
+                           Telefone2 = pessoa.Telefone2,
+                           Email = pessoa.Email,
+                           IdGrupoMusical = pessoa.IdGrupoMusical,
+                           IdPapelGrupo = pessoa.IdPapelGrupo
+                        }
+                        ).FirstOrDefaultAsync();
 
             return await query;
         }
@@ -611,6 +630,64 @@ namespace Service
                 .OrderBy(g => g.Nome).AsNoTracking();
         }
 
+        public async Task<string> GenerateRandomPassword(int length)
+        {
+            const string caracteresPermitidos = "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ123456789!@#$%^&*()-_=+[]{}|;:,.<>?";
+            const int minimoCaracteresEspeciais = 1;
+            const int minimoNumeros = 1;
+
+            StringBuilder senha = new StringBuilder();
+
+            using (var rng = new RNGCryptoServiceProvider())
+            {
+                // Adicionar pelo menos um caractere especial
+                byte[] randomBytes = new byte[1];
+
+                rng.GetBytes(randomBytes);
+
+                int indiceCaractereEspecial = randomBytes[0] % 20; // Índice entre 0 e 19
+
+                senha.Append(caracteresPermitidos[indiceCaractereEspecial]);
+
+                // Adicionar pelo menos um número
+                rng.GetBytes(randomBytes);
+
+                int indiceNumero = 20 + randomBytes[0] % 10; // Índice entre 20 e 29
+
+                senha.Append(caracteresPermitidos[indiceNumero]);
+
+                // Completar o restante da senha com caracteres aleatórios
+                for (int i = 0; i < length - minimoCaracteresEspeciais - minimoNumeros; i++)
+                {
+                    rng.GetBytes(randomBytes);
+                    int indiceCaractere = randomBytes[0] % caracteresPermitidos.Length;
+                    senha.Append(caracteresPermitidos[indiceCaractere]);
+                }
+            }
+
+            // Embaralhar a senha para torná-la mais segura
+            string senhaEmbaralhada = await PasswordShuffle(senha.ToString());
+
+            return senhaEmbaralhada;
+        }
+
+        public async Task<string> PasswordShuffle(string password)
+        {
+            char[] array = password.ToCharArray();
+            Random rng = new Random();
+            int n = array.Length;
+
+            while (n > 1)
+            {
+                n--;
+                int k = rng.Next(n + 1);
+                char value = array[k];
+                array[k] = array[n];
+                array[n] = value;
+            }
+
+            return new string(array);
+        }
 
         public async Task<string> GetNomeAssociado(string cpf)
         {
