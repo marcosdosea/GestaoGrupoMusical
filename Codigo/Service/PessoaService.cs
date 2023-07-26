@@ -4,6 +4,8 @@ using Core.Service;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Email;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Service
 {
@@ -598,5 +600,38 @@ namespace Service
                 .OrderBy(g => g.Nome).AsNoTracking();
         }
 
+        public Task<string> GenerateRandomPassword(int length)
+        {
+            const string caracteresPermitidos = "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ123456789!@#$%^&*()-_=+[]{}|;:,.<>?";
+            const int minimoCaracteresEspeciais = 1;
+            const int minimoNumeros = 1;
+
+            StringBuilder senha = new StringBuilder();
+            using (var rng = new RNGCryptoServiceProvider())
+            {
+                // Adicionar pelo menos um caractere especial
+                byte[] randomBytes = new byte[1];
+                rng.GetBytes(randomBytes);
+                int indiceCaractereEspecial = randomBytes[0] % 20; // Índice entre 0 e 19
+                senha.Append(caracteresPermitidos[indiceCaractereEspecial]);
+
+                // Adicionar pelo menos um número
+                rng.GetBytes(randomBytes);
+                int indiceNumero = 20 + randomBytes[0] % 10; // Índice entre 20 e 29
+                senha.Append(caracteresPermitidos[indiceNumero]);
+
+                // Completar o restante da senha com caracteres aleatórios
+                for (int i = 0; i < length - minimoCaracteresEspeciais - minimoNumeros; i++)
+                {
+                    rng.GetBytes(randomBytes);
+                    int indiceCaractere = randomBytes[0] % caracteresPermitidos.Length;
+                    senha.Append(caracteresPermitidos[indiceCaractere]);
+                }
+            }
+
+            // Embaralhar a senha para torná-la mais segura
+            string senhaEmbaralhada = EmbaralharString(senha.ToString());
+            return senhaEmbaralhada;
+        }
     }
 }
