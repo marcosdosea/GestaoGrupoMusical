@@ -235,8 +235,6 @@ namespace Service
 
                         var userDb = await _userManager.FindByNameAsync(pessoa.Cpf);
                         await _userManager.AddToRoleAsync(userDb, "ADMINISTRADOR GRUPO");
-
-                        await NotificarCadastroAdmGrupoAsync(pessoa);
                     }
                     sucesso = 200; //usuario CRIADO como administrador de grupo musical
                 }
@@ -254,8 +252,6 @@ namespace Service
                             await _roleManager.CreateAsync(new IdentityRole("ADMINISTRADOR GRUPO"));
                         }
                         await _userManager.AddToRoleAsync(user, "ADMINISTRADOR GRUPO");
-
-                        await NotificarCadastroAdmGrupoAsync(pessoaF);
                     }
                     //caso não user identity exista
                     else
@@ -278,8 +274,6 @@ namespace Service
 
                             var userDb = await _userManager.FindByNameAsync(pessoaF.Cpf);
                             await _userManager.AddToRoleAsync(userDb, "ADMINISTRADOR GRUPO");
-
-                            await NotificarCadastroAdmGrupoAsync(pessoaF);
                         }
                     }
 
@@ -394,8 +388,6 @@ namespace Service
 
                     var userDb = await _userManager.FindByNameAsync(pessoa.Cpf);
                     await _userManager.AddToRoleAsync(userDb, "ASSOCIADO");
-
-                    await NotificarCadastroAssociadoAsync(pessoa);
 
                     await transaction.CommitAsync();
                     return createResult;
@@ -695,6 +687,22 @@ namespace Service
             }
 
             return new string(array);
+        }
+
+        public async Task<string> GetNomeAssociado(string cpf)
+        {
+            var pessoa = await GetByCpf(cpf);
+
+            return pessoa.Nome;
+        }
+
+        public async Task<string> GetNomeAssociadoByEmail(string email)
+        {
+            var pessoaF = await (from pessoa in _context.Pessoas
+                         where pessoa.Email == email
+                         select pessoa).FirstOrDefaultAsync();
+
+            return pessoaF.Nome;
         }
     }
 }

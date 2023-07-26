@@ -116,5 +116,13 @@ namespace Core.Service
         /// <param name="password">string a ser embaralhada</param>
         /// <returns>string embaralhada</returns>
         Task<string> PasswordShuffle(string password);
+        /// <summary>
+        /// Retorna o nome do associado passando o cpf
+        /// </summary>
+        /// <param name="cpf">cpf do associado</param>
+        /// <returns>nome do associado</returns>
+        Task<string> GetNomeAssociado(string cpf);
+
+        Task<string> GetNomeAssociadoByEmail(string email);
     }
 }
