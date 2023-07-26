@@ -600,24 +600,30 @@ namespace Service
                 .OrderBy(g => g.Nome).AsNoTracking();
         }
 
-        public Task<string> GenerateRandomPassword(int length)
+        public async Task<string> GenerateRandomPassword(int length)
         {
             const string caracteresPermitidos = "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ123456789!@#$%^&*()-_=+[]{}|;:,.<>?";
             const int minimoCaracteresEspeciais = 1;
             const int minimoNumeros = 1;
 
             StringBuilder senha = new StringBuilder();
+
             using (var rng = new RNGCryptoServiceProvider())
             {
                 // Adicionar pelo menos um caractere especial
                 byte[] randomBytes = new byte[1];
+
                 rng.GetBytes(randomBytes);
+
                 int indiceCaractereEspecial = randomBytes[0] % 20; // Índice entre 0 e 19
+
                 senha.Append(caracteresPermitidos[indiceCaractereEspecial]);
 
                 // Adicionar pelo menos um número
                 rng.GetBytes(randomBytes);
+
                 int indiceNumero = 20 + randomBytes[0] % 10; // Índice entre 20 e 29
+
                 senha.Append(caracteresPermitidos[indiceNumero]);
 
                 // Completar o restante da senha com caracteres aleatórios
@@ -630,8 +636,27 @@ namespace Service
             }
 
             // Embaralhar a senha para torná-la mais segura
-            string senhaEmbaralhada = EmbaralharString(senha.ToString());
+            string senhaEmbaralhada = await PasswordShuffle(senha.ToString());
+
             return senhaEmbaralhada;
+        }
+
+        public async Task<string> PasswordShuffle(string password)
+        {
+            char[] array = password.ToCharArray();
+            Random rng = new Random();
+            int n = array.Length;
+
+            while (n > 1)
+            {
+                n--;
+                int k = rng.Next(n + 1);
+                char value = array[k];
+                array[k] = array[n];
+                array[n] = value;
+            }
+
+            return new string(array);
         }
     }
 }

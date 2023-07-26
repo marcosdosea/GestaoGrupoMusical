@@ -106,5 +106,12 @@ namespace Core.Service
         /// <param name="length">tamanho da senha</param>
         /// <returns>senha</returns>
         Task<string> GenerateRandomPassword(int length);
+
+        /// <summary>
+        /// Embaralha a string passada para ele
+        /// </summary>
+        /// <param name="password">string a ser embaralhada</param>
+        /// <returns>string embaralhada</returns>
+        Task<string> PasswordShuffle(string password);
     }
 }
