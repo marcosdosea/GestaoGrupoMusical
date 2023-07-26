@@ -214,7 +214,7 @@ namespace Service
 
                     user.Email = pessoa.Email;
 
-                    var result = await _userManager.CreateAsync(user, pessoa.Cpf);
+                    var result = await _userManager.CreateAsync(user, await GenerateRandomPassword(30));
 
                     if (result.Succeeded)
                     {
@@ -253,7 +253,7 @@ namespace Service
 
                         user.Email = pessoaF.Email;
 
-                        var result = await _userManager.CreateAsync(user, pessoaF.Cpf);
+                        var result = await _userManager.CreateAsync(user, await GenerateRandomPassword(30));
 
                         if (result.Succeeded)
                         {
@@ -362,7 +362,7 @@ namespace Service
                 user.Email = pessoa.Email;
 
                 await _userStore.SetUserNameAsync(user, pessoa.Cpf, CancellationToken.None);
-                var result = await _userManager.CreateAsync(user, pessoa.Cpf);
+                var result = await _userManager.CreateAsync(user, await GenerateRandomPassword(30));
 
                 if (result.Succeeded)
                 {
