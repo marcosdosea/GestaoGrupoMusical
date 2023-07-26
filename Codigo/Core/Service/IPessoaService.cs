@@ -21,6 +21,7 @@ namespace Core.Service
         /// 500 - Erro interno
         /// </returns>
         Task<int> Create(Pessoa pessoa);
+
         /// <summary>
         /// Edita uma pessoa no banco de dados
         /// </summary>
@@ -38,6 +39,7 @@ namespace Core.Service
         Task<IEnumerable<AssociadoDTO>> GetAllAssociadoDTO();
 
         bool GetCPFExistente(int id, string cpf);
+
         /// <summary>
         /// Cadastrar um associado ou não do grupo musical como  administrador do sistema
         /// </summary>
@@ -55,6 +57,7 @@ namespace Core.Service
         Task<bool> RemoveCollaborator(int id);
 
         IEnumerable<Papelgrupo> GetAllPapelGrupo();
+
         /// <summary>
         ///  Mudar o campo de ativo "Sim" para "Não",isso é um maneira de dizer que associado tá deletado
         /// </summary>
@@ -89,11 +92,19 @@ namespace Core.Service
         /// <param name="cpf">cpf da pessoa que está autentica</param>
         /// <returns>todas as pessoas que estão no mesmo grupo musical</returns>
         Task<IEnumerable<AssociadoDTO>> GetAllAssociadoDTOByGroup(String cpf);
+
         /// <summary>
         /// Pegar Pessoas de um grupo musical e em ordem
         /// </summary>
         /// <param name="cpf"></param>
         /// <returns>Uma lista de pessoas de um grupo em ordem alfabetica</returns>
         IEnumerable<Pessoa> GetAllPessoasOrder(int idGrupo);
+
+        /// <summary>
+        /// Gera senhas aleatorias
+        /// </summary>
+        /// <param name=""></param>
+        /// <returns></returns>
+        Task<string> GenerateRandomPassword(int length);
     }
 }
