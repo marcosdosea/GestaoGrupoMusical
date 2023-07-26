@@ -191,6 +191,7 @@ namespace Service
         public async Task<int> AddAdmGroup(Pessoa pessoa)
         {
             using var transaction = _context.Database.BeginTransaction();
+            int sucesso; //será usada para o retorno 200/201 de sucesso
 
             try
             {
@@ -198,6 +199,7 @@ namespace Service
                 //faz uma consulta para tentar buscar a primeira pessoa com o cpf que foi digitado
                 var pessoaF = _context.Pessoas.FirstOrDefault(p => p.Cpf == pessoa.Cpf);
 
+                //caso nao exista algeum com o cpf indicado
                 if (pessoaF == null)
                 {
                     pessoa.IdManequim = 1;
@@ -235,11 +237,14 @@ namespace Service
 
                         await NotificarCadastroAdmGrupoAsync(pessoa);
                     }
+                    sucesso = 200; //usuario CRIADO como administrador de grupo musical
                 }
-                else if (pessoaF.IdGrupoMusical == pessoa.IdGrupoMusical)
+                //caso exista, seja do mesmo grupo musical e não seja adm de grupo (3)
+                else if (pessoaF.IdGrupoMusical == pessoa.IdGrupoMusical && pessoaF.IdPapelGrupo != 3)
                 {
                     var user = await _userManager.FindByNameAsync(pessoaF.Cpf);
 
+                    //se o user identity existir
                     if (user != null)
                     {
                         bool roleExists = await _roleManager.RoleExistsAsync("ADMINISTRADOR GRUPO");
@@ -251,6 +256,7 @@ namespace Service
 
                         await NotificarCadastroAdmGrupoAsync(pessoaF);
                     }
+                    //caso não user identity exista
                     else
                     {
                         user = CreateUser();
@@ -283,6 +289,13 @@ namespace Service
                         await transaction.RollbackAsync();
                         return 500;//o usuario já possui cadastro em um grupo musical, não foi possiveç alterar ele para adm grupo musical
                     }
+
+                    sucesso = 201; //usuario promovido a administrador de grupo musical
+                }
+               
+                else if (pessoaF.IdGrupoMusical == pessoa.IdGrupoMusical && pessoaF.IdPapelGrupo == 3)
+                {
+                    return 401; // usuario já é administrador de grupo musical
                 }
                 else
                 {
@@ -291,12 +304,12 @@ namespace Service
                 }
 
                 await transaction.CommitAsync();
-                return 200;
+                return sucesso; //200 - usuario nao existia; 201 - usuario existia e foi promovido
             }
             catch
             {
                 await transaction.RollbackAsync();
-                return 500;//erro 500, do servidor
+                return 501;//erro 500, do servidor
             }
         }
         /// <summary>
