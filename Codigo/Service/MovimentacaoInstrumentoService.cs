@@ -3,6 +3,7 @@ using Core.DTO;
 using Core.Service;
 using Email;
 using Microsoft.EntityFrameworkCore;
+using static Core.DTO.InstrumentoAssociadoDTO;
 
 namespace Service
 {
@@ -176,6 +177,74 @@ namespace Service
                         select movimentacao).AsNoTracking().FirstOrDefaultAsync();
 
             return await query;
+        }
+
+        public async Task<MovimentacoesAssociado> MovimentacoesByIdAssociadoAsync(int idAssociado)
+        {
+            var devolucao = (from movimentacao in _context.Movimentacaoinstrumentos
+                             where movimentacao.IdAssociado == idAssociado
+                             where movimentacao.TipoMovimento == "DEVOLUCAO"
+                             orderby movimentacao.Data descending
+                             select new MovimentacaoAssociado
+                             {
+                                 Id = movimentacao.Id,
+                                 Data = movimentacao.Data,
+                                 NomeInstrumento = movimentacao.IdInstrumentoMusicalNavigation.IdTipoInstrumentoNavigation.Nome,
+                                 NomeStatus = movimentacao.ConfirmacaoAssociado == 1 ? "Confirmado" : "Aguardando Confirmação",
+                                 Status = movimentacao.ConfirmacaoAssociado == 1
+                             }
+                            ).AsNoTracking();
+
+            var emprestimo = (from movimentacao in _context.Movimentacaoinstrumentos
+                             where movimentacao.IdAssociado == idAssociado
+                             where movimentacao.TipoMovimento == "EMPRESTIMO"
+                             orderby movimentacao.Data descending
+                             select new MovimentacaoAssociado
+                             {
+                                 Id = movimentacao.Id,
+                                 Data = movimentacao.Data,
+                                 NomeInstrumento = movimentacao.IdInstrumentoMusicalNavigation.IdTipoInstrumentoNavigation.Nome,
+                                 NomeStatus = movimentacao.ConfirmacaoAssociado == 1 ? "Confirmado" : "Aguardando Confirmação",
+                                 Status = movimentacao.ConfirmacaoAssociado == 1
+                             }
+                            ).AsNoTracking();
+
+            MovimentacoesAssociado movimentacoes = new()
+            {
+                Devolucoes = await devolucao.ToListAsync(),
+                Emprestimos = await emprestimo.ToListAsync(),
+            };
+
+            return movimentacoes;
+        }
+
+        public async Task<int> ConfirmarMovimentacaoAsync(int idMovimentacao, int idAssociado)
+        {
+            try
+            {
+                var movimentacao = await _context.Movimentacaoinstrumentos.FindAsync(idMovimentacao);
+
+                if(movimentacao == null)
+                {
+                    return 404;
+                }
+
+                if(movimentacao.IdAssociado != idAssociado)
+                {
+                    return movimentacao.TipoMovimento == "DEVOLUCAO" ? 401 : 400;
+                }
+
+                movimentacao.ConfirmacaoAssociado = 1;
+
+                _context.Update(movimentacao);
+                await _context.SaveChangesAsync();
+
+                return movimentacao.TipoMovimento == "DEVOLUCAO" ? 201 : 200;
+            }
+            catch
+            {
+                return 500;
+            }
         }
 
         public async Task<int> NotificarViaEmailAsync(int id)

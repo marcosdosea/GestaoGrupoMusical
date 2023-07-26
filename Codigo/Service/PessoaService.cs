@@ -542,6 +542,7 @@ namespace Service
 
         public bool GetCPFExistente(int id, string cpf)
         {
+            cpf = cpf.Replace("-", string.Empty).Replace(".", string.Empty);
             var query = _context.Set<Pessoa>().AsNoTracking().FirstOrDefault(p => p.Id == id && p.Cpf == cpf);
             if (query != null)
             {
@@ -590,5 +591,12 @@ namespace Service
 
             return query;
         }
+        public IEnumerable<Pessoa> GetAllPessoasOrder(int idGrupo)
+        {
+            return _context.Pessoas.Where(g => g.IdGrupoMusical == idGrupo
+                && g.IdPapelGrupoNavigation.Nome == "Associado" && g.Ativo == 1)
+                .OrderBy(g => g.Nome).AsNoTracking();
+        }
+
     }
 }
