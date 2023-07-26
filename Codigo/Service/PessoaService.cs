@@ -99,7 +99,14 @@ namespace Service
                 pessoa.Cpf = pessoa.Cpf.Replace("-", string.Empty).Replace(".", string.Empty);
                 pessoa.Cep = pessoa.Cep.Replace("-", string.Empty);
 
-                _context.Pessoas.Update(pessoa);
+                var pessoaDb = await _context.Pessoas.Where(p => p.Id == pessoa.Id).AsNoTracking().SingleOrDefaultAsync();
+                if (pessoaDb != null && pessoaDb.Cpf == pessoa.Cpf)
+                {
+                    pessoa.IdGrupoMusical = pessoaDb.IdGrupoMusical;
+                    pessoa.IdPapelGrupo = pessoaDb.IdPapelGrupo;
+
+                    _context.Pessoas.Update(pessoa);
+                }
                 if (pessoa.DataEntrada == null && pessoa.DataNascimento == null)
                 {//Mensagem de sucesso
                     await _context.SaveChangesAsync();
