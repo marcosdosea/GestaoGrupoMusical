@@ -45,9 +45,12 @@ namespace Core.Service
         /// </summary>
         /// <param name="pessoa"></param>
         /// <returns>
-        /// 200 - Sucesso <para />
+        /// 200 - Associado não existia, mas foi criado como administrador de grupo musical
+        /// 201 - Associado existia e foi promovido
         /// 400 - O associado faz parte de outro grupo musical
-        /// 500 - Erro interno
+        /// 401 - O associado já é um administrador daquele grupo musical
+        /// 500 - O associado já possui cadastro em um grupo musical, não foi possivel alterar ele para adm grupo musical
+        /// 501 - Erro na operação
         /// </returns>
         Task<int> AddAdmGroup(Pessoa pessoa);
         Task<IEnumerable<AdministradorGrupoMusicalDTO>> GetAllAdmGroup(int id);
@@ -70,7 +73,7 @@ namespace Core.Service
 
         Task<bool> NotificarCadastroAdmGrupoAsync(Pessoa pessoa);
 
-        Task<Pessoa?> GetByCpf(string? cpf);
+        Task<UserDTO?> GetByCpf(string? cpf);
 
         /// <summary>
         /// Cadastra um Associado no banco de dados
