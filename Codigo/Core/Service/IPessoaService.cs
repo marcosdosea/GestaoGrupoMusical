@@ -103,8 +103,8 @@ namespace Core.Service
         /// <summary>
         /// Gera senhas aleatorias
         /// </summary>
-        /// <param name=""></param>
-        /// <returns></returns>
+        /// <param name="length">tamanho da senha</param>
+        /// <returns>senha</returns>
         Task<string> GenerateRandomPassword(int length);
     }
 }
