@@ -139,10 +139,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             var cpf = _pessoaService.GetCPFExistente(id,pessoaViewModel.Cpf);
 
-            IEnumerable<Papelgrupo> listaPapelGrupo = _pessoaService.GetAllPapelGrupo();
-            IEnumerable<Grupomusical> listaGrupoMusical = _grupoMusical.GetAll();
-            IEnumerable<Manequim> listaManequim = _manequim.GetAll();
-
             if (cpf)
             {
                 ModelState.Remove("Cpf");
@@ -172,6 +168,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 }
             }
 
+            IEnumerable<Manequim> listaManequim = _manequim.GetAll();
             pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", pessoaViewModel.IdManequim);
             return View("Edit", pessoaViewModel);
         }
