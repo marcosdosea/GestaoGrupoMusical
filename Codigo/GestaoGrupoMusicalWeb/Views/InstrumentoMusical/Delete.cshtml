@@ -51,12 +51,11 @@
                     <input asp-for="IdTipoInstrumento" value=@Model.IdTipoInstrumento class="form-control" disabled />
                     <span asp-validation-for="IdTipoInstrumento" class="text-danger"></span>
                 </div>
-                <dt class="col-sm-6">
-                    @Html.DisplayNameFor(model => model.IdGrupoMusical)
-                </dt>
-                <dd class="col-sm-6">
-                    @Html.DisplayFor(model => model.IdGrupoMusical)
-                </dd>
+                <div class="form-group col-xl-6">
+                    <label asp-for="IdGrupoMusical" class="control-label"></label>
+                    <input asp-for="IdGrupoMusical" value=@Model.IdGrupoMusical class="form-control" disabled />
+                    <span asp-validation-for="IdGrupoMusical" class="text-danger"></span>
+                </div>
             </div>
 
             <form asp-action="Delete" class="row d-flex flex-wrap-reverse justify-content-end">
