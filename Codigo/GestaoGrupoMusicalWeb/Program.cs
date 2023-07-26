@@ -4,6 +4,7 @@ using Core.Service;
 using Service;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
+using GestaoGrupoMusicalWeb.Helpers;
 
 namespace GestaoGrupoMusicalWeb
 {
@@ -76,6 +77,7 @@ namespace GestaoGrupoMusicalWeb
             builder.Services.AddTransient<IManequimService, ManequimService>();
             builder.Services.AddTransient<IInformativoService, InformativoService>();
 
+            builder.Services.AddScoped<IUserClaimsPrincipalFactory<UsuarioIdentity>, ApplicationUserClaims>();
            
             var app = builder.Build();
 
