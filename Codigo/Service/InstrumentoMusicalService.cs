@@ -33,10 +33,16 @@ namespace Service
 
         }
 
-        public async Task Delete(int id)
+        public async Task<int> Delete(int id)
         {
-            _context.Remove(await Get(id));
+            var instrumento = await Get(id);
+            if(instrumento == null)
+            {
+                return 404;
+            }
+            _context.Remove(instrumento);
             await _context.SaveChangesAsync();
+            return 200;
         }
 
         public async Task<int> Edit(Instrumentomusical instrumentoMusical)
