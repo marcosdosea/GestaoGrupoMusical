@@ -47,10 +47,10 @@
                     <td class="p-3">
                         @item.NomeAssociado
                     </td>
-                    <td class="d-flex flex-wrap border-0 p-3">
-                        <a role="button" class="btn btn-secondary btn-sm px-3 m-1" asp-controller="InstrumentoMusical" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"> </i> Editar </a>
-                        <a role="button" class="btn btn-secondary btn-sm px-3 m-1" asp-controller="InstrumentoMusical" asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-xmark"> </i> Excluir </a>
-                        <a role="button" class="btn btn-secondary btn-sm px-3 m-1" asp-controller="InstrumentoMusical" asp-action="Movimentar" asp-route-id="@item.Id"><i class="fa-solid fa-arrow-right-arrow-left"></i> Movimentar </a>
+                    <td class="d-flex flex-wrap border-0 align-items-center">
+                        <a role="button" class="btn btn-secondary btn-sm  m-2" asp-controller="InstrumentoMusical" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"> </i> Editar </a>
+                        <a role="button" class="btn btn-secondary btn-sm  m-2" asp-controller="InstrumentoMusical" asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-xmark"> </i> Excluir </a>
+                        <a role="button" class="btn btn-secondary btn-sm  m-2" asp-controller="InstrumentoMusical" asp-action="Movimentar" asp-route-id="@item.Id"><i class="fa-solid fa-arrow-right-arrow-left"></i> Movimentar </a>
                     </td>
                 </tr>
             }
