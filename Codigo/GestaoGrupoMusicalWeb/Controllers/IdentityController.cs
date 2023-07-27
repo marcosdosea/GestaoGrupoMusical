@@ -60,20 +60,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 }
                 else
                 {
-                    var pessoa = await _pessoaService.GetNomeAssociado(model.Cpf);
-                    if (!pessoa.Equals("Pessoa não encontrada"))
-                    {
-                        Notificar("<span class=\"fw-bold fs-5 mt-3\">Alerta ! A senha do usuário está incorreta, não é possível realizar a autenticação",
-               Notifica.Alerta);
-                    }
-                    else
-                    {
-                        Notificar("<span class=\"fw-bold fs-5 mt-3\">Alerta ! Esse cpf não existe no sistema, não é possível realizar a autenticação. Procure o suporte para mais informações",
-              Notifica.Alerta);
-                    }
+                   
+                        Notificar("<span class=\"fw-bold fs-5 mt-3\">Erro ! Houve um erro no login, não é possível realizar a autenticação. Qualquer dúvida contate o suporte",
+               Notifica.Erro);
+                 
                 }
             }
-            return View();
+            return View("Autenticar");
         }
 
         [HttpGet]
