@@ -26,11 +26,11 @@
             $("#chavePix").attr("placeholder", "000.000.000-00");
             $("#chavePix").inputmask("999.999.999-99");
         } else if (valorSelecionado == "celular") {
+            $('#spanChavePix').text("");
             $('#chavePix').off('change');
             limparCampo("#chavePix");
             $("#chavePix").attr("placeholder", "(99)99999-9999");
             $("#chavePix").inputmask("(99)99999-9999");
-            $("#spanChavePix").text("");
         } else if (valorSelecionado == "email") {
             limparCampo("#chavePix");
             $("#spanChavePix").text("");
