@@ -6,6 +6,14 @@ namespace Core.Service
     {
         Task<int> Create(Instrumentomusical instrumentoMusical);
         Task<int> Edit(Instrumentomusical instrumentoMusical);
+        /// <summary>
+        /// Remove um instrumento no banco de dados
+        /// </summary>
+        /// <param name="id">Id do Instrumento</param>
+        /// <returns>
+        /// 200 - Sucesso <para />
+        /// 404 - Instrumento não encontado <para />
+        /// </returns>
         Task<int> Delete(int id);
         Task<Instrumentomusical?> Get(int id);
         Task<IEnumerable<Instrumentomusical>> GetAll();
