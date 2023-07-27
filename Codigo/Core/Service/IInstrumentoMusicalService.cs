@@ -13,6 +13,8 @@ namespace Core.Service
         /// <returns>
         /// 200 - Sucesso <para />
         /// 404 - Instrumento não encontado <para />
+        /// 500 - Erro Interno
+        /// 501 - Erro No Banco de Dados
         /// </returns>
         Task<int> Delete(int id);
         Task<Instrumentomusical?> Get(int id);

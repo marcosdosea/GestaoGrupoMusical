@@ -2,6 +2,8 @@
 using Core.DTO;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+using System.Data.Common;
 
 namespace Service
 {
@@ -40,9 +42,16 @@ namespace Service
             {
                 return 404;
             }
-            _context.Remove(instrumento);
-            await _context.SaveChangesAsync();
-            return 200;
+            try
+            {
+                _context.Remove(instrumento);
+                await _context.SaveChangesAsync();
+                return 200;
+            }
+            catch(DbException)
+            {
+                return 501;
+            }
         }
 
         public async Task<int> Edit(Instrumentomusical instrumentoMusical)
