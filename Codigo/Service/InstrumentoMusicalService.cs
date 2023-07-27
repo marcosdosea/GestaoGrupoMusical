@@ -48,7 +48,7 @@ namespace Service
                 await _context.SaveChangesAsync();
                 return 200;
             }
-            catch(DbException)
+            catch(DbUpdateException)
             {
                 return 501;
             }

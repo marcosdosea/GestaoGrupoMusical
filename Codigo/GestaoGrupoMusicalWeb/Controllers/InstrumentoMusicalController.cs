@@ -190,8 +190,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     Notificar($"Nenhum <b>Instrumento Musical</b> corresponde ao id <b>{id}</b>.", Notifica.Erro);
                     break;
                 case 501:
-                    Notificar($"Desculpe, não é possível <b>Excluir</b> esse Instrumento Musical pois ele está associado a <b>Empréstimos/Devoluções</b>", Notifica.Erro);
-                    break;
+                    Notificar($"Desculpe, não é possível <b>Excluir</b> esse <b>Instrumento Musical</b> pois ele está associado a <b>Empréstimos ou Devoluções</b>", Notifica.Erro);
+                    return RedirectToAction(nameof(Delete), id);
             }
             
             return RedirectToAction(nameof(Index));
