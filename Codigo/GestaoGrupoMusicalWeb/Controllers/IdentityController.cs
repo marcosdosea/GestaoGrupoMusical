@@ -58,8 +58,15 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 {
                     return RedirectToAction("Index", "Home");
                 }
+                else
+                {
+                   
+                        Notificar("<span class=\"fw-bold fs-5 mt-3\">Erro ! Houve um erro no login, não é possível realizar a autenticação. Qualquer dúvida contate o suporte",
+               Notifica.Erro);
+                 
+                }
             }
-            return View();
+            return View("Autenticar");
         }
 
         [HttpGet]
