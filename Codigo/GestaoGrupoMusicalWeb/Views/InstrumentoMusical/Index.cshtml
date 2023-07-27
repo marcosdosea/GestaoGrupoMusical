@@ -15,19 +15,19 @@
     <table class="table">
         <thead>
             <tr class="bg-danger bg-opacity-75 text-white">
-                <th>
+                <th class="px-3">
                     @Html.DisplayNameFor(m => m.Patrimonio)
                 </th>
-                <th>
+                <th class="px-3">
                     @Html.DisplayNameFor(m => m.NomeInstrumento)
                 </th>
-                <th>
+                <th class="px-3">
                     @Html.DisplayNameFor(m => m.Status)
                 </th>
-                <th>
+                <th class="px-3">
                     @Html.DisplayNameFor(m => m.NomeAssociado)
                 </th>
-                <th>
+                <th class="px-3">
                     <span>Ações</span>
                 </th>
             </tr>
@@ -35,22 +35,22 @@
         <tbody>
             @foreach (var item in Model) {
                 <tr class="border-bottom border-danger border-opacity-75 align-middle">
-                    <td>
+                    <td class="p-3">
                         @item.Patrimonio
                     </td>
-                    <td>
+                    <td class="p-3">
                         @item.NomeInstrumento
                     </td>
-                    <td>
+                    <td class="p-3">
                         @item.Status
                     </td>
-                    <td>
+                    <td class="p-3">
                         @item.NomeAssociado
                     </td>
-                    <td class="d-flex flex-wrap justify-content-between border-0">
-                        <a role="button" class="btn btn-secondary btn-sm px-3 my-2" asp-controller="InstrumentoMusical" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"> </i> Editar </a>
-                        <a role="button" class="btn btn-secondary btn-sm px-3 my-2" asp-controller="InstrumentoMusical" asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-xmark"> </i> Excluir </a>
-                        <a role="button" class="btn btn-secondary btn-sm px-3 my-2" asp-controller="InstrumentoMusical" asp-action="Movimentar" asp-route-id="@item.Id"><i class="fa-solid fa-arrow-right-arrow-left"></i> Movimentar </a>
+                    <td class="d-flex flex-wrap border-0 align-items-center">
+                        <a role="button" class="btn btn-secondary btn-sm  m-2" asp-controller="InstrumentoMusical" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"> </i> Editar </a>
+                        <a role="button" class="btn btn-secondary btn-sm  m-2" asp-controller="InstrumentoMusical" asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-xmark"> </i> Excluir </a>
+                        <a role="button" class="btn btn-secondary btn-sm  m-2" asp-controller="InstrumentoMusical" asp-action="Movimentar" asp-route-id="@item.Id"><i class="fa-solid fa-arrow-right-arrow-left"></i> Movimentar </a>
                     </td>
                 </tr>
             }
