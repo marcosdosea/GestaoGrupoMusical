@@ -693,7 +693,7 @@ namespace Service
         {
             var pessoa = await GetByCpf(cpf);
 
-            return pessoa.Nome;
+            return pessoa?.Nome ?? "Pessoa não encontrada";
         }
 
         public async Task<string> GetNomeAssociadoByEmail(string email)
