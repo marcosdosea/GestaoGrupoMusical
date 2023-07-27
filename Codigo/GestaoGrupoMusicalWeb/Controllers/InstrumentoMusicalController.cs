@@ -355,6 +355,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "ASSOCIADO")]
         public async Task<ActionResult> ConfirmarMovimentacao(int idMovimentacao)
         {
             var associado = await _pessoa.GetByCpf(User.Identity?.Name);
