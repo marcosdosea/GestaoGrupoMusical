@@ -44,6 +44,7 @@
                         <div class="form-group col-xl">
                             <label asp-for="Cnpj" class="control-label"></label>
                             <input asp-for="Cnpj" id="campoCnpj" class="form-control" disabled />
+                            <input type="hidden" name="Cnpj" value="@Model.Cnpj" />
                             <span asp-validation-for="Cnpj" class="text-danger"></span>
                         </div>
                         <div class="form-group col-xl">
