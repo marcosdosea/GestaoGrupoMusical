@@ -2,100 +2,105 @@
 
 @{
     ViewData["Title"] = "Remover Associado";
+    ViewData["Pessoa"] = "Associado";
+    ViewData["RemoveAssociado"] = "Remover";
 }
 
-<h1>@ViewData["Title"]</h1>
+<div class="row">
+    <div class="col-md-8">
 
+        <h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">Remover Associado(a) - @Model.Nome</h1>
+        <nav>
+            <ol class="breadcrumb px-3">
+                <strong>
+                    <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Pessoa"]</a>
+                    <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["RemoveAssociado"]</spn>
+                </strong>
+            </ol>
+        </nav>
+        <hr />
+        <br />
+        <div class="container">
+            <div class="row">
+                <h2 class="fs-5">Dados do Associado(a)</h2>
+                <hr />
+                <br />
 
-<div>
-
-    <hr />
-
-        <dl class="row">
-
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Nome)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Nome)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Cpf)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Cpf)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Cep)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Cep)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Rua)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Rua)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Bairro)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Bairro)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Cidade)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Cidade)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Estado)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Estado)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.DataNascimento)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.DataNascimento)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Telefone1)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Telefone1)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Telefone2)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Telefone2)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Email)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Email)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.DataEntrada)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.DataEntrada)
-            </dd>
-        </dl>
-
-    <form asp-action="RemoveAssociado">
-
-        <div class="form-group">
-            <label asp-for="MotivoSaida" class="control-label"></label>
-            <input asp-for="MotivoSaida" class="form-control"  />
-            <span asp-validation-for="MotivoSaida" class="text-danger"></span>
+                <div class="form-group">
+                    <label class="control-label">Nome</label>
+                    <label class="form-control">@Model.Nome</label>
+                </div>
+            </div>
         </div>
-        <input type="hidden" name="Cpf" value="@Model.Cpf"/>
-        <input type="submit" value="Excluir" class="btn btn-danger" /> |
-        <a asp-action="Index">Voltar</a>
-    </form>
+        <div class="container">
+            <div class="row">
+                <div class="form-group">
+                    <label class="control-label">Email</label>
+                    <labe class="form-control">@Model.Email</labe>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row d-flex justify-content-between">
+                <div class="form-group col-md-4">
+                    <label class="control-label">CPF</label>
+                    <label class="form-control" id="campoCpf">@Model.Cpf</label>
+                </div>
+                <div class="form-group col-md-4">
+                    <label class="control-label">Data de nascimento</label>
+                    <label class="form-control">@Model.DataNascimento?.ToString("dd/MM/yyyy")</label>
+                </div>
+                <div class="form-group col-md-4">
+                    <label class="control-label">Telefone</label>
+                    <label class="form-control">@Model.Telefone1</label>
+                </div>
+            </div>
+        </div>
+        <br />
+        <br />
+
+@*        <div class="container">
+            <div class="row d-flex justify-content-between">
+                <h2 class="fs-5">Endereço</h2>
+                <hr />
+                <br />
+                <div class="form-group col-4">
+                    <label class="control-label">Rua</label>
+                    <label class="form-control">@Model.Rua</label>
+                </div>
+                <div class="form-group col-4">
+                    <label class="control-label">Cidade</label>
+                    <label class="form-control">@Model.Cidade</label>
+                </div>
+                <div class="form-group col-4">
+                    <label class="control-label">Estado</label>
+                    <label class="form-control">@Model.Estado</label>
+                </div>
+            </div>
+        </div>*@
+        <div class="container">
+            <div class="row">
+                <form asp-action="RemoveAssociado">
+
+                    <div class="form-group">
+                        <label asp-for="MotivoSaida" class="control-label"></label>
+                        @*<input asp-for="MotivoSaida" class="form-control" />*@
+                        <textarea asp-for="MotivoSaida" class="form-control"></textarea>
+                        <span asp-validation-for="MotivoSaida" class="text-danger"></span>
+                    </div>
+                    <br />
+                    <br />
+                    <input type="hidden" name="Cpf" value="@Model.Cpf" />
+                    <div class="container">
+                        <div class="row d-flex flex-column-reverse d-grig gap-2 mx-auto d-flex flex-sm-column-reverse flex-xl-row">
+                            <div class="col-5 d-none d-sm-block"></div>
+                            <a class="btn btn-light text-secondary border border-secondary d-grid gap-2 col-sm" asp-action="Index"> Voltar </a>
+                            <input type="submit" value="Excluir" class="btn btn-secondary d-grid gap-2 col-sm " />
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
 </div>
