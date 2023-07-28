@@ -266,11 +266,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         case 200:
                             if (movimentacao.TipoMovimento == "EMPRESTIMO")
                             {
-                                Notificar("Instrumento <b>Emprestado</b> com <b>Sucesso</b>", Notifica.Sucesso);
+                                Notificar("Instrumento <b>Emprestado</b> com <b>Sucesso</b>. Enviamos um <b>E-mail</b> para o <b>Associado</b> Confirmar.", Notifica.Sucesso);
                             }
                             else
                             {
-                                Notificar("Instrumento <b>Devolvido</b> com <b>Sucesso</b>", Notifica.Sucesso);
+                                Notificar("Instrumento <b>Devolvido</b> com <b>Sucesso</b>. Enviamos um <b>E-mail</b> para o <b>Associado</b> Confirmar.", Notifica.Sucesso);
                             }
                             return RedirectToAction(nameof(Movimentar), new { id = movimentacaoPost.IdInstrumentoMusical });
                         case 400:
