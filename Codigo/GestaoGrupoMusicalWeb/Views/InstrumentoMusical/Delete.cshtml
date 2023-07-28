@@ -1,4 +1,4 @@
-﻿@model GestaoGrupoMusicalWeb.Models.InstrumentoMusicalViewModel
+﻿@model Core.DTO.InstrumentoMusicalDeleteDTO
 
 @{
     ViewData["Title"] = "Excluir Instrumento";
@@ -40,9 +40,9 @@
                     <span asp-validation-for="Status" class="text-danger"></span>
                 </div>
                 <div class="form-group col-xl-6">
-                    <label asp-for="IdTipoInstrumento" class="control-label"></label>
-                    <input asp-for="IdTipoInstrumento" value=@Model.IdTipoInstrumento class="form-control" disabled />
-                    <span asp-validation-for="IdTipoInstrumento" class="text-danger"></span>
+                    <label asp-for="NomeInstrumento" class="control-label"></label>
+                    <input asp-for="NomeInstrumento" value=@Model.NomeInstrumento class="form-control" disabled />
+                    <span asp-validation-for="NomeInstrumento" class="text-danger"></span>
                 </div>
             </div>
 
