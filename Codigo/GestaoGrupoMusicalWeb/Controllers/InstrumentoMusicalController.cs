@@ -186,11 +186,14 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 case 200:
                     Notificar("Instrumento Musical <b>Excluído</b> com <b>Sucesso</b>.", Notifica.Sucesso);
                     break;
+                case 401:
+                    Notificar($"Desculpe, não é possível <b>Excluir</b> esse <b>Instrumento Musical</b> pois ele está associado a <b>Empréstimos ou Devoluções</b>", Notifica.Erro);
+                    return RedirectToAction(nameof(Delete), id);
                 case 404:
                     Notificar($"Nenhum <b>Instrumento Musical</b> corresponde ao id <b>{id}</b>.", Notifica.Erro);
                     break;
-                case 501:
-                    Notificar($"Desculpe, não é possível <b>Excluir</b> esse <b>Instrumento Musical</b> pois ele está associado a <b>Empréstimos ou Devoluções</b>", Notifica.Erro);
+                case 500:
+                    Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Exclusão</b>, se isso persistir entre em contato com o suporte", Notifica.Erro);
                     return RedirectToAction(nameof(Delete), id);
             }
             

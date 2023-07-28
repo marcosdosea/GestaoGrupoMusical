@@ -44,13 +44,18 @@ namespace Service
             }
             try
             {
+                var hasMovimentacao = await _context.Movimentacaoinstrumentos.Where(m => m.IdInstrumentoMusical == id).AsNoTracking().AnyAsync();
+                if (hasMovimentacao)
+                {
+                    return 401;
+                }
                 _context.Remove(instrumento);
                 await _context.SaveChangesAsync();
                 return 200;
             }
-            catch(DbUpdateException)
+            catch
             {
-                return 501;
+                return 500;
             }
         }
 
