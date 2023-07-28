@@ -279,7 +279,12 @@ namespace Service
 
                     //id para adm de grupo == 3
                     pessoaF.IdPapelGrupo = 3;
-                    if(await Edit(pessoaF) != 200)
+                    try
+                    {
+                        _context.Pessoas.Update(pessoaF);
+                        await _context.SaveChangesAsync();
+                    }
+                    catch 
                     {
                         await transaction.RollbackAsync();
                         return 500;//o usuario já possui cadastro em um grupo musical, não foi possiveç alterar ele para adm grupo musical
