@@ -254,6 +254,10 @@ namespace Service
                 var movimentacao = await _context.Movimentacaoinstrumentos.FindAsync(id);
                 if (movimentacao != null)
                 {
+                    if (Convert.ToBoolean(movimentacao.ConfirmacaoAssociado))
+                    {
+                        return movimentacao.TipoMovimento == "DEVOLUCAO" ? 407 : 406;
+                    }
                     var instrumento = await _context.Instrumentomusicals.FindAsync(movimentacao.IdInstrumentoMusical);
                     var associado = await _context.Pessoas.FindAsync(movimentacao.IdAssociado);
                     string tipoMovimentacao = movimentacao.TipoMovimento == "DEVOLUCAO" ? "Devolução" : "Empréstimo";

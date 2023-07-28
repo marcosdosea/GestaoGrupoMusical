@@ -346,6 +346,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 case 404:
                     Notificar($"O Id {id} não <b>Corresponde</b> a nenhuma <b>Movimentação</b>", Notifica.Erro);
                     break;
+                case 406:
+                    Notificar("O Associado <b>Confirmou</b> esse <b>Empréstimo</b>", Notifica.Alerta);
+                    break;
+                case 407:
+                    Notificar("O Associado <b>Confirmou</b> essa <b>Devolução</b>", Notifica.Alerta);
+                    break;
                 case 500:
                     Notificar("Desculpe, ocorreu um <b>Erro</b> durante o <b>Envio</b> da notificação, se isso persistir entre em contato com o suporte", Notifica.Erro);
                     break;
