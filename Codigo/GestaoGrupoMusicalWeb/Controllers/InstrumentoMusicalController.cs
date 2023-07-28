@@ -181,8 +181,22 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         public async Task<ActionResult> Delete(int id, InstrumentoMusicalViewModel instrumentoMusicalViewModel)
         {
-            await _instrumentoMusical.Delete(id);
-            Notificar("Instrumento Musical <b>Deletado</b> com <b>Sucesso</b>.", Notifica.Sucesso);
+            switch(await _instrumentoMusical.Delete(id))
+            {
+                case 200:
+                    Notificar("Instrumento Musical <b>Excluído</b> com <b>Sucesso</b>.", Notifica.Sucesso);
+                    break;
+                case 401:
+                    Notificar($"Desculpe, não é possível <b>Excluir</b> esse <b>Instrumento Musical</b> pois ele está associado a <b>Empréstimos ou Devoluções</b>", Notifica.Erro);
+                    return RedirectToAction(nameof(Delete), id);
+                case 404:
+                    Notificar($"Nenhum <b>Instrumento Musical</b> corresponde ao id <b>{id}</b>.", Notifica.Erro);
+                    break;
+                case 500:
+                    Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Exclusão</b>, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                    return RedirectToAction(nameof(Delete), id);
+            }
+            
             return RedirectToAction(nameof(Index));
         }
 
