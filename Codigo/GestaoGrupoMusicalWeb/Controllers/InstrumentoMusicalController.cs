@@ -164,6 +164,14 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             if (instrumentoMusicalDTO.Status != "EMPRESTADO")
             {
+                if(instrumentoMusicalDTO.Status == "DISPONIVEL")
+                {
+                    instrumentoMusicalDTO.Status = "Disponível";
+                }
+                else
+                {
+                    instrumentoMusicalDTO.Status = "Danificado";
+                }
                 return View(instrumentoMusicalDTO);
             }
             else
