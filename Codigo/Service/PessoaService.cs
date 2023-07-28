@@ -251,6 +251,7 @@ namespace Service
                         {
                             await _roleManager.CreateAsync(new IdentityRole("ADMINISTRADOR GRUPO"));
                         }
+                        await _userManager.RemoveFromRoleAsync(user, "ASSOCIADO");
                         await _userManager.AddToRoleAsync(user, "ADMINISTRADOR GRUPO");
                     }
                     //caso não user identity exista
