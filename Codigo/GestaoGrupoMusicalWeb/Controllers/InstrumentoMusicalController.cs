@@ -160,7 +160,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         public async Task<ActionResult> Delete(int id)
         {
-            var instrumentoMusicalDTO = await _instrumentoMusical.GetInstrumentoMusicalDeleteDTO(id);
+            var instrumentoMusicalDTO = _instrumentoMusical.GetInstrumentoMusicalDeleteDTO(id).GetAwaiter().GetResult();
 
             if (instrumentoMusicalDTO.Status != "EMPRESTADO")
             {

@@ -112,14 +112,16 @@ namespace Service
 
         public async Task<InstrumentoMusicalDeleteDTO> GetInstrumentoMusicalDeleteDTO(int id)
         {
-            var query = await (from instrumento in _context.Instrumentomusicals
-                               where id == instrumento.IdTipoInstrumento
+            var query = await (from instrumento in _context.Instrumentomusicals join
+                               tipoInstrumento in _context.Tipoinstrumentos
+                               on instrumento.IdTipoInstrumento equals tipoInstrumento.Id
+                               where id == instrumento.Id
                                select new InstrumentoMusicalDeleteDTO
                                {
                                    Patrimonio = instrumento.Patrimonio,
                                    Status = instrumento.Status,
                                    DataAquisicao = instrumento.DataAquisicao, 
-                                   NomeInstrumento = GetNomeInstrumento(id).Result
+                                   NomeInstrumento = tipoInstrumento.Nome,
                                }).AsNoTracking().SingleOrDefaultAsync();
             return query!;
         }
