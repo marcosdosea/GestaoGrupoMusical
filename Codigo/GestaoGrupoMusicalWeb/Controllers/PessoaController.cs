@@ -121,8 +121,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
             var pessoa = _pessoaService.Get(id);
             var pessoaViewModel = _mapper.Map<PessoaViewModel>(pessoa);
 
-            IEnumerable<Papelgrupo> listaPapelGrupo = _pessoaService.GetAllPapelGrupo();
-            IEnumerable<Grupomusical> listaGrupoMusical = _grupoMusical.GetAll();
             IEnumerable<Manequim> listaManequim = _manequim.GetAll();
 
             pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", pessoaViewModel.IdManequim);
@@ -138,10 +136,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> Edit(int id, PessoaViewModel pessoaViewModel)
         {
             var cpf = _pessoaService.GetCPFExistente(id,pessoaViewModel.Cpf);
-
-            IEnumerable<Papelgrupo> listaPapelGrupo = _pessoaService.GetAllPapelGrupo();
-            IEnumerable<Grupomusical> listaGrupoMusical = _grupoMusical.GetAll();
-            IEnumerable<Manequim> listaManequim = _manequim.GetAll();
 
             if (cpf)
             {
@@ -159,27 +153,22 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         return RedirectToAction(nameof(Index));
                     case 500:
                         Notificar("<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Editar</b> do associado, se isso persistir entre em contato com o suporte", Notifica.Erro);
-                        return RedirectToAction("Edit", pessoaViewModel);
+                        break;
                     case 400:
                         mensagem = "<b>Alerta</b> ! Não foi possível editar, a data de entrada deve ser menor que " + DateTime.Now.ToShortDateString();
                         Notificar(mensagem, Notifica.Alerta);
-
-                        pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", pessoaViewModel.IdManequim);
-                        return View("Edit", pessoaViewModel);
+                        break;
                     case 401:
                         mensagem = "<b>Alerta</b> ! Não foi possível editar, a data de nascimento deve ser menor que " + DateTime.Now.ToShortDateString() + " e menor que 120 anos ";
                         Notificar(mensagem, Notifica.Alerta);
-                        pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", pessoaViewModel.IdManequim);
-                        return View("Edit", pessoaViewModel);
+                        break;
 
                 }
             }
-            else
-            {
-                pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", null);
-                return View("Edit", pessoaViewModel);
-            }
-            return RedirectToAction(nameof(Index));
+
+            IEnumerable<Manequim> listaManequim = _manequim.GetAll();
+            pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", pessoaViewModel.IdManequim);
+            return View("Edit", pessoaViewModel);
         }
 
         // GET: PessoaController/Delete/5
