@@ -345,13 +345,14 @@ namespace Service
                     if (user != null)
                     {
                         await _userManager.RemoveFromRoleAsync(user, "ADMINISTRADOR GRUPO");
+                        await _userManager.AddToRoleAsync(user, "ASSOCIADO");
+
+                        pessoa.IdPapelGrupo = 1;
+
+                        _context.Pessoas.Update(pessoa);
+
+                        await _context.SaveChangesAsync();
                     }
-                    pessoa.IdPapelGrupo = 1;
-
-                    _context.Pessoas.Update(pessoa);
-
-                    await _context.SaveChangesAsync();
-
                     return true;
                 }
                 return false;
