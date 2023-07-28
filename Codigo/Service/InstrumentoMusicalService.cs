@@ -109,5 +109,19 @@ namespace Service
 
             return query?.Nome ?? "";
         }
+
+        public async Task<InstrumentoMusicalDeleteDTO> GetInstrumentoMusicalDeleteDTO(int id)
+        {
+            var query = await (from instrumento in _context.Instrumentomusicals
+                               where id == instrumento.IdTipoInstrumento
+                               select new InstrumentoMusicalDeleteDTO
+                               {
+                                   Patrimonio = instrumento.Patrimonio,
+                                   Status = instrumento.Status,
+                                   DataAquisicao = instrumento.DataAquisicao, 
+                                   NomeInstrumento = GetNomeInstrumento(id).Result
+                               }).AsNoTracking().SingleOrDefaultAsync();
+            return query!;
+        }
     }
 }
