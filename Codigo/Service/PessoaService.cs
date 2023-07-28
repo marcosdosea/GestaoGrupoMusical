@@ -251,6 +251,7 @@ namespace Service
                         {
                             await _roleManager.CreateAsync(new IdentityRole("ADMINISTRADOR GRUPO"));
                         }
+                        await _userManager.RemoveFromRoleAsync(user, "ASSOCIADO");
                         await _userManager.AddToRoleAsync(user, "ADMINISTRADOR GRUPO");
                     }
                     //caso não user identity exista
@@ -279,7 +280,12 @@ namespace Service
 
                     //id para adm de grupo == 3
                     pessoaF.IdPapelGrupo = 3;
-                    if(await Edit(pessoaF) != 200)
+                    try
+                    {
+                        _context.Pessoas.Update(pessoaF);
+                        await _context.SaveChangesAsync();
+                    }
+                    catch 
                     {
                         await transaction.RollbackAsync();
                         return 500;//o usuario já possui cadastro em um grupo musical, não foi possiveç alterar ele para adm grupo musical
@@ -339,13 +345,14 @@ namespace Service
                     if (user != null)
                     {
                         await _userManager.RemoveFromRoleAsync(user, "ADMINISTRADOR GRUPO");
+                        await _userManager.AddToRoleAsync(user, "ASSOCIADO");
+
+                        pessoa.IdPapelGrupo = 1;
+
+                        _context.Pessoas.Update(pessoa);
+
+                        await _context.SaveChangesAsync();
                     }
-                    pessoa.IdPapelGrupo = 1;
-
-                    _context.Pessoas.Update(pessoa);
-
-                    await _context.SaveChangesAsync();
-
                     return true;
                 }
                 return false;
