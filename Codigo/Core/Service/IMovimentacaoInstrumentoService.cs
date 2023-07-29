@@ -43,6 +43,8 @@ namespace Core.Service
         /// 401 - Instrumento não está cadastrado no sistema <para />
         /// 402 - Associado não está cadastrado no sistema <para />
         /// 404 - O id não corresponde a nenhuma movimentação <para />
+        /// 406 - Empréstimo já está confirmado <para />
+        /// 407 - Devolução já está confirmada <para />
         /// 500 - Erro interno
         /// </returns>
         Task<int> NotificarViaEmailAsync(int id);
