@@ -60,9 +60,15 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(PessoaViewModel pessoaViewModel)
         {
-            IEnumerable<Papelgrupo> listaPapelGrupo = _pessoaService.GetAllPapelGrupo();
-            IEnumerable<Grupomusical> listaGrupoMusical = _grupoMusical.GetAll();
-            IEnumerable<Manequim> listaManequim = _manequim.GetAll();
+            String mensagem = String.Empty;
+
+            if (await _pessoaService.AssociadoExist(pessoaViewModel.Email))
+            {
+                mensagem = "<b>Alerta!</b> Email já está em uso";
+                Notificar(mensagem, Notifica.Alerta);
+
+                return RedirectToAction(nameof(Index));
+            }
 
             if (ModelState.IsValid)
             {
@@ -74,7 +80,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 var pessoaModel = _mapper.Map<Pessoa>(pessoaViewModel);
                 pessoaModel.IdPapelGrupo = 1;
                 pessoaModel.IdGrupoMusical = colaborador.IdGrupoMusical;
-                String mensagem = String.Empty;
+                
               
 
                 switch (await _pessoaService.AddAssociadoAsync(pessoaModel))
@@ -108,7 +114,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             }
             else
-            {          
+            {
+                IEnumerable<Manequim> listaManequim = _manequim.GetAll();
+
                 pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", null);
                 return View("Create", pessoaViewModel);
             }
