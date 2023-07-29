@@ -334,7 +334,7 @@ namespace Service
             return await AdmGroupList.ToListAsync();
         }
 
-        public async Task<int> RemoveAdmGroup(int id)
+        public async Task<bool> RemoveAdmGroup(int id)
         {
             try
             {
@@ -353,13 +353,13 @@ namespace Service
 
                         await _context.SaveChangesAsync();
                     }
-                    return 200;
+                    return true;
                 }
-                return 500;
+                return false;
             }
             catch
             {
-                return 500;
+                return false;
             }
         }
 
@@ -726,10 +726,25 @@ namespace Service
                
         }
 
-        public async Task<bool> AtivarAssociado(string cpf)
+        public async Task<int> AtivarAssociado(string cpf)
         {
+            try
+            {
+                var pessoa = await _context.Pessoas.Where(p => p.Cpf == cpf).AsNoTracking().SingleOrDefaultAsync();
 
-            return true;
+                pessoa.Ativo = 1;
+
+                if (await Edit(pessoa) != 200)
+                {
+                    return 500;
+                }
+
+                return 200;
+            }
+            catch
+            {
+                return 501;
+            }
         }
     }
 }
