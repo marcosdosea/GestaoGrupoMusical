@@ -67,7 +67,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 mensagem = "<b>Alerta!</b> Email já está em uso";
                 Notificar(mensagem, Notifica.Alerta);
 
-                return RedirectToAction(nameof(Index));
+                return View("Create", pessoaViewModel);
             }
 
             if (ModelState.IsValid)
@@ -80,8 +80,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 var pessoaModel = _mapper.Map<Pessoa>(pessoaViewModel);
                 pessoaModel.IdPapelGrupo = 1;
                 pessoaModel.IdGrupoMusical = colaborador.IdGrupoMusical;
-                
-              
 
                 switch (await _pessoaService.AddAssociadoAsync(pessoaModel))
                 {
