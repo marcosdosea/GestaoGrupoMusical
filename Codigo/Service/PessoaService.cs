@@ -727,5 +727,11 @@ namespace Service
             }
                
         }
+
+        public Task<bool> AtivarAssociado(string email)
+        {
+
+            return true;
+        }
     }
 }

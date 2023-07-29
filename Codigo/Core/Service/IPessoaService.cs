@@ -132,5 +132,12 @@ namespace Core.Service
         /// <param name="email">email para verificar</param>
         /// <returns>true: caso exista; false: caso nao exista</returns>
         Task<bool> AssociadoExist(string email);
+
+        /// <summary>
+        /// Ativa associado logo após redefinir senha
+        /// </summary>
+        /// <param name="email">email do associado</param>
+        /// <returns>true: se mudou com sucesso; false: nao conseguiu ativar</returns>
+        Task<bool> AtivarAssociado(string email);
     }
 }
