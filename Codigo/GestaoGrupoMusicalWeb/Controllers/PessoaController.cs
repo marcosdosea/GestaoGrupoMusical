@@ -3,6 +3,7 @@ using Core;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -16,12 +17,15 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IGrupoMusicalService _grupoMusical;
         private readonly IManequimService _manequim;
 
-        public PessoaController (IPessoaService pessoaService, IMapper mapper, IGrupoMusicalService grupoMusical, IManequimService manequim)
+        private readonly UserManager<UsuarioIdentity> _userManager;
+
+        public PessoaController (IPessoaService pessoaService, IMapper mapper, IGrupoMusicalService grupoMusical, IManequimService manequim, UserManager<UsuarioIdentity> userManager)
         {
             _pessoaService = pessoaService;
             _mapper = mapper;
             _grupoMusical = grupoMusical;
             _manequim = manequim;
+            _userManager = userManager;
         }
 
         // GET: PessoaController
@@ -84,8 +88,17 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 switch (await _pessoaService.AddAssociadoAsync(pessoaModel))
                 {
                     case 200:
-                        mensagem = "Associado <b>Cadastrado</b> com <b>Sucesso</b>";
-                        Notificar(mensagem, Notifica.Sucesso);
+                        switch (await RequestPasswordReset(_userManager, pessoaModel.Email, pessoaModel.Nome))
+                        {
+                            case 200:
+                                mensagem = "<b>Sucesso</b>! Associado cadastrado e enviado email para redefinição de senha.";
+                                Notificar(mensagem, Notifica.Sucesso);
+                                break;
+                            default:
+                                mensagem = "<b>Alerta</b>! Associado cadastrado, mas não foi possível enviar o email para redefinição de senha.";
+                                Notificar(mensagem, Notifica.Alerta);
+                                break;
+                        }
                         return RedirectToAction(nameof(Index));
 
                     case 500:
