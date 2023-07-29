@@ -75,8 +75,8 @@ namespace GestaoGrupoMusicalWeb.Models
 
         [Display(Name = "Data de saída")]
         public DateTime? DataSaida { get; set; }
-
-        [Display(Name = "Motivo da saída")]
+       
+        [Display(Name = "Motivo da saída", Prompt ="Digite o motivo")]
         public string? MotivoSaida { get; set; }
 
         [Required(ErrorMessage = "O campo Ativo é obrigatório.")]
