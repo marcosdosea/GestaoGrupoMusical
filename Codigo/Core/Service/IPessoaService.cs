@@ -124,7 +124,13 @@ namespace Core.Service
         Task<string> GetNomeAssociado(string cpf);
 
         Task<string> GetNomeAssociadoByEmail(string email);
-
+        /// <summary>
+        /// Verifica se associado existe pelo email
+        /// afim de verificar se email ja esta em
+        /// uso
+        /// </summary>
+        /// <param name="email">email para verificar</param>
+        /// <returns>true: caso exista; false: caso nao exista</returns>
         Task<bool> AssociadoExist(string email);
     }
 }
