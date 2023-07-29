@@ -116,6 +116,7 @@ namespace Core.Service
         /// <param name="password">string a ser embaralhada</param>
         /// <returns>string embaralhada</returns>
         Task<string> PasswordShuffle(string password);
+
         /// <summary>
         /// Retorna o nome do associado passando o cpf
         /// </summary>
@@ -137,7 +138,10 @@ namespace Core.Service
         /// Ativa associado logo após redefinir senha
         /// </summary>
         /// <param name="email">cpf do associado</param>
-        /// <returns>true: se mudou com sucesso; false: nao conseguiu ativar</returns>
-        Task<bool> AtivarAssociado(string cpf);
+        /// <returns>
+        /// 500: Erro ao editar pessoa
+        /// 501: Erro na operação
+        /// </returns>
+        Task<int> AtivarAssociado(string cpf);
     }
 }
