@@ -200,8 +200,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
             //caso haja sucesso em redefinir senha
             if (result.Succeeded)
             {
-                // TODO
-                // apresentar uma notificação de senha redefinida com sucesso
+                //ativa associado
+                _pessoaService.AtivarAssociado(resetPasswordModel.UserId);
+
                 return RedirectToAction("PasswordChanged", new { change = true });
             }
             else 
