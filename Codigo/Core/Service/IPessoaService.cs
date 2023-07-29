@@ -125,6 +125,7 @@ namespace Core.Service
         Task<string> GetNomeAssociado(string cpf);
 
         Task<string> GetNomeAssociadoByEmail(string email);
+
         /// <summary>
         /// Verifica se associado existe pelo email
         /// afim de verificar se email ja esta em
@@ -139,7 +140,9 @@ namespace Core.Service
         /// </summary>
         /// <param name="email">cpf do associado</param>
         /// <returns>
-        /// 500: Erro ao editar pessoa
+        /// 400: Associado não encontrado
+        /// 401: Associado desativado por adm de grupo musical
+        /// 500: Erro ao editar Associado
         /// 501: Erro na operação
         /// </returns>
         Task<int> AtivarAssociado(string cpf);
