@@ -707,7 +707,7 @@ namespace Service
 
         public async Task<bool> AssociadoExist(string email)
         {
-            var pessoa = _context.Pessoas.Where(att => att.Email == email).AsNoTracking().SingleOrDefaultAsync();
+            var pessoa = await _context.Pessoas.Where(att => att.Email == email).AsNoTracking().SingleOrDefaultAsync();
 
             if (pessoa != null)
             {
