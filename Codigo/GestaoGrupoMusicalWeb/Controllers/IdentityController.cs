@@ -201,7 +201,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             if (result.Succeeded)
             {
                 //ativa associado
-                _pessoaService.AtivarAssociado(resetPasswordModel.UserId);
+                int atv = await _pessoaService.AtivarAssociado(user.UserName);
 
                 return RedirectToAction("PasswordChanged", new { change = true });
             }
