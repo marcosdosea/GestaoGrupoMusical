@@ -27,12 +27,12 @@
                     </td>
                     <td class="py-3 border-0 d-flex flex-column flex-lg-row gap-3">
                         <form id="@(item.Id + "_confirmar")" asp-controller="AdministradorGrupoMusical" asp-action="Delete" asp-route-id="@item.Id" method="post">
-                            <a class="btn btn-sm btn-secondary" role="button" onclick="showModal('@(item.Id + "_confirmar")', 'admModalNotificar')" data-bs-toggle="modal" data-bs-target="#admModal">
+                            <a class="btn btn-sm btn-secondary" role="button" onclick="showModal('@(item.Id + "_confirmar")', 'admModalNotificar')" data-bs-toggle="modal" data-bs-target="#admModalNotificar">
                                 <i class="fa-solid fa-envelope"></i>
                                 Notificar
                             </a>
 
-                            <a onclick="showModal('@(item.Id + "_confirmar")', 'admModal')" class="btn btn-sm btn-secondary" role="button" data-bs-toggle="modal" data-bs-target="#admModal">
+                            <a onclick="showModal('@(item.Id + "_confirmar")', 'admModal')" class="btn btn-sm btn-secondary" role="button" data-bs-toggle="modal" data-bs-target="#admModalExcluir">
                                 <i class="fa-solid fa-xmark"> </i>
                                 Excluir
                             </a>
@@ -43,7 +43,7 @@
         </tbody>
     </table>
 </div>
-<div class="modal fade" id="admModalNotificar" tabindex="-1" aria-labelledby="admLabel" aria-hidden="true">
+<div class="modal fade" id="admModalExcluir" tabindex="-1" aria-labelledby="admLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -60,7 +60,7 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="admModal" tabindex="-1" aria-labelledby="admLabel" aria-hidden="true">
+<div class="modal fade" id="admModalNotificar" tabindex="-1" aria-labelledby="admLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -68,7 +68,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                Deseja <b>Notificar</b> o cargo de <b>Administrador do grupo Musical</b>?
+                Deseja <b>Notificar</b> o cargo de <b>Administrador</b>?
             </div>
             <form method="post" class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary col-3 me-4" data-bs-dismiss="modal">Não</button>
