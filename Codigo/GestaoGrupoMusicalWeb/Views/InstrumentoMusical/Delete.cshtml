@@ -1,55 +1,58 @@
-﻿@model GestaoGrupoMusicalWeb.Models.InstrumentoMusicalViewModel
+﻿@model Core.DTO.InstrumentoMusicalDeleteDTO
 
 @{
     ViewData["Title"] = "Excluir Instrumento";
+    ViewData["Index"] = "Instrumentos Musicais";
 }
 
-<h1>Excluir Instrumento</h1>
-<br>
-<h3>Tem certeza de que deseja excluir este instrumento?</h3>
-<div>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Id)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Patrimonio)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Patrimonio)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DataAquisicao)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataAquisicao)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IdTipoInstrumento)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IdTipoInstrumento)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IdGrupoMusical)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IdGrupoMusical)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="submit" value="Excluir" class="btn btn-danger" /> |
-        <a asp-action="Index">Voltar</a>
-    </form>
+<partial name="_Notificar">
+<div class="container">
+    <div class="row">
+        <div class="col-sm-7">
+            <h1 class="bg-danger bg-opacity-75 p-3 text-white fs-5">Excluir Instrumento</h1>
+            <nav>
+                <ol class="breadcrumb px-3">
+                    <li>
+                        <strong>
+                            <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Index"]</a>
+                            <span class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Title"]</span>
+                        </strong>
+                    </li>
+                </ol>
+            </nav>
+            
+            <h3 class="fs-4">Tem certeza de que deseja excluir este instrumento?</h3>
+            <hr />
+
+            <div class="row">
+                <div class="form-group col-xl-6">
+                    <label asp-for="Patrimonio" class="control-label"></label>
+                    <input asp-for="Patrimonio" class="form-control" disabled />
+                    <span asp-validation-for="Patrimonio" class="text-danger"></span>
+                </div>
+                <div class="form-group col-xl-6">
+                    <label asp-for="DataAquisicao" class="control-label"></label>
+                    <input asp-for="DataAquisicao" class="form-control" disabled />
+                    <span asp-validation-for="DataAquisicao" class="text-danger"></span>
+                </div>
+                <div class="form-group col-xl-6">
+                    <label asp-for="Status" class="control-label"></label>
+                    <input asp-for="Status" class="form-control" disabled />
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
+                <div class="form-group col-xl-6">
+                    <label asp-for="NomeInstrumento" class="control-label"></label>
+                    <input asp-for="NomeInstrumento" class="form-control" disabled />
+                    <span asp-validation-for="NomeInstrumento" class="text-danger"></span>
+                </div>
+            </div>
+            <br />
+            <br />
+            <form asp-action="Delete" class="row">
+                <div class="col-5"></div>
+                <a asp-action="Index" class="col-3 m-2 btn btn-outline-secondary d-grid gap-2 mx-auto">Voltar</a>
+                    <input type="submit" value="Excluir" class=" col-3 btn btn-secondary m-2 d-grid gap-2 mx-auto" />
+            </form>
+        </div>
+    </div>
 </div>

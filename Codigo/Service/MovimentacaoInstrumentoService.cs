@@ -43,9 +43,9 @@ namespace Service
                             EmailModel email = new()
                             {
                                 Assunto = "Batalá - Empréstimo de instrumento",
+                                AddresseeName = associado.Nome,
                                 Body = "<div style=\"text-align: center;\">\r\n    " +
-                                "<h1>Empréstimo de instrumento</h1>\r\n    " +
-                                $"<h2>Olá, {associado.Nome}, estamos aguardando a sua confirmação de recebimento.</h2>\r\n" +
+                                $"<h3>Estamos aguardando a sua confirmação de Empréstimo.</h3>\r\n" +
                                 "<div style=\"font-size: large;\">\r\n        " +
                                 $"<dt style=\"font-weight: 700;\">Instrumento:</dt><dd>{instrumentoNome}</dd>" +
                                 $"<dt style=\"font-weight: 700;\">Data de Emprestimo:</dt><dd>{movimentacao.Data:dd/MM/yyyy}</dd>\n</div>"
@@ -77,9 +77,9 @@ namespace Service
                                 EmailModel email = new()
                                 {
                                     Assunto = "Batalá - Devolução de instrumento",
+                                    AddresseeName = associado.Nome,
                                     Body = "<div style=\"text-align: center;\">\r\n    " +
-                                    "<h1>Devolução de instrumento</h1>\r\n    " +
-                                    $"<h2>Olá, {associado.Nome}, estamos aguardando a sua confirmação de devolução.</h2>\r\n" +
+                                    $"<h3>Estamos aguardando a sua confirmação de Devolução.</h3>\r\n" +
                                     "<div style=\"font-size: large;\">\r\n        " +
                                     $"<dt style=\"font-weight: 700;\">Instrumento:</dt><dd>{instrumentoNome}</dd>" +
                                     $"<dt style=\"font-weight: 700;\">Data de Devolução:</dt><dd>{movimentacao.Data:dd/MM/yyyy}</dd>\n</div>"
@@ -254,6 +254,10 @@ namespace Service
                 var movimentacao = await _context.Movimentacaoinstrumentos.FindAsync(id);
                 if (movimentacao != null)
                 {
+                    if (Convert.ToBoolean(movimentacao.ConfirmacaoAssociado))
+                    {
+                        return movimentacao.TipoMovimento == "DEVOLUCAO" ? 407 : 406;
+                    }
                     var instrumento = await _context.Instrumentomusicals.FindAsync(movimentacao.IdInstrumentoMusical);
                     var associado = await _context.Pessoas.FindAsync(movimentacao.IdAssociado);
                     string tipoMovimentacao = movimentacao.TipoMovimento == "DEVOLUCAO" ? "Devolução" : "Empréstimo";
@@ -273,9 +277,9 @@ namespace Service
                     EmailModel email = new()
                     {
                         Assunto = $"Batalá - {tipoMovimentacao} de instrumento",
+                        AddresseeName = associado.Nome,
                         Body = "<div style=\"text-align: center;\">\r\n    " +
-                                $"<h1>{tipoMovimentacao} de instrumento</h1>\r\n    " +
-                                $"<h2>Olá, {associado.Nome}, estamos aguardando a sua confirmação de {tipoMovimentacao}.</h2>\r\n" +
+                                $"<h3>Estamos aguardando a sua confirmação de {tipoMovimentacao}.</h3>\r\n" +
                                 "<div style=\"font-size: large;\">\r\n        " +
                                 $"<dt style=\"font-weight: 700;\">Instrumento:</dt><dd>{instrumentoNome}</dd>" +
                                 $"<dt style=\"font-weight: 700;\">Data de {tipoMovimentacao}:</dt><dd>{movimentacao.Data:dd/MM/yyyy}</dd>\n</div>"

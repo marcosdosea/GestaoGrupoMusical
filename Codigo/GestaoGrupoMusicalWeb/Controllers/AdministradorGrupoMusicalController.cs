@@ -73,6 +73,14 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 };
                 String mensagem = String.Empty;
 
+                if (await _pessoaService.AssociadoExist(admViewModel.Email))
+                {
+                    mensagem = "<b>Alerta!</b> Email já está em uso";
+                    Notificar(mensagem, Notifica.Alerta);
+
+                    return RedirectToAction(nameof(Index));
+                }
+
                 int retAddAdm = await _pessoaService.AddAdmGroup(pessoa);
 
                 switch (retAddAdm)

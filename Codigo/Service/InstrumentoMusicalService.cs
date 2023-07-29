@@ -2,6 +2,8 @@
 using Core.DTO;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+using System.Data.Common;
 
 namespace Service
 {
@@ -33,10 +35,28 @@ namespace Service
 
         }
 
-        public async Task Delete(int id)
+        public async Task<int> Delete(int id)
         {
-            _context.Remove(await Get(id));
-            await _context.SaveChangesAsync();
+            var instrumento = await Get(id);
+            if(instrumento == null)
+            {
+                return 404;
+            }
+            try
+            {
+                var hasMovimentacao = await _context.Movimentacaoinstrumentos.Where(m => m.IdInstrumentoMusical == id).AsNoTracking().AnyAsync();
+                if (hasMovimentacao)
+                {
+                    return 401;
+                }
+                _context.Remove(instrumento);
+                await _context.SaveChangesAsync();
+                return 200;
+            }
+            catch
+            {
+                return 500;
+            }
         }
 
         public async Task<int> Edit(Instrumentomusical instrumentoMusical)
@@ -108,6 +128,22 @@ namespace Service
                                select new { instrumento.IdTipoInstrumentoNavigation.Nome }).AsNoTracking().SingleOrDefaultAsync();
 
             return query?.Nome ?? "";
+        }
+
+        public async Task<InstrumentoMusicalDeleteDTO> GetInstrumentoMusicalDeleteDTO(int id)
+        {
+            var query = await (from instrumento in _context.Instrumentomusicals join
+                               tipoInstrumento in _context.Tipoinstrumentos
+                               on instrumento.IdTipoInstrumento equals tipoInstrumento.Id
+                               where id == instrumento.Id
+                               select new InstrumentoMusicalDeleteDTO
+                               {
+                                   Patrimonio = instrumento.Patrimonio,
+                                   Status = instrumento.Status,
+                                   DataAquisicao = instrumento.DataAquisicao, 
+                                   NomeInstrumento = tipoInstrumento.Nome,
+                               }).AsNoTracking().SingleOrDefaultAsync();
+            return query!;
         }
     }
 }

@@ -4,11 +4,12 @@ using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using static GestaoGrupoMusicalWeb.Controllers.BaseController;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
     [Authorize]
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IEventoService _evento;
@@ -31,7 +32,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         public async Task<IActionResult> Index()
         {
-            
+            if (!Convert.ToBoolean(User.FindFirst("Ativo")?.Value))
+            {
+                Notificar("<span class=\"fw-bold fs-5 mt-3\">Erro ! Houve um erro no login, Associado não está Ativo",
+       Notifica.Erro);
+                return RedirectToAction("Autenticar", "Identity");
+            }
+
             if (User.IsInRole("ASSOCIADO"))
             {
                 return RedirectToAction("Movimentacoes", "InstrumentoMusical");
@@ -39,7 +46,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
             else if(User.IsInRole("ADMINISTRADOR SISTEMA"))
             {
                 return RedirectToAction(nameof(Index), "GrupoMusical");
-            }else if(User.IsInRole("ADMINISTRADOR GRUPO"))
+            }
+            else if(User.IsInRole("ADMINISTRADOR GRUPO"))
             {
                 return RedirectToAction(nameof(Index), "InstrumentoMusical");
             }

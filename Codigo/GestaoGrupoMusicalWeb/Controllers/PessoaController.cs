@@ -3,6 +3,7 @@ using Core;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -16,12 +17,15 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IGrupoMusicalService _grupoMusical;
         private readonly IManequimService _manequim;
 
-        public PessoaController (IPessoaService pessoaService, IMapper mapper, IGrupoMusicalService grupoMusical, IManequimService manequim)
+        private readonly UserManager<UsuarioIdentity> _userManager;
+
+        public PessoaController (IPessoaService pessoaService, IMapper mapper, IGrupoMusicalService grupoMusical, IManequimService manequim, UserManager<UsuarioIdentity> userManager)
         {
             _pessoaService = pessoaService;
             _mapper = mapper;
             _grupoMusical = grupoMusical;
             _manequim = manequim;
+            _userManager = userManager;
         }
 
         // GET: PessoaController
@@ -60,9 +64,15 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(PessoaViewModel pessoaViewModel)
         {
-            IEnumerable<Papelgrupo> listaPapelGrupo = _pessoaService.GetAllPapelGrupo();
-            IEnumerable<Grupomusical> listaGrupoMusical = _grupoMusical.GetAll();
-            IEnumerable<Manequim> listaManequim = _manequim.GetAll();
+            String mensagem = String.Empty;
+
+            if (await _pessoaService.AssociadoExist(pessoaViewModel.Email))
+            {
+                mensagem = "<b>Alerta!</b> Email já está em uso";
+                Notificar(mensagem, Notifica.Alerta);
+
+                return View("Create", pessoaViewModel);
+            }
 
             if (ModelState.IsValid)
             {
@@ -74,41 +84,54 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 var pessoaModel = _mapper.Map<Pessoa>(pessoaViewModel);
                 pessoaModel.IdPapelGrupo = 1;
                 pessoaModel.IdGrupoMusical = colaborador.IdGrupoMusical;
-                String mensagem = String.Empty;
-              
 
                 switch (await _pessoaService.AddAssociadoAsync(pessoaModel))
                 {
                     case 200:
-                        Notificar("Associado <b>Cadastrado</b> com <b>Sucesso</b>", Notifica.Sucesso);
+                        switch (await RequestPasswordReset(_userManager, pessoaModel.Email, pessoaModel.Nome))
+                        {
+                            case 200:
+                                mensagem = "<b>Sucesso</b>! Associado cadastrado e enviado email para redefinição de senha.";
+                                Notificar(mensagem, Notifica.Sucesso);
+                                break;
+                            default:
+                                mensagem = "<b>Alerta</b>! Associado cadastrado, mas não foi possível enviar o email para redefinição de senha.";
+                                Notificar(mensagem, Notifica.Alerta);
+                                break;
+                        }
                         return RedirectToAction(nameof(Index));
+
                     case 500:
-                        Notificar("<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Cadastro</b> do associado, se isso persistir entre em contato com o suporte", Notifica.Erro);
-                        return RedirectToAction("Create", pessoaViewModel);
+                        mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Cadastro</b> do associado, se isso persistir entre em contato com o suporte";
+                        Notificar(mensagem , Notifica.Erro);
+                        break;
+
                     case 400:
                         mensagem = "<b>Alerta</b> ! Não foi possível cadastrar, a data de entrada deve ser menor que " + DateTime.Now.ToShortDateString();
                         Notificar(mensagem, Notifica.Alerta);
-                       
-                        pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", pessoaViewModel.IdManequim);
-                        return View("Create", pessoaViewModel);
+                        break;
+
                     case 401:
                         mensagem = "<b>Alerta</b> ! Não foi possível cadastrar, a data de nascimento deve ser menor que " + DateTime.Now.ToShortDateString() + " e menor que 120 anos ";
                         Notificar(mensagem, Notifica.Alerta);
+                        break;
 
-                        pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", pessoaViewModel.IdManequim);
-                        return View("Create", pessoaViewModel);
                     case 450:
                         mensagem = "Ocorreu um <b>Erro</b> durante a liberação de acesso ao <b>Associado</b>, se isso persistir entre em contato com o suporte";
                         Notificar(mensagem, Notifica.Erro);
+                        break;
 
-                        pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", pessoaViewModel.IdManequim);
-                        return View("Create", pessoaViewModel);
-
+                    default:
+                        mensagem = "Ocorreu um <b>Erro</b> durante o cadastro.";
+                        Notificar(mensagem, Notifica.Erro);
+                        break;
                 }
 
             }
             else
-            {          
+            {
+                IEnumerable<Manequim> listaManequim = _manequim.GetAll();
+
                 pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", null);
                 return View("Create", pessoaViewModel);
             }

@@ -124,5 +124,7 @@ namespace Core.Service
         Task<string> GetNomeAssociado(string cpf);
 
         Task<string> GetNomeAssociadoByEmail(string email);
+
+        Task<bool> AssociadoExist(string email);
     }
 }

@@ -251,6 +251,7 @@ namespace Service
                         {
                             await _roleManager.CreateAsync(new IdentityRole("ADMINISTRADOR GRUPO"));
                         }
+                        await _userManager.RemoveFromRoleAsync(user, "ASSOCIADO");
                         await _userManager.AddToRoleAsync(user, "ADMINISTRADOR GRUPO");
                     }
                     //caso não user identity exista
@@ -279,7 +280,12 @@ namespace Service
 
                     //id para adm de grupo == 3
                     pessoaF.IdPapelGrupo = 3;
-                    if(await Edit(pessoaF) != 200)
+                    try
+                    {
+                        _context.Pessoas.Update(pessoaF);
+                        await _context.SaveChangesAsync();
+                    }
+                    catch 
                     {
                         await transaction.RollbackAsync();
                         return 500;//o usuario já possui cadastro em um grupo musical, não foi possiveç alterar ele para adm grupo musical
@@ -343,10 +349,13 @@ namespace Service
                     }
                     pessoa.IdPapelGrupo = 1;
 
-                    _context.Pessoas.Update(pessoa);
 
-                    await _context.SaveChangesAsync();
+                        pessoa.IdPapelGrupo = 1;
 
+                        _context.Pessoas.Update(pessoa);
+
+                        await _context.SaveChangesAsync();
+                    }
                     return true;
                 }
                 return false;
@@ -585,6 +594,7 @@ namespace Service
                            Telefone1 = pessoa.Telefone1,
                            Telefone2 = pessoa.Telefone2,
                            Email = pessoa.Email,
+                           Ativo = Convert.ToBoolean(pessoa.Ativo),
                            IdGrupoMusical = pessoa.IdGrupoMusical,
                            IdPapelGrupo = pessoa.IdPapelGrupo
                         }
@@ -704,6 +714,21 @@ namespace Service
                          select pessoa).FirstOrDefaultAsync();
 
             return pessoaF.Nome;
+        }
+
+        public async Task<bool> AssociadoExist(string email)
+        {
+            var pessoa = await _context.Pessoas.Where(att => att.Email == email).AsNoTracking().SingleOrDefaultAsync();
+
+            if (pessoa != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+               
         }
     }
 }

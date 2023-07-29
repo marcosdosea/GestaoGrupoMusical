@@ -160,12 +160,19 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         public async Task<ActionResult> Delete(int id)
         {
-            var instrumentoMusical = await _instrumentoMusical.Get(id);
-            var instrumentoMusicalModel = _mapper.Map<InstrumentoMusicalViewModel>(instrumentoMusical);
+            var instrumentoMusicalDTO = _instrumentoMusical.GetInstrumentoMusicalDeleteDTO(id).GetAwaiter().GetResult();
 
-            if (instrumentoMusicalModel.Status != "EMPRESTADO")
+            if (instrumentoMusicalDTO.Status != "EMPRESTADO")
             {
-                return View(instrumentoMusicalModel);
+                if(instrumentoMusicalDTO.Status == "DISPONIVEL")
+                {
+                    instrumentoMusicalDTO.Status = "Disponível";
+                }
+                else
+                {
+                    instrumentoMusicalDTO.Status = "Danificado";
+                }
+                return View(instrumentoMusicalDTO);
             }
             else
             {
@@ -181,8 +188,22 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         public async Task<ActionResult> Delete(int id, InstrumentoMusicalViewModel instrumentoMusicalViewModel)
         {
-            await _instrumentoMusical.Delete(id);
-            Notificar("Instrumento Musical <b>Deletado</b> com <b>Sucesso</b>.", Notifica.Sucesso);
+            switch(await _instrumentoMusical.Delete(id))
+            {
+                case 200:
+                    Notificar("Instrumento Musical <b>Excluído</b> com <b>Sucesso</b>.", Notifica.Sucesso);
+                    break;
+                case 401:
+                    Notificar($"Desculpe, não é possível <b>Excluir</b> esse <b>Instrumento Musical</b> pois ele está associado a <b>Empréstimos ou Devoluções</b>", Notifica.Erro);
+                    return RedirectToAction(nameof(Delete), id);
+                case 404:
+                    Notificar($"Nenhum <b>Instrumento Musical</b> corresponde ao id <b>{id}</b>.", Notifica.Erro);
+                    break;
+                case 500:
+                    Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Exclusão</b>, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                    return RedirectToAction(nameof(Delete), id);
+            }
+            
             return RedirectToAction(nameof(Index));
         }
 
@@ -252,11 +273,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         case 200:
                             if (movimentacao.TipoMovimento == "EMPRESTIMO")
                             {
-                                Notificar("Instrumento <b>Emprestado</b> com <b>Sucesso</b>", Notifica.Sucesso);
+                                Notificar("Instrumento <b>Emprestado</b> com <b>Sucesso</b>. Enviamos um <b>E-mail</b> para o <b>Associado</b> Confirmar.", Notifica.Sucesso);
                             }
                             else
                             {
-                                Notificar("Instrumento <b>Devolvido</b> com <b>Sucesso</b>", Notifica.Sucesso);
+                                Notificar("Instrumento <b>Devolvido</b> com <b>Sucesso</b>. Enviamos um <b>E-mail</b> para o <b>Associado</b> Confirmar.", Notifica.Sucesso);
                             }
                             return RedirectToAction(nameof(Movimentar), new { id = movimentacaoPost.IdInstrumentoMusical });
                         case 400:
@@ -331,6 +352,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     break;
                 case 404:
                     Notificar($"O Id {id} não <b>Corresponde</b> a nenhuma <b>Movimentação</b>", Notifica.Erro);
+                    break;
+                case 406:
+                    Notificar("O Associado <b>Confirmou</b> esse <b>Empréstimo</b>", Notifica.Alerta);
+                    break;
+                case 407:
+                    Notificar("O Associado <b>Confirmou</b> essa <b>Devolução</b>", Notifica.Alerta);
                     break;
                 case 500:
                     Notificar("Desculpe, ocorreu um <b>Erro</b> durante o <b>Envio</b> da notificação, se isso persistir entre em contato com o suporte", Notifica.Erro);
