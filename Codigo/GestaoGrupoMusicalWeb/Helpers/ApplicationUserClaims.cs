@@ -28,6 +28,7 @@ namespace GestaoGrupoMusicalWeb.Helpers
             {
                 identity.AddClaim(new Claim("UserName", pessoa.Nome.Split(" ")[0]));
                 identity.AddClaim(new Claim("UserRole", pessoa.Papel.ToLower()));
+                identity.AddClaim(new Claim("Ativo", pessoa.Ativo.ToString()));
             }
 
             return identity;
