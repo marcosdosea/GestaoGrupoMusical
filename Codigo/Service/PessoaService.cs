@@ -334,7 +334,7 @@ namespace Service
             return await AdmGroupList.ToListAsync();
         }
 
-        public async Task<bool> RemoveAdmGroup(int id)
+        public async Task<int> RemoveAdmGroup(int id)
         {
             try
             {
@@ -346,9 +346,6 @@ namespace Service
                     {
                         await _userManager.RemoveFromRoleAsync(user, "ADMINISTRADOR GRUPO");
                         await _userManager.AddToRoleAsync(user, "ASSOCIADO");
-                    }
-                    pessoa.IdPapelGrupo = 1;
-
 
                         pessoa.IdPapelGrupo = 1;
 
@@ -356,16 +353,14 @@ namespace Service
 
                         await _context.SaveChangesAsync();
                     }
-                    return true;
+                    return 200;
                 }
-                return false;
+                return 500;
             }
             catch
             {
-                return false;
+                return 500;
             }
-
-
         }
 
         public async Task<int> AddAssociadoAsync(Pessoa pessoa)
