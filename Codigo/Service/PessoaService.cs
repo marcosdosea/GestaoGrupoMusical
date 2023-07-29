@@ -591,6 +591,7 @@ namespace Service
                            Telefone1 = pessoa.Telefone1,
                            Telefone2 = pessoa.Telefone2,
                            Email = pessoa.Email,
+                           Ativo = Convert.ToBoolean(pessoa.Ativo),
                            IdGrupoMusical = pessoa.IdGrupoMusical,
                            IdPapelGrupo = pessoa.IdPapelGrupo
                         }
