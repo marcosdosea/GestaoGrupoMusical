@@ -732,14 +732,32 @@ namespace Service
             {
                 var pessoa = await _context.Pessoas.Where(p => p.Cpf == cpf).AsNoTracking().SingleOrDefaultAsync();
 
-                pessoa.Ativo = 1;
-
-                if (await Edit(pessoa) != 200)
+                //verificar se existe o associado
+                if(pessoa != null)
                 {
-                    return 500;
-                }
+                    //se o associado não foi desativado por algum adm de grupo
+                    if (pessoa.DataSaida != null && pessoa.MotivoSaida != null)
+                    {
+                        pessoa.Ativo = 1;
 
-                return 200;
+                        if (await Edit(pessoa) != 200)
+                        {
+                            return 500;
+                        }
+
+                        return 200;
+                    }
+                    else
+                    {
+                        return 401;
+                    }  
+                    //===========================================================//
+                }
+                else
+                {
+                    return 400;
+                }
+                //=================================//
             }
             catch
             {
