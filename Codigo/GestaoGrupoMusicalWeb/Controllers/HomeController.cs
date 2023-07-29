@@ -32,6 +32,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         public async Task<IActionResult> Index()
         {
+            if (User.IsInRole("ADMINISTRADOR SISTEMA"))
+            {
+                return RedirectToAction(nameof(Index), "GrupoMusical");
+            }
             if (!Convert.ToBoolean(User.FindFirst("Ativo")?.Value))
             {
                 Notificar("<span class=\"fw-bold fs-5 mt-3\">Erro ! Houve um erro no login, Associado não está Ativo",
@@ -42,10 +46,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
             if (User.IsInRole("ASSOCIADO"))
             {
                 return RedirectToAction("Movimentacoes", "InstrumentoMusical");
-            }
-            else if(User.IsInRole("ADMINISTRADOR SISTEMA"))
-            {
-                return RedirectToAction(nameof(Index), "GrupoMusical");
             }
             else if(User.IsInRole("ADMINISTRADOR GRUPO"))
             {
