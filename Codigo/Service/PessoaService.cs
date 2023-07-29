@@ -728,7 +728,7 @@ namespace Service
                
         }
 
-        public Task<bool> AtivarAssociado(string email)
+        public async Task<bool> AtivarAssociado(string cpf)
         {
 
             return true;

@@ -136,8 +136,8 @@ namespace Core.Service
         /// <summary>
         /// Ativa associado logo após redefinir senha
         /// </summary>
-        /// <param name="email">email do associado</param>
+        /// <param name="email">cpf do associado</param>
         /// <returns>true: se mudou com sucesso; false: nao conseguiu ativar</returns>
-        Task<bool> AtivarAssociado(string email);
+        Task<bool> AtivarAssociado(string cpf);
     }
 }
