@@ -346,6 +346,9 @@ namespace Service
                     {
                         await _userManager.RemoveFromRoleAsync(user, "ADMINISTRADOR GRUPO");
                         await _userManager.AddToRoleAsync(user, "ASSOCIADO");
+                    }
+                    pessoa.IdPapelGrupo = 1;
+
 
                         pessoa.IdPapelGrupo = 1;
 
