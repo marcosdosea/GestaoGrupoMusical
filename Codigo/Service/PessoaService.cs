@@ -704,5 +704,20 @@ namespace Service
 
             return pessoaF.Nome;
         }
+
+        public async Task<bool> AssociadoExist(string email)
+        {
+            var pessoa = _context.Pessoas.Where(att => att.Email == email).AsNoTracking().SingleOrDefaultAsync();
+
+            if (pessoa != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+               
+        }
     }
 }
