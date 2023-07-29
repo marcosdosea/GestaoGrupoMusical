@@ -86,30 +86,34 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 switch (await _pessoaService.AddAssociadoAsync(pessoaModel))
                 {
                     case 200:
-                        Notificar("Associado <b>Cadastrado</b> com <b>Sucesso</b>", Notifica.Sucesso);
+                        mensagem = "Associado <b>Cadastrado</b> com <b>Sucesso</b>";
+                        Notificar(mensagem, Notifica.Sucesso);
                         return RedirectToAction(nameof(Index));
+
                     case 500:
-                        Notificar("<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Cadastro</b> do associado, se isso persistir entre em contato com o suporte", Notifica.Erro);
-                        return RedirectToAction("Create", pessoaViewModel);
+                        mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Cadastro</b> do associado, se isso persistir entre em contato com o suporte";
+                        Notificar(mensagem , Notifica.Erro);
+                        break;
+
                     case 400:
                         mensagem = "<b>Alerta</b> ! Não foi possível cadastrar, a data de entrada deve ser menor que " + DateTime.Now.ToShortDateString();
                         Notificar(mensagem, Notifica.Alerta);
-                       
-                        pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", pessoaViewModel.IdManequim);
-                        return View("Create", pessoaViewModel);
+                        break;
+
                     case 401:
                         mensagem = "<b>Alerta</b> ! Não foi possível cadastrar, a data de nascimento deve ser menor que " + DateTime.Now.ToShortDateString() + " e menor que 120 anos ";
                         Notificar(mensagem, Notifica.Alerta);
+                        break;
 
-                        pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", pessoaViewModel.IdManequim);
-                        return View("Create", pessoaViewModel);
                     case 450:
                         mensagem = "Ocorreu um <b>Erro</b> durante a liberação de acesso ao <b>Associado</b>, se isso persistir entre em contato com o suporte";
                         Notificar(mensagem, Notifica.Erro);
+                        break;
 
-                        pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", pessoaViewModel.IdManequim);
-                        return View("Create", pessoaViewModel);
-
+                    default:
+                        mensagem = "Ocorreu um <b>Erro</b> durante o cadastro.";
+                        Notificar(mensagem, Notifica.Erro);
+                        break;
                 }
 
             }
