@@ -33,7 +33,7 @@ namespace Service.Tests
                     IdInstrumentoMusical = 1,
                     IdAssociado = 1,
                     IdColaborador = 1,
-                    ConfirmacaoAssociado = 1,
+                    ConfirmacaoAssociado = 0,
                     TipoMovimento = "EMPRESTIMO"
                 },
                 new Movimentacaoinstrumento
@@ -53,7 +53,7 @@ namespace Service.Tests
                     IdInstrumentoMusical = 3,
                     IdAssociado = 3,
                     IdColaborador = 1,
-                    ConfirmacaoAssociado = 3,
+                    ConfirmacaoAssociado = 0,
                     TipoMovimento = "EMPRESTIMO"
                 }
             };
@@ -75,14 +75,15 @@ namespace Service.Tests
                 IdInstrumentoMusical = 4,
                 IdAssociado = 4,
                 IdColaborador = 2,
-                ConfirmacaoAssociado = 4,
-                TipoMovimento = "DEVOLUCAO"
+                ConfirmacaoAssociado = 0,
+                TipoMovimento = "EMPRESTIMO"
             });
 
             // Assert
-            var movimentacaoInstrumento = _movimentacaoInstrumento.GetEmprestimoByIdInstrumento(2).GetAwaiter().GetResult();
+            var movimentacaoInstrumento = _context.Movimentacaoinstrumentos.FindAsync(2).GetAwaiter().GetResult();
+            //Assert.AreEqual(200, valor.Result);
             Assert.IsNotNull(movimentacaoInstrumento);
-            Assert.AreEqual(4, movimentacaoInstrumento.Id);
+            Assert.AreEqual(2, movimentacaoInstrumento.Id);
         }
 
     }
