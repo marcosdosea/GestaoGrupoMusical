@@ -65,7 +65,7 @@ namespace Service.Tests
         }
 
         [TestMethod]
-        public void CreateTest()
+        public void CreateAsyncTest()
         {
             // Act
             _movimentacaoInstrumento.CreateAsync(new Movimentacaoinstrumento
