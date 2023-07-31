@@ -86,5 +86,11 @@ namespace Service.Tests
             Assert.AreEqual(2, movimentacaoInstrumento.Id);
         }
 
+        [TestMethod]
+        public void DeleteAsyncTest()
+        {
+
+        }
+
     }
 }
