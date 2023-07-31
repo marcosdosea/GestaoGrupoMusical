@@ -346,9 +346,6 @@ namespace Service
                     {
                         await _userManager.RemoveFromRoleAsync(user, "ADMINISTRADOR GRUPO");
                         await _userManager.AddToRoleAsync(user, "ASSOCIADO");
-                    }
-                    pessoa.IdPapelGrupo = 1;
-
 
                         pessoa.IdPapelGrupo = 1;
 
@@ -364,8 +361,6 @@ namespace Service
             {
                 return false;
             }
-
-
         }
 
         public async Task<int> AddAssociadoAsync(Pessoa pessoa)
@@ -729,6 +724,45 @@ namespace Service
                 return false;
             }
                
+        }
+
+        public async Task<int> AtivarAssociado(string cpf)
+        {
+            try
+            {
+                var pessoa = await _context.Pessoas.Where(p => p.Cpf == cpf).AsNoTracking().SingleOrDefaultAsync();
+
+                //verificar se existe o associado
+                if(pessoa != null)
+                {
+                    //se o associado não foi desativado por algum adm de grupo
+                    if (pessoa.DataSaida != null && pessoa.MotivoSaida != null)
+                    {
+                        pessoa.Ativo = 1;
+
+                        if (await Edit(pessoa) != 200)
+                        {
+                            return 500;
+                        }
+
+                        return 200;
+                    }
+                    else
+                    {
+                        return 401;
+                    }  
+                    //===========================================================//
+                }
+                else
+                {
+                    return 400;
+                }
+                //=================================//
+            }
+            catch
+            {
+                return 501;
+            }
         }
     }
 }

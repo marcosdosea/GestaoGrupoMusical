@@ -116,6 +116,7 @@ namespace Core.Service
         /// <param name="password">string a ser embaralhada</param>
         /// <returns>string embaralhada</returns>
         Task<string> PasswordShuffle(string password);
+
         /// <summary>
         /// Retorna o nome do associado passando o cpf
         /// </summary>
@@ -125,6 +126,25 @@ namespace Core.Service
 
         Task<string> GetNomeAssociadoByEmail(string email);
 
+        /// <summary>
+        /// Verifica se associado existe pelo email
+        /// afim de verificar se email ja esta em
+        /// uso
+        /// </summary>
+        /// <param name="email">email para verificar</param>
+        /// <returns>true: caso exista; false: caso nao exista</returns>
         Task<bool> AssociadoExist(string email);
+
+        /// <summary>
+        /// Ativa associado logo após redefinir senha
+        /// </summary>
+        /// <param name="email">cpf do associado</param>
+        /// <returns>
+        /// 400: Associado não encontrado
+        /// 401: Associado desativado por adm de grupo musical
+        /// 500: Erro ao editar Associado
+        /// 501: Erro na operação
+        /// </returns>
+        Task<int> AtivarAssociado(string cpf);
     }
 }
