@@ -40,8 +40,8 @@ namespace Service.Tests
                 {
                     Id = 2,
                     Data = new DateTime(2022, 8, 25),
-                    IdInstrumentoMusical = 1,
-                    IdAssociado = 1,
+                    IdInstrumentoMusical = 2,
+                    IdAssociado = 2,
                     IdColaborador = 1,
                     ConfirmacaoAssociado = 1,
                     TipoMovimento = "DEVOLUCAO"
@@ -50,10 +50,10 @@ namespace Service.Tests
                 {
                     Id = 3,
                     Data = new DateTime(2023, 2, 28),
-                    IdInstrumentoMusical = 2,
+                    IdInstrumentoMusical = 3,
                     IdAssociado = 3,
-                    IdColaborador = 2,
-                    ConfirmacaoAssociado = 1,
+                    IdColaborador = 1,
+                    ConfirmacaoAssociado = 3,
                     TipoMovimento = "EMPRESTIMO"
                 }
             };
@@ -72,10 +72,10 @@ namespace Service.Tests
             {
                 Id = 4,
                 Data = new DateTime(2023, 3, 10),
-                IdInstrumentoMusical = 2,
-                IdAssociado = 3,
+                IdInstrumentoMusical = 4,
+                IdAssociado = 4,
                 IdColaborador = 2,
-                ConfirmacaoAssociado = 1,
+                ConfirmacaoAssociado = 4,
                 TipoMovimento = "DEVOLUCAO"
             });
 
