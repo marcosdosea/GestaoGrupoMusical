@@ -80,8 +80,9 @@ namespace Service.Tests
             });
 
             // Assert
-            var movimentacoesInstrumento = _movimentacaoInstrumento.GetAllByIdInstrumento(2).GetAwaiter().GetResult();
-            Assert.AreEqual(2, movimentacoesInstrumento.ToList().Count);
+            var movimentacaoInstrumento = _movimentacaoInstrumento.GetEmprestimoByIdInstrumento(2).GetAwaiter().GetResult();
+            Assert.IsNotNull(movimentacaoInstrumento);
+            Assert.AreEqual(4, movimentacaoInstrumento.Id);
         }
 
     }
