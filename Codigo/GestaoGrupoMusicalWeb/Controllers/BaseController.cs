@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Core;
+using Email;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -32,6 +35,58 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 break;
             }
             TempData["alertText"] = mensagem;
+        }
+        /// <summary>
+        /// Este método tem o tralho de gerar um token para
+        /// redefinição de senha do usuário identity, gera
+        /// uma url para redefinir a senha e encaminha isso
+        /// para o email cadastrado (se existir usuario com ele).
+        /// </summary>
+        /// <param name="_userManager">UserManager do identity</param>
+        /// <param name="userEmail">Email do usuario</param>
+        /// <returns>200: Sucesso; 400: usuario não encontrado; 500: problema na geração do token</returns>
+        public async Task<int> RequestPasswordReset(UserManager<UsuarioIdentity> _userManager, string userEmail, string userName)
+        {
+            var user = await _userManager.FindByEmailAsync(userEmail);
+
+            //a segunda condição é para caso seja necessario
+            //confirmar o email do usuario para alterar a senha
+            if (user == null /*|| !(await _userManager.IsEmailConfirmedAsync(user))*/)
+            {
+                //usuario não encontrado
+                return 400;
+            }
+
+            string code = "";
+
+            try
+            {
+                //gera o token para redefinir senha
+                code = await _userManager.GeneratePasswordResetTokenAsync(user);
+            }
+            catch(Exception ex)
+            {
+                //erro na geração do token
+                return 500;
+            }
+
+            //gera link para a view da controladora ja passando codigo e id do usuario
+            var callbackUrl = Url.Action("ResetPassword", "Identity", new { userId = user.Id, token = code }, /*protocol:*/ Request.Scheme);
+
+            //enviar email com o link
+            EmailModel email = new()
+            {
+                Assunto = "Batalá - Redefinição de Senha",
+                AddresseeName = userName,
+                Body = "Aqui está o link para redefinir sua senha:\r\n" +
+                $"<a href=\"{callbackUrl}\"\">Clique Aqui</a>"
+            };
+
+            email.To.Add(userEmail);
+
+            await EmailService.Enviar(email);
+
+            return 200;
         }
     }
 }

@@ -25,34 +25,35 @@
         <div class="row mb-3">
             <div>
                 <label asp-for="IdAssociado" class="control-label"></label>
-                <select asp-for="IdAssociado" asp-items="@Model.ListaAssociado" class="form-select">
-                    <option value=""></option>
-                </select>
-                <span asp-validation-for="IdAssociado" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="row mb-3">
-            <div>
-                <label asp-for="IdColaborador" class="control-label"></label>
-                <select asp-for="IdColaborador" asp-items="@Model.ListaAssociado" class="form-select">
-                    <option value=""></option>
-                </select>
-                <span asp-validation-for="IdColaborador" class="text-danger"></span>
+                    @if (Model.IdAssociado != 0)
+                    {
+                        <select asp-for="IdAssociado" asp-items="@Model.ListaAssociado" class="form-select" disabled>
+                            <option value=""></option>
+                        </select>
+                        <input asp-for="IdAssociado" type="hidden"/>
+                    }
+                    else
+                    {
+                        <select asp-for="IdAssociado" asp-items="@Model.ListaAssociado" class="form-select">
+                            <option value=""></option>
+                        </select>
+                    }
+                    <span asp-validation-for="IdAssociado" class="text-danger"></span>
             </div>
         </div>
         <div class="row mb-3">
             <div class="col-lg-6">
                 <label asp-for="Movimentacao" class="control-label"></label>
                 <div class="d-flex justify-content-around">
-                    @{
-                        foreach (var item in Model.MovimentacaoEnum)
-                        {
-                            <div>
-                                <label for="@item.Key">@item.Key</label>
-                                <input type="radio" value="@item.Value" asp-for="Movimentacao" id="@item.Key" />
-                            </div>
-                        }
+                @{
+                    foreach (var item in Model.MovimentacaoEnum)
+                    {
+                        <div>
+                            <label for="@item.Key">@item.Key</label>
+                            <input class="form-check-input" type="radio" value="@item.Value" asp-for="Movimentacao" id="@item.Key" />
+                        </div>
                     }
+                }
                 </div>
                 <span asp-validation-for="Movimentacao" class="text-danger"></span>
             </div>
@@ -63,9 +64,9 @@
             </div>
         </div>
         <div class="row">
-            <div class="d-flex justify-content-lg-end flex-column flex-lg-row">
-                <a class="btn btn-light col-lg-2 mt-3 me-lg-3" asp-controller="InstrumentoMusical" asp-action="Index">Voltar</a>
-                <input class="btn btn-primary col-lg-2 mt-3 ml-3" type="submit" value="Adicionar" />
+            <div class="d-flex justify-content-lg-end flex-column-reverse flex-lg-row">
+                <a class="btn btn-outline-secondary col-lg-2 mt-3 me-lg-3" asp-controller="InstrumentoMusical" asp-action="Index">Voltar</a>
+                <input class="btn btn-secondary col-lg-2 mt-3 ml-3" type="submit" value="Adicionar" />
             </div>
         </div>
     </form>

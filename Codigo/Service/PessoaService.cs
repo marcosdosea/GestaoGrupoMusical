@@ -3,9 +3,9 @@ using Core.DTO;
 using Core.Service;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
 using Email;
-using System.Diagnostics.Metrics;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Service
 {
@@ -16,7 +16,7 @@ namespace Service
         private readonly IUserStore<UsuarioIdentity> _userStore;
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        public PessoaService(GrupoMusicalContext context, 
+        public PessoaService(GrupoMusicalContext context,
                             UserManager<UsuarioIdentity> userManager,
                             IUserStore<UsuarioIdentity> userStore,
                             RoleManager<IdentityRole> roleManager)
@@ -34,21 +34,127 @@ namespace Service
         /// <returns>retorna o id referente a nova entidade criada</returns>
         public async Task<int> Create(Pessoa pessoa)
         {
-            await _context.Pessoas.AddAsync(pessoa);
-            await _context.SaveChangesAsync();
 
-            return pessoa.Id;
+                try
+                {
+                    pessoa.Cpf = pessoa.Cpf.Replace("-", string.Empty).Replace(".", string.Empty);
+                    pessoa.Cep = pessoa.Cep.Replace("-", string.Empty);
+
+                    await _context.Pessoas.AddAsync(pessoa);
+
+                    if (pessoa.DataEntrada == null && pessoa.DataNascimento == null)
+                    {//Mensagem de sucesso
+                        await _context.SaveChangesAsync();
+                        return 200;
+                    }
+                    else if (pessoa.DataNascimento != null)
+                    {
+                        int idade = Math.Abs(pessoa.DataNascimento.Value.Year - DateTime.Now.Year);
+                        if (pessoa.DataNascimento <= DateTime.Now && idade < 120)
+                        {
+                            if (pessoa.DataEntrada == null || pessoa.DataEntrada < DateTime.Now)
+                            {//mensagem de sucesso
+                               
+                                await _context.SaveChangesAsync();
+                                return 200;
+                            }
+                            else
+                            {
+                                // erro 400, data de entrada fora do escopo
+                                return 400;
+                            }
+                        }
+                        else
+                        {
+                            // erro 401, data de nascimento está fora do escopo
+                            return 401;
+                        }
+                    }
+                    else if (pessoa.DataEntrada == null || pessoa.DataEntrada < DateTime.Now)
+                    {
+                        await _context.SaveChangesAsync();
+                        return 200;
+                    }
+                    else
+                    {
+                        // erro 400, data de entrada fora do escopo
+                        return 400;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    //Aconteceu algum erro do servidor ou interno
+                    return 500;
+                }
+
         }
 
         /// <summary>
         /// Metodo que atualiza os dados de uma pessoa/associado
         /// </summary>
         /// <param name="pessoa">dados do associado</param>
-        public void Edit(Pessoa pessoa)
+        public async Task<int> Edit(Pessoa pessoa)
         {
             //Criar excecao para data de nascimento, etc
-            _context.Update(pessoa);
-            _context.SaveChanges();
+            try
+            {
+                pessoa.Cpf = pessoa.Cpf.Replace("-", string.Empty).Replace(".", string.Empty);
+                pessoa.Cep = pessoa.Cep.Replace("-", string.Empty);
+
+                var pessoaDb = await _context.Pessoas.Where(p => p.Id == pessoa.Id).AsNoTracking().SingleOrDefaultAsync();
+                if (pessoaDb != null && pessoaDb.Cpf == pessoa.Cpf)
+                {
+                    pessoa.IdGrupoMusical = pessoaDb.IdGrupoMusical;
+                    pessoa.IdPapelGrupo = pessoaDb.IdPapelGrupo;
+
+                    _context.Pessoas.Update(pessoa);
+                }
+                if (pessoa.DataEntrada == null && pessoa.DataNascimento == null)
+                {//Mensagem de sucesso
+                    await _context.SaveChangesAsync();
+                    return 200;
+                }
+                else if (pessoa.DataNascimento != null)
+                {
+                    int idade = Math.Abs(pessoa.DataNascimento.Value.Year - DateTime.Now.Year);
+                    if (pessoa.DataNascimento <= DateTime.Now && idade < 120)
+                    {
+                        if (pessoa.DataEntrada == null || pessoa.DataEntrada < DateTime.Now)
+                        {//mensagem de sucesso
+
+                            await _context.SaveChangesAsync();
+                            return 200;
+                        }
+                        else
+                        {
+                            // erro 400, data de entrada fora do escopo
+                            return 400;
+                        }
+                    }
+                    else
+                    {
+                        // erro 401, data de nascimento está fora do escopo
+                        return 401;
+                    }
+                }
+                else if (pessoa.DataEntrada == null || pessoa.DataEntrada < DateTime.Now)
+                {
+                    await _context.SaveChangesAsync();
+                    return 200;
+                }
+                else
+                {
+                    // erro 400, data de entrada fora do escopo
+                    return 400;
+                }
+            }
+            catch (Exception ex)
+            {
+                //Aconteceu algum erro do servidor ou interno
+                return 500;
+            }
+
+
         }
 
         /// <summary>
@@ -83,13 +189,18 @@ namespace Service
             return _context.Pessoas.AsNoTracking();
         }
 
-        public async Task<bool> AddAdmGroup(Pessoa pessoa)
+        public async Task<int> AddAdmGroup(Pessoa pessoa)
         {
+            using var transaction = _context.Database.BeginTransaction();
+            int sucesso; //será usada para o retorno 200/201 de sucesso
+
             try
             {
+                pessoa.Cpf = pessoa.Cpf.Replace(".", String.Empty).Replace("-", String.Empty);
                 //faz uma consulta para tentar buscar a primeira pessoa com o cpf que foi digitado
                 var pessoaF = _context.Pessoas.FirstOrDefault(p => p.Cpf == pessoa.Cpf);
 
+                //caso nao exista algeum com o cpf indicado
                 if (pessoaF == null)
                 {
                     pessoa.IdManequim = 1;
@@ -100,12 +211,19 @@ namespace Service
                     pessoa.IsentoPagamento = 1;
                     pessoa.Telefone1 = "";
 
-                    await Create(pessoa);
+                    if(await Create(pessoa) != 200)
+                    {
+                        await transaction.RollbackAsync();
+                        return 500;//nao foi possivel criar a pessoa
+                    }
 
                     var user = CreateUser();
 
                     await _userStore.SetUserNameAsync(user, pessoa.Cpf, CancellationToken.None);
-                    var result = await _userManager.CreateAsync(user, pessoa.Cpf);
+
+                    user.Email = pessoa.Email;
+
+                    var result = await _userManager.CreateAsync(user, await GenerateRandomPassword(30));
 
                     if (result.Succeeded)
                     {
@@ -117,31 +235,35 @@ namespace Service
 
                         var userDb = await _userManager.FindByNameAsync(pessoa.Cpf);
                         await _userManager.AddToRoleAsync(userDb, "ADMINISTRADOR GRUPO");
-
-                        await NotificarCadastroAdmGrupoAsync(pessoa);
                     }
+                    sucesso = 200; //usuario CRIADO como administrador de grupo musical
                 }
-                else if (pessoaF.IdGrupoMusical == pessoa.IdGrupoMusical)
+                //caso exista, seja do mesmo grupo musical e não seja adm de grupo (3)
+                else if (pessoaF.IdGrupoMusical == pessoa.IdGrupoMusical && pessoaF.IdPapelGrupo != 3)
                 {
                     var user = await _userManager.FindByNameAsync(pessoaF.Cpf);
 
-                    if(user != null)
+                    //se o user identity existir
+                    if (user != null)
                     {
                         bool roleExists = await _roleManager.RoleExistsAsync("ADMINISTRADOR GRUPO");
                         if (!roleExists)
                         {
                             await _roleManager.CreateAsync(new IdentityRole("ADMINISTRADOR GRUPO"));
                         }
+                        await _userManager.RemoveFromRoleAsync(user, "ASSOCIADO");
                         await _userManager.AddToRoleAsync(user, "ADMINISTRADOR GRUPO");
-
-                        await NotificarCadastroAdmGrupoAsync(pessoaF);
                     }
+                    //caso não user identity exista
                     else
                     {
                         user = CreateUser();
 
                         await _userStore.SetUserNameAsync(user, pessoaF.Cpf, CancellationToken.None);
-                        var result = await _userManager.CreateAsync(user, pessoaF.Cpf);
+
+                        user.Email = pessoaF.Email;
+
+                        var result = await _userManager.CreateAsync(user, await GenerateRandomPassword(30));
 
                         if (result.Succeeded)
                         {
@@ -153,26 +275,42 @@ namespace Service
 
                             var userDb = await _userManager.FindByNameAsync(pessoaF.Cpf);
                             await _userManager.AddToRoleAsync(userDb, "ADMINISTRADOR GRUPO");
-
-                            await NotificarCadastroAdmGrupoAsync(pessoaF);
                         }
                     }
 
                     //id para adm de grupo == 3
                     pessoaF.IdPapelGrupo = 3;
-                    Edit(pessoaF);
+                    try
+                    {
+                        _context.Pessoas.Update(pessoaF);
+                        await _context.SaveChangesAsync();
+                    }
+                    catch 
+                    {
+                        await transaction.RollbackAsync();
+                        return 500;//o usuario já possui cadastro em um grupo musical, não foi possiveç alterar ele para adm grupo musical
+                    }
+
+                    sucesso = 201; //usuario promovido a administrador de grupo musical
+                }
+               
+                else if (pessoaF.IdGrupoMusical == pessoa.IdGrupoMusical && pessoaF.IdPapelGrupo == 3)
+                {
+                    return 401; // usuario já é administrador de grupo musical
                 }
                 else
                 {
-                    return false;
+                    await transaction.RollbackAsync();
+                    return 400;//erro 400, o usuario associado a outro grupo musical
                 }
-                
 
-                return true;
+                await transaction.CommitAsync();
+                return sucesso; //200 - usuario nao existia; 201 - usuario existia e foi promovido
             }
             catch
             {
-                return false;
+                await transaction.RollbackAsync();
+                return 501;//erro 500, do servidor
             }
         }
         /// <summary>
@@ -204,16 +342,17 @@ namespace Service
                 if (pessoa != null)
                 {
                     var user = await _userManager.FindByNameAsync(pessoa.Cpf);
-                    if(user != null)
+                    if (user != null)
                     {
                         await _userManager.RemoveFromRoleAsync(user, "ADMINISTRADOR GRUPO");
+                        await _userManager.AddToRoleAsync(user, "ASSOCIADO");
+
+                        pessoa.IdPapelGrupo = 1;
+
+                        _context.Pessoas.Update(pessoa);
+
+                        await _context.SaveChangesAsync();
                     }
-                    pessoa.IdPapelGrupo = 1;
-
-                    _context.Pessoas.Update(pessoa);
-
-                    await _context.SaveChangesAsync();
-
                     return true;
                 }
                 return false;
@@ -222,20 +361,67 @@ namespace Service
             {
                 return false;
             }
-            
-
         }
 
-        public IEnumerable<AssociadoDTO> GetAllAssociadoDTO()
+        public async Task<int> AddAssociadoAsync(Pessoa pessoa)
         {
-            return from pessoa in _context.Pessoas
-                   select new AssociadoDTO
-                   {
-                       Id = pessoa.Id,
-                       Nome = pessoa.Nome,
-                       Ativo = pessoa.Ativo
-                   };
+            using var transaction = _context.Database.BeginTransaction();
+
+            try
+            {
+                int createResult = await Create(pessoa);
+                if (createResult != 200)
+                {
+                    await transaction.RollbackAsync();
+                    return createResult;
+                }
+
+                var user = CreateUser();
+
+                user.Email = pessoa.Email;
+
+                await _userStore.SetUserNameAsync(user, pessoa.Cpf, CancellationToken.None);
+                var result = await _userManager.CreateAsync(user, await GenerateRandomPassword(30));
+
+                if (result.Succeeded)
+                {
+                    bool roleExists = await _roleManager.RoleExistsAsync("ASSOCIADO");
+                    if (!roleExists)
+                    {
+                        await _roleManager.CreateAsync(new IdentityRole("ASSOCIADO"));
+                    }
+
+                    var userDb = await _userManager.FindByNameAsync(pessoa.Cpf);
+                    await _userManager.AddToRoleAsync(userDb, "ASSOCIADO");
+
+                    await transaction.CommitAsync();
+                    return createResult;
+                }
+
+                await transaction.RollbackAsync();
+                return 450;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                return 500;
+            }
         }
+
+        public async Task<IEnumerable<AssociadoDTO>> GetAllAssociadoDTO()
+        {
+            var query = from pessoa in _context.Pessoas
+                        where pessoa.IdPapelGrupo == 1
+                        select new AssociadoDTO
+                        {
+                            Id = pessoa.Id,
+                            Nome = pessoa.Nome,
+                            Ativo = pessoa.Ativo
+                        };
+
+            return await query.AsNoTracking().ToListAsync();
+        }
+
         public IEnumerable<Papelgrupo> GetAllPapelGrupo()
         {
             return _context.Papelgrupos.AsNoTracking();
@@ -252,7 +438,7 @@ namespace Service
 
             //uma query pois pode ser que o id seja alterado futuramente
             var idPapel = _context.Papelgrupos
-                .Where(p=>p.Nome == "Colaborador")
+                .Where(p => p.Nome == "Colaborador")
                 .Select(p => p.IdPapelGrupo)
                 .First();
 
@@ -283,7 +469,7 @@ namespace Service
             //isso e para evitar que um adm de grupo seja
             //rebaixado a associado
             if (idPapel != null && idPapel.GetType() == typeof(int)
-                && pessoa != null && pessoa.IdPapelGrupo <= (idPapel+1))
+                && pessoa != null && pessoa.IdPapelGrupo <= (idPapel + 1))
             {
                 pessoa.IdPapelGrupo = idPapel;
                 Edit(pessoa);
@@ -295,25 +481,53 @@ namespace Service
             }
         }
 
-        public void RemoverAssociado(Pessoa pessoaAssociada, String? motivoSaida)
+        public async Task<int> RemoverAssociado(Pessoa pessoaAssociada, String? motivoSaida)
         {
             pessoaAssociada.MotivoSaida = motivoSaida;
             pessoaAssociada.Ativo = 0;
             pessoaAssociada.DataSaida = DateTime.Now;
-            Edit(pessoaAssociada);
+            return await Edit(pessoaAssociada);
             
+
         }
 
         public async Task<bool> NotificarCadastroAdmGrupoAsync(Pessoa pessoa)
         {
             try
             {
-                
+
                 EmailModel email = new()
                 {
                     Assunto = "Batalá - Administrador do Grupo",
                     Body = "<div style=\"text-align: center;\">\r\n    " +
                     "<h1>Administrador do Grupo</h1>\r\n    " +
+                    $"<h2>Olá, {pessoa.Nome}, a sua senha para acesso.</h2>\r\n" +
+                    "<div style=\"font-size: large;\">\r\n        " +
+                    $"<dt style=\"font-weight: 700;\">Login:</dt><dd>{pessoa.Cpf}</dd>" +
+                    $"<dt style=\"font-weight: 700;\">Senha:</dt><dd>{pessoa.Cpf}</dd>"
+                };
+
+                email.To.Add(pessoa.Email);
+
+                await EmailService.Enviar(email);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> NotificarCadastroAssociadoAsync(Pessoa pessoa)
+        {
+            try
+            {
+
+                EmailModel email = new()
+                {
+                    Assunto = "Batalá - Acesso como Associado",
+                    Body = "<div style=\"text-align: center;\">\r\n    " +
+                    "<h1>Associado</h1>\r\n    " +
                     $"<h2>Olá, {pessoa.Nome}, a sua senha para acesso.</h2>\r\n" +
                     "<div style=\"font-size: large;\">\r\n        " +
                     $"<dt style=\"font-weight: 700;\">Login:</dt><dd>{pessoa.Cpf}</dd>" +
@@ -345,14 +559,210 @@ namespace Service
             }
         }
 
-        public bool GetCPFExistente(int id,string cpf)
+        public bool GetCPFExistente(int id, string cpf)
         {
+            cpf = cpf.Replace("-", string.Empty).Replace(".", string.Empty);
             var query = _context.Set<Pessoa>().AsNoTracking().FirstOrDefault(p => p.Id == id && p.Cpf == cpf);
-            if(query != null)
+            if (query != null)
             {
                 return true;
             }
             return false;
+        }
+
+        public async Task<UserDTO?> GetByCpf(string? cpf)
+        {
+            var query = (from pessoa in _context.Pessoas
+                        where pessoa.Cpf == cpf
+                        select new UserDTO
+                        {
+                           Id = pessoa.Id,
+                           Nome = pessoa.Nome,
+                           Papel = pessoa.IdPapelGrupoNavigation.Nome,
+                           Sexo = pessoa.Sexo,
+                           Cep = pessoa.Cep,
+                           Rua = pessoa.Rua,
+                           Bairro = pessoa.Bairro,
+                           Cidade = pessoa.Cidade,
+                           Estado = pessoa.Estado,
+                           DataNascimento = pessoa.DataNascimento,
+                           Telefone1 = pessoa.Telefone1,
+                           Telefone2 = pessoa.Telefone2,
+                           Email = pessoa.Email,
+                           Ativo = Convert.ToBoolean(pessoa.Ativo),
+                           IdGrupoMusical = pessoa.IdGrupoMusical,
+                           IdPapelGrupo = pessoa.IdPapelGrupo
+                        }
+                        ).FirstOrDefaultAsync();
+
+            return await query;
+        }
+
+        public async Task<IEnumerable<AssociadoDTO>> GetAllAssociadoDTOByGroup(string cpf)
+        {
+            if (cpf == null)
+            {
+                return null;
+            }
+
+            int idGrupo;
+
+            try
+            {
+                var pessoa = await GetByCpf(cpf);
+                idGrupo = pessoa.IdGrupoMusical;
+            }
+            catch
+            {
+                return null;
+            }
+
+            var query = from pessoaQ in _context.Pessoas
+                        where pessoaQ.IdGrupoMusical == idGrupo
+                        && pessoaQ.IdPapelGrupo == 1            //retorna apenas associados
+                        select new AssociadoDTO
+                        {
+                            Id = pessoaQ.Id,
+                            Nome = pessoaQ.Nome,
+                            Ativo = pessoaQ.Ativo
+                        };
+
+            return query;
+        }
+        public IEnumerable<Pessoa> GetAllPessoasOrder(int idGrupo)
+        {
+            return _context.Pessoas.Where(g => g.IdGrupoMusical == idGrupo
+                && g.IdPapelGrupoNavigation.Nome == "Associado" && g.Ativo == 1)
+                .OrderBy(g => g.Nome).AsNoTracking();
+        }
+
+        public async Task<string> GenerateRandomPassword(int length)
+        {
+            const string caracteresPermitidos = "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ123456789!@#$%^&*()-_=+[]{}|;:,.<>?";
+            const int minimoCaracteresEspeciais = 1;
+            const int minimoNumeros = 1;
+
+            StringBuilder senha = new StringBuilder();
+
+            using (var rng = new RNGCryptoServiceProvider())
+            {
+                // Adicionar pelo menos um caractere especial
+                byte[] randomBytes = new byte[1];
+
+                rng.GetBytes(randomBytes);
+
+                int indiceCaractereEspecial = randomBytes[0] % 20; // Índice entre 0 e 19
+
+                senha.Append(caracteresPermitidos[indiceCaractereEspecial]);
+
+                // Adicionar pelo menos um número
+                rng.GetBytes(randomBytes);
+
+                int indiceNumero = 20 + randomBytes[0] % 10; // Índice entre 20 e 29
+
+                senha.Append(caracteresPermitidos[indiceNumero]);
+
+                // Completar o restante da senha com caracteres aleatórios
+                for (int i = 0; i < length - minimoCaracteresEspeciais - minimoNumeros; i++)
+                {
+                    rng.GetBytes(randomBytes);
+                    int indiceCaractere = randomBytes[0] % caracteresPermitidos.Length;
+                    senha.Append(caracteresPermitidos[indiceCaractere]);
+                }
+            }
+
+            // Embaralhar a senha para torná-la mais segura
+            string senhaEmbaralhada = await PasswordShuffle(senha.ToString());
+
+            return senhaEmbaralhada;
+        }
+
+        public async Task<string> PasswordShuffle(string password)
+        {
+            char[] array = password.ToCharArray();
+            Random rng = new Random();
+            int n = array.Length;
+
+            while (n > 1)
+            {
+                n--;
+                int k = rng.Next(n + 1);
+                char value = array[k];
+                array[k] = array[n];
+                array[n] = value;
+            }
+
+            return new string(array);
+        }
+
+        public async Task<string> GetNomeAssociado(string cpf)
+        {
+            var pessoa = await GetByCpf(cpf);
+
+            return pessoa.Nome;
+        }
+
+        public async Task<string> GetNomeAssociadoByEmail(string email)
+        {
+            var pessoaF = await (from pessoa in _context.Pessoas
+                         where pessoa.Email == email
+                         select pessoa).FirstOrDefaultAsync();
+
+            return pessoaF.Nome;
+        }
+
+        public async Task<bool> AssociadoExist(string email)
+        {
+            var pessoa = await _context.Pessoas.Where(att => att.Email == email).AsNoTracking().SingleOrDefaultAsync();
+
+            if (pessoa != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+               
+        }
+
+        public async Task<int> AtivarAssociado(string cpf)
+        {
+            try
+            {
+                var pessoa = await _context.Pessoas.Where(p => p.Cpf == cpf).AsNoTracking().SingleOrDefaultAsync();
+
+                //verificar se existe o associado
+                if(pessoa != null)
+                {
+                    //se o associado não foi desativado por algum adm de grupo
+                    if (pessoa.DataSaida != null && pessoa.MotivoSaida != null)
+                    {
+                        pessoa.Ativo = 1;
+
+                        if (await Edit(pessoa) != 200)
+                        {
+                            return 500;
+                        }
+
+                        return 200;
+                    }
+                    else
+                    {
+                        return 401;
+                    }  
+                    //===========================================================//
+                }
+                else
+                {
+                    return 400;
+                }
+                //=================================//
+            }
+            catch
+            {
+                return 501;
+            }
         }
     }
 }

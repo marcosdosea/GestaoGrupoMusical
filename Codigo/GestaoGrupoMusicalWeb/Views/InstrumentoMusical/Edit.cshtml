@@ -1,60 +1,84 @@
 ﻿@model GestaoGrupoMusicalWeb.Models.InstrumentoMusicalViewModel
 
 @{
-    ViewData["Title"] = "Editar Instrumento";
+    ViewData["Title"] = "Adicionar Instrumento";
+    ViewData["InstrumentoMusical"] = "Instrumento";
+    ViewData["Edit"] = "Editar";
 }
+<partial name="_Notificar">
 
-<h1>Editar Instrumento</h1>
+    <div class="row">
+        <div class="col-md-10 col-lg-6">
+            <h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">Editar Instrumento</h1>
+            <nav>
+                <ol class="breadcrumb px-3">
+                    <strong>
+                        <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["InstrumentoMusical"]</a>
+                        <span class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Edit"]</span>
+                    </strong>
+                </ol>
+            </nav>
+            <hr />
+            <br />
 
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Patrimonio" class="control-label"></label>
-                <input asp-for="Patrimonio" class="form-control" />
-                <span asp-validation-for="Patrimonio" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DataAquisicao" class="control-label"></label>
-                <input asp-for="DataAquisicao" class="form-control" />
-                <span asp-validation-for="DataAquisicao" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IdTipoInstrumento" class="control-label"></label>
-                <select asp-for="IdTipoInstrumento" asp-items="@Model.ListaInstrumentos" class="form-control"></select>
-                <span asp-validation-for="IdTipoInstrumento" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IdGrupoMusical" class="control-label"></label>
-                <input asp-for="IdGrupoMusical" class="form-control" />
-                <span asp-validation-for="IdGrupoMusical" class="text-danger"></span>
-            </div>
-            @if (Model.Status != "EMPRESTADO")
-            {
-                <div class="form-check">
-                    <!-- <input asp-for="IsDanificado" checked="" /> -->
-                    <!-- <input asp-for="IsDanificado" name="IsDanificado" type="hidden" value="false" id="flexCheckChecked" /> -->
-                    @Html.CheckBox("IsDanificado", (Model.Status.Equals("DANIFICADO")) ? true : false )
-                    <label asp-for="IsDanificado" class="form-check-label" for="flexCheckChecked"></label>
-                    <span asp-validation-for="Status" class="text-danger"></span>
+
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="container">
+                    <div class="row d-flex justify-content-between ">
+                        <div class="form-group col-md-5">
+                            <label asp-for="Patrimonio" class="control-label"></label>
+                            <input asp-for="Patrimonio" class="form-control" />
+                            <span asp-validation-for="Patrimonio" class="text-danger"></span>
+                        </div>
+                        <div class="form-group  col-md-6">
+                            <label asp-for="DataAquisicao" class="control-label"></label>
+                            <input asp-for="DataAquisicao" class="form-control" />
+                            <span asp-validation-for="DataAquisicao" class="text-danger"></span>
+
+                        </div>
+                    </div>
                 </div>
-            }
-            else
-            {
-                <input asp-for="IsDanificado" value="null" hidden />
-            }
-            <div class="form-group">
-                <input type="submit" value="Salvar" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
-<div>
-    <a asp-action="Index">Voltar</a>
-</div>
+                <div class="container">
+                    <div class="row d-flex justify-content-between">
+                        <div class="form-group  col-md-5">
+                            <label asp-for="IdTipoInstrumento" class="control-label"></label>
+                            <select asp-for="IdTipoInstrumento" asp-items="@Model.ListaInstrumentos" class="form-select"></select>
+                            <span asp-validation-for="IdTipoInstrumento" class="text-danger"></span>
+                        </div>
+                        <div class="form-group  col-md-6">
+                            <label asp-for="Status" class="control-label"></label>
+                            <select asp-for="Status" class="form-select">
+                                <option value="DISPONIVEL">Disponível</option>
+                                <option value="DANIFICADO">Danificado</option>
+                            </select>
+                            <span asp-validation-for="Status" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="container">
+                    <div class="form-group">
+                        <input asp-for="IdGrupoMusical" type="hidden" />
+                    </div>
+                </div>
+                <br />
+                <br />
+                <div class="container">
+                    <div class="row">
+                        <div class="col-5"></div>
+                        <a class="btn btn-light text-secondary border border-secondary d-grid gap-2 col-3 mx-auto" asp-action="Index"> Voltar </a>
+                        <input type="submit" value="Salvar" class="btn btn-secondary d-grid gap-2 col-3 mx-auto" />
+                    </div>
+                </div>
+            </form>
+        </div>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+
+    </div>
+
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+    }

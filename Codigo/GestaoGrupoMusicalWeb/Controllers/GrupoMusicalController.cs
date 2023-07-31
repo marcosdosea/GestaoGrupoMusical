@@ -2,14 +2,13 @@
 using Core;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Service;
-using System.Net.WebSockets;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
-    public class GrupoMusicalController : Controller
+    [Authorize(Roles = "ADMINISTRADOR SISTEMA")]
+    public class GrupoMusicalController : BaseController
     {
         private readonly IGrupoMusicalService _grupoMusical;
         private readonly IMapper _mapper;
@@ -40,23 +39,42 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: GrupoMusicalController/Create
         public ActionResult Create()
         {
-            return View();
+            GrupoMusicalViewModel grupoMusicalViewModel = new();
+            return View(grupoMusicalViewModel);
         }
 
         // POST: GrupoMusicalController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(GrupoMusicalViewModel grupoMusicalViewModel)
+        public async Task<ActionResult> Create(GrupoMusicalViewModel grupoMusicalViewModel)
         {
-            grupoMusicalViewModel.Cnpj = grupoMusicalViewModel.Cnpj.Replace(".", string.Empty).Replace("-",string.Empty).Replace("/", string.Empty);
+            grupoMusicalViewModel.Cnpj = grupoMusicalViewModel.Cnpj.Replace(".", string.Empty).Replace("-", string.Empty).Replace("/", string.Empty);
             grupoMusicalViewModel.Cep = grupoMusicalViewModel.Cep.Replace("-", string.Empty);
             if (ModelState.IsValid)
             {
                 var grupoModel = _mapper.Map<Grupomusical>(grupoMusicalViewModel);
-                _grupoMusical.Create(grupoModel);
+
+
+                switch (await _grupoMusical.Create(grupoModel))
+                {
+                    case 200:
+
+                        Notificar("Grupo <b> Cadastrado </b> com <b> Sucesso </b> ", Notifica.Sucesso);
+                        return RedirectToAction(nameof(Index));
+                        break;
+                    case 500:
+                        Notificar("<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Cadastro</b> do associado, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                        return RedirectToAction(nameof(Index));
+                        break;
+                }
+
+            }
+            else
+            {
+                return View(grupoMusicalViewModel);
             }
             return RedirectToAction(nameof(Index));
-            
+
         }
 
         // GET: GrupoMusicalController/Edit/5
@@ -71,14 +89,34 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: GrupoMusicalController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, GrupoMusicalViewModel grupoMusicalViewModel)
+        public async Task<ActionResult> Edit(int id, GrupoMusicalViewModel grupoMusicalViewModel)
         {
             grupoMusicalViewModel.Cnpj = grupoMusicalViewModel.Cnpj.Replace(".", string.Empty).Replace("-", string.Empty).Replace("/", string.Empty);
-            grupoMusicalViewModel.Cep = grupoMusicalViewModel.Cep.Replace("-", string.Empty);
+            if (grupoMusicalViewModel.Cep != null)
+                grupoMusicalViewModel.Cep = grupoMusicalViewModel.Cep.Replace("-", string.Empty);
+
+            var existe = _grupoMusical.GetCNPJExistente(id, grupoMusicalViewModel.Cnpj);
+            if (existe)
+            {
+                ModelState.Remove("CNPJ");
+            }
             if (ModelState.IsValid)
             {
                 var grupoMusical = _mapper.Map<Grupomusical>(grupoMusicalViewModel);
-                _grupoMusical.Edit(grupoMusical);
+
+                switch (await _grupoMusical.Edit(grupoMusical))
+                {
+                    case 200:
+                        Notificar("Grupo Musical <b>Editado</b> com <b>Sucesso</b>", Notifica.Sucesso);
+                        return RedirectToAction(nameof(Index));
+                    case 500:
+                        Notificar("<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Cadastro</b> do associado, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                        return RedirectToAction(nameof(Index));
+                }
+            }
+            else
+            {
+                return View(grupoMusicalViewModel);
             }
             return RedirectToAction(nameof(Index));
         }
@@ -94,9 +132,21 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: GrupoMusicalController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, GrupoMusicalViewModel grupoMusicalViewModel)
+        public async Task<ActionResult> Delete(int id, GrupoMusicalViewModel grupoMusicalViewModel)
         {
-            _grupoMusical.Delete(id);
+
+            switch (await _grupoMusical.Delete(id))
+            {
+                case 200:
+                    Notificar("Grupo <b> Excluido </b> com <b> Sucesso </b> ", Notifica.Sucesso);
+                    return RedirectToAction(nameof(Index));
+                    break;
+                case 500:
+                    Notificar("<b>Erro</b> ! Desculpe, ocorreu um erro durante a <b>Exclusão</b> do Gruppo Musical, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                    return RedirectToAction(nameof(Index));
+                    break;
+            }
+
             return RedirectToAction(nameof(Index));
         }
     }

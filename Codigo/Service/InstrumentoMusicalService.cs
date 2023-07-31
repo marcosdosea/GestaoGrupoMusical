@@ -2,6 +2,8 @@
 using Core.DTO;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+using System.Data.Common;
 
 namespace Service
 {
@@ -16,21 +18,60 @@ namespace Service
 
         public async Task<int> Create(Instrumentomusical instrumentoMusical)
         {
-            await _context.AddAsync(instrumentoMusical);
-            await _context.SaveChangesAsync();
-            return instrumentoMusical.Id;
+            if (instrumentoMusical.DataAquisicao > DateTime.Now)
+            {
+                return 100;
+            }
+            try
+            {
+                await _context.AddAsync(instrumentoMusical);
+                await _context.SaveChangesAsync();
+                return 200;
+            }
+            catch (Exception)
+            {
+                return 500;
+            }
+
         }
 
-        public async Task Delete(int id)
+        public async Task<int> Delete(int id)
         {
-            _context.Remove(await Get(id));
-            await _context.SaveChangesAsync();
+            var instrumento = await Get(id);
+            if(instrumento == null)
+            {
+                return 404;
+            }
+            try
+            {
+                var hasMovimentacao = await _context.Movimentacaoinstrumentos.Where(m => m.IdInstrumentoMusical == id).AsNoTracking().AnyAsync();
+                if (hasMovimentacao)
+                {
+                    return 401;
+                }
+                _context.Remove(instrumento);
+                await _context.SaveChangesAsync();
+                return 200;
+            }
+            catch
+            {
+                return 500;
+            }
         }
 
-        public async Task Edit(Instrumentomusical instrumentoMusical)
+        public async Task<int> Edit(Instrumentomusical instrumentoMusical)
         {
-            _context.Update(instrumentoMusical);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Update(instrumentoMusical);
+                await _context.SaveChangesAsync();
+                return 200;
+            }
+            catch
+            {
+                return 500;
+            }
+
         }
 
         public async Task<Instrumentomusical?> Get(int id)
@@ -43,22 +84,27 @@ namespace Service
             return await _context.Instrumentomusicals.AsNoTracking().ToListAsync();
         }
 
-        public async Task<IEnumerable<InstrumentoMusicalDTO>> GetAllDTO()
+        public async Task<IEnumerable<InstrumentoMusicalDTO>> GetAllDTO(int idGrupo)
         {
-            var query = await   (from instrumento in _context.Instrumentomusicals
-                                join movimentacao in _context.Movimentacaoinstrumentos
-                                on instrumento.Id equals movimentacao.IdInstrumentoMusical into intMovi
-                                from instrumentoMovi in intMovi.DefaultIfEmpty()
-                                select new InstrumentoMusicalDTO
-                                {
-                                    Id = instrumento.Id,
-                                    Patrimonio = instrumento.Patrimonio,
-                                    NomeInstrumento = instrumento.IdTipoInstrumentoNavigation.Nome,
-                                    Status = instrumento.Status,
-                                    NomeAssociado = instrumentoMovi.IdAssociadoNavigation.Nome
-                                }).AsNoTracking().Distinct().ToListAsync();
-    
-            foreach (var instrumento in query)
+            var query = await (from instrumento in _context.Instrumentomusicals join
+                               movimentacao in _context.Movimentacaoinstrumentos
+                               on instrumento.Id equals movimentacao.IdInstrumentoMusical into intMovi
+                               from instrumentoMovi in intMovi.DefaultIfEmpty()
+                               where instrumento.IdGrupoMusical == idGrupo
+                               orderby instrumentoMovi.Data descending
+                               select new InstrumentoMusicalDTO
+                               {
+                                   Id = instrumento.Id,
+                                   Patrimonio = instrumento.Patrimonio,
+                                   NomeInstrumento = instrumento.IdTipoInstrumentoNavigation.Nome,
+                                   Status = instrumento.Status,
+                                   NomeAssociado = instrumentoMovi.IdAssociadoNavigation.Nome
+                               }).AsNoTracking().ToListAsync();
+
+
+            var list = query.DistinctBy(m => m.Patrimonio).OrderBy(m => m.NomeInstrumento);
+
+            foreach (var instrumento in list)
             {
                 if (instrumento.Status == "DISPONIVEL")
                 {
@@ -67,7 +113,7 @@ namespace Service
                 instrumento.Status = instrumento.EnumStatus.Single(s => s.Key == instrumento.Status).Value;
             }
 
-            return query;
+            return list;
         }
 
         public async Task<IEnumerable<Tipoinstrumento>> GetAllTipoInstrumento()
@@ -78,10 +124,26 @@ namespace Service
         public async Task<string> GetNomeInstrumento(int id)
         {
             var query = await (from instrumento in _context.Instrumentomusicals
-                        where instrumento.Id == id
-                        select new { instrumento.IdTipoInstrumentoNavigation.Nome }).AsNoTracking().SingleOrDefaultAsync();
+                               where instrumento.Id == id
+                               select new { instrumento.IdTipoInstrumentoNavigation.Nome }).AsNoTracking().SingleOrDefaultAsync();
 
             return query?.Nome ?? "";
+        }
+
+        public async Task<InstrumentoMusicalDeleteDTO> GetInstrumentoMusicalDeleteDTO(int id)
+        {
+            var query = await (from instrumento in _context.Instrumentomusicals join
+                               tipoInstrumento in _context.Tipoinstrumentos
+                               on instrumento.IdTipoInstrumento equals tipoInstrumento.Id
+                               where id == instrumento.Id
+                               select new InstrumentoMusicalDeleteDTO
+                               {
+                                   Patrimonio = instrumento.Patrimonio,
+                                   Status = instrumento.Status,
+                                   DataAquisicao = instrumento.DataAquisicao, 
+                                   NomeInstrumento = tipoInstrumento.Nome,
+                               }).AsNoTracking().SingleOrDefaultAsync();
+            return query!;
         }
     }
 }

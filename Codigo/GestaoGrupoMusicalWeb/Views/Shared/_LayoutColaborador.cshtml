@@ -26,16 +26,15 @@
 
             <div class="list-group list-group-flush">
                 <a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" asp-controller="Home" asp-action="Index"> Início</a>
-                <a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" asp-controller="Ensaio" asp-action="Index">Ensaios</a>
-                <a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" asp-controller="Evento" asp-action="Index">Eventos</a>
+                <!--<a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" asp-controller="Ensaio" asp-action="Index">Ensaios</a>-->
+                <!--<a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" asp-controller="Evento" asp-action="Index">Eventos</a>-->
                 <a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" asp-controller="Pessoa" asp-action="Index">Associados</a>
-                <a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" href="#!">Financeiro</a>
+                <!--<a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" href="#!">Financeiro</a>-->
                 <a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" asp-controller="InstrumentoMusical" asp-action="Index">Instrumentos</a>
-                <a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" href="#!">Figurinos</a>
-                <a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" href="#!">Material de Estudo</a>
-                <a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" asp-controller="Informativo" asp-action="Index">Informativos</a>
-                <a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" href="#!">Consultas</a>
-                <a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" asp-controller="GrupoMusical" asp-action="Index">Grupo Musical</a>
+                <!--<a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" href="#!">Figurinos</a>-->
+                <!--<a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" href="#!">Material de Estudo</a>-->
+                <!--<a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" asp-controller="Informativo" asp-action="Index">Informativos</a>-->
+                <!--<a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" href="#!">Consultas</a>-->
             </div>
         </div>
         <!-- Page content wrapper-->
@@ -50,11 +49,14 @@
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle fs-5 text-light" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="fa-solid fa-circle-user"></i>
+                                <a class="nav-link dropdown-toggle fs-5 text-light d-flex align-items-center" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <div class="card-body">
+                                        <h5 class="card-title">@User.FindFirst("UserName")?.Value</h5>
+                                        <h6 class="card-subtitle mb-2 text-muted text-capitalize">@User.FindFirst("UserRole")?.Value</h6>
+                                    </div>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="#!">
+                                    @*<a class="dropdown-item" href="#!">
                                         <i class="fa-solid fa-address-card"></i>
                                         Meus Dados
                                     </a>
@@ -62,7 +64,7 @@
                                         <i class="fa-solid fa-gear"></i>
                                         Configurações
                                     </a>
-                                    <div class="dropdown-divider"></div>
+                                    <div class="dropdown-divider"></div>*@
                                     <form asp-controller="Identity" asp-action="Sair">
                                         <button class="dropdown-item">
                                             <i class="fa-solid fa-right-from-bracket"></i>
@@ -84,14 +86,17 @@
 
     <footer class="border-top text-muted p-2 text-center">
         <div class="container">
-            &copy; @DateTime.Now.Year - GestaoGrupoMusicalWeb - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; @DateTime.Now.Year - v1.0
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/jquery-mask/jquery.inputmask.js"></script>
+    <script src="~/js/Mascara.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/simple-sidebar/dist/js/scripts.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/BuscaCep.js"></script>
+    <script src="~/js/modal.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

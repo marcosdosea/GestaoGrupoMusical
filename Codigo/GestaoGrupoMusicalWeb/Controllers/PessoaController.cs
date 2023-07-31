@@ -2,31 +2,36 @@
 using Core;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
-    public class PessoaController : Controller
+    [Authorize(Roles = "ADMINISTRADOR GRUPO")]
+    public class PessoaController : BaseController
     {
         private readonly IPessoaService _pessoaService;
         private readonly IMapper _mapper;
         private readonly IGrupoMusicalService _grupoMusical;
         private readonly IManequimService _manequim;
 
-        public PessoaController (IPessoaService pessoaService, IMapper mapper, IGrupoMusicalService grupoMusical, IManequimService manequim)
+        private readonly UserManager<UsuarioIdentity> _userManager;
+
+        public PessoaController (IPessoaService pessoaService, IMapper mapper, IGrupoMusicalService grupoMusical, IManequimService manequim, UserManager<UsuarioIdentity> userManager)
         {
             _pessoaService = pessoaService;
             _mapper = mapper;
             _grupoMusical = grupoMusical;
             _manequim = manequim;
+            _userManager = userManager;
         }
 
         // GET: PessoaController
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            var listaPessoasDTO = _pessoaService.GetAllAssociadoDTO();
+            var listaPessoasDTO = await _pessoaService.GetAllAssociadoDTOByGroup(User.Identity.Name);
 
             return View(listaPessoasDTO);
         }
@@ -49,8 +54,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
             IEnumerable<Grupomusical> listaGrupoMusical = _grupoMusical.GetAll();
             IEnumerable<Manequim> listaManequim = _manequim.GetAll();
 
-            pessoaViewModel.ListaGrupoMusical = new SelectList(listaGrupoMusical, "Id", "Nome", null);
-            pessoaViewModel.ListaPapelGrupo = new SelectList(listaPapelGrupo, "IdPapelGrupo", "Nome", null);
             pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", null);
 
             return View(pessoaViewModel);
@@ -61,23 +64,74 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(PessoaViewModel pessoaViewModel)
         {
-            pessoaViewModel.Cpf = pessoaViewModel.Cpf.Replace("-", string.Empty).Replace(".", string.Empty);
-            pessoaViewModel.Cep = pessoaViewModel.Cep.Replace("-", string.Empty);
+            String mensagem = String.Empty;
 
+            if (await _pessoaService.AssociadoExist(pessoaViewModel.Email))
+            {
+                mensagem = "<b>Alerta!</b> Email já está em uso";
+                Notificar(mensagem, Notifica.Alerta);
+
+                return View("Create", pessoaViewModel);
+            }
 
             if (ModelState.IsValid)
             {
+                var colaborador = await _pessoaService.GetByCpf(User.Identity?.Name);
+                if (colaborador == null)
+                {
+                    return RedirectToAction("Sair", "Identity");
+                }
                 var pessoaModel = _mapper.Map<Pessoa>(pessoaViewModel);
-                await _pessoaService.Create(pessoaModel);
+                pessoaModel.IdPapelGrupo = 1;
+                pessoaModel.IdGrupoMusical = colaborador.IdGrupoMusical;
+
+                switch (await _pessoaService.AddAssociadoAsync(pessoaModel))
+                {
+                    case 200:
+                        switch (await RequestPasswordReset(_userManager, pessoaModel.Email, pessoaModel.Nome))
+                        {
+                            case 200:
+                                mensagem = "<b>Sucesso</b>! Associado cadastrado e enviado email para redefinição de senha.";
+                                Notificar(mensagem, Notifica.Sucesso);
+                                break;
+                            default:
+                                mensagem = "<b>Alerta</b>! Associado cadastrado, mas não foi possível enviar o email para redefinição de senha.";
+                                Notificar(mensagem, Notifica.Alerta);
+                                break;
+                        }
+                        return RedirectToAction(nameof(Index));
+
+                    case 500:
+                        mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Cadastro</b> do associado, se isso persistir entre em contato com o suporte";
+                        Notificar(mensagem , Notifica.Erro);
+                        break;
+
+                    case 400:
+                        mensagem = "<b>Alerta</b> ! Não foi possível cadastrar, a data de entrada deve ser menor que " + DateTime.Now.ToShortDateString();
+                        Notificar(mensagem, Notifica.Alerta);
+                        break;
+
+                    case 401:
+                        mensagem = "<b>Alerta</b> ! Não foi possível cadastrar, a data de nascimento deve ser menor que " + DateTime.Now.ToShortDateString() + " e menor que 120 anos ";
+                        Notificar(mensagem, Notifica.Alerta);
+                        break;
+
+                    case 450:
+                        mensagem = "Ocorreu um <b>Erro</b> durante a liberação de acesso ao <b>Associado</b>, se isso persistir entre em contato com o suporte";
+                        Notificar(mensagem, Notifica.Erro);
+                        break;
+
+                    default:
+                        mensagem = "Ocorreu um <b>Erro</b> durante o cadastro.";
+                        Notificar(mensagem, Notifica.Erro);
+                        break;
+                }
+
             }
             else
             {
-                IEnumerable<Papelgrupo> listaPapelGrupo = _pessoaService.GetAllPapelGrupo();
-                IEnumerable<Grupomusical> listaGrupoMusical = _grupoMusical.GetAll();
                 IEnumerable<Manequim> listaManequim = _manequim.GetAll();
 
-                pessoaViewModel.ListaGrupoMusical = new SelectList(listaGrupoMusical, "Id", "Nome", null);
-                pessoaViewModel.ListaPapelGrupo = new SelectList(listaPapelGrupo, "IdPapelGrupo", "Nome", null);
                 pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", null);
                 return View("Create", pessoaViewModel);
             }
@@ -90,12 +144,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
             var pessoa = _pessoaService.Get(id);
             var pessoaViewModel = _mapper.Map<PessoaViewModel>(pessoa);
 
-            IEnumerable<Papelgrupo> listaPapelGrupo = _pessoaService.GetAllPapelGrupo();
-            IEnumerable<Grupomusical> listaGrupoMusical = _grupoMusical.GetAll();
             IEnumerable<Manequim> listaManequim = _manequim.GetAll();
 
-            pessoaViewModel.ListaGrupoMusical = new SelectList(listaGrupoMusical, "Id", "Nome", pessoaViewModel.IdGrupoMusical);
-            pessoaViewModel.ListaPapelGrupo = new SelectList(listaPapelGrupo, "IdPapelGrupo", "Nome", pessoaViewModel.IdPapelGrupo);
             pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", pessoaViewModel.IdManequim);
 
 
@@ -106,13 +156,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: PessoaController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, PessoaViewModel pessoaViewModel)
+        public async Task<ActionResult> Edit(int id, PessoaViewModel pessoaViewModel)
         {
-            pessoaViewModel.Cpf = pessoaViewModel.Cpf.Replace("-", string.Empty).Replace(".", string.Empty);
-            pessoaViewModel.Cep = pessoaViewModel.Cep.Replace("-", string.Empty);
             var cpf = _pessoaService.GetCPFExistente(id,pessoaViewModel.Cpf);
-            
-            if(cpf)
+
+            if (cpf)
             {
                 ModelState.Remove("Cpf");
             }
@@ -120,20 +168,30 @@ namespace GestaoGrupoMusicalWeb.Controllers
             if (ModelState.IsValid)
             {
                 var pessoa = _mapper.Map<Pessoa>(pessoaViewModel);
-                _pessoaService.Edit(pessoa);
-            }
-            else
-            {
-                IEnumerable<Papelgrupo> listaPapelGrupo = _pessoaService.GetAllPapelGrupo();
-                IEnumerable<Grupomusical> listaGrupoMusical = _grupoMusical.GetAll();
-                IEnumerable<Manequim> listaManequim = _manequim.GetAll();
+                String mensagem = String.Empty;
+                switch (await _pessoaService.Edit(pessoa))
+                {
+                    case 200:
+                        Notificar("Associado <b>Editado</b> com <b>Sucesso</b>", Notifica.Sucesso);
+                        return RedirectToAction(nameof(Index));
+                    case 500:
+                        Notificar("<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Editar</b> do associado, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                        break;
+                    case 400:
+                        mensagem = "<b>Alerta</b> ! Não foi possível editar, a data de entrada deve ser menor que " + DateTime.Now.ToShortDateString();
+                        Notificar(mensagem, Notifica.Alerta);
+                        break;
+                    case 401:
+                        mensagem = "<b>Alerta</b> ! Não foi possível editar, a data de nascimento deve ser menor que " + DateTime.Now.ToShortDateString() + " e menor que 120 anos ";
+                        Notificar(mensagem, Notifica.Alerta);
+                        break;
 
-                pessoaViewModel.ListaGrupoMusical = new SelectList(listaGrupoMusical, "Id", "Nome", null);
-                pessoaViewModel.ListaPapelGrupo = new SelectList(listaPapelGrupo, "IdPapelGrupo", "Nome", null);
-                pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", null);
-                return View("Edit", pessoaViewModel);
+                }
             }
-            return RedirectToAction(nameof(Index));
+
+            IEnumerable<Manequim> listaManequim = _manequim.GetAll();
+            pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", pessoaViewModel.IdManequim);
+            return View("Edit", pessoaViewModel);
         }
 
         // GET: PessoaController/Delete/5
@@ -162,10 +220,21 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult RemoveAssociado(int id, PessoaViewModel pessoaViewModel)
+        public async Task<ActionResult> RemoveAssociado(int id, PessoaViewModel pessoaViewModel)
         {
             var pessoassociada = _pessoaService.Get(id);
-            _pessoaService.RemoverAssociado(pessoassociada, pessoaViewModel.MotivoSaida);
+            String mensagem = String.Empty;
+            switch (await _pessoaService.RemoverAssociado(pessoassociada, pessoaViewModel.MotivoSaida)){
+                case 200:
+                    mensagem = "Associado <b>Excluído</b> com <b>Sucesso</b>";
+                    Notificar(mensagem, Notifica.Sucesso);
+                    return RedirectToAction(nameof(Index));
+                case 500:
+                    mensagem = "<b>Erro</b> ! erro ao <b>Excluir</b> um associado, se isso persistir entre em contato com o suporte";
+                    Notificar(mensagem, Notifica.Erro);
+                    return RedirectToAction("Delete", pessoassociada);
+
+            }
             return RedirectToAction(nameof(Index));
         }
 

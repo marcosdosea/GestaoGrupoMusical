@@ -2,26 +2,33 @@
 using Core;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Service;
+using static GestaoGrupoMusicalWeb.Controllers.BaseController;
 using static GestaoGrupoMusicalWeb.Models.AdministradorGrupoMusicalViewModel;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
-    public class AdministradorGrupoMusicalController : Controller
+    [Authorize(Roles = "ADMINISTRADOR SISTEMA")]
+    public class AdministradorGrupoMusicalController : BaseController
     {
 
         private readonly IPessoaService _pessoaService;
         private readonly IGrupoMusicalService _grupoMusicalService;
         private readonly IMapper _mapper;
 
-        public AdministradorGrupoMusicalController(IPessoaService pessoaService,IGrupoMusicalService grupoMusicalService, IMapper mapper)
+        private readonly UserManager<UsuarioIdentity> _userManager;
+
+        public AdministradorGrupoMusicalController(IPessoaService pessoaService,IGrupoMusicalService grupoMusicalService,
+                                                   IMapper mapper, UserManager<UsuarioIdentity> userManager)
         {
             _pessoaService = pessoaService;
             _grupoMusicalService = grupoMusicalService;
             _mapper = mapper;
+            _userManager = userManager;
         }
 
         /// <summary>
@@ -64,10 +71,61 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     Sexo = admViewModel.Sexo,
                     IdGrupoMusical = admViewModel.IdGrupoMusical
                 };
+                String mensagem = String.Empty;
 
-                await _pessoaService.AddAdmGroup(pessoa);
+                if (await _pessoaService.AssociadoExist(admViewModel.Email))
+                {
+                    mensagem = "<b>Alerta!</b> Email já está em uso";
+                    Notificar(mensagem, Notifica.Alerta);
+
+                    return RedirectToAction(nameof(Index));
+                }
+
+                int retAddAdm = await _pessoaService.AddAdmGroup(pessoa);
+
+                switch (retAddAdm)
+                {
+                    case 200:
+                        switch (await RequestPasswordReset(_userManager, pessoa.Email, pessoa.Nome))
+                        {
+                            case 200:
+                                mensagem = "<b>Sucesso</b>! Administrador cadastrado e enviado email para redefinição de senha.";
+                                Notificar(mensagem, Notifica.Sucesso);
+                                break;
+                            default:
+                                mensagem = "<b>Alerta</b>! Administrador cadastrado, mas não foi possível enviar o email para redefinição de senha.";
+                                Notificar(mensagem, Notifica.Alerta);
+                                break;
+                        }
+                        break;
+
+                    case 201:
+                        mensagem = "<b>Sucesso</b>! Associado promovido a <b>Administrador do Grupo Musical</b>.";
+                        Notificar(mensagem, Notifica.Sucesso);
+                        break;
+
+                    case 400:
+                        mensagem = "<b>Alerta</b>! Infelizemente não foi possível <b>cadastrar</b>, o usuário faz parte de outro grupo musical";
+                        Notificar(mensagem, Notifica.Alerta);
+                        break;
+
+                    case 401:
+                        mensagem = "<b>Erro</b>! Associado já é um administrador deste grupo.";
+                        Notificar(mensagem, Notifica.Erro);
+                        break;
+
+                    case 500:
+                        mensagem = "<b>Erro</b>! Desculpe, ocorreu um erro durante a <b>Promoção</b> do associado para administrador, se isso persistir entre em contato com o suporte";
+                        Notificar(mensagem, Notifica.Erro);
+                        break;
+                    case 501:
+                        mensagem = "<b>Erro</b>! Desculpe, ocorreu um erro durante a <b>Operação</b>, se isso persistir entre em contato com o suporte";
+                        Notificar(mensagem, Notifica.Erro);
+                        break;
+                }
+                return RedirectToAction(nameof(Index));
             }
-            return RedirectToAction(nameof(Index), new { id=admViewModel.IdGrupoMusical });
+            return RedirectToAction(nameof(Index), new { id = admViewModel.IdGrupoMusical });
         }
 
         /// <summary>
@@ -82,7 +140,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
             var pessoa = _pessoaService.Get(id);
             var pessoaViewModel = _mapper.Map<PessoaViewModel>(pessoa);
 
-            ViewBag.idGrupoMusical = pessoaViewModel.IdGrupoMusical;
 
             return View(pessoaViewModel);
         }

@@ -1,146 +1,180 @@
 ﻿@model GestaoGrupoMusicalWeb.Models.PessoaViewModel
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar associado";
+    ViewData["Pessoa"] = "Associado";
+    ViewData["Edit"] = "Editar";
 }
+<partial name="_Notificar">
+    <div class="row">
+        <div class="col-md-8">
+            <h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">Editar dados do Associado</h1>
+            <nav>
+                <ol class="breadcrumb px-3">
+                    <strong>
+                        <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Pessoa"]</a>
+                        <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Edit"]</spn>
+                    </strong>
+                </ol>
+            </nav>
+            <hr />
+            <br />
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="container">
+                    <div class="row">
+                        <h2 class="fs-5">Dados pessoais</h2>
+                        <hr />
+                        <br />
+                        <div class="form-group">
+                            <label asp-for="Nome" class="control-label"></label>
+                            <input asp-for="Nome" class="form-control" />
+                            <span asp-validation-for="Nome" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
 
-<h1>Editar</h1>
+                <div class="container">
+                    <div class="row d-flex d-flex-sm-warp">
+                        <div class="form-group col-xl">
+                            <label asp-for="Cpf" class="control-label">CPF</label>
+                            <input asp-for="Cpf" id="campoCpf" class="form-control" />
+                            <span asp-validation-for="Cpf" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-sm">
+                            <label asp-for="DataNascimento" class="control-label"></label>
+                            <input asp-for="DataNascimento" class="form-control" />
+                            <span asp-validation-for="DataNascimento" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-sm">
+                            <label asp-for="Sexo" class="control-label"></label>
+                            <div class="d-flex justify-content-around">
+                                @{
+                                    foreach (var item in Model.sexoPessoa)
+                                    {
+                                        <div>
+                                            <label for="@item.Key">@item.Key</label>
+                                            <input class="form-check-input" type="radio" value="@item.Value" asp-for="Sexo" id="@item.Key" />
+                                        </div>
+                                    }
+                                }
+                            </div>
+                            <span asp-validation-for="Sexo" class="text-danger"></span>
+                        </div>
 
-<h4>Associado</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Cpf" class="control-label"></label>
-                <input asp-for="Cpf" id="campoCpf" class="form-control" />
-                <span asp-validation-for="Cpf" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Nome" class="control-label"></label>
-                <input asp-for="Nome" class="form-control" />
-                <span asp-validation-for="Nome" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Sexo" class="control-label"></label>
-                <input asp-for="Sexo" class="form-control" />
-                <span asp-validation-for="Sexo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Cep" class="control-label"></label>
-                <input asp-for="Cep" id="campoCep" class="form-control" />
-                <span asp-validation-for="Cep" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Rua" class="control-label"></label>
-                <input asp-for="Rua" class="form-control" />
-                <span asp-validation-for="Rua" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Bairro" class="control-label"></label>
-                <input asp-for="Bairro" class="form-control" />
-                <span asp-validation-for="Bairro" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Cidade" class="control-label"></label>
-                <input asp-for="Cidade" class="form-control" />
-                <span asp-validation-for="Cidade" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Estado" class="control-label"></label>
-                <input asp-for="Estado" class="form-control" />
-                <span asp-validation-for="Estado" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DataNascimento" class="control-label"></label>
-                <input asp-for="DataNascimento" class="form-control" />
-                <span asp-validation-for="DataNascimento" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Telefone1" class="control-label"></label>
-                <input asp-for="Telefone1" id="campoTelefone1" class="form-control" />
-                <span asp-validation-for="Telefone1" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Telefone2" class="control-label"></label>
-                <input asp-for="Telefone2" id="campoTelefone2" class="form-control" />
-                <span asp-validation-for="Telefone2" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DataEntrada" class="control-label"></label>
-                <input asp-for="DataEntrada" class="form-control" />
-                <span asp-validation-for="DataEntrada" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DataSaida" class="control-label"></label>
-                <input asp-for="DataSaida" class="form-control" />
-                <span asp-validation-for="DataSaida" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MotivoSaida" class="control-label"></label>
-                <input asp-for="MotivoSaida" class="form-control" />
-                <span asp-validation-for="MotivoSaida" class="text-danger"></span>
-            </div>
-            <div>
-                <label class="control-label" asp-for="Ativo"></label>
-                <select asp-for="Ativo" class="form-select">
-                    <option value="1">Sim</option>
-                    <option value="0">Não</option>
-                </select>
-                <span asp-validation-for="Ativo" class="text-danger"></span>
-            </div>
+                    </div>
 
-            <div>
-                <label class="control-label" asp-for="IsentoPagamento"></label>
-                <select asp-for="IsentoPagamento" class="form-select">
-                    <option value="1">Sim</option>
-                    <option value="0">Não</option>
-                </select>
-                <span asp-validation-for="IsentoPagamento" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IdGrupoMusical" class="control-label"></label>
-                <select asp-items="@Model.ListaGrupoMusical" asp-for="IdGrupoMusical" class="form-control"></select>
-                <span asp-validation-for="IdGrupoMusical" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IdPapelGrupo" class="control-label"></label>
-                <select asp-items="@Model.ListaPapelGrupo" asp-for="IdPapelGrupo" class="form-control"></select>
-                <span asp-validation-for="IdPapelGrupo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IdManequim" class="control-label"></label>
-                <select asp-items="@Model.ListaManequim" asp-for="IdManequim" class="form-control"></select>
-                <span asp-validation-for="IdManequim" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Salvar" class="btn btn-primary" />
-            </div>
-        </form>
+                </div>
+
+                <div class="container">
+                    <div class="row d-flex d-flex-sm-warp">
+                        <div class="form-group">
+                            <label asp-for="Email" class="control-label">E-mail</label>
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-xxl">
+                            <label asp-for="Telefone1" class="control-label"></label>
+                            <input asp-for="Telefone1" id="campoTelefone1" class="form-control" />
+                            <span asp-validation-for="Telefone1" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-xl">
+                            <label asp-for="Telefone2" class="control-label"></label>
+                            <input asp-for="Telefone2" id="campoTelefone2" class="form-control" />
+                            <span asp-validation-for="Telefone2" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-xl">
+                            <label asp-for="DataEntrada" class="control-label"></label>
+                            <input asp-for="DataEntrada" class="form-control" />
+                            <span asp-validation-for="DataEntrada" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="row">
+                        <div class="form-group col-sm">
+                            <label class="control-label" asp-for="Ativo"></label>
+                            <select asp-for="Ativo" class="form-select">
+                                <option value="1">Sim</option>
+                                <option value="0">Não</option>
+                            </select>
+                            <span asp-validation-for="Ativo" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group col-xl">
+                            <label class="control-label" asp-for="IsentoPagamento"></label>
+                            <select asp-for="IsentoPagamento" class="form-select">
+                                <option value="1">Sim</option>
+                                <option value="0">Não</option>
+                            </select>
+                            <span asp-validation-for="IsentoPagamento" class="text-danger"></span>
+                        </div>
+
+
+                        <div class="form-group col-sm">
+                            <label asp-for="IdManequim" class="control-label"></label>
+                            <select asp-items="@Model.ListaManequim" asp-for="IdManequim" class="form-select"></select>
+                            <span asp-validation-for="IdManequim" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <br />
+
+                <div class="container">
+                    <div class="row">
+                        <h2 class="fs-5">Endereço</h2>
+                        <hr />
+                        <br />
+                        <div class="form-group col-xl">
+                            <label asp-for="Cep" class="control-label">CEP</label>
+                            <input asp-for="Cep" id="campoCep" class="form-control" />
+                            <span asp-validation-for="Cep" id="campoMensagem" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-sm">
+                            <label asp-for="Rua" class="control-label"></label>
+                            <input asp-for="Rua" id="campoRua" class="form-control" />
+                            <span asp-validation-for="Rua" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container">
+                    <div class="row">
+                        <div class="form-group col-xl">
+                            <label asp-for="Bairro" class="control-label"></label>
+                            <input asp-for="Bairro" id="campoBairro"class="form-control" />
+                            <span asp-validation-for="Bairro" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-sm">
+                            <label asp-for="Cidade" class="control-label"></label>
+                            <input asp-for="Cidade" id="campoCidade" class="form-control" />
+                            <span asp-validation-for="Cidade" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-sm-4">
+                            <label asp-for="Estado" class="control-label"></label>
+                            <input asp-for="Estado" id="campoEstado" class="form-control" />
+                            <span asp-validation-for="Estado" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <br />
+                <div class="container">
+                    <div class="row d-flex flex-column-reverse d-grig gap-2 mx-auto d-flex flex-sm-column-reverse flex-xl-row">
+                        <div class="col-5 d-none d-sm-block"></div>
+                        <a class="btn btn-light text-secondary border border-secondary d-grid gap-2 col-sm" asp-action="Index"> Voltar </a>
+                        <input type="submit" value="Salvar" class="btn btn-secondary d-grid gap-2 col-sm " />
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Voltar</a>
-</div>
 
-@section Scripts {
-    <script>
-        $(document).ready(function () {
-            $("#campoCpf").inputmask("999.999.999-99");  //static mask
-            $("#campoCep").inputmask("99999-999");
-            $("#campoTelefone1").inputmask("(99)99999-9999");
-            $("#campoTelefone2").inputmask("(99)99999-9999");
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
 
-        });
-
-    </script>
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-      
-}
+    }

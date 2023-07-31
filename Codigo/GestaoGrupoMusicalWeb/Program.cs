@@ -4,6 +4,7 @@ using Core.Service;
 using Service;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
+using GestaoGrupoMusicalWeb.Helpers;
 
 namespace GestaoGrupoMusicalWeb
 {
@@ -39,13 +40,20 @@ namespace GestaoGrupoMusicalWeb
                 // Default User settings.
                 options.User.AllowedUserNameCharacters =
                         "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-                options.User.RequireUniqueEmail = false;
+                options.User.RequireUniqueEmail = true;
 
                 // Default Lockout settings
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
                 options.Lockout.MaxFailedAccessAttempts = 5;
                 options.Lockout.AllowedForNewUsers = true;
-            }).AddEntityFrameworkStores<IdentityContext>();
+            }).AddEntityFrameworkStores<IdentityContext>()
+              .AddDefaultTokenProviders();
+
+            //Configure tokens life
+            builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
+                //sets a 2 hour lifetime of the generated token to reset password/email/phone number
+                options.TokenLifespan = TimeSpan.FromHours(2)
+            );
 
             builder.Services.ConfigureApplicationCookie(options =>
             {
@@ -69,6 +77,7 @@ namespace GestaoGrupoMusicalWeb
             builder.Services.AddTransient<IManequimService, ManequimService>();
             builder.Services.AddTransient<IInformativoService, InformativoService>();
 
+            builder.Services.AddScoped<IUserClaimsPrincipalFactory<UsuarioIdentity>, ApplicationUserClaims>();
            
             var app = builder.Build();
 

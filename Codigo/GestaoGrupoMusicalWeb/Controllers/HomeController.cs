@@ -1,12 +1,15 @@
 ﻿using AutoMapper;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using static GestaoGrupoMusicalWeb.Controllers.BaseController;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
-    public class HomeController : Controller
+    [Authorize]
+    public class HomeController : BaseController
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IEventoService _evento;
@@ -14,7 +17,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IInformativoService _informativoService;
         private readonly IMapper _mapper;
 
-        public HomeController(ILogger<HomeController> logger, IEventoService evento, IEnsaioService ensaioService, IInformativoService informativoService,IMapper mapper)
+        public HomeController(ILogger<HomeController> logger, 
+                              IEventoService evento, 
+                              IEnsaioService ensaioService, 
+                              IInformativoService informativoService,
+                              IMapper mapper)
         {
             _logger = logger;
             _evento = evento;
@@ -25,6 +32,30 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         public async Task<IActionResult> Index()
         {
+            if (User.IsInRole("ADMINISTRADOR SISTEMA"))
+            {
+                return RedirectToAction(nameof(Index), "GrupoMusical");
+            }
+            if (!Convert.ToBoolean(User.FindFirst("Ativo")?.Value))
+            {
+                Notificar("<span class=\"fw-bold fs-5 mt-3\">Erro ! Houve um erro no login, Associado não está Ativo",
+       Notifica.Erro);
+                return RedirectToAction("Autenticar", "Identity");
+            }
+
+            if (User.IsInRole("ASSOCIADO"))
+            {
+                return RedirectToAction("Movimentacoes", "InstrumentoMusical");
+            }
+            else if(User.IsInRole("ADMINISTRADOR SISTEMA"))
+            {
+                return RedirectToAction(nameof(Index), "GrupoMusical");
+            }
+            else if(User.IsInRole("ADMINISTRADOR GRUPO"))
+            {
+                return RedirectToAction(nameof(Index), "InstrumentoMusical");
+            }
+
             var listaEvento = _evento.GetAllDTO();
             var EventoViewDTO = _mapper.Map<List<EventoViewModelDTO>>(listaEvento);
             var listaEnsaio = await _ensaioService.GetAllDTO();

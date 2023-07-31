@@ -8,6 +8,34 @@ html {
   }
 }
 
+.pointer-cursor {
+    cursor: pointer;
+}
+
+@media (min-width: 1501px) and (max-width: 1900px) {
+    .img-login {
+        width: 250px;
+        height: 460px;
+    }
+    .img-login img {
+        width: 100%;
+        height: 100%;
+    }
+}
+
+@media (max-width: 1500px){
+    .img-login {
+        display: none !important;
+    }
+}
+
+@media (max-height: 500px) {
+    .img-login {
+        display: none !important;
+    }
+}
+
+
 .btn {
     box-shadow: none !important;
 }
@@ -22,6 +50,8 @@ html {
 }
 
 .form-control {
+    --bs-bg-opacity: 1;
+    background-color: rgba(var(--bs-light-rgb), var(--bs-bg-opacity)) !important;
     color: var(--bs-dark);
     border-top: 0px;
     border-left: 0px;
@@ -39,6 +69,8 @@ html {
 }
 
 .form-select {
+    --bs-bg-opacity: 1;
+    background-color: rgba(var(--bs-light-rgb), var(--bs-bg-opacity)) !important;
     color: var(--bs-dark);
     background-color: #fff;
     background-image: url("../icon/select_icon.svg");
@@ -67,6 +99,7 @@ html {
 }
 
 .form-check-input:checked {
-    background-color: var(--bs-success);
-    border-color: var(--bs-success);
+    border-color: rgba(var(--bs-danger-rgb), 0.75);
+    background-color: rgba(var(--bs-danger-rgb), 0.75);
+    background-clip: padding-box
 }

@@ -1,5 +1,5 @@
 ﻿@model GestaoGrupoMusicalWeb.Models.AdministradorGrupoMusicalViewModel.AdministradorModel
-
+<partial name="_Notificar">
 
 <div class="container mb-4 mt-4">
     <form asp-action="Create">
@@ -13,7 +13,7 @@
         <div class="row mb-3">
             <div class="col-lg-3">
                 <label asp-for="Cpf" class="control-label"></label>
-                <input asp-for="Cpf" class="form-control" />
+                <input asp-for="Cpf" id="campoCpf" class="form-control" />
                 <span asp-validation-for="Cpf" class="text-danger"></span>
             </div>
             <div class="col-lg-3">

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using Core;
 using Core.DTO;
 using Core.Service;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Service
@@ -21,34 +23,70 @@ namespace Service
         }
 
         /// <summary>
-        /// Metodo usadoa para adicionar o Grupo Musical
+        /// Metodo usado para adicionar o Grupo Musical
         /// </summary>
         /// <param name="grupomusical"></param>
-        /// <returns>Id do Grupo Musical</returns>
-        public int Create(Grupomusical grupomusical)
+        /// <returns>200 caso seja sucesso ou 500 se ouver algum erro ao executar o metodo</returns>
+        public async Task<int> Create(Grupomusical grupomusical)
         {
-            _context.Add(grupomusical);
-            _context.SaveChanges();
-            return grupomusical.Id;
+
+
+            try
+            {
+                await _context.Grupomusicals.AddAsync(grupomusical);
+                await _context.SaveChangesAsync();
+
+                return 200;
+            }
+            catch (Exception ex)
+            {
+
+                return 500;
+            }
         }
         /// <summary>
-        /// Metodo para deletar o Grupo Musical
+        /// Metodo usado para deletar um grupo musical
         /// </summary>
         /// <param name="id"></param>
-        public void Delete(int id)
+        /// <returns>200 caso seja sucesso ou 500 se ouver algum erro ao executar o metodo</returns>
+        public async Task<int> Delete(int id)
         {
-            var grupomusical = _context.Grupomusicals.Find(id);
-            _context.Remove(grupomusical);
-            _context.SaveChanges();
+
+            var grupo = await _context.Grupomusicals.FindAsync(id);
+
+            try
+            {
+
+                _context.Remove(grupo);
+                await _context.SaveChangesAsync();
+                return 200;
+            }
+            catch (Exception ex)
+            {
+                return 500;
+            }
+
         }
         /// <summary>
-        /// Metodo usado para editar um Grupo Musical
+        /// Metodo usado para editar um grupo musical
         /// </summary>
         /// <param name="grupomusical"></param>
-        public void Edit(Grupomusical grupomusical)
+        /// <returns>200 caso seja sucesso ou 500 se ouver algum erro ao executar o metodo</returns>
+        public async Task<int> Edit(Grupomusical grupomusical)
         {
-            _context.Update(grupomusical);
-            _context.SaveChanges();
+
+            try
+            {
+                _context.Update(grupomusical);
+                await _context.SaveChangesAsync();
+
+                return 200;
+            }
+            catch
+            {
+
+                return 500;
+            }
 
         }
         /// <summary>
@@ -83,8 +121,26 @@ namespace Service
                     {
                         Id = g.Id,
                         Name = g.Nome
-                    }) ;
+                    });
             return query.AsNoTracking();
+        }
+
+        public int GetIdGrupo(string cpf)
+        {
+            var query = _context.Pessoas
+                 .Where(g => g.Cpf == cpf)
+                 .Select(g => g.IdGrupoMusical).FirstOrDefault();
+            return query;
+        }
+
+        public bool GetCNPJExistente(int id, string cnpj)
+        {
+            var query =   _context.Set<Grupomusical>().AsNoTracking().FirstOrDefault( p => p.Id == id && p.Cnpj == cnpj);
+            if(query != null)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

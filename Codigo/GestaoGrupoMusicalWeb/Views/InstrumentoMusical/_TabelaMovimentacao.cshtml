@@ -1,9 +1,9 @@
 ﻿@model IEnumerable<Core.DTO.MovimentacaoInstrumentoDTO>
 
-<div class="table-responsive-md">
-    <table class="table table table-bordered mt-3">
-        <thead class="table-light">
-            <tr>
+<div class="table-responsive">
+    <table class="table mt-3">
+        <thead>
+            <tr class="bg-danger bg-opacity-75 text-white">
                 <th>
                     @Html.DisplayNameFor(model => model.Cpf)
                 </th>
@@ -25,7 +25,7 @@
         <tbody>
             @foreach (var item in Model)
             {
-                <tr>
+                <tr class="border-bottom border-danger border-opacity-75 align-middle">
                     <td>
                         @item.Cpf
                     </td>
@@ -41,18 +41,21 @@
                     <td>
                         @item.Status
                     </td>
-                    <td>
-                        <form id="@(item.Id + "_delete")" asp-controller="InstrumentoMusical" asp-action="DeleteMovimentacao" asp-route-Id="@item.Id" asp-route-IdInstrumento="@item.IdInstrumento" method="post">
-                            <a role="button" class="link-primary"
-                               onclick="(() => {confirm('Deseja excluir a movimentação?') ? document.getElementById('@(item.Id + "_delete")').submit() : null})()">
-                                Excluir
+                    <td class="py-3 border-0 d-flex flex-column flex-lg-row gap-3">
+                        <form id="@(item.Id + "_notificar")" asp-controller="InstrumentoMusical" asp-action="NotificarViaEmail" asp-route-Id="@item.Id" asp-route-IdInstrumento="@item.IdInstrumento" method="post">
+                            <a role="button" class="btn btn-sm btn-secondary"
+                               data-bs-toggle="modal" data-bs-target="#notificarMovimentacaoModal"
+                               onclick="showModal('@(item.Id + "_notificar")', 'notificarMovimentacaoModal')">
+                                <i class="fa-solid fa-envelope"></i>
+                                Notificar
                             </a>
                         </form>
-                        |
-                        <form id="@(item.Id + "_notificar")" asp-controller="InstrumentoMusical" asp-action="NotificarViaEmail" asp-route-Id="@item.Id" asp-route-IdInstrumento="@item.IdInstrumento" method="post">
-                            <a role="button" class="link-primary"
-                               onclick="(() => {confirm('Deseja notificar a movimentação?') ? document.getElementById('@(item.Id + "_notificar")').submit() : null})()">
-                                Notificar
+                        <form id="@(item.Id + "_delete")" asp-controller="InstrumentoMusical" asp-action="DeleteMovimentacao" asp-route-Id="@item.Id" asp-route-IdInstrumento="@item.IdInstrumento" method="post">
+                            <a role="button" class="btn btn-sm btn-secondary"
+                               data-bs-toggle="modal" data-bs-target="#excluirMovimentacaoModal"
+                               onclick="showModal('@(item.Id + "_delete")', 'excluirMovimentacaoModal')">
+                                <i class="fa-solid fa-xmark"> </i>
+                                Excluir
                             </a>
                         </form>
                     </td>
@@ -64,4 +67,40 @@
     {
         <p class="text-center mt-4 mb-0">Desculpe, nenhuma movimentação encontrada :(</p>
     }
+</div>
+
+<div class="modal fade" id="excluirMovimentacaoModal" tabindex="-1" aria-labelledby="excluirMovimentacaoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="excluirMovimentacaoLabel">Excluir Movimentação</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Deseja <b>Excluir</b> essa <b>Movimentação</b>?
+            </div>
+            <form method="post" class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary col-3 me-4" data-bs-dismiss="modal">Não</button>
+                <button type="submit" class="btn btn-secondary col-3">Sim</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="notificarMovimentacaoModal" tabindex="-1" aria-labelledby="notificarMovimentacaoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="notificarMovimentacaoLabel">Notificar Movimentação</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Deseja <b>Notificar</b> o <b>Associado</b> da necessidade de <b>Confirmação</b>?
+            </div>
+            <form method="post" class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary col-3 me-4" data-bs-dismiss="modal">Não</button>
+                <button type="submit" class="btn btn-secondary col-3">Sim</button>
+            </form>
+        </div>
+    </div>
 </div>
