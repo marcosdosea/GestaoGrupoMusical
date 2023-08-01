@@ -89,7 +89,12 @@ namespace Service.Tests
         [TestMethod]
         public void DeleteAsyncTest()
         {
+            // Act
+            _movimentacaoInstrumento.DeleteAsync(2).GetAwaiter().GetResult();
 
+            // Assert
+            var movimentacaoInstrumento = _context.Movimentacaoinstrumentos.FindAsync(2).Result;
+            Assert.IsNull(movimentacaoInstrumento);
         }
 
     }
