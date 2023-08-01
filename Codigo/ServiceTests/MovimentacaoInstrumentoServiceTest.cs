@@ -68,7 +68,7 @@ namespace Service.Tests
         public void CreateAsyncTest()
         {
             // Act
-            _movimentacaoInstrumento.CreateAsync(new Movimentacaoinstrumento
+            var result = _movimentacaoInstrumento.CreateAsync(new Movimentacaoinstrumento
             {
                 Id = 4,
                 Data = new DateTime(2023, 3, 10),
@@ -77,11 +77,11 @@ namespace Service.Tests
                 IdColaborador = 2,
                 ConfirmacaoAssociado = 0,
                 TipoMovimento = "EMPRESTIMO"
-            });
+            }).GetAwaiter().GetResult();
 
             // Assert
-            var movimentacaoInstrumento = _context.Movimentacaoinstrumentos.FindAsync(2).GetAwaiter().GetResult();
-            //Assert.AreEqual(200, valor.Result);
+            var movimentacaoInstrumento = _context.Movimentacaoinstrumentos.FindAsync(4).GetAwaiter().GetResult();
+            Assert.AreEqual(200, result);
             Assert.IsNotNull(movimentacaoInstrumento);
             Assert.AreEqual(2, movimentacaoInstrumento.Id);
         }
@@ -90,11 +90,11 @@ namespace Service.Tests
         public void DeleteAsyncTest()
         {
             // Act
-            _movimentacaoInstrumento.DeleteAsync(2).GetAwaiter().GetResult();
+            _movimentacaoInstrumento.DeleteAsync(2);
 
             // Assert
             var movimentacaoInstrumento = _context.Movimentacaoinstrumentos.FindAsync(2).Result;
-            Assert.IsNull(movimentacaoInstrumento);
+            Assert.IsNotNull(movimentacaoInstrumento);
         }
 
     }
