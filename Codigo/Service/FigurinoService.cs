@@ -86,9 +86,25 @@ namespace Service
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<FigurinoDTO>> GetAll()
+        public async Task<IEnumerable<FigurinoDTO>> GetAll(int idGrupo)
         {
-            throw new NotImplementedException();
+            var query = await (from figurinos in _context.Figurinos
+                        where figurinos.IdGrupoMusical == idGrupo
+                        join figurinoManequim in _context.Figurinomanequims
+                        on figurinos.Id equals figurinoManequim.IdFigurino
+                        orderby figurinos.Nome ascending
+                        select new FigurinoDTO
+                        {
+                            Nome = figurinos.Nome,
+                            IdFigurino = figurinos.Id,
+                            IdManequim = figurinoManequim.IdManequim,
+                            IdGrupoMusical = figurinos.IdGrupoMusical,
+                            Data = figurinos.Data,
+                            QuantidadeDisponivel = figurinoManequim.QuantidadeDisponivel,
+                            QuantidadeEntregue = figurinoManequim.QuantidadeEntregue
+                        }).AsNoTracking().ToListAsync();
+                ;
+            return query;
         }
 
         public async Task<Figurino> GetByName(string name)
