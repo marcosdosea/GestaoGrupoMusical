@@ -71,14 +71,14 @@ namespace GestaoGrupoMusicalWeb
             builder.Services.AddTransient<IGrupoMusicalService, GrupoMusicalService>();
             builder.Services.AddTransient<IPessoaService, PessoaService>();
             builder.Services.AddTransient<IEventoService, EventoService>();
-            builder.Services.AddScoped<IEnsaioService, EnsaioService>();
             builder.Services.AddTransient<IInstrumentoMusicalService, InstrumentoMusicalService>();
-            builder.Services.AddScoped<IMovimentacaoInstrumentoService, MovimentacaoInstrumentoService>();
             builder.Services.AddTransient<IManequimService, ManequimService>();
             builder.Services.AddTransient<IInformativoService, InformativoService>();
-
+            builder.Services.AddTransient<IFigurinoService, FigurinoService>();
+            builder.Services.AddScoped<IEnsaioService, EnsaioService>();
+            builder.Services.AddScoped<IMovimentacaoInstrumentoService, MovimentacaoInstrumentoService>();
             builder.Services.AddScoped<IUserClaimsPrincipalFactory<UsuarioIdentity>, ApplicationUserClaims>();
-           
+            
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
