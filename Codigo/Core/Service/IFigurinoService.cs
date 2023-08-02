@@ -9,12 +9,6 @@ namespace Core.Service
 {
     public interface IFigurinoService
     {
-        /// <summary>
-        /// Aqui ele criará uma linha para figurino
-        /// e outra para figurinomanequim 
-        /// </summary>
-        /// <param name="figurino"></param>
-        /// <returns></returns>
         Task<int> Create(Figurino figurino);
         Task<int> Edit(Figurino figurino);
         Task<int> Delete(int id);
