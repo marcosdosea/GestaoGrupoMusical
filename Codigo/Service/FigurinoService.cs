@@ -44,10 +44,9 @@ namespace Service
             throw new NotImplementedException();
         }
 
-        public Figurino Get(int id)
+        public async Task<Figurino> Get(int id)
         {
-
-            throw new NotImplementedException();
+            return await _context.Figurinos.FindAsync(id); ;
         }
 
         public async Task<IEnumerable<Figurino>> GetAll(string cpf)

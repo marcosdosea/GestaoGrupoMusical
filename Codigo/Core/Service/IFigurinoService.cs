@@ -12,7 +12,8 @@ namespace Core.Service
         Task<int> Create(Figurino figurino);
         Task<int> Edit(Figurino figurino);
         Task<int> Delete(int id);
-        Figurino Get(int id);
+
+        Task<Figurino> Get(int id);
 
         /// <summary>
         /// Retorna uma lista contendo todos os figurinos
