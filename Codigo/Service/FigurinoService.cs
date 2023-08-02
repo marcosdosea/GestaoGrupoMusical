@@ -34,9 +34,23 @@ namespace Service
             }
         }
 
-        public Task<int> Delete(int id)
+        public async Task<int> Delete(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var figurino = await Get(id);
+
+                _context.Figurinos.Remove(figurino);
+
+                await _context.SaveChangesAsync();
+
+                return 200;
+            }
+            catch
+            {
+                return 500;
+            }
+            
         }
 
         public async Task<int> Edit(Figurino figurino)

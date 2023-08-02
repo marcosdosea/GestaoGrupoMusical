@@ -112,7 +112,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 int resul = await _figurinoService.Edit(figurino);
                 if (resul == 200)
                 {
-                    Notificar("<b>Sucesso</b>! Figurino alterado com sucesso!", Notifica.Sucesso);
+                    Notificar("<b>Sucesso</b>! Figurino alterado!", Notifica.Sucesso);
                     return RedirectToAction(nameof(Index));
                 }
                 else
@@ -129,9 +129,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: FigurinoController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            var figurino = _figurinoService.Get(id);
+            var figurino = await _figurinoService.Get(id);
             var figurinoViewModel = _mapper.Map<FigurinoViewModel>(figurino);
 
             return View(figurinoViewModel);
@@ -140,15 +140,19 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: FigurinoController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> Delete(int id, FigurinoViewModel figurinoViewModel)
         {
-            try
+            int resul = await _figurinoService.Delete(id);
+
+            if (resul == 200)
             {
+                Notificar("<b>Sucesso</b>! Figurino removido!", Notifica.Sucesso);
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            else
             {
-                return View();
+                Notificar("<b>Erro</b>! Algo deu errado ao remover figurino. Verifique se há estoque emprestado.", Notifica.Erro);
+                return RedirectToAction(nameof(Index));
             }
         }
     }
