@@ -13,12 +13,14 @@ namespace GestaoGrupoMusicalWeb.Models
         [Display(Name = "Nome", Prompt = "Ex.: São João 2023")]
         [Required(ErrorMessage = "O campo Nome é obrigatótio.")]
         [StringLength(100, MinimumLength = 5, ErrorMessage = "O nome do figurino deve ter entre 5 e 100 caracteres")]
-        public string? Name { get; set; }
+        public string Nome { get; set; } = null!;
 
         [Display(Name = "Data")]
-        [DataType(DataType.Date, ErrorMessage = "É necessário escolher uma data válida.")
+        [DataType(DataType.Date, ErrorMessage = "É necessário escolher uma data válida.")]
         [Required(ErrorMessage = "O campo Data é obrigatótio.")]
-        public DateTime? dateTime { get; set; }
+        public DateTime? Data { get; set; }
+
+        public int IdGrupoMusical { get; set; }
 
     }
 }

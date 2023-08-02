@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using Core;
 using Core.Service;
+using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
 using System.Data;
 
 namespace GestaoGrupoMusicalWeb.Controllers
@@ -32,7 +34,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> Index()
         {
             var listFigurinos = await _figurino.GetAll(User.Identity.Name);
-            return View(listFigurinos);
+
+            var listFigurinosViewModdel = _mapper.Map<IEnumerable<FigurinoViewModel>>(listFigurinos);
+
+            return View(listFigurinosViewModdel);
         }
 
         // GET: FigurinoController/Details/5

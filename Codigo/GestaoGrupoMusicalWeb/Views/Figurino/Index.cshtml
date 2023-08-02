@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Core.DTO.FigurinoDTO>
+﻿@model IEnumerable<GestaoGrupoMusicalWeb.Models.FigurinoViewModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -13,25 +13,13 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.IdFigurino)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdManequim)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdGrupoMusical)
+                @Html.DisplayNameFor(model => model.Id)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Nome)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Data)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.QuantidadeDisponivel)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.QuantidadeEntregue)
             </th>
             <th></th>
         </tr>
@@ -40,25 +28,13 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.IdFigurino)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdManequim)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdGrupoMusical)
+                @Html.DisplayFor(modelItem => item.Id)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Nome)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Data)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.QuantidadeDisponivel)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.QuantidadeEntregue)
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
