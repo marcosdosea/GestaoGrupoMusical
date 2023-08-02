@@ -39,9 +39,21 @@ namespace Service
             throw new NotImplementedException();
         }
 
-        public Task<int> Edit(Figurino figurinoDto)
+        public async Task<int> Edit(Figurino figurino)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _context.Update(figurino);
+                await _context.SaveChangesAsync();
+
+                return 200;
+            }
+            catch
+            {
+                return 500;
+            }
+            
+
         }
 
         public async Task<Figurino> Get(int id)
