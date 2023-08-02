@@ -59,6 +59,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             if (ModelState.IsValid)
             {
+                figurinoViewModel.IdGrupoMusical = _grupoMusical.GetIdGrupo(User.Identity.Name);
+
                 var figurino = _mapper.Map<Figurino>(figurinoViewModel);
                 int resul = await _figurino.Create(figurino);
 
