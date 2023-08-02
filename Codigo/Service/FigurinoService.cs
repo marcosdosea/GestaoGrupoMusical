@@ -86,8 +86,11 @@ namespace Service
             throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<FigurinoDTO>> GetAll(int idGrupo)
+        public async Task<IEnumerable<FigurinoDTO>> GetAll(string cpf)
         {
+            var pessoa = await _context.Pessoas.Where(p => p.Cpf == cpf).SingleOrDefaultAsync();
+            int idGrupo = pessoa.IdGrupoMusical;
+
             var query = await (from figurinos in _context.Figurinos
                         where figurinos.IdGrupoMusical == idGrupo
                         join figurinoManequim in _context.Figurinomanequims
