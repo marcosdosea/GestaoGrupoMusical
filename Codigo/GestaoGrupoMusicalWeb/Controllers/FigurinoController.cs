@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.VisualBasic;
+using Service;
 using System.Data;
 
 namespace GestaoGrupoMusicalWeb.Controllers
@@ -17,7 +19,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IMapper _mapper;
         private readonly IGrupoMusicalService _grupoMusical;
         private readonly IManequimService _manequim;
-        private readonly IFigurinoService _figurino;
+        private readonly IFigurinoService _figurinoService;
         private readonly UserManager<UsuarioIdentity> _userManager;
 
         public FigurinoController(IMapper mapper, IGrupoMusicalService grupoMusical,
@@ -26,14 +28,14 @@ namespace GestaoGrupoMusicalWeb.Controllers
             _mapper = mapper;
             _grupoMusical = grupoMusical;
             _manequim = manequim;
-            _figurino = figurino;
+            _figurinoService = figurino;
             _userManager = userManager;
         }
 
         // GET: FigurinoController
         public async Task<ActionResult> Index()
         {
-            var listFigurinos = await _figurino.GetAll(User.Identity.Name);
+            var listFigurinos = await _figurinoService.GetAll(User.Identity.Name);
 
             var listFigurinosViewModdel = _mapper.Map<IEnumerable<FigurinoViewModel>>(listFigurinos);
 
@@ -62,7 +64,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 figurinoViewModel.IdGrupoMusical = _grupoMusical.GetIdGrupo(User.Identity.Name);
 
                 var figurino = _mapper.Map<Figurino>(figurinoViewModel);
-                int resul = await _figurino.Create(figurino);
+                int resul = await _figurinoService.Create(figurino);
 
 
                 switch (resul)
@@ -88,22 +90,40 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: FigurinoController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
-            return View();
+            var figurino = await _figurinoService.Get(id);
+            var figurinoViewModel = _mapper.Map<FigurinoViewModel>(figurino);
+
+            return View(figurinoViewModel);
         }
 
         // POST: FigurinoController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(int id, FigurinoViewModel figurinoViewModel)
         {
-            try
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                var figurino = _mapper.Map<Figurino>(figurinoViewModel);
+
+                figurino.IdGrupoMusical = _grupoMusical.GetIdGrupo(User.Identity.Name);
+
+                int resul = await _figurinoService.Edit(figurino);
+                if (resul == 200)
+                {
+                    Notificar("<b>Sucesso</b>! Figurino alterado com sucesso!", Notifica.Sucesso);
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    Notificar("<b>Erro</b>! Há algo errado com os dados", Notifica.Erro);
+                    return View(figurinoViewModel);
+                } 
             }
-            catch
+            else
             {
+                Notificar("<b>Erro</b>! Há algo errado com os dados", Notifica.Erro);
                 return View();
             }
         }
