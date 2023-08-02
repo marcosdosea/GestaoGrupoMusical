@@ -20,5 +20,7 @@ namespace Core.Service
         Task<int> Delete(int id);
         FigurinoDTO Get(int id);
         Task<IEnumerable<FigurinoDTO>> GetAll();
+
+        Task<Figurino> GetByName(string name);
     }
 }
