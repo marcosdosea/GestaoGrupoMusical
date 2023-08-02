@@ -131,7 +131,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: FigurinoController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            var figurino = _figurinoService.Get(id);
+            var figurinoViewModel = _mapper.Map<FigurinoViewModel>(figurino);
+
+            return View(figurinoViewModel);
         }
 
         // POST: FigurinoController/Delete/5
