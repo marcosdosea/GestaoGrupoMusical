@@ -55,14 +55,32 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: FigurinoController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> Create(FigurinoViewModel figurinoViewModel)
         {
-            try
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                var figurino = _mapper.Map<Figurino>(figurinoViewModel);
+                int resul = await _figurino.Create(figurino);
+
+
+                switch (resul)
+                {
+                    case 200:
+                        Notificar("<b>Sucesso</b>! Figurino cadastrado!", Notifica.Sucesso);
+                        break;
+                    case 500:
+                        Notificar("<b>Erro</b>! Algo deu errado ao cadastrar novo figurino", Notifica.Erro);
+                        return View(figurinoViewModel);
+                    default:
+                        Notificar("<b>Erro</b>! Algo deu errado", Notifica.Erro);
+                        break;
+                }
+
+                return RedirectToAction("Index");
             }
-            catch
+            else
             {
+                Notificar("<b>Erro</b>! Há algo errado com os dados", Notifica.Erro);
                 return View();
             }
         }
