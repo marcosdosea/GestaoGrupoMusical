@@ -97,10 +97,14 @@ namespace Service.Tests
             Assert.IsNotNull(movimentacaoInstrumento);
         }
 
+        [TestMethod]    
         public void GetAllByIdInstrumentoTest()
         {
             // Act
             var instrumentos = _movimentacaoInstrumento.GetAllByIdInstrumento(3);
+
+            // Assert
+            Assert.IsNotNull(instrumentos);
         }
     }
 }
