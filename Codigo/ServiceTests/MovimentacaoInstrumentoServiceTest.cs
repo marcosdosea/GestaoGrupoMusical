@@ -90,12 +90,17 @@ namespace Service.Tests
         public void DeleteAsyncTest()
         {
             // Act
-            _movimentacaoInstrumento.DeleteAsync(2);
+            _movimentacaoInstrumento.DeleteAsync(2).Wait();
 
             // Assert
             var movimentacaoInstrumento = _context.Movimentacaoinstrumentos.FindAsync(2).Result;
             Assert.IsNotNull(movimentacaoInstrumento);
         }
 
+        public void GetAllByIdInstrumentoTest()
+        {
+            // Act
+            var instrumentos = _movimentacaoInstrumento.GetAllByIdInstrumento(3);
+        }
     }
 }
