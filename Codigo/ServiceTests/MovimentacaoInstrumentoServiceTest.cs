@@ -136,6 +136,32 @@ namespace Service.Tests
 
             _context.AddRange(pessoas);
 
+            var tiposInstrumentos = new List<Tipoinstrumento>
+            {
+                new Tipoinstrumento
+                {
+                    Id = 0,
+                    Nome = "Tambor"
+                },
+                new Tipoinstrumento
+                {
+                    Id = 1,
+                    Nome = "Flauta"
+                },
+                new Tipoinstrumento
+                {
+                    Id = 2,
+                    Nome = "Violão"
+                },
+                new Tipoinstrumento
+                {
+                    Id = 3,
+                    Nome = "Xilofone"
+                }
+            };
+
+            _context.AddRange(tiposInstrumentos);
+
             var instrumentosMusicais = new List<Instrumentomusical>
             {
                 new Instrumentomusical
@@ -168,7 +194,6 @@ namespace Service.Tests
             };
 
             _context.AddRange(instrumentosMusicais);
-
             _context.SaveChanges();
 
             _movimentacaoInstrumento = new MovimentacaoInstrumentoService(_context);
@@ -255,7 +280,7 @@ namespace Service.Tests
             Assert.IsNotNull(movimentacoesInstrumentos.Emprestimos);
             Assert.IsNotNull(movimentacoesInstrumentos.Devolucoes);
             Assert.AreEqual(0, movimentacoesInstrumentos.Emprestimos.Count());
-            Assert.AreEqual(0, movimentacoesInstrumentos.Devolucoes.Count());
+            Assert.AreEqual(1, movimentacoesInstrumentos.Devolucoes.Count());
         }
     }
 }
