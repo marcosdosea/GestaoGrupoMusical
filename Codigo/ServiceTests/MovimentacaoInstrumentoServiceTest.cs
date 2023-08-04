@@ -284,5 +284,14 @@ namespace Service.Tests
             Assert.AreEqual(0, movimentacoesInstrumentos.Emprestimos.Count());
             Assert.AreEqual(1, movimentacoesInstrumentos.Devolucoes.Count());
         }
+
+        [TestMethod]
+        public void ConfirmarMovimentacaoAsyncTest()
+        {
+            // Act 
+            _movimentacaoInstrumento.ConfirmarMovimentacaoAsync(1, 1);
+
+            // Assert
+        }
     }
 }
