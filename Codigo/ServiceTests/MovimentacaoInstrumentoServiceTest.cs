@@ -292,6 +292,11 @@ namespace Service.Tests
             _movimentacaoInstrumento.ConfirmarMovimentacaoAsync(1, 1);
 
             // Assert
+            var movimentacaoInstrumento = _context.Movimentacaoinstrumentos.Find(1);
+            Assert.IsNotNull(movimentacaoInstrumento);
+            Assert.AreEqual(1, movimentacaoInstrumento.Id);
+            Assert.AreEqual(1, movimentacaoInstrumento.IdAssociado);
+            Assert.AreEqual(1, movimentacaoInstrumento.ConfirmacaoAssociado);
         }
     }
 }
