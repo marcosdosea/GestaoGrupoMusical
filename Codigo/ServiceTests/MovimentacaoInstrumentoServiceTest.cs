@@ -192,5 +192,16 @@ namespace Service.Tests
             Assert.AreEqual("Empréstimo", movimentacaoInstrumento.Movimentacao);
             Assert.AreEqual("Aguardando Confirmação", movimentacaoInstrumento.Status);
         }
+
+        [TestMethod]
+        public void GetEmprestimoByIdInstrumentoTest()
+        {
+            // Act
+            var movimentacaoInstrumento = _movimentacaoInstrumento.GetEmprestimoByIdInstrumento(1).GetAwaiter().GetResult();
+
+            // Assert
+            Assert.AreEqual(1,movimentacaoInstrumento.Id);
+            Assert.AreEqual(1, movimentacaoInstrumento.IdInstrumentoMusical);
+        }
     }
 }
