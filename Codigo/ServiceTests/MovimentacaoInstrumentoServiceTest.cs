@@ -136,6 +136,39 @@ namespace Service.Tests
 
             _context.AddRange(pessoas);
 
+            var instrumentosMusicais = new List<Instrumentomusical>
+            {
+                new Instrumentomusical
+                {
+                    Id = 1,
+                    Patrimonio = "1",
+                    DataAquisicao = DateTime.Parse("24/02/2013"),
+                    Status = "DISPONIVEL",
+                    IdTipoInstrumento = 0 ,
+                    IdGrupoMusical = 0
+                },
+                new Instrumentomusical
+                {
+                    Id = 2,
+                    Patrimonio = "2",
+                    DataAquisicao = DateTime.Parse("24/02/2013"),
+                    Status = "EMPRESTADO",
+                    IdTipoInstrumento = 1 ,
+                    IdGrupoMusical = 0
+                },
+                new Instrumentomusical
+                {
+                    Id = 3,
+                    Patrimonio = "3",
+                    DataAquisicao = DateTime.Parse("24/02/2013"),
+                    Status = "DANIFICADO",
+                    IdTipoInstrumento = 2 ,
+                    IdGrupoMusical = 0
+                }
+            };
+
+            _context.AddRange(instrumentosMusicais);
+
             _context.SaveChanges();
 
             _movimentacaoInstrumento = new MovimentacaoInstrumentoService(_context);
