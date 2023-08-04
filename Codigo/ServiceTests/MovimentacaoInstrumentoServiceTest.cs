@@ -24,6 +24,34 @@ namespace Service.Tests
             _context = new GrupoMusicalContext(options);
             _context.Database.EnsureDeleted();
             _context.Database.EnsureCreated();
+
+            var tiposInstrumentos = new List<Tipoinstrumento>
+            {
+                new Tipoinstrumento
+                {
+                    Id = 1,
+                    Nome = "Tambor"
+
+                },
+                new Tipoinstrumento
+                {
+                    Id = 2,
+                    Nome = "Flauta"
+                },
+                new Tipoinstrumento
+                {
+                    Id = 3,
+                    Nome = "Violão"
+                },
+                new Tipoinstrumento
+                {
+                    Id = 4,
+                    Nome = "Xilofone"
+                }
+            };
+
+            _context.Tipoinstrumentos.AddRange(tiposInstrumentos);
+
             var movimentacoesInstrumentos = new List<Movimentacaoinstrumento>
             {
                 new Movimentacaoinstrumento
@@ -136,34 +164,6 @@ namespace Service.Tests
 
             _context.AddRange(pessoas);
 
-            var tiposInstrumentos = new List<Tipoinstrumento>
-            {
-                new Tipoinstrumento
-                {
-                    Id = 0,
-                    Nome = "Tambor"
-
-                },
-                new Tipoinstrumento
-                {
-                    Id = 1,
-                    Nome = "Flauta"
-                },
-                new Tipoinstrumento
-                {
-                    Id = 2,
-                    Nome = "Violão"
-                },
-                new Tipoinstrumento
-                {
-                    Id = 3,
-                    Nome = "Xilofone"
-                }
-            };
-
-            _context.Tipoinstrumentos.AddRange(tiposInstrumentos);
-            _context.SaveChanges();
-
             var instrumentosMusicais = new List<Instrumentomusical>
             {
                 new Instrumentomusical
@@ -172,7 +172,7 @@ namespace Service.Tests
                     Patrimonio = "1",
                     DataAquisicao = DateTime.Parse("24/02/2013"),
                     Status = "DISPONIVEL",
-                    IdTipoInstrumento = 0 ,
+                    IdTipoInstrumento = 1 ,
                     IdGrupoMusical = 0
                 },
                 new Instrumentomusical
@@ -181,7 +181,7 @@ namespace Service.Tests
                     Patrimonio = "2",
                     DataAquisicao = DateTime.Parse("24/02/2013"),
                     Status = "EMPRESTADO",
-                    IdTipoInstrumento = 1 ,
+                    IdTipoInstrumento = 2 ,
                     IdGrupoMusical = 0
                 },
                 new Instrumentomusical
@@ -190,7 +190,7 @@ namespace Service.Tests
                     Patrimonio = "3",
                     DataAquisicao = DateTime.Parse("24/02/2013"),
                     Status = "DANIFICADO",
-                    IdTipoInstrumento = 2 ,
+                    IdTipoInstrumento = 3 ,
                     IdGrupoMusical = 0
                 }
             };
