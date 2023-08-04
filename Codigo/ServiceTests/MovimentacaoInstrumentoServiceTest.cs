@@ -142,6 +142,7 @@ namespace Service.Tests
                 {
                     Id = 0,
                     Nome = "Tambor"
+
                 },
                 new Tipoinstrumento
                 {
@@ -160,7 +161,8 @@ namespace Service.Tests
                 }
             };
 
-            _context.AddRange(tiposInstrumentos);
+            _context.Tipoinstrumentos.AddRange(tiposInstrumentos);
+            _context.SaveChanges();
 
             var instrumentosMusicais = new List<Instrumentomusical>
             {
