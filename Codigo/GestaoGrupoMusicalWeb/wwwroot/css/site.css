@@ -59,6 +59,9 @@ html {
     border-bottom: 1px solid var(--bs-dark);
     border-radius: 0;
 }
+.form-control-desabled {
+    background-color: #e8e4e4 !important;
+}
 
 .form-select.input-validation-error {
     padding-right: 4.125rem;
