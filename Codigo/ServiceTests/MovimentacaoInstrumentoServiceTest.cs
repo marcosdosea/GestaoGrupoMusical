@@ -197,11 +197,17 @@ namespace Service.Tests
         public void GetEmprestimoByIdInstrumentoTest()
         {
             // Act
-            var movimentacaoInstrumento = _movimentacaoInstrumento.GetEmprestimoByIdInstrumento(1).GetAwaiter().GetResult();
+            var movimentacaoInstrumento = _movimentacaoInstrumento.GetEmprestimoByIdInstrumento(3).GetAwaiter().GetResult();
 
             // Assert
-            Assert.AreEqual(1,movimentacaoInstrumento.Id);
-            Assert.AreEqual(1, movimentacaoInstrumento.IdInstrumentoMusical);
+            Assert.IsNotNull(movimentacaoInstrumento);
+            Assert.AreEqual(3,movimentacaoInstrumento.Id);
+            Assert.AreEqual(3, movimentacaoInstrumento.IdInstrumentoMusical);
+            Assert.AreEqual(new DateTime(2023, 2, 28), movimentacaoInstrumento.Data);
+            Assert.AreEqual(3, movimentacaoInstrumento.IdAssociado);
+            Assert.AreEqual(1, movimentacaoInstrumento.IdColaborador);
+            Assert.AreEqual(0, movimentacaoInstrumento.ConfirmacaoAssociado);
+            Assert.AreEqual("EMPRESTIMO", movimentacaoInstrumento.TipoMovimento);
         }
     }
 }
