@@ -209,5 +209,20 @@ namespace Service.Tests
             Assert.AreEqual(0, movimentacaoInstrumento.ConfirmacaoAssociado);
             Assert.AreEqual("EMPRESTIMO", movimentacaoInstrumento.TipoMovimento);
         }
+
+
+        [TestMethod]
+        public void MovimentacoesByIdAssociadoAsyncTest()
+        {
+            // Act
+            var movimentacoesInstrumentos = _movimentacaoInstrumento.MovimentacoesByIdAssociadoAsync(2).GetAwaiter().GetResult();
+
+            // Assert
+            Assert.IsNotNull(movimentacoesInstrumentos);
+            Assert.IsNotNull(movimentacoesInstrumentos.Emprestimos);
+            Assert.IsNotNull(movimentacoesInstrumentos.Devolucoes);
+            //Assert.AreEqual(1, movimentacoesInstrumentos.Emprestimos.Count());
+            Assert.AreEqual(0, movimentacoesInstrumentos.Devolucoes.);
+        }
     }
 }
