@@ -221,8 +221,8 @@ namespace Service.Tests
             Assert.IsNotNull(movimentacoesInstrumentos);
             Assert.IsNotNull(movimentacoesInstrumentos.Emprestimos);
             Assert.IsNotNull(movimentacoesInstrumentos.Devolucoes);
-            //Assert.AreEqual(1, movimentacoesInstrumentos.Emprestimos.Count());
-            Assert.AreEqual(0, movimentacoesInstrumentos.Devolucoes.);
+            Assert.AreEqual(0, movimentacoesInstrumentos.Emprestimos.Count());
+            Assert.AreEqual(0, movimentacoesInstrumentos.Devolucoes.Count());
         }
     }
 }
