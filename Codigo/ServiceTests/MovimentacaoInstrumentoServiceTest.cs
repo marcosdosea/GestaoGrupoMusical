@@ -183,6 +183,14 @@ namespace Service.Tests
             // Assert
             Assert.IsNotNull(instrumentos);
             Assert.AreEqual(1, instrumentos.Count());
+            var movimentacaoInstrumento = instrumentos.First();
+            Assert.AreEqual(1, movimentacaoInstrumento.Id);
+            Assert.AreEqual(1, movimentacaoInstrumento.IdInstrumento);
+            Assert.AreEqual("007.587.624-02", movimentacaoInstrumento.Cpf);
+            Assert.AreEqual("José santos", movimentacaoInstrumento.NomeAssociado);
+            Assert.AreEqual(new DateTime(2022, 8, 3), movimentacaoInstrumento.Data);
+            Assert.AreEqual("Empréstimo", movimentacaoInstrumento.Movimentacao);
+            Assert.AreEqual("Aguardando Confirmação", movimentacaoInstrumento.Status);
         }
     }
 }
