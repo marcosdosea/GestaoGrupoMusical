@@ -34,7 +34,7 @@ namespace Service.Tests
                     IdAssociado = 1,
                     IdColaborador = 1,
                     ConfirmacaoAssociado = 0,
-                    TipoMovimento = "EMPRESTIMO"
+                    TipoMovimento = "EMPRESTIMO",
                 },
                 new Movimentacaoinstrumento
                 {
@@ -59,6 +59,83 @@ namespace Service.Tests
             };
 
             _context.AddRange(movimentacoesInstrumentos);
+
+            var pessoas = new List<Pessoa>
+                {
+                    new Pessoa {
+                        Id = 1,
+                        Cpf = "007.587.624-02",
+                        Nome = "José santos",
+                        Sexo = "M",
+                        Cep = "49520-111",
+                        Rua = "Rua 10",
+                        Bairro = "Centro",
+                        Cidade = "Itabaina",
+                        Estado = "SE",
+                        DataNascimento = DateTime.Parse("01-02-1992"),
+                        Telefone1 = "79998567896",
+                        Telefone2 = "79998653284",
+                        Email = "josests@gmail.com",
+                        DataEntrada = DateTime.Parse("10-01-2020"),
+                        DataSaida = DateTime.Parse("05-06-2022"),
+                        MotivoSaida = "Não me acostumei com a cultura",
+                        Ativo = 1,
+                        IsentoPagamento = 1,
+                        IdGrupoMusical = 1,
+                        IdPapelGrupo = 1,
+                        IdManequim = 1
+                    },
+                    new Pessoa {
+                        Id = 2,
+                        Cpf = "007.457.624-02",
+                        Nome = "Matheus santos",
+                        Sexo = "M",
+                        Cep = "49520-111",
+                        Rua = "Rua 10",
+                        Bairro = "Centro",
+                        Cidade = "Itabaina",
+                        Estado = "SE",
+                        DataNascimento = DateTime.Parse("01-02-1985"),
+                        Telefone1 = "79956567896",
+                        Telefone2 = "79998653654",
+                        Email = "matheussts@gmail.com",
+                        DataEntrada = DateTime.Parse("10-01-2020"),
+                        DataSaida = DateTime.Parse("05-06-2022"),
+                        MotivoSaida = "Não me acostumei com a cultura",
+                        Ativo = 1,
+                        IsentoPagamento = 1,
+                        IdGrupoMusical = 1,
+                        IdPapelGrupo = 1,
+                        IdManequim = 1
+                    },
+
+                    new Pessoa {
+                        Id = 3,
+                        Cpf = "007.217.424-02",
+                        Nome = "Douglas santos",
+                        Sexo = "M",
+                        Cep = "49520-111",
+                        Rua = "Rua 10",
+                        Bairro = "Centro",
+                        Cidade = "Itabaina",
+                        Estado = "SE",
+                        DataNascimento = DateTime.Parse("01-02-1998"),
+                        Telefone1 = "79998567896",
+                        Telefone2 = "79998653284",
+                        Email = "Douglassts@gmail.com",
+                        DataEntrada = DateTime.Parse("10-01-2019"),
+                        DataSaida = DateTime.Parse("05-06-2021"),
+                        MotivoSaida = "Não me acostumei com a cultura",
+                        Ativo = 1,
+                        IsentoPagamento = 1,
+                        IdGrupoMusical = 1,
+                        IdPapelGrupo = 1,
+                        IdManequim = 1
+                    }
+                };
+
+            _context.AddRange(pessoas);
+
             _context.SaveChanges();
 
             _movimentacaoInstrumento = new MovimentacaoInstrumentoService(_context);
@@ -80,10 +157,10 @@ namespace Service.Tests
             }).GetAwaiter().GetResult();
 
             // Assert
-            var movimentacaoInstrumento = _context.Movimentacaoinstrumentos.FindAsync(4).GetAwaiter().GetResult();
+            var movimentacaoInstrumento = _context.Movimentacaoinstrumentos.Find(3);
             Assert.AreEqual(200, result);
             Assert.IsNotNull(movimentacaoInstrumento);
-            Assert.AreEqual(2, movimentacaoInstrumento.Id);
+            Assert.AreEqual(2, movimentacaoInstrumento.IdInstrumentoMusical);
         }
 
         [TestMethod]
@@ -101,10 +178,11 @@ namespace Service.Tests
         public void GetAllByIdInstrumentoTest()
         {
             // Act
-            var instrumentos = _movimentacaoInstrumento.GetAllByIdInstrumento(3);
+            var instrumentos = _movimentacaoInstrumento.GetAllByIdInstrumento(1).GetAwaiter().GetResult();
 
             // Assert
             Assert.IsNotNull(instrumentos);
+            Assert.AreEqual(1, instrumentos.Count());
         }
     }
 }
