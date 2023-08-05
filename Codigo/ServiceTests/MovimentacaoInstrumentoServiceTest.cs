@@ -303,8 +303,10 @@ namespace Service.Tests
         public void NotificarViaEmailAsyncTest()
         {
             // Act
-            _movimentacaoInstrumento.NotificarViaEmailAsync(3);
+            var result = _movimentacaoInstrumento.NotificarViaEmailAsync(3).Result;
 
+            // Assert
+            Assert.AreEqual(200, result);
         }
     }
 }
