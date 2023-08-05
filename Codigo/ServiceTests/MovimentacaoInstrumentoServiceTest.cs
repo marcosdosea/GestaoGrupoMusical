@@ -298,5 +298,13 @@ namespace Service.Tests
             Assert.AreEqual(1, movimentacaoInstrumento.IdAssociado);
             Assert.AreEqual(1, movimentacaoInstrumento.ConfirmacaoAssociado);
         }
+
+        [TestMethod]
+        public void NotificarViaEmailAsyncTest()
+        {
+            // Act
+            _movimentacaoInstrumento.NotificarViaEmailAsync(3);
+
+        }
     }
 }
