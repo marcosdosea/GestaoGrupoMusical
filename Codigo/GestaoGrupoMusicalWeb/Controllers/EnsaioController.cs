@@ -4,6 +4,7 @@ using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Org.BouncyCastle.Utilities;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -54,7 +55,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
             if (ModelState.IsValid)
             {
                 String mensagem = String.Empty;
-                switch(await _ensaio.Create(_mapper.Map<Ensaio>(ensaioViewModel)))
+                var ensaio = _mapper.Map<Ensaio>(ensaioViewModel);
+                if(Int32.TryParse(User.FindFirst("IdGrupoMusical")?.Value, out int idGrupoMusical) && Int32.TryParse(User.FindFirst("Id")?.Value, out int id))
+                {
+                    ensaio.IdGrupoMusical = idGrupoMusical;
+                    ensaio.IdColaboradorResponsavel = id;
+                }
+                switch (await _ensaio.Create(_mapper.Map<Ensaio>(ensaioViewModel)))
                 {
                     case 200:
                         mensagem = "Ensaio <b>Cadastrado</b> com <b>Sucesso</b>";
