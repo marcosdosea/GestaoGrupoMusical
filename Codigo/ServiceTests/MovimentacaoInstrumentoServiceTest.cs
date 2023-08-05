@@ -1,6 +1,7 @@
 ﻿using Core;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Service;
 
@@ -18,7 +19,7 @@ namespace Service.Tests
         {
             // Arrange
             var builder = new DbContextOptionsBuilder<GrupoMusicalContext>();
-            builder.UseInMemoryDatabase("GrupoMusical");
+            builder.UseInMemoryDatabase("GrupoMusical").ConfigureWarnings(warning => warning.Ignore(InMemoryEventId.TransactionIgnoredWarning));
             var options = builder.Options;
 
             _context = new GrupoMusicalContext(options);
