@@ -42,7 +42,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
             EnsaioViewModel ensaioModel = new();
 
             ensaioModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
-            ensaioModel.ListaGrupoMusical = new SelectList(_grupoMusical.GetAll(), "Id", "Nome");
 
             return View(ensaioModel);
         }
@@ -52,8 +51,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(EnsaioViewModel ensaioViewModel)
         {
-            ensaioViewModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
-            ensaioViewModel.ListaGrupoMusical = new SelectList(_grupoMusical.GetAll(), "Id", "Nome");
             if (ModelState.IsValid)
             {
                 String mensagem = String.Empty;
@@ -66,19 +63,18 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     case 400:
                         mensagem = "Alerta ! A <b>data de início</b> deve ser menor que a data de <b>fim</b>";
                         Notificar(mensagem, Notifica.Alerta);
-                        return View("Create", ensaioViewModel);
+                        break;
                     case 401:
                         mensagem = "Alerta ! A <b>data de início</b> deve ser maior que a data de hoje " + DateTime.Now;
                         Notificar(mensagem, Notifica.Alerta);
-                        return View("Create", ensaioViewModel);
+                        break;
                     case 500:
                         mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Cadastro</b> de ensaio, se isso persistir entre em contato com o suporte";
                         Notificar(mensagem, Notifica.Erro);
-                        return RedirectToAction("Create", ensaioViewModel);
-
+                        break;
                 }
             }
-
+            ensaioViewModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
             return View(ensaioViewModel);
         }
 
@@ -89,7 +85,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
             EnsaioViewModel ensaioModel = _mapper.Map<EnsaioViewModel>(ensaio);
 
             ensaioModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
-            ensaioModel.ListaGrupoMusical = new SelectList(_grupoMusical.GetAll(), "Id", "Nome");
 
             return View(ensaioModel);
         }
@@ -99,8 +94,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(EnsaioViewModel ensaioViewModel)
         {
-            ensaioViewModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
-            ensaioViewModel.ListaGrupoMusical = new SelectList(_grupoMusical.GetAll(), "Id", "Nome");
             if (ModelState.IsValid)
             {
                 String mensagem = String.Empty;
@@ -113,19 +106,20 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     case 401:
                         mensagem = "Alerta ! A <b>data de início</b> deve ser menor que a data de <b>a data de fim</b>, ou a <b>a data de fim</b> tem que ser maior";
                         Notificar(mensagem, Notifica.Alerta);
-                        return View("Edit", ensaioViewModel);
+                        break;
                     case 400:
                         mensagem = "Alerta ! A <b>data de início</b> deve ser maior que a data de hoje " + DateTime.Now;
                         Notificar(mensagem, Notifica.Alerta);
-                        return View("Edit", ensaioViewModel);
+                        break;
                     case 500:
                         mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Editar</b> de ensaio, se isso persistir entre em contato com o suporte";
                         Notificar(mensagem, Notifica.Erro);
-                        return RedirectToAction("Edit", ensaioViewModel);
+                        break;
 
 
                 }
             }
+            ensaioViewModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
             return View(ensaioViewModel);
         }
 
@@ -139,19 +133,19 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: EnsaioController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(EnsaioViewModel ensaioModel)
+        public async Task<ActionResult> DeletePost(int id)
         {
             String mensagem = String.Empty;
-            switch (await _ensaio.Delete(ensaioModel.Id))
+            switch (await _ensaio.Delete(id))
             {
                 case 200:
                     mensagem = "Ensaio <b>Deletado</b> com <b>Sucesso</b>";
                     Notificar(mensagem, Notifica.Sucesso);
-                    return RedirectToAction(nameof(Index));
+                    break;
                 case 500:
                     mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante ao <b>Excluir</b> um ensaio, se isso persistir entre em contato com o suporte";
                     Notificar(mensagem, Notifica.Erro);
-                    return RedirectToAction(nameof(Index));
+                    break;
 
             }
             return RedirectToAction(nameof(Index));
