@@ -2,12 +2,13 @@
 using Core;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Org.BouncyCastle.Utilities;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
+    [Authorize(Roles = "ADMINISTRADOR GRUPO")]
     public class EnsaioController : BaseController
     {
         private readonly IEnsaioService _ensaio;
@@ -61,7 +62,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     ensaio.IdGrupoMusical = idGrupoMusical;
                     ensaio.IdColaboradorResponsavel = id;
                 }
-                switch (await _ensaio.Create(_mapper.Map<Ensaio>(ensaioViewModel)))
+                switch (await _ensaio.Create(ensaio))
                 {
                     case 200:
                         mensagem = "Ensaio <b>Cadastrado</b> com <b>Sucesso</b>";
