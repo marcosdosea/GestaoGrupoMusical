@@ -133,10 +133,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: EnsaioController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeletePost(int id)
+        public async Task<ActionResult> Delete(EnsaioViewModel ensaioModel)
         {
             String mensagem = String.Empty;
-            switch (await _ensaio.Delete(id))
+            switch (await _ensaio.Delete(ensaioModel.Id))
             {
                 case 200:
                     mensagem = "Ensaio <b>Deletado</b> com <b>Sucesso</b>";
