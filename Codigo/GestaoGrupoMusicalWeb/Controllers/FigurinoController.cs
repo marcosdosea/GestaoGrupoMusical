@@ -155,5 +155,47 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 return RedirectToAction(nameof(Index));
             }
         }
+
+        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
+        public async Task<ActionResult> Movimentar(int id)
+        {
+            MovimentacaoFigurinoViewModel movimentarFigurino = new();
+
+
+            /*
+            MovimentacaoInstrumentoViewModel movimentacaoModel = new();
+            var instrumento = await _instrumentoMusical.Get(id);
+            var movimentacao = await _movimentacaoInstrumento.GetEmprestimoByIdInstrumento(id);
+            if (instrumento.Status.Equals("DANIFICADO"))
+            {
+                Notificar("Não é permitido fazer uma <b>movimentação</b> de um instrumento <b>Danificado</b>", Notifica.Alerta);
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (instrumento == null)
+            {
+                Notificar($"O Id {id} não <b>Corresponde</b> a nenhuma <b>Movimentação</b>", Notifica.Erro);
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (movimentacao != null && instrumento.Status == "EMPRESTADO")
+            {
+                movimentacaoModel.IdAssociado = movimentacao.IdAssociado;
+                movimentacaoModel.Movimentacao = "DEVOLUCAO";
+            }
+
+            movimentacaoModel.Movimentacoes = await _movimentacaoInstrumento.GetAllByIdInstrumento(id);
+            movimentacaoModel.Patrimonio = instrumento.Patrimonio;
+            movimentacaoModel.IdInstrumentoMusical = instrumento.Id;
+            movimentacaoModel.NomeInstrumento = await _instrumentoMusical.GetNomeInstrumento(id);
+
+            int idGrupo = _grupoMusical.GetIdGrupo(User.Identity.Name);
+            var listaPessoas = _pessoa.GetAllPessoasOrder(idGrupo).ToList();
+            // listaPessoas.Remove(listaPessoas.Single(p => p.Cpf == User.Identity?.Name));
+
+            movimentacaoModel.ListaAssociado = new SelectList(listaPessoas, "Id", "Nome");
+            */
+            throw new NotImplementedException();
+        }
     }
 }
