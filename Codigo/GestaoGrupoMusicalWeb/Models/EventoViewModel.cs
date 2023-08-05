@@ -5,8 +5,6 @@ namespace GestaoGrupoMusicalWeb.Models
 {
     public class EventoViewModel
     {
-        [Key]
-        public int Id { get; set; }
         [Display(Name = "Grupo Musical")]
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public int IdGrupoMusical { get; set; }
@@ -28,7 +26,6 @@ namespace GestaoGrupoMusicalWeb.Models
         public int IdRegente { get; set; }
 
         public SelectList? ListaPessoa { get; set; }
-        public SelectList? ListaGrupoMusical { get; set; }
 
       
     }
