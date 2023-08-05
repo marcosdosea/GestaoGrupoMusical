@@ -7,10 +7,6 @@ namespace GestaoGrupoMusicalWeb.Models
     {
         public int Id { get; set; }
 
-        [Display(Name ="Grupo Musical")]
-        [Required(ErrorMessage = "O campo {0} é obrigatório")]
-        public int IdGrupoMusical { get; set; }
-
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public Tipo Tipo { get; set; }
 
@@ -32,10 +28,6 @@ namespace GestaoGrupoMusicalWeb.Models
         [Display(Name = "Repertório")]
         [MaxLength(100, ErrorMessage = "O campo {0} deve ter no máximo 100 caracteres")]
         public string? Repertorio { get; set; }
-
-        [Display(Name = "Colaborador Responsável")]
-        [Required(ErrorMessage = "O campo {0} é obrigatório")]
-        public int IdColaboradorResponsavel { get; set; }
 
         [Display(Name = "Regente")]
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
