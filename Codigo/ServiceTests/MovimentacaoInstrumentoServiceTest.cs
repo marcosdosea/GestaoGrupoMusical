@@ -32,7 +32,6 @@ namespace Service.Tests
                 {
                     Id = 1,
                     Nome = "Tambor"
-
                 },
                 new Tipoinstrumento
                 {
