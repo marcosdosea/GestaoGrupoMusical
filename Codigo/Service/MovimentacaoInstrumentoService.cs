@@ -9,7 +9,7 @@ namespace Service
 {
     public class MovimentacaoInstrumentoService : IMovimentacaoInstrumentoService
     {
-        GrupoMusicalContext _context;
+        private readonly GrupoMusicalContext _context;
 
         public MovimentacaoInstrumentoService(GrupoMusicalContext context)
         {
