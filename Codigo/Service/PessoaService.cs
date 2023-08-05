@@ -736,7 +736,7 @@ namespace Service
                 if(pessoa != null)
                 {
                     //se o associado não foi desativado por algum adm de grupo
-                    if (pessoa.DataSaida != null && pessoa.MotivoSaida != null)
+                    if (String.IsNullOrEmpty(pessoa.DataSaida.ToString()) && String.IsNullOrEmpty(pessoa.MotivoSaida))
                     {
                         pessoa.Ativo = 1;
 
