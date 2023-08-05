@@ -5,6 +5,7 @@ namespace GestaoGrupoMusicalWeb.Models
 {
     public class EnsaioViewModel
     {
+        public int Id { get; set; }
 
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public Tipo Tipo { get; set; }
