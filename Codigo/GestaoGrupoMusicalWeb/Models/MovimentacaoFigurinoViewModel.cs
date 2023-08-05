@@ -6,7 +6,7 @@ using System.Xml.Linq;
 
 namespace GestaoGrupoMusicalWeb.Models
 {
-    public class MovimentacaoFigurino
+    public class MovimentacaoFigurinoViewModel
     {
 
         public int Id { get; set; }
