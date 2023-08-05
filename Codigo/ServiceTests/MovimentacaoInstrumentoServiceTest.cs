@@ -58,7 +58,7 @@ namespace Service.Tests
                 new Movimentacaoinstrumento
                 {
                     Id = 1,
-                    Data = new DateTime(2022, 8, 3),
+                    Data = new DateTime(2022, 8, 3, 0, 0, 0, 0, DateTimeKind.Local),
                     IdInstrumentoMusical = 1,
                     IdAssociado = 1,
                     IdColaborador = 1,
@@ -68,7 +68,7 @@ namespace Service.Tests
                 new Movimentacaoinstrumento
                 {
                     Id = 2,
-                    Data = new DateTime(2022, 8, 25),
+                    Data = new DateTime(2022, 8, 25, 0, 0, 0, 0, DateTimeKind.Local),
                     IdInstrumentoMusical = 2,
                     IdAssociado = 2,
                     IdColaborador = 1,
@@ -78,7 +78,7 @@ namespace Service.Tests
                 new Movimentacaoinstrumento
                 {
                     Id = 3,
-                    Data = new DateTime(2023, 2, 28),
+                    Data = new DateTime(2023, 2, 28, 0, 0, 0, 0, DateTimeKind.Local),
                     IdInstrumentoMusical = 3,
                     IdAssociado = 3,
                     IdColaborador = 1,
@@ -101,12 +101,12 @@ namespace Service.Tests
                         Bairro = "Centro",
                         Cidade = "Itabaina",
                         Estado = "SE",
-                        DataNascimento = DateTime.Parse("01-02-1992"),
+                        DataNascimento = new DateTime(1998, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
                         Telefone1 = "79998567896",
                         Telefone2 = "79998653284",
                         Email = "josests@gmail.com",
-                        DataEntrada = DateTime.Parse("10-01-2020"),
-                        DataSaida = DateTime.Parse("05-06-2022"),
+                        DataEntrada = new DateTime(1998, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                        DataSaida = new DateTime (1998, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
                         MotivoSaida = "Não me acostumei com a cultura",
                         Ativo = 1,
                         IsentoPagamento = 1,
@@ -124,12 +124,12 @@ namespace Service.Tests
                         Bairro = "Centro",
                         Cidade = "Itabaina",
                         Estado = "SE",
-                        DataNascimento = DateTime.Parse("01-02-1985"),
+                        DataNascimento = new DateTime (1998, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
                         Telefone1 = "79956567896",
                         Telefone2 = "79998653654",
                         Email = "matheussts@gmail.com",
-                        DataEntrada = DateTime.Parse("10-01-2020"),
-                        DataSaida = DateTime.Parse("05-06-2022"),
+                        DataEntrada = new DateTime (2013, 2, 24, 0, 0, 0, 0, DateTimeKind.Local),
+                        DataSaida = new DateTime (2021, 6, 5, 0, 0, 0, 0, DateTimeKind.Local),
                         MotivoSaida = "Não me acostumei com a cultura",
                         Ativo = 1,
                         IsentoPagamento = 1,
@@ -148,12 +148,12 @@ namespace Service.Tests
                         Bairro = "Centro",
                         Cidade = "Itabaina",
                         Estado = "SE",
-                        DataNascimento = DateTime.Parse("01-02-1998"),
+                        DataNascimento = new DateTime(1998, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
                         Telefone1 = "79998567896",
                         Telefone2 = "79998653284",
                         Email = "Douglassts@gmail.com",
-                        DataEntrada = DateTime.Parse("10-01-2019"),
-                        DataSaida = DateTime.Parse("05-06-2021"),
+                        DataEntrada = new DateTime(2019, 1, 10, 0, 0, 0, 0, DateTimeKind.Local),
+                        DataSaida = new DateTime(2021, 6, 5, 0, 0, 0, 0, DateTimeKind.Local),
                         MotivoSaida = "Não me acostumei com a cultura",
                         Ativo = 1,
                         IsentoPagamento = 1,
@@ -171,7 +171,7 @@ namespace Service.Tests
                 {
                     Id = 1,
                     Patrimonio = "1",
-                    DataAquisicao = DateTime.Parse("24/02/2013"),
+                    DataAquisicao = new DateTime(2013, 2, 24, 0, 0, 0, 0, DateTimeKind.Local),
                     Status = "DISPONIVEL",
                     IdTipoInstrumento = 1 ,
                     IdGrupoMusical = 0
@@ -180,7 +180,7 @@ namespace Service.Tests
                 {
                     Id = 2,
                     Patrimonio = "2",
-                    DataAquisicao = DateTime.Parse("24/02/2013"),
+                    DataAquisicao = new DateTime(2013, 2, 24, 0, 0, 0, 0, DateTimeKind.Local),
                     Status = "EMPRESTADO",
                     IdTipoInstrumento = 2 ,
                     IdGrupoMusical = 0
@@ -189,7 +189,7 @@ namespace Service.Tests
                 {
                     Id = 3,
                     Patrimonio = "3",
-                    DataAquisicao = DateTime.Parse("24/02/2013"),
+                    DataAquisicao = new DateTime(2013, 2, 24, 0, 0, 0, 0, DateTimeKind.Local),
                     Status = "DANIFICADO",
                     IdTipoInstrumento = 3 ,
                     IdGrupoMusical = 0
@@ -209,7 +209,7 @@ namespace Service.Tests
             _movimentacaoInstrumento.CreateAsync(new Movimentacaoinstrumento
             {
                 Id = 4,
-                Data = new DateTime(2023, 3, 10),
+                Data = new DateTime(2023, 3, 10, 0, 0, 0, 0, DateTimeKind.Local),
                 IdInstrumentoMusical = 4,
                 IdAssociado = 4,
                 IdColaborador = 2,
@@ -220,7 +220,7 @@ namespace Service.Tests
             // Assert
             var movimentacaoInstrumento = _context.Movimentacaoinstrumentos.Find(4);
             Assert.IsNotNull(movimentacaoInstrumento);
-            Assert.AreEqual(new DateTime(2023, 3, 10), movimentacaoInstrumento.Data);
+            Assert.AreEqual(new DateTime(2023, 3, 10, 0, 0, 0, 0, DateTimeKind.Local), movimentacaoInstrumento.Data);
             Assert.AreEqual(4, movimentacaoInstrumento.IdInstrumentoMusical);
             Assert.AreEqual(4, movimentacaoInstrumento.IdAssociado);
             Assert.AreEqual(2, movimentacaoInstrumento.IdColaborador);
@@ -253,7 +253,7 @@ namespace Service.Tests
             Assert.AreEqual(1, movimentacaoInstrumento.IdInstrumento);
             Assert.AreEqual("007.587.624-02", movimentacaoInstrumento.Cpf);
             Assert.AreEqual("José santos", movimentacaoInstrumento.NomeAssociado);
-            Assert.AreEqual(new DateTime(2022, 8, 3), movimentacaoInstrumento.Data);
+            Assert.AreEqual(new DateTime(2022, 8, 3, 0, 0, 0, 0, DateTimeKind.Local), movimentacaoInstrumento.Data);
             Assert.AreEqual("Empréstimo", movimentacaoInstrumento.Movimentacao);
             Assert.AreEqual("Aguardando Confirmação", movimentacaoInstrumento.Status);
         }
@@ -268,7 +268,7 @@ namespace Service.Tests
             Assert.IsNotNull(movimentacaoInstrumento);
             Assert.AreEqual(3,movimentacaoInstrumento.Id);
             Assert.AreEqual(3, movimentacaoInstrumento.IdInstrumentoMusical);
-            Assert.AreEqual(new DateTime(2023, 2, 28), movimentacaoInstrumento.Data);
+            Assert.AreEqual(new DateTime(2023, 2, 28, 0, 0, 0, 0, DateTimeKind.Local), movimentacaoInstrumento.Data);
             Assert.AreEqual(3, movimentacaoInstrumento.IdAssociado);
             Assert.AreEqual(1, movimentacaoInstrumento.IdColaborador);
             Assert.AreEqual(0, movimentacaoInstrumento.ConfirmacaoAssociado);
