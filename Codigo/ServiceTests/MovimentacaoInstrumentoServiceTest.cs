@@ -206,7 +206,7 @@ namespace Service.Tests
         public void CreateAsyncTest()
         {
             // Act
-            var result = _movimentacaoInstrumento.CreateAsync(new Movimentacaoinstrumento
+            _movimentacaoInstrumento.CreateAsync(new Movimentacaoinstrumento
             {
                 Id = 4,
                 Data = new DateTime(2023, 3, 10),
@@ -218,10 +218,14 @@ namespace Service.Tests
             }).GetAwaiter().GetResult();
 
             // Assert
-            var movimentacaoInstrumento = _context.Movimentacaoinstrumentos.Find(3);
-            Assert.AreEqual(200, result);
+            var movimentacaoInstrumento = _context.Movimentacaoinstrumentos.Find(4);
             Assert.IsNotNull(movimentacaoInstrumento);
-            Assert.AreEqual(2, movimentacaoInstrumento.IdInstrumentoMusical);
+            Assert.AreEqual(new DateTime(2023, 3, 10), movimentacaoInstrumento.Data);
+            Assert.AreEqual(4, movimentacaoInstrumento.IdInstrumentoMusical);
+            Assert.AreEqual(4, movimentacaoInstrumento.IdAssociado);
+            Assert.AreEqual(2, movimentacaoInstrumento.IdColaborador);
+            Assert.AreEqual(0, movimentacaoInstrumento.ConfirmacaoAssociado);
+            Assert.AreEqual("EMPRESTIMO", movimentacaoInstrumento.TipoMovimento);
         }
 
         [TestMethod]
