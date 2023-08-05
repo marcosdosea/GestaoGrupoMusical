@@ -193,6 +193,15 @@ namespace Service.Tests
                     Status = "DISPONIVEL",
                     IdTipoInstrumento = 3 ,
                     IdGrupoMusical = 0
+                },
+                new Instrumentomusical
+                {
+                    Id = 4,
+                    Patrimonio = "4",
+                    DataAquisicao = new DateTime(2018, 12, 18, 0, 0, 0, 0, DateTimeKind.Local),
+                    Status = "DISPONIVEL",
+                    IdTipoInstrumento = 9,
+                    IdGrupoMusical = 7
                 }
             };
 
