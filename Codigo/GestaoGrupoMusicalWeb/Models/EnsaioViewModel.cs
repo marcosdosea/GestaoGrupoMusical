@@ -5,7 +5,6 @@ namespace GestaoGrupoMusicalWeb.Models
 {
     public class EnsaioViewModel
     {
-        public int Id { get; set; }
 
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public Tipo Tipo { get; set; }
@@ -40,7 +39,6 @@ namespace GestaoGrupoMusicalWeb.Models
         };
 
         public SelectList? ListaPessoa { get; set; }
-        public SelectList? ListaGrupoMusical { get; set; }
     }
 
     public enum Tipo 
