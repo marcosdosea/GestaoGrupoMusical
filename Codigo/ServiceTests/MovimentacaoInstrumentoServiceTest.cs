@@ -190,7 +190,7 @@ namespace Service.Tests
                     Id = 3,
                     Patrimonio = "3",
                     DataAquisicao = new DateTime(2013, 2, 24, 0, 0, 0, 0, DateTimeKind.Local),
-                    Status = "DANIFICADO",
+                    Status = "DISPONIVEL",
                     IdTipoInstrumento = 3 ,
                     IdGrupoMusical = 0
                 }
