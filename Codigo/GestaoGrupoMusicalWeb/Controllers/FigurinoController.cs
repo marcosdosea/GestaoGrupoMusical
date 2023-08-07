@@ -17,19 +17,21 @@ namespace GestaoGrupoMusicalWeb.Controllers
     public class FigurinoController : BaseController
     {
         private readonly IMapper _mapper;
-        private readonly IGrupoMusicalService _grupoMusical;
-        private readonly IManequimService _manequim;
+        private readonly IGrupoMusicalService _grupoMusicalService;
+        private readonly IManequimService _manequimService;
         private readonly IFigurinoService _figurinoService;
+        private readonly IPessoaService _pessoaService;
         private readonly UserManager<UsuarioIdentity> _userManager;
 
         public FigurinoController(IMapper mapper, IGrupoMusicalService grupoMusical,
-            IManequimService manequim, IFigurinoService figurino, UserManager<UsuarioIdentity> userManager)
+            IManequimService manequim, IFigurinoService figurino,UserManager<UsuarioIdentity> userManager, IPessoaService pessoa)
         {
             _mapper = mapper;
-            _grupoMusical = grupoMusical;
-            _manequim = manequim;
+            _grupoMusicalService = grupoMusical;
+            _manequimService = manequim;
             _figurinoService = figurino;
             _userManager = userManager;
+            _pessoaService = pessoa;
         }
 
         // GET: FigurinoController
@@ -61,7 +63,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                figurinoViewModel.IdGrupoMusical = _grupoMusical.GetIdGrupo(User.Identity.Name);
+                figurinoViewModel.IdGrupoMusical = _grupoMusicalService.GetIdGrupo(User.Identity.Name);
 
                 var figurino = _mapper.Map<Figurino>(figurinoViewModel);
                 int resul = await _figurinoService.Create(figurino);
@@ -107,7 +109,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 var figurino = _mapper.Map<Figurino>(figurinoViewModel);
 
-                figurino.IdGrupoMusical = _grupoMusical.GetIdGrupo(User.Identity.Name);
+                figurino.IdGrupoMusical = _grupoMusicalService.GetIdGrupo(User.Identity.Name);
 
                 int resul = await _figurinoService.Edit(figurino);
                 if (resul == 200)
@@ -159,9 +161,20 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         public async Task<ActionResult> Movimentar(int id)
         {
-            MovimentacaoFigurinoViewModel movimentarFigurino = new();
 
+            var figurino = await _figurinoService.Get(id);
+            var manequins = _manequimService.GetAll();
+            var associados = _pessoaService.GetAllPessoasOrder(_grupoMusicalService.GetIdGrupo(User.Identity.Name));
+            SelectList listAssociados = new SelectList(associados, "Id", "Nome");
+            SelectList listManequins = new SelectList(associados, "Id", "Tamanho");
 
+            var movimentarFigurinoViewModel = new MovimentacaoFigurinoViewModel
+            {
+                IdFigurino = figurino.Id,
+                NomeFigurino = figurino.Nome,
+                ListaAssociado = listAssociados,
+                ListaManequim = listManequins
+            };
             /*
             MovimentacaoInstrumentoViewModel movimentacaoModel = new();
             var instrumento = await _instrumentoMusical.Get(id);
@@ -195,7 +208,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             movimentacaoModel.ListaAssociado = new SelectList(listaPessoas, "Id", "Nome");
             */
-            throw new NotImplementedException();
+            return View(movimentarFigurinoViewModel);
         }
     }
 }
