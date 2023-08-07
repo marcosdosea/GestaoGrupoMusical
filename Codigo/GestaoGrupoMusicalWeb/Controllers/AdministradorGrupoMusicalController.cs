@@ -123,7 +123,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         Notificar(mensagem, Notifica.Erro);
                         break;
                 }
-                return RedirectToAction(nameof(Index));
+               
             }
             return RedirectToAction(nameof(Index), new { id = admViewModel.IdGrupoMusical });
         }
