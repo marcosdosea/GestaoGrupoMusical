@@ -1,0 +1,82 @@
+﻿@model GestaoGrupoMusicalWeb.Models.MovimentacaoFigurinoViewModel
+
+@{
+    ViewData["Title"] = "Movimentar";
+}
+
+<h1>Movimentar</h1>
+
+<h4>MovimentacaoFigurinoViewModel</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Movimentar">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="NomeFigurino" class="control-label"></label>
+                <input asp-for="NomeFigurino" class="form-control" />
+                <span asp-validation-for="NomeFigurino" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Data" class="control-label"></label>
+                <input asp-for="DataString" class="form-control" />
+                <span asp-validation-for="Data" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <label asp-for="IdFigurino" class="control-label"></label>
+                <input asp-for="IdFigurino" class="form-control" />
+                <span asp-validation-for="IdFigurino" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="IdManequim" class="control-label"></label>
+                <input asp-for="IdManequim" class="form-control" />
+                <span asp-validation-for="IdManequim" class="text-danger"></span>
+            </div>
+
+            <label asp-for="IdAssociado" class="control-label"></label>
+            @if (Model.IdAssociado != 0)
+            {
+                <select asp-for="IdAssociado" asp-items="@Model.ListaAssociado" class="form-select" disabled>
+                    <option value=""></option>
+                </select>
+                <input asp-for="IdAssociado" type="hidden" />
+            }
+            else
+            {
+                <select asp-for="IdAssociado" asp-items="@Model.ListaAssociado" class="form-select">
+                    <option value=""></option>
+                </select>
+            }
+            <span asp-validation-for="IdAssociado" class="text-danger"></span>
+
+            <label asp-for="Movimentacao" class="control-label"></label>
+            <div class="d-flex justify-content-around">
+                @{
+                    foreach (var item in Model.MovimentacaoEnum)
+                    {
+                        <div>
+                            <label for="@item.Key">@item.Key</label>
+                            <input class="form-check-input" type="radio" value="@item.Value" asp-for="Movimentacao" id="@item.Key" />
+                        </div>
+                    }
+                }
+            </div>
+            <span asp-validation-for="Movimentacao" class="text-danger"></span>
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
