@@ -46,6 +46,10 @@ namespace Service
 
                 await _context.AddAsync(movimentacao);
 
+                figurinoEstoque.QuantidadeDisponivel--;
+
+                _context.Figurinomanequims.Update(figurinoEstoque);
+
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
@@ -78,9 +82,8 @@ namespace Service
                 await transaction.RollbackAsync();
                 return 500;
             }
-            
 
-            throw new NotImplementedException();
+            return 200;
         }
 
         public Task<int> DeleteAsync(int id)
