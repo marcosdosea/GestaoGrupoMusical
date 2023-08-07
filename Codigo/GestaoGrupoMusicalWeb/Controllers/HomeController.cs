@@ -32,6 +32,23 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         public async Task<IActionResult> Index()
         {
+
+            var listaEvento = _evento.GetAllDTO();
+            var eventoViewDTO = _mapper.Map<List<EventoViewModelDTO>>(listaEvento);
+            var listaEnsaio = await _ensaioService.GetAllDTO();
+            var ensaioViewDTO = _mapper.Map<List<EnsaioViewModelDTO>>(listaEnsaio);
+            var listaIformativo = await _informativoService.GetAll();
+            var informativo = _mapper.Map<List<InformativoViewModel>>(listaIformativo);
+
+
+            var viewModel = new TelaPrincipalViewModel
+            {
+                Ensaio = ensaioViewDTO,
+                Evento = eventoViewDTO,
+                Informativo = informativo
+            };
+
+
             if (User.IsInRole("ADMINISTRADOR SISTEMA"))
             {
                 return RedirectToAction(nameof(Index), "GrupoMusical");
@@ -53,23 +70,25 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
             else if(User.IsInRole("ADMINISTRADOR GRUPO"))
             {
-                return RedirectToAction(nameof(Index), "InstrumentoMusical");
+                //return RedirectToAction(nameof(Index));
+                return View(viewModel);
+
             }
 
-            var listaEvento = _evento.GetAllDTO();
-            var EventoViewDTO = _mapper.Map<List<EventoViewModelDTO>>(listaEvento);
-            var listaEnsaio = await _ensaioService.GetAllDTO();
-            var EnsaioViewDTO = _mapper.Map<List<EnsaioViewModelDTO>>(listaEnsaio);
-            var listaIformativo = await _informativoService.GetAllDTO();
-            var InformativoDTO = _mapper.Map<List<InformativoViewModelDTO>>(listaIformativo);
+            //var listaEvento = _evento.GetAllDTO();
+            //var EventoViewDTO = _mapper.Map<List<EventoViewModelDTO>>(listaEvento);
+            //var listaEnsaio = await _ensaioService.GetAllDTO();
+            //var EnsaioViewDTO = _mapper.Map<List<EnsaioViewModelDTO>>(listaEnsaio);
+            //var listaIformativo = await _informativoService.GetAllDTO();
+            //var InformativoDTO = _mapper.Map<List<InformativoViewModelDTO>>(listaIformativo);
 
 
-            var viewModel = new TelaPrincipalViewModel
-            {
-                Ensaio = EnsaioViewDTO,
-                Evento = EventoViewDTO,
-                Informativo = InformativoDTO
-            };
+            //var viewModel = new TelaPrincipalViewModel
+            //{
+            //    Ensaio = EnsaioViewDTO,
+            //    Evento = EventoViewDTO,
+            //    Informativo = InformativoDTO
+            //};
 
 
             return View(viewModel);
