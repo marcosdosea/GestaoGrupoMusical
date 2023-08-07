@@ -4,78 +4,80 @@
     ViewData["Title"] = $"Editar Ensaio {Model.Local}";
 }
 <partial name="_Notificar">
-<h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">@ViewData["Title"]</h1>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div class="form-group">
-                <label asp-for="IdGrupoMusical" class="control-label"></label>
-                <select asp-for="IdGrupoMusical" asp-items="@Model.ListaGrupoMusical" class="form-select">
-                    <option value=""></option>
-                </select>
-                <span asp-validation-for="IdGrupoMusical" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Tipo" class="control-label"></label>
-                <select asp-for="Tipo" class="form-select" asp-items="Html.GetEnumSelectList<Tipo>()">
-                </select>
-                <span asp-validation-for="Tipo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DataHoraInicio" class="control-label"></label>
-                <input asp-for="DataHoraInicio" class="form-control" />
-                <span asp-validation-for="DataHoraInicio" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DataHoraFim" class="control-label"></label>
-                <input asp-for="DataHoraFim" class="form-control" />
-                <span asp-validation-for="DataHoraFim" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PresencaObrigatoria" class="control-label"></label>
-                <div class="d-flex justify-content-around">
-                    @{
-                        foreach (var item in Model.Obrigatorio)
-                        {
-                            <div>
-                                <label for="@item.Key">@item.Key</label>
-                                <input type="radio" value="@item.Value" asp-for="PresencaObrigatoria" id="@item.Key" />
-                            </div>
-                        }
-                    }
+<div class=container>
+    <h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">@ViewData["Title"]</h1>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Edit">
+                <div class="form-group">
+                    <label asp-for="IdGrupoMusical" class="control-label"></label>
+                    <select asp-for="IdGrupoMusical" asp-items="@Model.ListaGrupoMusical" class="form-select">
+                        <option value=""></option>
+                    </select>
+                    <span asp-validation-for="IdGrupoMusical" class="text-danger"></span>
                 </div>
-                <span asp-validation-for="PresencaObrigatoria" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Local" class="control-label"></label>
-                <input asp-for="Local" class="form-control" />
-                <span asp-validation-for="Local" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Repertorio" class="control-label"></label>
-                <input asp-for="Repertorio" class="form-control" />
-                <span asp-validation-for="Repertorio" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IdColaboradorResponsavel" class="control-label"></label>
-                <select asp-for="IdColaboradorResponsavel" asp-items="@Model.ListaPessoa" class="form-select">
-                    <option value=""></option>
-                </select>
-                <span asp-validation-for="IdColaboradorResponsavel" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IdRegente" class="control-label"></label>
-                <select asp-for="IdRegente" asp-items="@Model.ListaPessoa" class="form-select">
-                    <option value=""></option>
-                </select>
-                <span asp-validation-for="IdRegente" class="text-danger"></span>
-            </div>
-            <div class="d-flex justify-content-lg-start">
-                <a class="btn btn-outline-secondary" role="button" asp-controller="Ensaio" asp-action="Index">Voltar</a>
-                <input type="submit" value="Salvar" class="btn btn-secondary ms-2" />
-            </div>
-        </form>
+                <div class="form-group">
+                    <label asp-for="Tipo" class="control-label"></label>
+                    <select asp-for="Tipo" class="form-select" asp-items="Html.GetEnumSelectList<Tipo>()">
+                    </select>
+                    <span asp-validation-for="Tipo" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="DataHoraInicio" class="control-label"></label>
+                    <input asp-for="DataHoraInicio" class="form-control" />
+                    <span asp-validation-for="DataHoraInicio" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="DataHoraFim" class="control-label"></label>
+                    <input asp-for="DataHoraFim" class="form-control" />
+                    <span asp-validation-for="DataHoraFim" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PresencaObrigatoria" class="control-label"></label>
+                    <div class="d-flex justify-content-around">
+                                @{
+                                    foreach (var item in Model.Obrigatorio)
+                                    {
+                                        <div>
+                                            <label for="@item.Key">@item.Key</label>
+                                            <input type="radio" value="@item.Value" asp-for="PresencaObrigatoria" id="@item.Key" />
+                                        </div>
+                                    }
+                                }
+                    </div>
+                    <span asp-validation-for="PresencaObrigatoria" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Local" class="control-label"></label>
+                    <input asp-for="Local" class="form-control" />
+                    <span asp-validation-for="Local" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Repertorio" class="control-label"></label>
+                    <input asp-for="Repertorio" class="form-control" />
+                    <span asp-validation-for="Repertorio" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="IdColaboradorResponsavel" class="control-label"></label>
+                    <select asp-for="IdColaboradorResponsavel" asp-items="@Model.ListaPessoa" class="form-select">
+                        <option value=""></option>
+                    </select>
+                    <span asp-validation-for="IdColaboradorResponsavel" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="IdRegente" class="control-label"></label>
+                    <select asp-for="IdRegente" asp-items="@Model.ListaPessoa" class="form-select">
+                        <option value=""></option>
+                    </select>
+                    <span asp-validation-for="IdRegente" class="text-danger"></span>
+                </div>
+                <div class="d-flex justify-content-lg-start">
+                    <a class="btn btn-outline-secondary" role="button" asp-controller="Ensaio" asp-action="Index">Voltar</a>
+                    <input type="submit" value="Salvar" class="btn btn-secondary ms-2" />
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 @section Scripts {
