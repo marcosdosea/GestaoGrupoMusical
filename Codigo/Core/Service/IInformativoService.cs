@@ -14,6 +14,5 @@ namespace Core.Service
         Task<bool> Delete(int idPessoa, int idGrupoMusical);
         Task<Informativo> Get(int idPessoa, int idGrupoMusical);
         Task<IEnumerable<Informativo>> GetAll();
-        Task<IEnumerable<InformativoDTO>> GetAllDTO();
     }
 }
