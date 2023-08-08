@@ -42,5 +42,7 @@ namespace Core.Service
         /// 500 - Erro interno
         /// </returns>
         Task<int> DeleteAsync(int id);
+
+        Task<IEnumerable<EstoqueDTO>> GetEstoque(int idFigurino);
     }
 }

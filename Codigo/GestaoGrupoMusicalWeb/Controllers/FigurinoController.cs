@@ -164,7 +164,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> Movimentar(int id)
         {
             var figurino = await _figurinoService.Get(id);
-            var manequins = _manequimService.GetAll();
+
+            var manequins = await _movimentacaoService.GetEstoque(id);
 
             int idGrupo = _grupoMusicalService.GetIdGrupo(User.Identity.Name);
             var associados = _pessoaService.GetAllPessoasOrder(idGrupo);
@@ -172,7 +173,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             var movimentacoes = await  _movimentacaoService.GetAllByIdFigurino(id);
 
             SelectList listAssociados = new SelectList(associados, "Id", "Nome", associados.First().Id );
-            SelectList listManequins = new SelectList(manequins, "Id", "Tamanho", manequins.First().Id );
+            SelectList listEstoque = new SelectList(manequins, "Id", "TamanhoEstoque", manequins.First().Id );
 
             var movimentarFigurinoViewModel = new MovimentacaoFigurinoViewModel
             {
@@ -180,7 +181,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 NomeFigurino = figurino.Nome,
                 DataFigurinoString = figurino.Data.Value.ToString("dd/MM/yyyy"),
                 ListaAssociado = listAssociados,
-                ListaManequim = listManequins,
+                ListaManequim = listEstoque,
                 Movimentacoes = movimentacoes
             };
 

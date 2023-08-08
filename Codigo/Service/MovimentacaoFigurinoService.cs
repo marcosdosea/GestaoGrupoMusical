@@ -57,7 +57,10 @@ namespace Service
                         await transaction.RollbackAsync();
                         return 402; //associado nao possue nada emprestado para devolver
                     }
-                    figurinoEstoque.QuantidadeDisponivel++;
+                    if (movimentacao.Status.Equals("DEVOLVIDO"))
+                    {
+                        figurinoEstoque.QuantidadeDisponivel++;
+                    }     
                 }
                     
 
@@ -147,8 +150,23 @@ namespace Service
                                    select movimentacoes
                                     ).AsNoTracking().CountAsync();
 
-            return (devolvidos-recebidos) == 0? true: false;
+            return (recebidos - devolvidos) <= 0? true: false;
         }
 
+        public async Task<IEnumerable<EstoqueDTO>> GetEstoque(int idFigurino)
+        {
+            var query = await (from estoque in _context.Figurinomanequims
+                         where estoque.IdFigurino == idFigurino
+                         select new EstoqueDTO
+                         {
+                             Id = estoque.IdManequim,
+                             Tamanho = estoque.IdManequimNavigation.Tamanho,
+                             Disponivel = estoque.QuantidadeDisponivel,
+                             Entregues = estoque.QuantidadeEntregue
+                         }
+                         ).AsNoTracking().ToListAsync();
+
+            return query;
+        }
     }
 }
