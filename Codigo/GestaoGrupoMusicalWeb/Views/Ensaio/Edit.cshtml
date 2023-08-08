@@ -2,13 +2,26 @@
 
 @{
     ViewData["Title"] = $"Editar Ensaio {Model.Local}";
+    ViewData["Ensaio"] = "Ensaios";
+    ViewData["Edit"] = "Editar";
 }
 <partial name="_Notificar">
 <div class=container>
     <div class="row">
         <div class="col-md-8">
             <h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">@ViewData["Title"]</h1>
+            <nav>
+                <ol class="breadcrumb px-3">
+                    <li>
+                        <strong>
+                            <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Ensaio"]</a>
+                            <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Edit"]</spn>
+                        </strong>
+                    </li>
+                </ol>
+            </nav>
             <hr />
+            <br />
     
             <form asp-action="Edit">
                 <div class="form-group">
