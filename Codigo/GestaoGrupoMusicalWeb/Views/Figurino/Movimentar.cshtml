@@ -14,25 +14,29 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="NomeFigurino" class="control-label"></label>
-                <input asp-for="NomeFigurino" class="form-control" />
+                <input asp-for="NomeFigurino" class="form-control" readonly />
                 <span asp-validation-for="NomeFigurino" class="text-danger"></span>
             </div>
 
             <div class="form-group">
                 <label asp-for="Data" class="control-label"></label>
-                <input asp-for="DataString" class="form-control" />
+                <input asp-for="DataString" class="form-control" readonly />
                 <span asp-validation-for="Data" class="text-danger"></span>
             </div>
             
             <div class="form-group">
-                <label asp-for="IdFigurino" class="control-label"></label>
-                <input asp-for="IdFigurino" class="form-control" />
+                <input asp-for="IdFigurino" class="form-control" type="hidden" />
                 <span asp-validation-for="IdFigurino" class="text-danger"></span>
             </div>
 
+
+            
+
             <div class="form-group">
                 <label asp-for="IdManequim" class="control-label"></label>
-                <input asp-for="IdManequim" class="form-control" />
+                <select asp-for="IdManequim" asp-items="@Model.ListaManequim" class="form-select">
+                    <option value=""></option>
+                </select>
                 <span asp-validation-for="IdManequim" class="text-danger"></span>
             </div>
 
