@@ -18,7 +18,6 @@ namespace GestaoGrupoMusicalWeb.Models
         public DateTime Data { get; set; } = DateTime.Today;
         //============================================================================
 
-
         [Display(Name = "Figurino")]
         public string NomeFigurino { get; set; } = string.Empty;
         public int IdFigurino { get; set; }
@@ -40,14 +39,16 @@ namespace GestaoGrupoMusicalWeb.Models
 
         [Display(Name = "Movimentação")]
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
-        public string Movimentacao { get; set; } = "EMPRESTIMO";
+        public string Movimentacao { get; set; } = "ENTREGUE";
 
         public IEnumerable<MovimentacaoInstrumentoDTO>? Movimentacoes { get; set; }
 
+        public Boolean danificado { get; set; }
+
         public Dictionary<string, string> MovimentacaoEnum { get; } = new()
         {
-            { "Empréstimo", "EMPRESTIMO" },
-            { "Devolução", "DEVOLUCAO" }
+            { "Entregar", "ENTREGUE" },
+            { "Devolver", "DEVOLVIDO" }
         };
 
     }
