@@ -21,10 +21,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IManequimService _manequimService;
         private readonly IFigurinoService _figurinoService;
         private readonly IPessoaService _pessoaService;
+        private readonly IMovimentacaoFigurinoService _movimentacaoService;
         private readonly UserManager<UsuarioIdentity> _userManager;
 
         public FigurinoController(IMapper mapper, IGrupoMusicalService grupoMusical,
-            IManequimService manequim, IFigurinoService figurino,UserManager<UsuarioIdentity> userManager, IPessoaService pessoa)
+            IManequimService manequim, IFigurinoService figurino,UserManager<UsuarioIdentity> userManager, IPessoaService pessoa, IMovimentacaoFigurinoService movimentacaoService)
         {
             _mapper = mapper;
             _grupoMusicalService = grupoMusical;
@@ -32,6 +33,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             _figurinoService = figurino;
             _userManager = userManager;
             _pessoaService = pessoa;
+            _movimentacaoService = movimentacaoService;
         }
 
         // GET: FigurinoController
@@ -181,6 +183,71 @@ namespace GestaoGrupoMusicalWeb.Controllers
             };
 
             return View(movimentarFigurinoViewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Movimentar(MovimentacaoFigurinoViewModel movimentacaoViewModel)
+        {
+
+            var colaborador = await _pessoaService.GetByCpf(User.Identity.Name);
+
+            string status = string.Empty;
+
+            if (movimentacaoViewModel.Danificado)
+            {
+                status = "DANIFICADO";
+            }
+            else
+            {
+                status = movimentacaoViewModel.Movimentacao;
+            }
+
+
+            Movimentacaofigurino movimentacao = new Movimentacaofigurino
+            {
+                Data = movimentacaoViewModel.Data,
+                IdFigurino = movimentacaoViewModel.IdFigurino,
+                IdManequim = movimentacaoViewModel.IdManequim,
+                IdAssociado = movimentacaoViewModel.IdAssociado,
+                IdColaborador = colaborador.Id,
+                Status = status,
+                ConfirmacaoRecebimento = 0
+            };
+
+            int resul = await _movimentacaoService.CreateAsync(movimentacao);
+
+            string tipoMov = string.Empty;
+
+            if (movimentacaoViewModel.Movimentacao.Equals("ENTREGUE"))
+            {
+                tipoMov = "Entregue";
+            }
+            else
+            {
+                tipoMov = "Devolvido";
+            }
+
+            switch(resul)
+            {
+                case 200:
+                    Notificar($"<b>Sucesso!</b> Figurino foi <b>{tipoMov}</b>", Notifica.Sucesso);
+                    break;
+                case 400:
+                    Notificar("<b>Alerta!</b> Não há estoque desse tamanho", Notifica.Alerta);
+                    break;
+                case 401:
+                    Notificar("<b>Alerta!</b> Não há peças disponíveis para empréstimo", Notifica.Alerta);
+                    break;
+                case 500:
+                    Notificar("<b>Erro!</b> Algo deu errado", Notifica.Erro);
+                    break;
+                default:
+                    Notificar("<b>Erro!</b> Algo deu errado na operação", Notifica.Erro);
+                    break;
+            }
+
+            return RedirectToAction(nameof(Movimentar), new {id = movimentacaoViewModel.IdFigurino});
         }
     }
 }
