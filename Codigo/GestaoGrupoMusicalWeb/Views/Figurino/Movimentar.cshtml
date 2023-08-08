@@ -1,77 +1,87 @@
 ﻿@model GestaoGrupoMusicalWeb.Models.MovimentacaoFigurinoViewModel
 
 @{
-    ViewData["Title"] = "Movimentar";
+    ViewData["Title"] = "Movimentar Figurino";
 }
 
-<h1>Movimentar</h1>
+<h1 class="fs-5">@ViewData["Title"]</h1>
 
-<h4>MovimentacaoFigurinoViewModel</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Movimentar">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
+<div class="container mt-4">
+    <form asp-action="Movimentar">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="row mb-3">
+            <div class="form-group col-lg-8">
                 <label asp-for="NomeFigurino" class="control-label"></label>
-                <input asp-for="NomeFigurino" class="form-control" readonly />
+                <input asp-for="NomeFigurino" class="form-control form-control-disabled" readonly />
                 <span asp-validation-for="NomeFigurino" class="text-danger"></span>
             </div>
 
-            <div class="form-group">
+            <div class="form-group col-lg-4">
                 <label asp-for="Data" class="control-label"></label>
-                <input asp-for="DataString" class="form-control" readonly />
+                <input asp-for="DataFigurinoString" class="form-control form-control-disabled" readonly />
                 <span asp-validation-for="Data" class="text-danger"></span>
             </div>
-            
-            <div class="form-group">
-                <input asp-for="IdFigurino" class="form-control" type="hidden" />
-                <span asp-validation-for="IdFigurino" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <input asp-for="IdFigurino" class="form-control" type="hidden" />
+            <span asp-validation-for="IdFigurino" class="text-danger"></span>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-lg-6">
+                <label asp-for="IdAssociado" class="control-label"></label>
+                @if (Model.IdAssociado != 0)
+                {
+                    <select asp-for="IdAssociado" asp-items="@Model.ListaAssociado" class="form-select" disabled>
+                    </select>
+                    <input asp-for="IdAssociado" type="hidden" />
+                }
+                else
+                {
+                    <select asp-for="IdAssociado" asp-items="@Model.ListaAssociado" class="form-select">
+                    </select>
+                }
+                <span asp-validation-for="IdAssociado" class="text-danger"></span>
             </div>
 
-
-            
-
-            <div class="form-group">
+            <div class="form-group col-lg-6">
                 <label asp-for="IdManequim" class="control-label"></label>
                 <select asp-for="IdManequim" asp-items="@Model.ListaManequim" class="form-select"></select>
                 <span asp-validation-for="IdManequim" class="text-danger"></span>
             </div>
 
-            <label asp-for="IdAssociado" class="control-label"></label>
-            @if (Model.IdAssociado != 0)
-            {
-                <select asp-for="IdAssociado" asp-items="@Model.ListaAssociado" class="form-select" disabled>
-                </select>
-                <input asp-for="IdAssociado" type="hidden" />
-            }
-            else
-            {
-                <select asp-for="IdAssociado" asp-items="@Model.ListaAssociado" class="form-select">
-                </select>
-            }
-            <span asp-validation-for="IdAssociado" class="text-danger"></span>
-
-            <label asp-for="Movimentacao" class="control-label"></label>
-            <div class="d-flex justify-content-around">
-                @{
-                    foreach (var item in Model.MovimentacaoEnum)
-                    {
-                        <div>
-                            <label for="@item.Key">@item.Key</label>
-                            <input class="form-check-input" type="radio" value="@item.Value" asp-for="Movimentacao" id="@item.Key" />
-                        </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-lg-6">
+                <label asp-for="Movimentacao" class="control-label"></label>
+                <div class="d-flex justify-content-around">
+                    @{
+                        foreach (var item in Model.MovimentacaoEnum)
+                        {
+                            <div>
+                                <label for="@item.Key">@item.Key</label>
+                                <input class="form-check-input" type="radio" value="@item.Value" asp-for="Movimentacao" id="@item.Key" />
+                            </div>
+                        }
                     }
-                }
+                </div>
+                <span asp-validation-for="Movimentacao" class="text-danger"></span>
             </div>
-            <span asp-validation-for="Movimentacao" class="text-danger"></span>
+            <div class="col-lg-6">
+                <label asp-for="Data" class="control-label"></label>
+                <input asp-for="Data" class="form-control form-control-disabled" />
+                <span asp-validation-for="Data" class="text-danger"></span>
+            </div>
+        </div>
 
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
+        <div class="form-group">
+            <input type="submit" value="Create" class="btn btn-primary" />
+        </div>
+    </form>
 </div>
+
 
 <div>
     <a asp-action="Index">Back to List</a>

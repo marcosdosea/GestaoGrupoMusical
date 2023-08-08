@@ -1,5 +1,6 @@
 ﻿using Core.DTO;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using MySqlX.XDevAPI.Relational;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection.Metadata;
 using System.Xml.Linq;
@@ -11,14 +12,15 @@ namespace GestaoGrupoMusicalWeb.Models
 
         public int Id { get; set; }
 
-        public DateTime Data { get; set; } = DateTime.Now;
+        public string DataFigurinoString { get; set; }
 
-        public string DataString { get; set; } = DateTime.Now.ToString("dd/MM/yyyy");
+        //data de emprestimo/devolução do figurino
+        public DateTime Data { get; set; } = DateTime.Today;
+        //============================================================================
 
 
         [Display(Name = "Figurino")]
         public string NomeFigurino { get; set; } = string.Empty;
-
         public int IdFigurino { get; set; }
 
         [Display(Name = "Tamanho")]

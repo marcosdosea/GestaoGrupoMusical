@@ -161,7 +161,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         public async Task<ActionResult> Movimentar(int id)
         {
-
             var figurino = await _figurinoService.Get(id);
             var manequins = _manequimService.GetAll();
 
@@ -176,6 +175,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 IdFigurino = figurino.Id,
                 NomeFigurino = figurino.Nome,
+                DataFigurinoString = figurino.Data.Value.ToString("dd/MM/yyyy"),
                 ListaAssociado = listAssociados,
                 ListaManequim = listManequins
             };
