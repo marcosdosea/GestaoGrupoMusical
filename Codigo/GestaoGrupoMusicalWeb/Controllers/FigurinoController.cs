@@ -165,7 +165,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             var figurino = await _figurinoService.Get(id);
 
+
             var manequins = await _movimentacaoService.GetEstoque(id);
+            if(manequins == null)
+            {
+                Notificar("<b>Alerta</b>! Figurino não possue estoque.", Notifica.Alerta);
+                return RedirectToAction(nameof(Index));
+            }
 
             int idGrupo = _grupoMusicalService.GetIdGrupo(User.Identity.Name);
             var associados = _pessoaService.GetAllPessoasOrder(idGrupo);
