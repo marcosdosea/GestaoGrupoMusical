@@ -25,11 +25,11 @@ namespace GestaoGrupoMusicalWeb.Models
         [Display(Name = "Presença Obrigatória")]
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public bool PresencaObrigatoria { get; set; } = true;
-
+        [Display(Prompt = "Informe o local do ensaio.")]
         [MaxLength(100, ErrorMessage = "O campo {0} deve ter no máximo 100 caracteres")]
         public string? Local { get; set; }
 
-        [Display(Name = "Repertório")]
+        [Display(Name = "Repertório", Prompt = "Informe o repertório.")]
         [MaxLength(100, ErrorMessage = "O campo {0} deve ter no máximo 100 caracteres")]
         public string? Repertorio { get; set; }
 
