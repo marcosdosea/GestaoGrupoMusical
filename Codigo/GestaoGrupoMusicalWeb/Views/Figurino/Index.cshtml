@@ -6,7 +6,7 @@
 
 <partial name="_Notificar">
 
-<h1>Index</h1>
+    <h1>Index</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -38,9 +38,14 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Data)
             </td>
-            <td>
-                @Html.ActionLink("Editar", "Edit", new { id=item.Id })
-                @Html.ActionLink("Excluir", "Delete", new { id=item.Id })
+            <td class="d-flex justify-content-start align-items-top">
+                <a role="button" class="btn btn-secondary btn-sm me-2" asp-controller="Figurino" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"> </i> Editar </a>
+                <form id="@(item.Id + "_confirmar")" asp-action="Delete" asp-route-id="@item.Id" method="post" class="me-2">
+                    <a onclick="showModal('@(item.Id + "_confirmar")', 'figurinoModal')" class="btn btn-sm btn-secondary" role="button" data-bs-toggle="modal" data-bs-target="#figurinoModal">
+                        <i class="fa-solid fa-xmark"> </i>
+                        Excluir
+                    </a>
+                </form>
                 @Html.ActionLink("Estoque", "", new { id=item.Id })
                 @Html.ActionLink("Movimentar", "Movimentar", new { id=item.Id })
             </td>
@@ -48,3 +53,20 @@
 }
     </tbody>
 </table>
+    <div class="modal fade" id="figurinoModal" tabindex="-1" aria-labelledby="figurinoLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="admLabel">Confirmar Exclusão do Figurino</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Deseja <b>Excluir</b> o <b>Figurino</b>?
+                </div>
+                <form method="post" class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary col-3 me-4" data-bs-dismiss="modal">Não</button>
+                    <button type="submit" class="btn btn-secondary col-3">Sim</button>
+                </form>
+            </div>
+        </div>
+    </div>
