@@ -90,10 +90,7 @@
     </form>
 </div>
 
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+<partial name="_TabelaMovimentacao" model="@Model.Movimentacoes">
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

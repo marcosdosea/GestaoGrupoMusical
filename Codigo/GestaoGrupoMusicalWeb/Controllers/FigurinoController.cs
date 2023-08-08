@@ -169,6 +169,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             int idGrupo = _grupoMusicalService.GetIdGrupo(User.Identity.Name);
             var associados = _pessoaService.GetAllPessoasOrder(idGrupo);
 
+            var movimentacoes = await  _movimentacaoService.GetAllByIdFigurino(id);
 
             SelectList listAssociados = new SelectList(associados, "Id", "Nome", associados.First().Id );
             SelectList listManequins = new SelectList(manequins, "Id", "Tamanho", manequins.First().Id );
@@ -179,7 +180,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 NomeFigurino = figurino.Nome,
                 DataFigurinoString = figurino.Data.Value.ToString("dd/MM/yyyy"),
                 ListaAssociado = listAssociados,
-                ListaManequim = listManequins
+                ListaManequim = listManequins,
+                Movimentacoes = movimentacoes
             };
 
             return View(movimentarFigurinoViewModel);

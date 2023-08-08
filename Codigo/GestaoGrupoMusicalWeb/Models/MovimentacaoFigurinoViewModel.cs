@@ -41,7 +41,7 @@ namespace GestaoGrupoMusicalWeb.Models
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public string Movimentacao { get; set; } = "ENTREGUE";
 
-        public IEnumerable<MovimentacaoInstrumentoDTO>? Movimentacoes { get; set; }
+        public IEnumerable<MovimentacaoFigurinoDTO>? Movimentacoes { get; set; }
 
         public Boolean Danificado { get; set; }
 
