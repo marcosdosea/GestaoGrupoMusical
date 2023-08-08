@@ -19,33 +19,40 @@ namespace Service
         /// <returns>Verdadeiro(<see langword="true" />) se cadastrou com sucesso ou Falso(<see langword="false" />) se houve algum erro.</returns>
         public async Task<int> Create(Ensaio ensaio)
         {
+            using var transaction = _context.Database.BeginTransaction();
+
             try
             {
-                await _context.Ensaios.AddAsync(ensaio);
                 if (ensaio.DataHoraFim > ensaio.DataHoraInicio)
                 {
                     if(ensaio.DataHoraInicio >= DateTime.Now)
                     {
+                        await _context.Ensaios.AddAsync(ensaio);
                         var idAssociados = _context.Pessoas
                                            .Where(p => p.IdPapelGrupo == 1 && p.Ativo == 1 && p.IdGrupoMusical == ensaio.IdGrupoMusical)
                                            .Select(pessoa => pessoa.Id);
+
                         await _context.SaveChangesAsync();
+                        await transaction.CommitAsync();
                         return 200;
                     }
                     else
                     {
+                        await transaction.RollbackAsync();
                         return 400;
                     }
                    
                 }
                 else 
                 {
+                    await transaction.RollbackAsync();
                     return 401;
                 }
              
             }
             catch
             {
+                await transaction.RollbackAsync();
                 return 500;
             }
         }
