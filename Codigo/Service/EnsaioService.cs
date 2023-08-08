@@ -74,6 +74,12 @@ namespace Service
 
              try
             {
+                var ensaioDb = await _context.Ensaios.Where(e => e.Id == ensaio.Id).AsNoTracking().SingleOrDefaultAsync();
+                if(ensaioDb != null)
+                {
+                    ensaio.IdColaboradorResponsavel = ensaioDb.IdColaboradorResponsavel;
+                    ensaio.IdGrupoMusical = ensaioDb.IdColaboradorResponsavel;
+                }
                 _context.Ensaios.Update(ensaio);
                 if (ensaio.DataHoraFim > ensaio.DataHoraInicio)
                 {
