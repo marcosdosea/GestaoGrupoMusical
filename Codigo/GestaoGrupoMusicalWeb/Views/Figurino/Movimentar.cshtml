@@ -4,6 +4,8 @@
     ViewData["Title"] = "Movimentar Figurino";
 }
 
+<partial name="_Notificar">
+
 <h1 class="fs-5">@ViewData["Title"]</h1>
 
 <div class="container mt-4">
@@ -55,7 +57,7 @@
         </div>
         <div class="row mb-3">
             <div class="col-lg-6">
-                <label asp-for="Movimentacao" class="control-label"></label>
+                <label asp-for="Movimentacao" class="control-label mb-2"></label>
                 <div class="d-flex justify-content-around">
                     @{
                         foreach (var item in Model.MovimentacaoEnum)
@@ -67,7 +69,7 @@
                         }
                     }
                     <div id="checkboxContainer" style="display: none;">
-                        <input class="form-check-input" type="checkbox" id="Danificado" value="DANIFICADO" asp-for="danificado" />
+                        <input class="form-check-input" type="checkbox" id="Danificado" asp-for="Danificado" />
                         <label for="Danificado">Danificado</label>
                     </div>
                 </div>
