@@ -50,8 +50,13 @@ namespace Service
                 {
                     figurinoEstoque.QuantidadeDisponivel--;
                 }
-                else if(movimentacao.Status.Equals("DEVOLVIDO"))
+                else if(movimentacao.Status.Equals("DEVOLVIDO") || movimentacao.Status.Equals("DANIFICADO"))
                 {
+                    if (await AssociadoEmprestimo(movimentacao.IdAssociado, movimentacao.IdFigurino, movimentacao.IdManequim))
+                    {
+                        await transaction.RollbackAsync();
+                        return 402; //associado nao possue nada emprestado para devolver
+                    }
                     figurinoEstoque.QuantidadeDisponivel++;
                 }
                     
@@ -122,6 +127,27 @@ namespace Service
         public Task<Movimentacaofigurino?> GetEmprestimoByIdFigurino(int idFigurino)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<bool> AssociadoEmprestimo(int idAssociado, int idFigurino, int idManequim)
+        {
+            int devolvidos = await (from movimentacoes in _context.Movimentacaofigurinos
+                                    where movimentacoes.IdAssociado == idAssociado &&
+                                    movimentacoes.IdFigurino == idFigurino &&
+                                    movimentacoes.IdManequim == idManequim &&
+                                    (movimentacoes.Status == "DEVOLVIDO" || movimentacoes.Status == "DANIFICADO")
+                                    select movimentacoes
+                                    ).AsNoTracking().CountAsync();
+
+            int recebidos = await (from movimentacoes in _context.Movimentacaofigurinos
+                                   where movimentacoes.IdAssociado == idAssociado &&
+                                   movimentacoes.IdFigurino == idFigurino &&
+                                   movimentacoes.IdManequim == idManequim &&
+                                   (movimentacoes.Status == "ENTREGUE" || movimentacoes.Status == "RECEBIDO")
+                                   select movimentacoes
+                                    ).AsNoTracking().CountAsync();
+
+            return (devolvidos-recebidos) == 0? true: false;
         }
 
     }

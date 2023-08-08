@@ -241,6 +241,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 case 401:
                     Notificar("<b>Alerta!</b> Não há peças disponíveis para empréstimo", Notifica.Alerta);
                     break;
+                case 402:
+                    Notificar("<b>Alerta!</b> Não há nada para devolver", Notifica.Alerta);
+                    break;
                 case 500:
                     Notificar("<b>Erro!</b> Algo deu errado", Notifica.Erro);
                     break;

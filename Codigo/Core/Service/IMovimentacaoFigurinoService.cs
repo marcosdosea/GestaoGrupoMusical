@@ -24,6 +24,16 @@ namespace Core.Service
         Task<IEnumerable<MovimentacaoFigurinoDTO>> GetAllByIdFigurino(int idFigurino);
 
         /// <summary>
+        /// Este metodo retorna se o associado possui alguma
+        /// emprestimo com o figurino do tamanho "manequim"
+        /// </summary>
+        /// <param name="idAssociado">id do associado</param>
+        /// <param name="idFigurino">id do figurino</param>
+        /// <param name="idManequim">id do manequim(tamanho)</param>
+        /// <returns>true: nao possue emprestimo `ativo`, false: possue emprestimo `ativo`</returns>
+        Task<bool> AssociadoEmprestimo(int idAssociado, int idFigurino,int idManequim); 
+
+        /// <summary>
         /// Remove uma movimentação no banco de dados
         /// </summary>
         /// <param name="id"></param>
