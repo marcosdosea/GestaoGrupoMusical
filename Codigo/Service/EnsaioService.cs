@@ -78,7 +78,7 @@ namespace Service
                 if(ensaioDb != null)
                 {
                     ensaio.IdColaboradorResponsavel = ensaioDb.IdColaboradorResponsavel;
-                    ensaio.IdGrupoMusical = ensaioDb.IdColaboradorResponsavel;
+                    ensaio.IdGrupoMusical = ensaioDb.IdGrupoMusical;
                 }
                 _context.Ensaios.Update(ensaio);
                 if (ensaio.DataHoraFim > ensaio.DataHoraInicio)
