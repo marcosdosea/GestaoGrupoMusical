@@ -163,10 +163,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
 
             var figurino = await _figurinoService.Get(id);
-            var manequins = _manequimService.GetAll();
-            var associados = _pessoaService.GetAllPessoasOrder(_grupoMusicalService.GetIdGrupo(User.Identity.Name));
+            var manequins = _manequimService.GetAll().ToList();
+            int idGrupo = _grupoMusicalService.GetIdGrupo(User.Identity.Name);
+            var associados = _pessoaService.GetAllAssociadoDTOByGroup(User.Identity.Name).ToList();
+
             SelectList listAssociados = new SelectList(associados, "Id", "Nome");
-            SelectList listManequins = new SelectList(associados, "Id", "Tamanho");
+            SelectList listManequins = new SelectList(manequins, "Id", "Tamanho");
 
             var movimentarFigurinoViewModel = new MovimentacaoFigurinoViewModel
             {
