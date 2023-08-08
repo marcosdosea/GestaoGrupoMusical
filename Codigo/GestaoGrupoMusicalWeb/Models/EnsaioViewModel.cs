@@ -26,7 +26,7 @@ namespace GestaoGrupoMusicalWeb.Models
         public string? Local { get; set; }
 
         [Display(Name = "Repertório", Prompt = "Informe o repertório.")]
-        [MaxLength(100, ErrorMessage = "O campo {0} deve ter no máximo 100 caracteres")]
+        [MaxLength(100, ErrorMessage = "O campo {0} deve ter no máximo 1000 caracteres")]
         public string? Repertorio { get; set; }
 
         [Display(Name = "Regente")]
