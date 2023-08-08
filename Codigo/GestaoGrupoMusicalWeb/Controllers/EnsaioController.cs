@@ -156,5 +156,14 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
+
+        public async Task<ActionResult> RegistrarFrequencia(int idEnsaio)
+        {
+            var ensaio = await _ensaio.Get(idEnsaio);
+            if(ensaio == null || ensaio.IdGrupoMusical != Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+        }
     }
 }
