@@ -91,5 +91,28 @@ namespace Service
 
             return figurino;
         }
+        public async Task<IEnumerable<Manequim>> GetAllManequim()
+        {
+            return await _context.Manequims.AsNoTracking().ToListAsync();
+        }
+        public async Task<IEnumerable<EstoqueDTO>> GetAllEstoqueDTO(int id)
+        {
+            var query = from figurino in _context.Figurinos
+                        where figurino.Id == id
+                        join figurinomanequim in _context.Figurinomanequims
+                        on figurino.Id equals figurinomanequim.IdFigurino into joinedFigurinoManequim //Criação do grupo com LEFT
+                        from figurinoManequim in joinedFigurinoManequim.DefaultIfEmpty()
+                        orderby figurinoManequim == null ? null : figurinoManequim.IdManequimNavigation.Tamanho
+                        select new EstoqueDTO
+                        {
+                            Nome = figurino.Nome,
+                            Data = figurino.Data,
+                            Tamanho = figurinoManequim == null ? null : figurinoManequim.IdManequimNavigation.Tamanho,
+                            Disponivel = figurinoManequim == null ? 0 : figurinoManequim.QuantidadeDisponivel,
+                            Entregues = figurinoManequim == null ? 0 : figurinoManequim.QuantidadeEntregue
+                        };
+
+            return await query.AsNoTracking().ToListAsync();
+        }
     }
 }
