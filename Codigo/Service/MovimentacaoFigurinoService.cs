@@ -73,7 +73,7 @@ namespace Service
                         Body = "<div style=\"text-align: center;\">\r\n    " +
                         $"<h3>Estamos aguardando a sua confirmação de Empréstimo.</h3>\r\n" +
                         "<div style=\"font-size: large;\">\r\n        " +
-                        $"<dt style=\"font-weight: 700;\">Instrumento:</dt><dd>{figurinoNome}</dd>" +
+                        $"<dt style=\"font-weight: 700;\">Figurino:</dt><dd>{figurinoNome}</dd>" +
                         $"<dt style=\"font-weight: 700;\">Data de Emprestimo:</dt><dd>{movimentacao.Data:dd/MM/yyyy}</dd>\n</div>"
                     };
 
