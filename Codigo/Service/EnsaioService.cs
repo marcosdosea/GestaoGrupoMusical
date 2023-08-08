@@ -26,6 +26,9 @@ namespace Service
                 {
                     if(ensaio.DataHoraInicio >= DateTime.Now)
                     {
+                        var idAssociados = _context.Pessoas
+                                           .Where(p => p.IdPapelGrupo == 1 && p.Ativo == 1 && p.IdGrupoMusical == ensaio.IdGrupoMusical)
+                                           .Select(pessoa => pessoa.Id);
                         await _context.SaveChangesAsync();
                         return 200;
                     }
