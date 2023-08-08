@@ -81,9 +81,15 @@
                     </select>
                     <span asp-validation-for="IdRegente" class="text-danger"></span>
                 </div>
-                <div class="d-flex justify-content-lg-start">
-                    <a class="btn btn-outline-secondary" role="button" asp-controller="Ensaio" asp-action="Index">Voltar</a>
-                    <input type="submit" value="Salvar" class="btn btn-secondary ms-2" />
+
+                <br />
+                <br />
+                <div class="container">
+                    <div class="row d-flex flex-column-reverse d-grig gap-2 mx-auto d-flex flex-sm-column-reverse flex-xl-row">
+                        <div class="col-5 d-none d-sm-block"></div>
+                        <a class="btn btn-light text-secondary border border-secondary d-grid gap-2 col-sm" role="button" asp-controller="Ensaio" asp-action="Index">Voltar</a>
+                        <input type="submit" value="Salvar" class="btn btn-secondary d-grid gap-2 col-sm " />
+                    </div>
                 </div>
             </form>
         </div>
