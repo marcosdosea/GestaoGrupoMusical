@@ -24,15 +24,19 @@
                     </select>
                     <span asp-validation-for="Tipo" class="text-danger"></span>
                 </div>
-                <div class="form-group">
-                    <label asp-for="DataHoraInicio" class="control-label"></label>
-                    <input asp-for="DataHoraInicio" class="form-control" />
-                    <span asp-validation-for="DataHoraInicio" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="DataHoraFim" class="control-label"></label>
-                    <input asp-for="DataHoraFim" class="form-control" />
-                    <span asp-validation-for="DataHoraFim" class="text-danger"></span>
+                <div class="container">    
+                    <div class="row">
+                        <div class="form-group col-lg-6">
+                            <label asp-for="DataHoraInicio" class="control-label"></label>
+                            <input asp-for="DataHoraInicio" class="form-control" />
+                            <span asp-validation-for="DataHoraInicio" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-lg-6">
+                            <label asp-for="DataHoraFim" class="control-label"></label>
+                            <input asp-for="DataHoraFim" class="form-control" />
+                            <span asp-validation-for="DataHoraFim" class="text-danger"></span>
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label asp-for="PresencaObrigatoria" class="control-label"></label>
