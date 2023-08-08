@@ -163,12 +163,14 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
 
             var figurino = await _figurinoService.Get(id);
-            var manequins = _manequimService.GetAll().ToList();
-            int idGrupo = _grupoMusicalService.GetIdGrupo(User.Identity.Name);
-            var associados = _pessoaService.GetAllAssociadoDTOByGroup(User.Identity.Name).ToList();
+            var manequins = _manequimService.GetAll();
 
-            SelectList listAssociados = new SelectList(associados, "Id", "Nome");
-            SelectList listManequins = new SelectList(manequins, "Id", "Tamanho");
+            int idGrupo = _grupoMusicalService.GetIdGrupo(User.Identity.Name);
+            var associados = _pessoaService.GetAllPessoasOrder(idGrupo);
+
+
+            SelectList listAssociados = new SelectList(associados, "Id", "Nome", associados.First().Id );
+            SelectList listManequins = new SelectList(manequins, "Id", "Tamanho", manequins.First().Id );
 
             var movimentarFigurinoViewModel = new MovimentacaoFigurinoViewModel
             {
@@ -177,39 +179,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 ListaAssociado = listAssociados,
                 ListaManequim = listManequins
             };
-            /*
-            MovimentacaoInstrumentoViewModel movimentacaoModel = new();
-            var instrumento = await _instrumentoMusical.Get(id);
-            var movimentacao = await _movimentacaoInstrumento.GetEmprestimoByIdInstrumento(id);
-            if (instrumento.Status.Equals("DANIFICADO"))
-            {
-                Notificar("Não é permitido fazer uma <b>movimentação</b> de um instrumento <b>Danificado</b>", Notifica.Alerta);
-                return RedirectToAction(nameof(Index));
-            }
 
-            if (instrumento == null)
-            {
-                Notificar($"O Id {id} não <b>Corresponde</b> a nenhuma <b>Movimentação</b>", Notifica.Erro);
-                return RedirectToAction(nameof(Index));
-            }
-
-            if (movimentacao != null && instrumento.Status == "EMPRESTADO")
-            {
-                movimentacaoModel.IdAssociado = movimentacao.IdAssociado;
-                movimentacaoModel.Movimentacao = "DEVOLUCAO";
-            }
-
-            movimentacaoModel.Movimentacoes = await _movimentacaoInstrumento.GetAllByIdInstrumento(id);
-            movimentacaoModel.Patrimonio = instrumento.Patrimonio;
-            movimentacaoModel.IdInstrumentoMusical = instrumento.Id;
-            movimentacaoModel.NomeInstrumento = await _instrumentoMusical.GetNomeInstrumento(id);
-
-            int idGrupo = _grupoMusical.GetIdGrupo(User.Identity.Name);
-            var listaPessoas = _pessoa.GetAllPessoasOrder(idGrupo).ToList();
-            // listaPessoas.Remove(listaPessoas.Single(p => p.Cpf == User.Identity?.Name));
-
-            movimentacaoModel.ListaAssociado = new SelectList(listaPessoas, "Id", "Nome");
-            */
             return View(movimentarFigurinoViewModel);
         }
     }

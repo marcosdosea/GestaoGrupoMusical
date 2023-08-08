@@ -34,9 +34,7 @@
 
             <div class="form-group">
                 <label asp-for="IdManequim" class="control-label"></label>
-                <select asp-for="IdManequim" asp-items="@Model.ListaManequim" class="form-select">
-                    <option value=""></option>
-                </select>
+                <select asp-for="IdManequim" asp-items="@Model.ListaManequim" class="form-select"></select>
                 <span asp-validation-for="IdManequim" class="text-danger"></span>
             </div>
 
@@ -44,14 +42,12 @@
             @if (Model.IdAssociado != 0)
             {
                 <select asp-for="IdAssociado" asp-items="@Model.ListaAssociado" class="form-select" disabled>
-                    <option value=""></option>
                 </select>
                 <input asp-for="IdAssociado" type="hidden" />
             }
             else
             {
                 <select asp-for="IdAssociado" asp-items="@Model.ListaAssociado" class="form-select">
-                    <option value=""></option>
                 </select>
             }
             <span asp-validation-for="IdAssociado" class="text-danger"></span>
