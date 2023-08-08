@@ -60,18 +60,24 @@
                     @{
                         foreach (var item in Model.MovimentacaoEnum)
                         {
-                            <div>
+                            <div class="col-lg-2">
                                 <label for="@item.Key">@item.Key</label>
                                 <input class="form-check-input" type="radio" value="@item.Value" asp-for="Movimentacao" id="@item.Key" />
                             </div>
                         }
                     }
+                    <div id="checkboxContainer" style="display: none;">
+                        <input class="form-check-input" type="checkbox" id="Danificado" value="DANIFICADO" asp-for="danificado" />
+                        <label for="Danificado">Danificado</label>
+                    </div>
                 </div>
                 <span asp-validation-for="Movimentacao" class="text-danger"></span>
+
+                
             </div>
             <div class="col-lg-6">
                 <label asp-for="Data" class="control-label"></label>
-                <input asp-for="Data" class="form-control form-control-disabled" />
+                <input asp-for="Data" class="form-control" />
                 <span asp-validation-for="Data" class="text-danger"></span>
             </div>
         </div>
@@ -89,4 +95,16 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $(document).ready(function () {
+            $('input[type="radio"]').change(function () {
+                if ($(this).val() === 'DEVOLVIDO') {
+                    $('#checkboxContainer').show();
+                } else {
+                    $('#checkboxContainer').hide();
+                }
+            });
+        });
+    </script>
 }
