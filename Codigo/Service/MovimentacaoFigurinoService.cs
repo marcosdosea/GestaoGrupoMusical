@@ -101,6 +101,7 @@ namespace Service
         {
             var query = await (from movimentacoes in _context.Movimentacaofigurinos
                         where movimentacoes.IdFigurino == idFigurino
+                        orderby movimentacoes.Id descending
                         select new MovimentacaoFigurinoDTO
                         {
                             Id = movimentacoes.Id,
