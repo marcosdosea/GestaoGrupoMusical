@@ -155,5 +155,18 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 return RedirectToAction(nameof(Index));
             }
         }
+        public async Task<ActionResult> Estoque(int id)
+        {
+            EstoqueDTOViewModel estoqueDTOviewModel = new();
+            estoqueDTOviewModel.TabelaEstoques = _mapper.Map<IEnumerable<EstoqueDTOViewModel>>(await _figurinoService.GetAllEstoqueDTO(id));
+            var EstoqueModel = _mapper.Map<EstoqueDTOViewModel>(estoqueDTOviewModel);
+
+            EstoqueModel.Nome = estoqueDTOviewModel.TabelaEstoques.First().Nome;
+            EstoqueModel.Data = estoqueDTOviewModel.TabelaEstoques.First().Data;
+            EstoqueModel.Tamanho = estoqueDTOviewModel.TabelaEstoques.First().Tamanho;
+
+
+            return View(EstoqueModel);
+        }
     }
 }
