@@ -97,14 +97,31 @@ namespace Service
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<MovimentacaoFigurinoDTO>> GetAllByIdInstrumento(int idFigurino)
+        public async Task<IEnumerable<MovimentacaoFigurinoDTO>> GetAllByIdFigurino(int idFigurino)
+        {
+            var query = await (from movimentacoes in _context.Movimentacaofigurinos
+                        where movimentacoes.IdFigurino == idFigurino
+                        select new MovimentacaoFigurinoDTO
+                        {
+                            Id = movimentacoes.Id,
+                            IdFigurino = idFigurino,
+                            IdManequim = movimentacoes.IdManequim,
+                            Cpf = movimentacoes.IdAssociadoNavigation.Cpf,
+                            NomeAssociado = movimentacoes.IdAssociadoNavigation.Nome,
+                            Data = movimentacoes.Data,
+                            Movimentacao = movimentacoes.Status,
+                            Status = movimentacoes.ConfirmacaoRecebimento == 0 ? "Aguardando Confirmação" : "Confirmado",
+                            Tamanho = movimentacoes.IdManequimNavigation.Tamanho
+                        }).AsNoTracking().ToListAsync();
+
+            return query;
+        }
+
+
+        public Task<Movimentacaofigurino?> GetEmprestimoByIdFigurino(int idFigurino)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Movimentacaofigurino?> GetEmprestimoByIdInstrumento(int idFigurino)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

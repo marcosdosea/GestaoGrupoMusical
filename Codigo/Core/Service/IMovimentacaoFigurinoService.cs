@@ -19,9 +19,9 @@ namespace Core.Service
         /// </returns>
         Task<int> CreateAsync(Movimentacaofigurino movimentacao);
 
-        Task<Movimentacaofigurino?> GetEmprestimoByIdInstrumento(int idFigurino);
+        Task<Movimentacaofigurino?> GetEmprestimoByIdFigurino(int idFigurino);
 
-        Task<IEnumerable<MovimentacaoFigurinoDTO>> GetAllByIdInstrumento(int idFigurino);
+        Task<IEnumerable<MovimentacaoFigurinoDTO>> GetAllByIdFigurino(int idFigurino);
 
         /// <summary>
         /// Remove uma movimentação no banco de dados
