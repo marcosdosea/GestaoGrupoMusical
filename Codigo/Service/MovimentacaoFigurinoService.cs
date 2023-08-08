@@ -25,6 +25,7 @@ namespace Service
         public async Task<int> CreateAsync(Movimentacaofigurino movimentacao)
         {
             using var transaction = _context.Database.BeginTransaction();
+
             try
             {
                 var figurinoEstoque = await _context.Figurinomanequims.FindAsync(movimentacao.IdFigurino, movimentacao.IdManequim);
@@ -33,25 +34,31 @@ namespace Service
                 {
                     if (figurinoEstoque.QuantidadeDisponivel == 0)
                     {
+                        await transaction.RollbackAsync();
                         return 401; //não há peças disponiveis para emprestar
                     }
                 }
                 else
                 {
+                    await transaction.RollbackAsync();
                     return 400; //estoque nao existe, talvez id esteja errado
                 }
 
-                movimentacao.Status = "EMPRESTADO";
-                movimentacao.ConfirmacaoRecebimento = 0;
-
                 await _context.AddAsync(movimentacao);
 
-                figurinoEstoque.QuantidadeDisponivel--;
+                if (movimentacao.Status.Equals("ENTREGUE"))
+                {
+                    figurinoEstoque.QuantidadeDisponivel--;
+                }
+                else if(movimentacao.Status.Equals("DEVOLVIDO"))
+                {
+                    figurinoEstoque.QuantidadeDisponivel++;
+                }
+                    
 
                 _context.Figurinomanequims.Update(figurinoEstoque);
 
                 await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
 
                 var associado = await _context.Pessoas.FindAsync(movimentacao.IdAssociado);
 
@@ -74,8 +81,6 @@ namespace Service
 
                     await EmailService.Enviar(email);
                 }
-
-
             }
             catch
             {
@@ -83,6 +88,7 @@ namespace Service
                 return 500;
             }
 
+            await transaction.CommitAsync();
             return 200;
         }
 

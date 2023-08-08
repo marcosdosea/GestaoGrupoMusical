@@ -43,7 +43,7 @@ namespace GestaoGrupoMusicalWeb.Models
 
         public IEnumerable<MovimentacaoInstrumentoDTO>? Movimentacoes { get; set; }
 
-        public Boolean danificado { get; set; }
+        public Boolean Danificado { get; set; }
 
         public Dictionary<string, string> MovimentacaoEnum { get; } = new()
         {
