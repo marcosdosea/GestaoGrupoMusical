@@ -21,13 +21,6 @@
             <form asp-action="Create">
                 <div class="container">
                     <div class="row">
-                        <div class="form-group col-xl-8">
-                            <label asp-for="IdGrupoMusical" class="control-label"></label>
-                            <select asp-for="IdGrupoMusical" asp-items="@Model.ListaGrupoMusical" class="form-select">
-                                <option value=""></option>
-                            </select>
-                            <span asp-validation-for="IdGrupoMusical" class="text-danger"></span>
-                        </div>
                         <div class="form-group col-xl">
                             <label asp-for="Tipo" class="control-label"></label>
                             <select asp-for="Tipo" class="form-select" asp-items="Html.GetEnumSelectList<Tipo>()">
@@ -57,7 +50,7 @@
                                     {
                                         <div>
                                             <label for="@item.Key">@item.Key</label>
-                                            <input type="radio" value="@item.Value" asp-for="PresencaObrigatoria" id="@item.Key" />
+                                            <input class="form-check-input" type="radio" value="@item.Value" asp-for="PresencaObrigatoria" id="@item.Key" />
                                         </div>
                                     }
                                 }
@@ -73,28 +66,25 @@
                             <input asp-for="Local" class="form-control" />
                             <span asp-validation-for="Local" class="text-danger"></span>
                         </div>
-                        <div class="form-group">
-                            <label asp-for="Repertorio" class="control-label"></label>
-                            <input asp-for="Repertorio" class="form-control" />
-                            <span asp-validation-for="Repertorio" class="text-danger"></span>
-                        </div>
                     </div>
                 </div>
                 <div class="container">
                     <div class="row">
-                        <div class="form-group col-xl">
-                            <label asp-for="IdColaboradorResponsavel" class="control-label"></label>
-                            <select asp-for="IdColaboradorResponsavel" asp-items="@Model.ListaPessoa" class="form-select">
-                                <option value=""></option>
-                            </select>
-                            <span asp-validation-for="IdColaboradorResponsavel" class="text-danger"></span>
-                        </div>
                         <div class="form-group col-xl">
                             <label asp-for="IdRegente" class="control-label"></label>
                             <select asp-for="IdRegente" asp-items="@Model.ListaPessoa" class="form-select">
                                 <option value=""></option>
                             </select>
                             <span asp-validation-for="IdRegente" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="row">
+                        <div class="form-group">
+                            <label asp-for="Repertorio" class="control-label"></label>
+                            <textarea asp-for="Repertorio" class="form-control"></textarea>
+                            <span asp-validation-for="Repertorio" class="text-danger"></span>
                         </div>
                     </div>
                 </div>
