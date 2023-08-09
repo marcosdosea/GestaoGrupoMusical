@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace GestaoGrupoMusicalWeb.Models
 {
-    public class EstoqueDTOViewModel
+    public class EstoqueViewModel
     {
         public int Id { get; set; }
         [Display(Prompt = "Nome do figurino")]

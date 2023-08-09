@@ -8,7 +8,7 @@ namespace GestaoGrupoMusicalWeb.Models
     {
         public EstoqueDTOProfile()
         {
-            CreateMap<EstoqueDTOViewModel, EstoqueDTO>().ReverseMap();
+            CreateMap<EstoqueViewModel, EstoqueDTO>().ReverseMap();
         }
     }
 }

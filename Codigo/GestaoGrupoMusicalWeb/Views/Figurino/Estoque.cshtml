@@ -1,4 +1,4 @@
-﻿@model GestaoGrupoMusicalWeb.Models.EstoqueDTOViewModel
+﻿@model GestaoGrupoMusicalWeb.Models.EstoqueViewModel
 
 @{
     ViewData["Title"] = "Estoque";
@@ -25,7 +25,8 @@
 <br />
 <div class="d-flex justify-content-between align-items-center">
     <div class="col-9 d-none d-sm-block"></div>
-    <a role="button" class="btn btn-secondary d-grid gap-2 col-sm" asp-controller="" asp-action="">Novo Estoque</a>
+    <a role="button" class="btn btn-secondary d-grid gap-2 col-sm"
+       asp-controller="Figurino" asp-action="CreateEstoque" asp-route-IdFigurino="@Model.">Novo Estoque</a>
 </div>
 <br />
 <br />

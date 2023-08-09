@@ -158,7 +158,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
         public async Task<ActionResult> Estoque(int id)
         {
-            EstoqueDTOViewModel estoqueDTOviewModel = new();
+            EstoqueViewModel estoqueDTOviewModel = new();
             var figurino = await _figurinoService.Get(id);
 
             var estoque = await _figurinoService.GetAllEstoqueDTO(id);
