@@ -158,17 +158,18 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
         public async Task<ActionResult> Estoque(int id)
         {
-            EstoqueViewModel estoqueDTOviewModel = new();
+            EstoqueViewModel estoqueViewModel = new();
             var figurino = await _figurinoService.Get(id);
 
             var estoque = await _figurinoService.GetAllEstoqueDTO(id);
 
-            estoqueDTOviewModel.TabelaEstoques = estoque;
+            estoqueViewModel.TabelaEstoques = estoque;
 
-            estoqueDTOviewModel.Nome = figurino.Nome;
-            estoqueDTOviewModel.Data = figurino.Data;
+            estoqueViewModel.Id = figurino.Id;
+            estoqueViewModel.Nome = figurino.Nome;
+            estoqueViewModel.Data = figurino.Data;
 
-            return View(estoqueDTOviewModel);
+            return View(estoqueViewModel);
         }
 
         public async Task<ActionResult> CreateEstoque(int idFigurino)
@@ -181,6 +182,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             CreateEstoqueViewModel estoqueViewModel = new()
             {
                 IdFigurino = figurino.Id,
+                Nome = figurino.Nome,
                 Data = figurino.Data.Value.ToString("dd/MM/yyyy"),
                 listManequim = listManequins
 
