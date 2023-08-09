@@ -8,10 +8,14 @@ namespace Core.DTO
 {
     public class EstoqueDTO
     {
-        public string? Nome { get; set; }
-        public DateTime? Data { get; set; }
+        public int Id { get; set; }
         public string? Tamanho { get; set; }
-        public int Disponivel { get; set; } 
+        public int Disponivel { get; set; }
         public int Entregues { get; set; }
+
+        public string TamanhoEstoque
+        {
+            get { return Tamanho + " - " + Disponivel + " disponíveis"; }
+        }
     }
 }
