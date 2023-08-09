@@ -1,0 +1,66 @@
+﻿@model GestaoGrupoMusicalWeb.Models.EstoqueDTOViewModel
+
+@{
+    ViewData["Title"] = "Estoque";
+}
+
+<h1 class="fs-5">Estoque de Figurino</h1>
+<br />
+
+<div class="container">
+    <div class="row d-flex justify-content-between">
+        <div class="form-group col-xl-7">
+            <label asp-for="Nome" class="control-label">Nome</label>
+            <input asp-for="Nome" class="form-control" readonly />
+            <span asp-validation-for="Nome" class="text-danger"></span>
+        </div>
+        <div class="form-group col-xl-3">
+            <label asp-for="Data" class="control-label">Data</label>
+            <input asp-for="Data" class="form-control" readonly />
+            <span asp-validation-for="Data" class="text-danger"></span>
+        </div>
+    </div>
+</div>
+<br />
+<br />
+<div class="d-flex justify-content-between align-items-center">
+    <div class="col-9 d-none d-sm-block"></div>
+    <a role="button" class="btn btn-secondary d-grid gap-2 col-sm" asp-controller="" asp-action="">Novo Estoque</a>
+</div>
+<br />
+<br />
+<table class="table">
+    <thead>
+        <tr class="bg-danger opacity-75">
+            <th class="px-3 border-0 w-25">
+                <span class="text-white">Tamanho</span>
+            </th>
+            <th class="px-3 border-0 w-25">
+                <span class="text-white">Disponível</span>
+            </th>
+            <th class="px-3 border-0 w-25">
+                <span class="text-white">Entregues</span>
+            </th>
+            <th class="px-3 border-0 w-25">
+                <span class="text-white">Ações</span>
+            </th>
+        </tr>
+    </thead>
+
+        <Partial name="_TabelaEstoque" model="Model.TabelaEstoques" />
+    
+    
+</table>
+@if (!(Model.TabelaEstoques != null && (Model.TabelaEstoques.Any())))
+{
+    <p class="text-center mt-4 mb-0">Desculpe, nenhuma <b>Item</b> encontrada :(</p>
+}
+<br />
+<br />
+<div class="container">
+    <div class="row">
+        <div class="col-9"></div>
+        <a class="btn btn-light text-secondary border border-secondary d-grid gap-2 col-3 mx-auto" asp-action="Index"> Voltar </a>
+    </div>
+</div>
+

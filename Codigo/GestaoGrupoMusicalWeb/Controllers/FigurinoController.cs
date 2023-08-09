@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Core;
+using Core.DTO;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -25,7 +26,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly UserManager<UsuarioIdentity> _userManager;
 
         public FigurinoController(IMapper mapper, IGrupoMusicalService grupoMusical,
-            IManequimService manequim, IFigurinoService figurino,UserManager<UsuarioIdentity> userManager, IPessoaService pessoa, IMovimentacaoFigurinoService movimentacaoService)
+            IManequimService manequim, IFigurinoService figurino, UserManager<UsuarioIdentity> userManager, IPessoaService pessoa, IMovimentacaoFigurinoService movimentacaoService)
         {
             _mapper = mapper;
             _grupoMusicalService = grupoMusical;
@@ -123,7 +124,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 {
                     Notificar("<b>Erro</b>! Há algo errado com os dados", Notifica.Erro);
                     return View(figurinoViewModel);
-                } 
+                }
             }
             else
             {
@@ -159,6 +160,21 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 return RedirectToAction(nameof(Index));
             }
         }
+    
+        public async Task<ActionResult> Estoque(int id)
+        {
+            EstoqueDTOViewModel estoqueDTOviewModel = new();
+            var figurino = await _figurinoService.Get(id);
+
+            var estoque = await _figurinoService.GetAllEstoqueDTO(id);
+
+            estoqueDTOviewModel.TabelaEstoques = estoque;
+
+            estoqueDTOviewModel.Nome = figurino.Nome;
+            estoqueDTOviewModel.Data = figurino.Data;
+
+            return View(estoqueDTOviewModel);
+        }
 
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         public async Task<ActionResult> Movimentar(int id)
@@ -167,7 +183,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
 
             var manequins = await _movimentacaoService.GetEstoque(id);
-            if(manequins == null)
+            if (manequins == null)
             {
                 Notificar("<b>Alerta</b>! Figurino não possue estoque.", Notifica.Alerta);
                 return RedirectToAction(nameof(Index));
@@ -176,10 +192,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
             int idGrupo = _grupoMusicalService.GetIdGrupo(User.Identity.Name);
             var associados = _pessoaService.GetAllPessoasOrder(idGrupo);
 
-            var movimentacoes = await  _movimentacaoService.GetAllByIdFigurino(id);
+            var movimentacoes = await _movimentacaoService.GetAllByIdFigurino(id);
 
-            SelectList listAssociados = new SelectList(associados, "Id", "Nome", associados.First().Id );
-            SelectList listEstoque = new SelectList(manequins, "Id", "TamanhoEstoque", manequins.First().Id );
+            SelectList listAssociados = new SelectList(associados, "Id", "Nome", associados.First().Id);
+            SelectList listEstoque = new SelectList(manequins, "IdManequim", "TamanhoEstoque", manequins.First().Id);
 
             var movimentarFigurinoViewModel = new MovimentacaoFigurinoViewModel
             {
@@ -237,7 +253,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 tipoMov = "Devolvido";
             }
 
-            switch(resul)
+            switch (resul)
             {
                 case 200:
                     Notificar($"<b>Sucesso!</b> Figurino foi <b>{tipoMov}</b>", Notifica.Sucesso);
@@ -259,7 +275,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     break;
             }
 
-            return RedirectToAction(nameof(Movimentar), new {id = movimentacaoViewModel.IdFigurino});
+            return RedirectToAction(nameof(Movimentar), new { id = movimentacaoViewModel.IdFigurino });
         }
     }
 }
+
