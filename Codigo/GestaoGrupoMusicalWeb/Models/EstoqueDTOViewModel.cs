@@ -7,13 +7,14 @@ namespace GestaoGrupoMusicalWeb.Models
 {
     public class EstoqueDTOViewModel
     {
+        public int Id { get; set; }
         [Display(Prompt = "Nome do figurino")]
         public string? Nome { get; set; }
         public DateTime? Data { get; set; }
         public IEnumerable<EstoqueDTO>? TabelaEstoques { get; set; }
     }
 
-    public class CreateEstoque
+    public class CreateEstoqueViewModel
     {
         [Required]
         public string? Nome { get; set; }
