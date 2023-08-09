@@ -1,17 +1,20 @@
 ﻿@model GestaoGrupoMusicalWeb.Models.EnsaioViewModel
 
 @{
-    ViewData["Title"] = $"Detalhes Ensaio {Model.Local}";
+    ViewData["Title"] = $"Ensaio";
+    ViewData["Details"] = $"Detalhes";
 }
 <div class="row">
     <div class="col-md-8">
         <h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">Detalhes do Ensaio</h1>
         <nav>
             <ol class="breadcrumb px-3">
-                <strong>
-                    <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Title"]</a>
-                    <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Create"]</spn>
-                </strong>
+                <li>
+                    <strong>
+                        <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Title"]</a>
+                        <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Details"]</spn>
+                    </strong>
+                </li>
             </ol>
         </nav>
         <hr />
