@@ -59,7 +59,7 @@ html {
     border-bottom: 1px solid var(--bs-dark);
     border-radius: 0;
 }
-.form-control-desabled {
+.form-control-disabled {
     background-color: #e8e4e4 !important;
 }
 
