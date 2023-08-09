@@ -170,5 +170,40 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             return View(estoqueDTOviewModel);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> CreateEstoque(EstoqueDTO estoqueDTO)
+        {
+            Figurinomanequim estoque = new()
+            {
+                IdFigurino = estoqueDTO.IdFigurino,
+                IdManequim = estoqueDTO.IdManequim,
+                QuantidadeDisponivel = estoqueDTO.Disponivel,
+                QuantidadeEntregue = estoqueDTO.Entregues
+            };
+
+            int resul = await _figurinoService.CreateEstoque(estoque);
+
+            switch (resul)
+            {
+                case 200:
+                    Notificar("<b>Sucesso</b>! Estoque cadastrado.", Notifica.Sucesso);
+                    break;
+                case 400:
+                    Notificar("<b>Alerta</b>! Dados insuficientes.", Notifica.Alerta);
+                    break;
+                case 401:
+                    Notificar("<b>Alerta</b>! Sem quantidade disponível para estoque.", Notifica.Alerta);
+                    break;
+                case 500:
+                    Notificar("<b>Erro</b>! Algum problema ao registrar estoque.", Notifica.Erro);
+                    break;
+                default:
+                    Notificar("<b>Erro</b>! Algum problema ao tentar registrar estoque.", Notifica.Erro);
+                    break;
+            }
+            return View();
+        }
     }
 }
