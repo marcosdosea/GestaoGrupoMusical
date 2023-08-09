@@ -10,7 +10,6 @@ namespace GestaoGrupoMusicalWeb.Models
         [Display(Prompt = "Nome do figurino")]
         public string? Nome { get; set; }
         public DateTime? Data { get; set; }
-        [Display(Name = "Tamanho")]
         public IEnumerable<EstoqueDTO>? TabelaEstoques { get; set; }
     }
 }
