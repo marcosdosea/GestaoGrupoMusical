@@ -8,7 +8,6 @@ namespace Core.DTO
 {
     public class EstoqueDTO
     {
-        public int Id { get; set; }
         public int IdManequim { get; set; }
         public int IdFigurino { get; set; }
         public string? Tamanho { get; set; }
