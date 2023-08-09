@@ -105,5 +105,30 @@ namespace Service
                         };
             return await query.AsNoTracking().ToListAsync();
         }
+
+        public async Task<int> CreateEstoque(Figurinomanequim estoque)
+        {
+            if(estoque.IdManequim == null || estoque.IdFigurino == null)
+            {
+                return 400;//falta algum dos id's
+            }
+            else if(estoque.QuantidadeDisponivel <= 0)
+            {
+                return 401;//nao existe quantidade para disponibilizar
+            }
+
+            try
+            {
+                await _context.Figurinomanequims.AddAsync(estoque);
+            }
+            catch
+            {
+                return 500;//deu tudo errado
+            }
+
+
+            await _context.SaveChangesAsync();
+            return 200;
+        }
     }
 }

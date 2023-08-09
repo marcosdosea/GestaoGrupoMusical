@@ -24,6 +24,8 @@ namespace Core.Service
         Task<IEnumerable<Figurino>> GetAll(string cpf);
 
         Task<Figurino> GetByName(string name);
-        public Task<IEnumerable<EstoqueDTO>> GetAllEstoqueDTO(int id);
+        Task<IEnumerable<EstoqueDTO>> GetAllEstoqueDTO(int id);
+
+        Task<int> CreateEstoque(Figurinomanequim estoque);
     }
 }
