@@ -54,13 +54,35 @@
                     <td>
                         @Html.DisplayFor(modelItem => presenca)
                     </td>
-                    <td class="d-flex justify-content-between border-0 flex-wrap py-3">
-                        <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb-2" asp-controller="Ensaio" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"> </i> Editar </a>
-                        <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb-2" asp-controller="Ensaio" asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-file"> </i> Detalhes </a>
-                        <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb-2" asp-controller="Ensaio" asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-xmark"> </i> Excluir </a>
+                    <td class="d-flex justify-content-between border-0 flex-wrap py-3">                
+                            <form id="@(item.Id + "_confirmar")" asp-action="Delete" asp-route-id="@item.Id" method="post">
+                                <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb-2" asp-controller="Ensaio" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"> </i> Editar </a>
+                                <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb-2" asp-controller="Ensaio" asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-file"> </i> Detalhes </a>                 
+                                <a onclick="showModal('@(item.Id + "_confirmar")', 'ensaioModal')" class="btn btn-sm btn-secondary" role="button" data-bs-toggle="modal" data-bs-target="#ensaioModal">
+                                    <i class="fa-solid fa-xmark"> </i>
+                                    Excluir
+                                </a>
+                            </form>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
 </div>
+    <div class="modal fade" id="ensaioModal" tabindex="-1" aria-labelledby="ensaioLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="admLabel">Confirmar Exclusão do Ensaio</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Deseja <b>Excluir</b> o <b>Ensaio</b>?
+                </div>
+                <form method="post" class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary col-3 me-4" data-bs-dismiss="modal">Não</button>
+                    <button type="submit" class="btn btn-secondary col-3">Sim</button>
+                </form>
+            </div>
+        </div>
+    </div>
