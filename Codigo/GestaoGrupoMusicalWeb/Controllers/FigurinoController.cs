@@ -194,8 +194,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             var movimentacoes = await _movimentacaoService.GetAllByIdFigurino(id);
 
-            SelectList listAssociados = new SelectList(associados, "Id", "Nome", associados.First().Id);
-            SelectList listEstoque = new SelectList(manequins, "IdManequim", "TamanhoEstoque", manequins.First().Id);
+            SelectList listAssociados = new SelectList(associados, "Id", "Nome");
+            SelectList listEstoque = new SelectList(manequins, "IdManequim", "TamanhoEstoque");
 
             var movimentarFigurinoViewModel = new MovimentacaoFigurinoViewModel
             {
