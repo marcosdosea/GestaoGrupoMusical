@@ -11,7 +11,6 @@ namespace GestaoGrupoMusicalWeb.Models
         public string? Nome { get; set; }
         public DateTime? Data { get; set; }
         [Display(Name = "Tamanho")]
-        public string? Tamanho { get; set; }
         public IEnumerable<EstoqueDTO>? TabelaEstoques { get; set; }
     }
 }
