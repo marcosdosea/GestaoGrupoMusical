@@ -19,85 +19,84 @@
         </nav>
         <hr />
         <br />
-        <form asp-action="Create">
-            <div class="container">
-                <div class="row">
-                    <div class="form-group col-xl">
-                        <label asp-for="Tipo" class="control-label"></label>
-                        <select asp-for="Tipo" class="form-select" asp-items="Html.GetEnumSelectList<Tipo>()">
-                        </select>
-                        <span asp-validation-for="Tipo" class="text-danger"></span>
-                    </div>
+        
+        <div class="container">
+            <div class="row">
+                <div class="form-group col-xl">
+                    <label asp-for="Tipo" class="control-label"></label>
+                    <select asp-for="Tipo" class="form-select" asp-items="Html.GetEnumSelectList<Tipo>()">
+                    </select>
+                    <span asp-validation-for="Tipo" class="text-danger"></span>
                 </div>
             </div>
-            <div class="container">
-                <div class="row">
-                    <div class="form-group col-xxl-4">
-                        <label asp-for="DataHoraInicio" class="control-label"></label>
-                        <input asp-for="DataHoraInicio" class="form-control" />
-                        <span asp-validation-for="DataHoraInicio" class="text-danger"></span>
-                    </div>
-                    <div class="form-group col-xxl-4">
-                        <label asp-for="DataHoraFim" class="control-label"></label>
-                        <input asp-for="DataHoraFim" class="form-control" />
-                        <span asp-validation-for="DataHoraFim" class="text-danger"></span>
-                    </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="form-group col-xxl-4">
+                    <label asp-for="DataHoraInicio" class="control-label"></label>
+                    <input asp-for="DataHoraInicio" class="form-control" />
+                    <span asp-validation-for="DataHoraInicio" class="text-danger"></span>
+                </div>
+                <div class="form-group col-xxl-4">
+                    <label asp-for="DataHoraFim" class="control-label"></label>
+                    <input asp-for="DataHoraFim" class="form-control" />
+                    <span asp-validation-for="DataHoraFim" class="text-danger"></span>
+                </div>
 
-                    <div class="form-group col-xl">
-                        <label asp-for="PresencaObrigatoria" class="control-label"></label>
-                        <div class="d-flex justify-content-around">
-                            @{
-                                foreach (var item in Model.Obrigatorio)
-                                {
-                                    <div>
-                                        <label for="@item.Key">@item.Key</label>
-                                        <input class="form-check-input" type="radio" value="@item.Value" asp-for="PresencaObrigatoria" id="@item.Key" />
-                                    </div>
-                                }
+                <div class="form-group col-xl">
+                    <label asp-for="PresencaObrigatoria" class="control-label"></label>
+                    <div class="d-flex justify-content-around">
+                        @{
+                            foreach (var item in Model.Obrigatorio)
+                            {
+                                <div>
+                                    <label for="@item.Key">@item.Key</label>
+                                    <input class="form-check-input" type="radio" value="@item.Value" asp-for="PresencaObrigatoria" id="@item.Key" />
+                                </div>
                             }
-                        </div>
-                        <span asp-validation-for="PresencaObrigatoria" class="text-danger"></span>
+                        }
                     </div>
+                    <span asp-validation-for="PresencaObrigatoria" class="text-danger"></span>
                 </div>
             </div>
-            <div class="container">
-                <div class="row">
-                    <div class="form-group">
-                        <label asp-for="Local" class="control-label"></label>
-                        <input asp-for="Local" class="form-control" />
-                        <span asp-validation-for="Local" class="text-danger"></span>
-                    </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="form-group">
+                    <label asp-for="Local" class="control-label"></label>
+                    <input asp-for="Local" class="form-control" />
+                    <span asp-validation-for="Local" class="text-danger"></span>
                 </div>
             </div>
-            <div class="container">
-                <div class="row">
-                    <div class="form-group col-xl">
-                        <label asp-for="IdRegente" class="control-label"></label>
-                        <select asp-for="IdRegente" asp-items="@Model.ListaPessoa" class="form-select">
-                            <option value=""></option>
-                        </select>
-                        <span asp-validation-for="IdRegente" class="text-danger"></span>
-                    </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="form-group col-xl">
+                    <label asp-for="IdRegente" class="control-label"></label>
+                    <select asp-for="IdRegente" asp-items="@Model.ListaPessoa" class="form-select">
+                    <option value=""></option>
+                    </select>
+                    <span asp-validation-for="IdRegente" class="text-danger"></span>
                 </div>
             </div>
-            <div class="container">
-                <div class="row">
-                    <div class="form-group">
-                        <label asp-for="Repertorio" class="control-label"></label>
-                        <textarea asp-for="Repertorio" class="form-control"></textarea>
-                        <span asp-validation-for="Repertorio" class="text-danger"></span>
-                    </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="form-group">
+                    <label asp-for="Repertorio" class="control-label"></label>
+                    <textarea asp-for="Repertorio" class="form-control"></textarea>
+                    <span asp-validation-for="Repertorio" class="text-danger"></span>
                 </div>
             </div>
-            <br />
-            <br />
-            <div class="container">
-                <div class="row d-flex flex-column-reverse d-grig gap-2 mx-auto d-flex flex-sm-column-reverse flex-xl-row">
-                    <div class="col-5 d-none d-sm-block"></div>
-                    <a class="btn btn-outline-secondary" role="button" asp-controller="Ensaio" asp-action="Index">Voltar</a>
-                    <a class="btn btn-secondary ms-2" role="button" asp-controller="Ensaio" asp-action="Edit" asp-route-id="@Model.Id">Editar</a>
-                </div>
+        </div>
+        <br />
+        <br />
+        <div class="container">
+            <div class="row d-flex flex-column-reverse d-grig gap-2 mx-auto d-flex flex-sm-column-reverse flex-xl-row">
+                <div class="col-5 d-none d-sm-block"></div>
+                <a class="btn btn-outline-secondary" role="button" asp-controller="Ensaio" asp-action="Index">Voltar</a>
+                <a class="btn btn-secondary ms-2" role="button" asp-controller="Ensaio" asp-action="Edit" asp-route-id="@Model.Id">Editar</a>
             </div>
-        </form>
+        </div>
     </div>
 </div>
