@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Core;
+using Core.DTO;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -158,15 +159,16 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> Estoque(int id)
         {
             EstoqueDTOViewModel estoqueDTOviewModel = new();
-            estoqueDTOviewModel.TabelaEstoques = _mapper.Map<IEnumerable<EstoqueDTOViewModel>>(await _figurinoService.GetAllEstoqueDTO(id));
-            var EstoqueModel = _mapper.Map<EstoqueDTOViewModel>(estoqueDTOviewModel);
+            var figurino = await _figurinoService.Get(id);
 
-            EstoqueModel.Nome = estoqueDTOviewModel.TabelaEstoques.First().Nome;
-            EstoqueModel.Data = estoqueDTOviewModel.TabelaEstoques.First().Data;
-            EstoqueModel.Tamanho = estoqueDTOviewModel.TabelaEstoques.First().Tamanho;
+            var estoque = await _figurinoService.GetAllEstoqueDTO(id);
 
+            estoqueDTOviewModel.TabelaEstoques = estoque;
 
-            return View(EstoqueModel);
+            estoqueDTOviewModel.Nome = figurino.Nome;
+            estoqueDTOviewModel.Data = figurino.Data;
+
+            return View(estoqueDTOviewModel);
         }
     }
 }
