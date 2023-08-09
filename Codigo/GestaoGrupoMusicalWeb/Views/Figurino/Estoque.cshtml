@@ -46,13 +46,12 @@
             </th>
         </tr>
     </thead>
-    @if (!String.IsNullOrEmpty(Model.Tamanho))
-    {
+
         <Partial name="_TabelaEstoque" model="Model.TabelaEstoques" />
-    }
+    
     
 </table>
-@if (string.IsNullOrEmpty(Model.Tamanho))
+@if (!(Model.TabelaEstoques != null && (Model.TabelaEstoques.Any())))
 {
     <p class="text-center mt-4 mb-0">Desculpe, nenhuma <b>Item</b> encontrada :(</p>
 }
