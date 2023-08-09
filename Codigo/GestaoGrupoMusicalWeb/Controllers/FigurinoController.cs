@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Core;
+using Core.DTO;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -154,6 +155,20 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 Notificar("<b>Erro</b>! Algo deu errado ao remover figurino. Verifique se há estoque emprestado.", Notifica.Erro);
                 return RedirectToAction(nameof(Index));
             }
+        }
+        public async Task<ActionResult> Estoque(int id)
+        {
+            EstoqueDTOViewModel estoqueDTOviewModel = new();
+            var figurino = await _figurinoService.Get(id);
+
+            var estoque = await _figurinoService.GetAllEstoqueDTO(id);
+
+            estoqueDTOviewModel.TabelaEstoques = estoque;
+
+            estoqueDTOviewModel.Nome = figurino.Nome;
+            estoqueDTOviewModel.Data = figurino.Data;
+
+            return View(estoqueDTOviewModel);
         }
     }
 }
