@@ -33,9 +33,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<IActionResult> Index()
         {
 
-
-
-
             if (User.IsInRole("ADMINISTRADOR SISTEMA"))
             {
                 return RedirectToAction(nameof(Index), "GrupoMusical");
@@ -57,11 +54,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
             else if(User.IsInRole("ADMINISTRADOR GRUPO"))
             {
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index),"InstrumentoMusical");
 
 
             }
-
             var listaEvento = _evento.GetAllDTO();
             var EventoViewDTO = _mapper.Map<List<EventoViewModelDTO>>(listaEvento);
             var listaEnsaio = await _ensaioService.GetAllDTO();
@@ -69,14 +65,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
             var listaIformativo = await _informativoService.GetAll();
             var Informativo = _mapper.Map<List<InformativoViewModel>>(listaIformativo);
 
-
             var viewModel = new TelaPrincipalViewModel
             {
                 Ensaio = EnsaioViewDTO,
                 Evento = EventoViewDTO,
                 Informativo = Informativo
             };
-
 
             return View(viewModel);
         }
