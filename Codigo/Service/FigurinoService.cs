@@ -97,6 +97,8 @@ namespace Service
                         where figurinomanequim.IdFigurino == id
                         select new EstoqueDTO
                         {
+                            IdManequim = figurinomanequim.IdManequim,
+                            IdFigurino = figurinomanequim.IdFigurino,
                             Tamanho = figurinomanequim.IdManequimNavigation.Tamanho,
                             Disponivel = figurinomanequim.QuantidadeDisponivel,
                             Entregues = figurinomanequim.QuantidadeEntregue
