@@ -33,6 +33,17 @@ namespace Service
                                            .Select(pessoa => pessoa.Id);
 
                         await _context.SaveChangesAsync();
+
+                        await idAssociados.ForEachAsync(async idPessoa => {
+                            Ensaiopessoa ensaioPessoa = new()
+                            {
+                                IdEnsaio = ensaio.Id,
+                                IdPessoa = idPessoa
+                            };
+                            await _context.Ensaiopessoas.AddAsync(ensaioPessoa);
+                        });
+
+                        await _context.SaveChangesAsync();
                         await transaction.CommitAsync();
                         return 200;
                     }
