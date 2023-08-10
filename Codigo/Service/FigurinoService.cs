@@ -119,6 +119,19 @@ namespace Service
 
             try
             {
+                var estoqueFound = await _context.Figurinomanequims.FindAsync(estoque.IdFigurino, estoque.IdManequim);
+
+                if(estoqueFound != null)
+                {
+                    estoqueFound.QuantidadeDisponivel += estoque.QuantidadeDisponivel;
+
+                    _context.Figurinomanequims.Update(estoqueFound);
+
+                    await _context.SaveChangesAsync();
+
+                    return 201; //caso estoque ja existia
+                }
+
                 await _context.Figurinomanequims.AddAsync(estoque);
             }
             catch

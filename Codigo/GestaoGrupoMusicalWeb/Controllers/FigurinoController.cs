@@ -215,6 +215,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 case 200:
                     Notificar("<b>Sucesso</b>! Estoque cadastrado.", Notifica.Sucesso);
                     break;
+                case 201:
+                    Notificar("<b>Sucesso</b>! Adicionado peças ao estoque.", Notifica.Sucesso);
+                    break;
                 case 400:
                     Notificar("<b>Alerta</b>! Dados insuficientes.", Notifica.Alerta);
                     break;
