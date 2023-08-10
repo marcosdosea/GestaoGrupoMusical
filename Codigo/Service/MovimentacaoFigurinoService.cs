@@ -175,7 +175,7 @@ namespace Service
         {
             var entregues = await (from movimentacoesFigurino in _context.Movimentacaofigurinos
                              where movimentacoesFigurino.IdAssociado == idAssociado
-                             where movimentacoesFigurino.Status == "ENTRGUE"
+                             where movimentacoesFigurino.Status == "ENTREGUE"
                              orderby movimentacoesFigurino.Data descending
                              select new MovimentacaoAssociadoFigurino
                              {
