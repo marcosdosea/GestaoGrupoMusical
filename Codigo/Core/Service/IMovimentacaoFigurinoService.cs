@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Core.DTO.InstrumentoAssociadoDTO;
+using static Core.DTO.MovimentacaoAssociadoFigurinoDTO;
 
 namespace Core.Service
 {
@@ -44,5 +46,7 @@ namespace Core.Service
         Task<int> DeleteAsync(int id);
 
         Task<IEnumerable<EstoqueDTO>> GetEstoque(int idFigurino);
+
+        Task<MovimentacoesAssociadoFigurino> MovimentacoesByIdAssociadoAsync(int idAssociado);
     }
 }

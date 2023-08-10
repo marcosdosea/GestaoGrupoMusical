@@ -23,10 +23,10 @@ namespace Core.DTO
         public class MovimentacoesAssociadoFigurino
         {
             [Display(Name = "Entregues")]
-            public IEnumerable<MovimentacaoFigurinoDTO>? Entregue { get; set; }
+            public IEnumerable<MovimentacaoAssociadoFigurino>? Entregue { get; set; }
 
             [Display(Name = "Devoluções")]
-            public IEnumerable<MovimentacaoFigurinoDTO>? Devolvido { get; set; }
+            public IEnumerable<MovimentacaoAssociadoFigurino>? Devolucoes { get; set; }
         }
     }
 }
