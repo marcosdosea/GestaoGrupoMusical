@@ -34,7 +34,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: EnsaioController/Details/5
         public async Task<ActionResult> Details(int id)
         {
-            var ensaio = await _ensaio.Get(id);
+            var ensaio = _ensaio.Get;
             return View(_mapper.Map<EnsaioViewModel>(ensaio));
         }
 
