@@ -36,6 +36,6 @@ namespace Core.DTO
         public string? Repertorio { get; set; }
 
         [Display(Name = "Regente")]
-        public int NomeRegente { get; set; }
+        public string? NomeRegente { get; set; }
     }
 }

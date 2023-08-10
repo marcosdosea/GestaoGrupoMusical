@@ -160,9 +160,12 @@ namespace Service
                 {
                     Id = g.Id,
                     DataHoraInicio = g.DataHoraInicio,
+                    DataHoraFim = g.DataHoraFim,
                     Tipo = g.Tipo,
                     Local = g.Local,
-                    PresencaObrigatoria = g.PresencaObrigatoria == 1 ? "Sim" : "Não"
+                    PresencaObrigatoria = g.PresencaObrigatoria == 1 ? "Sim" : "Não",
+                    Repertorio = g.Repertorio,
+                    NomeRegente = _context.Pessoas.Find(g.IdRegente).Nome
 
                 }).Where(g => g.Id == idEnsaio);
             return query;
