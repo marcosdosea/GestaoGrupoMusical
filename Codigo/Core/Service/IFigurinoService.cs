@@ -24,6 +24,19 @@ namespace Core.Service
         Task<IEnumerable<Figurino>> GetAll(string cpf);
 
         Task<Figurino> GetByName(string name);
-        public Task<IEnumerable<EstoqueDTO>> GetAllEstoqueDTO(int id);
+        Task<IEnumerable<EstoqueDTO>> GetAllEstoqueDTO(int id);
+
+        /// <summary>
+        /// Cria um estoque de um figurino
+        /// </summary>
+        /// <param name="estoque">entidade do estoque contendo id de figurino, manequim e quantidade que será disponibilizada</param>
+        /// <returns>
+        /// 200: estoque criado
+        /// 201: estoque atualizada
+        /// 400: falta algum dos id's
+        /// 401: nao existe quantidade para disponibilizar
+        /// 500: nao conseguiu criar o estoque ou atualizar
+        /// </returns>
+        Task<int> CreateEstoque(Figurinomanequim estoque);
     }
 }
