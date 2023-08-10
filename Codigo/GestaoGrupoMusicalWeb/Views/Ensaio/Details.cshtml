@@ -41,15 +41,7 @@
             <div class="row">
                 <div class="form-group col-xl">
                     <label asp-for="PresencaObrigatoria" class="control-label"></label>
-                    @{
-                        foreach (var item in Model.Obrigatorio)
-                        {
-                            if (item.Value == Model.PresencaObrigatoria)
-                            {
-                                <input class="form-control" value="@item.Key" disabled />
-                            }
-                        }
-                    }
+                    <input asp-for="PresencaObrigatoria" class="form-control" disabled />
                 </div>
             </div>
         </div>
@@ -65,10 +57,8 @@
         <div class="container">
             <div class="row">
                 <div class="form-group col-xl">
-                    <label asp-for="IdRegente" class="control-label"></label>
-                    <select asp-for="IdRegente" asp-items="@Model.ListaPessoa" class="form-select">
-                    <option value=""></option>
-                    </select>
+                    <label asp-for="NomeRegente" class="control-label"></label>
+                    <input asp-for="NomeRegente" class="form-control" disabled />
                 </div>
             </div>
         </div>
