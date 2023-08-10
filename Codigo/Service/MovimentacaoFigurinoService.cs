@@ -9,6 +9,7 @@ using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Core.DTO.MovimentacaoAssociadoFigurinoDTO;
 
 namespace Service
 {
@@ -169,5 +170,25 @@ namespace Service
 
             return query;
         }
+        
+        public async Task<MovimentacoesAssociadoFigurino> MovimentacoesByIdAssociadoAsync(int idAssociado)
+        {
+           var entregue = (from movimentacoes in _context.Movimentacaofigurinos
+                           where movimentacoes.IdAssociado == idAssociado
+                           where movimentacoes.Status == "ENTRGUE"
+                           orderby movimentacoes.Data descending
+                           select new MovimentacaoAssociadoFigurino
+                           {
+                               Id = movimentacoes.Id,
+                               Data = movimentacoes.Data,
+                               NomeFigurino = movimentacoes.IdFigurinoNavigation.Nome,
+                               Tamanho = movimentacoes.IdManequimNavigation.Tamanho,
+                               Status = movimentacoes.ConfirmacaoRecebimento == 1 ? "Confirmado" : "Agurdando Confirmação"
+
+                           }).AsNoTracking().ToListAsync();
+                            
+                               
+                              
+                        
     }
 }
