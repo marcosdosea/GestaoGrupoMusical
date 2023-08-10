@@ -1,0 +1,27 @@
+﻿@model IEnumerable<Core.DTO.MovimentacaoAssociadoFigurinoDTO.MovimentacaoAssociadoFigurino>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Data</th>
+            <th>Nome do Figurino</th>
+            <th>Tamanho</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var movimentacao in Model)
+        {
+            <tr>
+                <td>@movimentacao.Id</td>
+                <td>@movimentacao.Data</td>
+                <td>@movimentacao.NomeFigurino</td>
+                <td>@movimentacao.Tamanho</td>
+                <td>@movimentacao.Status</td>
+            </tr>
+        }
+    </tbody>
+</table>
+@{
+}
