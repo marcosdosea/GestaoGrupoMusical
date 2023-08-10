@@ -70,20 +70,6 @@ namespace Service
             return await _context.Informativos.AsNoTracking().ToListAsync();
         }
 
-        public async Task<IEnumerable<InformativoDTO>> GetAllDTO()
-        {
-            var query = _context.Informativos
-                .OrderBy(g => g.Data)
-                .Select(g =>
-              new InformativoDTO
-              {
-                  IdGrupoMusical = g.IdGrupoMusical,
-                  IdPessoa = g.IdPessoa,
-                  Data = g.Data,
-                  Mensagem = g.Mensagem
-              }).AsNoTracking().ToListAsync();
-            return await query;
-        }
 
     }
 }

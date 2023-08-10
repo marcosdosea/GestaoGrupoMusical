@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Core;
+using Core.DTO;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -17,19 +18,23 @@ namespace GestaoGrupoMusicalWeb.Controllers
     public class FigurinoController : BaseController
     {
         private readonly IMapper _mapper;
-        private readonly IGrupoMusicalService _grupoMusical;
-        private readonly IManequimService _manequim;
+        private readonly IGrupoMusicalService _grupoMusicalService;
+        private readonly IManequimService _manequimService;
         private readonly IFigurinoService _figurinoService;
+        private readonly IPessoaService _pessoaService;
+        private readonly IMovimentacaoFigurinoService _movimentacaoService;
         private readonly UserManager<UsuarioIdentity> _userManager;
 
         public FigurinoController(IMapper mapper, IGrupoMusicalService grupoMusical,
-            IManequimService manequim, IFigurinoService figurino, UserManager<UsuarioIdentity> userManager)
+            IManequimService manequim, IFigurinoService figurino, UserManager<UsuarioIdentity> userManager, IPessoaService pessoa, IMovimentacaoFigurinoService movimentacaoService)
         {
             _mapper = mapper;
-            _grupoMusical = grupoMusical;
-            _manequim = manequim;
+            _grupoMusicalService = grupoMusical;
+            _manequimService = manequim;
             _figurinoService = figurino;
             _userManager = userManager;
+            _pessoaService = pessoa;
+            _movimentacaoService = movimentacaoService;
         }
 
         // GET: FigurinoController
@@ -61,7 +66,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                figurinoViewModel.IdGrupoMusical = _grupoMusical.GetIdGrupo(User.Identity.Name);
+                figurinoViewModel.IdGrupoMusical = _grupoMusicalService.GetIdGrupo(User.Identity.Name);
 
                 var figurino = _mapper.Map<Figurino>(figurinoViewModel);
                 int resul = await _figurinoService.Create(figurino);
@@ -107,7 +112,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 var figurino = _mapper.Map<Figurino>(figurinoViewModel);
 
-                figurino.IdGrupoMusical = _grupoMusical.GetIdGrupo(User.Identity.Name);
+                figurino.IdGrupoMusical = _grupoMusicalService.GetIdGrupo(User.Identity.Name);
 
                 int resul = await _figurinoService.Edit(figurino);
                 if (resul == 200)
@@ -119,7 +124,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 {
                     Notificar("<b>Erro</b>! Há algo errado com os dados", Notifica.Erro);
                     return View(figurinoViewModel);
-                } 
+                }
             }
             else
             {
@@ -155,5 +160,123 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 return RedirectToAction(nameof(Index));
             }
         }
+    
+        public async Task<ActionResult> Estoque(int id)
+        {
+            EstoqueDTOViewModel estoqueDTOviewModel = new();
+            var figurino = await _figurinoService.Get(id);
+
+            var estoque = await _figurinoService.GetAllEstoqueDTO(id);
+
+            estoqueDTOviewModel.TabelaEstoques = estoque;
+
+            estoqueDTOviewModel.Nome = figurino.Nome;
+            estoqueDTOviewModel.Data = figurino.Data;
+
+            return View(estoqueDTOviewModel);
+        }
+
+        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
+        public async Task<ActionResult> Movimentar(int id)
+        {
+            var figurino = await _figurinoService.Get(id);
+
+
+            var manequins = await _movimentacaoService.GetEstoque(id);
+            if (manequins == null)
+            {
+                Notificar("<b>Alerta</b>! Figurino não possue estoque.", Notifica.Alerta);
+                return RedirectToAction(nameof(Index));
+            }
+
+            int idGrupo = _grupoMusicalService.GetIdGrupo(User.Identity.Name);
+            var associados = _pessoaService.GetAllPessoasOrder(idGrupo);
+
+            var movimentacoes = await _movimentacaoService.GetAllByIdFigurino(id);
+
+            SelectList listAssociados = new SelectList(associados, "Id", "Nome");
+            SelectList listEstoque = new SelectList(manequins, "IdManequim", "TamanhoEstoque");
+
+            var movimentarFigurinoViewModel = new MovimentacaoFigurinoViewModel
+            {
+                IdFigurino = figurino.Id,
+                NomeFigurino = figurino.Nome,
+                DataFigurinoString = figurino.Data.Value.ToString("dd/MM/yyyy"),
+                ListaAssociado = listAssociados,
+                ListaManequim = listEstoque,
+                Movimentacoes = movimentacoes
+            };
+
+            return View(movimentarFigurinoViewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Movimentar(MovimentacaoFigurinoViewModel movimentacaoViewModel)
+        {
+
+            var colaborador = await _pessoaService.GetByCpf(User.Identity.Name);
+
+            string status = string.Empty;
+
+            if (movimentacaoViewModel.Danificado)
+            {
+                status = "DANIFICADO";
+            }
+            else
+            {
+                status = movimentacaoViewModel.Movimentacao;
+            }
+
+
+            Movimentacaofigurino movimentacao = new Movimentacaofigurino
+            {
+                Data = movimentacaoViewModel.Data,
+                IdFigurino = movimentacaoViewModel.IdFigurino,
+                IdManequim = movimentacaoViewModel.IdManequim,
+                IdAssociado = movimentacaoViewModel.IdAssociado,
+                IdColaborador = colaborador.Id,
+                Status = status,
+                ConfirmacaoRecebimento = 0
+            };
+
+            int resul = await _movimentacaoService.CreateAsync(movimentacao);
+
+            string tipoMov = string.Empty;
+
+            if (movimentacaoViewModel.Movimentacao.Equals("ENTREGUE"))
+            {
+                tipoMov = "Entregue";
+            }
+            else
+            {
+                tipoMov = "Devolvido";
+            }
+
+            switch (resul)
+            {
+                case 200:
+                    Notificar($"<b>Sucesso!</b> Figurino foi <b>{tipoMov}</b>", Notifica.Sucesso);
+                    break;
+                case 400:
+                    Notificar("<b>Alerta!</b> Não há estoque desse tamanho", Notifica.Alerta);
+                    break;
+                case 401:
+                    Notificar("<b>Alerta!</b> Não há peças disponíveis para empréstimo", Notifica.Alerta);
+                    break;
+                case 402:
+                    Notificar("<b>Alerta!</b> Não há nada para devolver", Notifica.Alerta);
+                    break;
+                case 500:
+                    Notificar("<b>Erro!</b> Algo deu errado", Notifica.Erro);
+                    break;
+                default:
+                    Notificar("<b>Erro!</b> Algo deu errado na operação", Notifica.Erro);
+                    break;
+            }
+
+            return RedirectToAction(nameof(Movimentar), new { id = movimentacaoViewModel.IdFigurino });
+        }
     }
 }
+
