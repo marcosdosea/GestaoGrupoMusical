@@ -18,6 +18,7 @@ namespace Core.DTO
 
     public class EnsaioDetailsDTO
     {
+        public int Id { get; set; }
         public string? Tipo { get; set; }
 
         [Display(Name = "Data e Hora de Início")]

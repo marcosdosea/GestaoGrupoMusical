@@ -152,5 +152,20 @@ namespace Service
                 }).AsNoTracking().ToListAsync();
             return await query;
         }
+
+        public EnsaioDetailsDTO GetDetailsDTO(int idEnsaio)
+        {
+            var query = _context.Ensaios
+                .Select(g => new EnsaioDetailsDTO
+                {
+                    Id = g.Id,
+                    DataHoraInicio = g.DataHoraInicio,
+                    Tipo = g.Tipo,
+                    Local = g.Local,
+                    PresencaObrigatoria = g.PresencaObrigatoria == 1 ? "Sim" : "Não"
+
+                }).Where(g => g.Id == idEnsaio);
+            return query;
+        }
     }
 }
