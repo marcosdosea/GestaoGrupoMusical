@@ -180,7 +180,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> CreateEstoque(int idFigurino)
         {
             var figurino = await _figurinoService.Get(idFigurino);
-            var manequins = _manequim.GetAll();
+            var manequins = _manequimService.GetAll();
 
             SelectList listManequins = new SelectList(manequins, "Id", "Tamanho");
 
@@ -198,14 +198,14 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CreateEstoque(CreateEstoqueViewModel estoqueDTO)
+        public async Task<ActionResult> CreateEstoque(CreateEstoqueViewModel estoqueViewModel)
         {
-            /*Figurinomanequim estoque = new()
+            Figurinomanequim estoque = new()
             {
-                IdFigurino = estoqueDTO.IdFigurino,
-                IdManequim = estoqueDTO.IdManequim,
-                QuantidadeDisponivel = estoqueDTO.Disponivel,
-                QuantidadeEntregue = estoqueDTO.Entregues
+                IdFigurino = estoqueViewModel.IdFigurino,
+                IdManequim = estoqueViewModel.IdManequim,
+                QuantidadeDisponivel = estoqueViewModel.QuantidadeDisponivel,
+                QuantidadeEntregue = 0
             };
 
             int resul = await _figurinoService.CreateEstoque(estoque);
@@ -227,8 +227,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 default:
                     Notificar("<b>Erro</b>! Algum problema ao tentar registrar estoque.", Notifica.Erro);
                     break;
-            }*/
-            return View();
+            }
+            return RedirectToAction(nameof(Estoque), new { id = estoqueViewModel.IdFigurino });
         }
 
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
