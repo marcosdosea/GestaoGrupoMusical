@@ -277,6 +277,20 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             return RedirectToAction(nameof(Movimentar), new { id = movimentacaoViewModel.IdFigurino });
         }
+
+        [Authorize(Roles = "ASSOCIADO")]
+        public async Task<ActionResult> Movimentacoes()
+        {
+            var associado = await _pessoaService.GetByCpf(User.Identity?.Name);
+            if (associado == null)
+            {
+                return RedirectToAction("Sair", "Identity");
+            }
+
+            var movimentacoes = await _movimentacaoService.MovimentacoesByIdAssociadoAsync(associado.Id);
+
+            return View(movimentacoes);
+        }
     }
 }
 
