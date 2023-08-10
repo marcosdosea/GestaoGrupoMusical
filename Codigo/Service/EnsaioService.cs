@@ -73,7 +73,7 @@ namespace Service
         {
 
              try
-            {
+             {
                 var ensaioDb = await _context.Ensaios.Where(e => e.Id == ensaio.Id).AsNoTracking().SingleOrDefaultAsync();
                 if(ensaioDb != null)
                 {
@@ -99,11 +99,11 @@ namespace Service
                     return 401;
                 }
              
-            }
-            catch
-            {
+             }
+             catch
+             {
                 return 500;
-            }
+             }
         }
         /// <summary>
         /// Consulta um Ensaio no banco de dados
@@ -165,10 +165,11 @@ namespace Service
                     Local = g.Local,
                     PresencaObrigatoria = g.PresencaObrigatoria == 1 ? "Sim" : "Não",
                     Repertorio = g.Repertorio,
-                    NomeRegente = _context.Pessoas.Find(g.IdRegente).Nome
+                    NomeRegente = _context.Pessoas.Find(g.IdRegente)!.Nome
 
                 }).Where(g => g.Id == idEnsaio);
-            return query;
+
+            return query.FirstOrDefault()!;
         }
     }
 }
