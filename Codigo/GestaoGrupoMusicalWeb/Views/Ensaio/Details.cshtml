@@ -25,17 +25,14 @@
                 <div class="form-group col-xxl-4">
                     <label asp-for="DataHoraInicio" class="control-label"></label>
                     <input asp-for="DataHoraInicio" class="form-control" disabled/>
-                    <span asp-validation-for="DataHoraInicio" class="text-danger"></span>
                 </div>
                 <div class="form-group col-xxl-4">
                     <label asp-for="DataHoraFim" class="control-label"></label>
                     <input asp-for="DataHoraFim" class="form-control" disabled/>
-                    <span asp-validation-for="DataHoraFim" class="text-danger"></span>
                 </div>
                 <div class="form-group col-xxl-4">
                     <label asp-for="Tipo" class="control-label"></label>
                     <input asp-for="Tipo" class="form-control" disabled />
-                    <span asp-validation-for="Tipo" class="text-danger"></span>
                 </div>
             </div>
         </div>
@@ -53,7 +50,6 @@
                             }
                         }
                     }
-                    <span asp-validation-for="PresencaObrigatoria" class="text-danger"></span>
                 </div>
             </div>
         </div>
@@ -63,7 +59,6 @@
                 <div class="form-group">
                     <label asp-for="Local" class="control-label"></label>
                     <input asp-for="Local" class="form-control" disabled/>
-                    <span asp-validation-for="Local" class="text-danger"></span>
                 </div>
             </div>
         </div>
@@ -74,7 +69,6 @@
                     <select asp-for="IdRegente" asp-items="@Model.ListaPessoa" class="form-select">
                     <option value=""></option>
                     </select>
-                    <span asp-validation-for="IdRegente" class="text-danger"></span>
                 </div>
             </div>
         </div>
@@ -82,8 +76,7 @@
             <div class="row">
                 <div class="form-group">
                     <label asp-for="Repertorio" class="control-label"></label>
-                    <input asp-for="Repertorio" class="form-control"/>
-                    <span asp-validation-for="Repertorio" class="text-danger"></span>
+                    <input asp-for="Repertorio" class="form-control" disabled/>
                 </div>
             </div>
         </div>
