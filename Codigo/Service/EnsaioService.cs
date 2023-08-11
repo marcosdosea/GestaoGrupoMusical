@@ -1,6 +1,7 @@
 ﻿using Core;
 using Core.DTO;
 using Core.Service;
+using Email;
 using Microsoft.EntityFrameworkCore;
 
 namespace Service
@@ -30,11 +31,22 @@ namespace Service
                         await _context.Ensaios.AddAsync(ensaio);
 
                         var associados = _context.Pessoas
-                                           .Where(p => p.IdPapelGrupo == 1 && p.Ativo == 1 && p.IdGrupoMusical == ensaio.IdGrupoMusical)
-                                           .Select(pessoa => new { pessoa.Id, pessoa.Email }).AsNoTracking();
+                                         .Where(p => p.IdPapelGrupo == 1 && p.Ativo == 1 && p.IdGrupoMusical == ensaio.IdGrupoMusical)
+                                         .Select(pessoa => new { pessoa.Id, pessoa.Email }).AsNoTracking();
 
                         await _context.SaveChangesAsync();
-                        
+
+                        EmailModel email = new()
+                        {
+                            Assunto = "Batalá - Novo Ensaio Cadastrado",
+                            AddresseeName = "Associado",
+                            Body = "<div style=\"text-align: center;\">\r\n    " +
+                                    $"<h3>Um novo ensaio foi cadastrado.</h3>\r\n" +
+                                    "<div style=\"font-size: large;\">\r\n        " +
+                                    $"<dt style=\"font-weight: 700;\">Data e Horário de Início:</dt><dd>{ensaio.DataHoraInicio}</dd>" +
+                                    $"<dt style=\"font-weight: 700;\">Data e Horário de Fim:</dt><dd>{ensaio.DataHoraFim}</dd>\n</div>"
+                        };
+
                         await associados.ForEachAsync(async associado => {
                             Ensaiopessoa ensaioPessoa = new()
                             {
@@ -43,10 +55,14 @@ namespace Service
                                 Presente = 1
                             };
                             await _context.Ensaiopessoas.AddAsync(ensaioPessoa);
+                            email.To.Add(associado.Email);
                         });
+
+                        await EmailService.Enviar(email);
 
                         await _context.SaveChangesAsync();
                         await transaction.CommitAsync();
+
                         return 200;
                     }
                     else
