@@ -28,17 +28,19 @@ namespace Service
                     if(ensaio.DataHoraInicio >= DateTime.Now)
                     {
                         await _context.Ensaios.AddAsync(ensaio);
-                        var idAssociados = _context.Pessoas
+
+                        var associados = _context.Pessoas
                                            .Where(p => p.IdPapelGrupo == 1 && p.Ativo == 1 && p.IdGrupoMusical == ensaio.IdGrupoMusical)
-                                           .Select(pessoa => pessoa.Id);
+                                           .Select(pessoa => new { pessoa.Id, pessoa.Email }).AsNoTracking();
 
                         await _context.SaveChangesAsync();
-
-                        await idAssociados.ForEachAsync(async idPessoa => {
+                        
+                        await associados.ForEachAsync(async associado => {
                             Ensaiopessoa ensaioPessoa = new()
                             {
                                 IdEnsaio = ensaio.Id,
-                                IdPessoa = idPessoa
+                                IdPessoa = associado.Id,
+                                Presente = 1
                             };
                             await _context.Ensaiopessoas.AddAsync(ensaioPessoa);
                         });
