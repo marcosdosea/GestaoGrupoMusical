@@ -165,11 +165,11 @@ namespace Service
                     Local = g.Local,
                     PresencaObrigatoria = g.PresencaObrigatoria == 1 ? "Sim" : "Não",
                     Repertorio = g.Repertorio,
-                    NomeRegente = _context.Pessoas.Find(g.IdRegente)!.Nome
+                    NomeRegente = g.IdRegenteNavigation.Nome
 
                 }).Where(g => g.Id == idEnsaio);
 
-            return query.FirstOrDefault()!;
+            return query.First();
         }
     }
 }
