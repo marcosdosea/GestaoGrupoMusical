@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.VisualBasic;
+using MySqlX.XDevAPI.Common;
 using Service;
 using System.Data;
 
@@ -167,6 +168,15 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> DeleteEstoque(int idFigurino, int idManequim)
         {
             int result = await _figurinoService.DeleteEstoque(idFigurino, idManequim);
+
+            if (result == 200)
+            {
+                Notificar("<b>Sucesso</b>! Estoque removido!", Notifica.Sucesso);
+            }
+            else
+            {
+                Notificar("<b>Erro</b>! Algo deu errado ao tentar remover estoque.", Notifica.Erro);
+            }
 
             return RedirectToAction(nameof(Estoque));
         }
