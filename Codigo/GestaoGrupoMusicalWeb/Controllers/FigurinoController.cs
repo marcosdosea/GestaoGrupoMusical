@@ -272,7 +272,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Movimentar(MovimentacaoFigurinoViewModel movimentacaoViewModel)
         {
-
             var colaborador = await _pessoaService.GetByCpf(User.Identity.Name);
 
             string status = string.Empty;
@@ -334,6 +333,15 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
 
             return RedirectToAction(nameof(Movimentar), new { id = movimentacaoViewModel.IdFigurino });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeleteMovimento(int id)
+        {
+
+
+            throw new NotImplementedException();
         }
     }
 }

@@ -104,6 +104,7 @@ namespace Service
 
         public Task<int> DeleteAsync(int id)
         {
+            _context.
             throw new NotImplementedException();
         }
 
@@ -170,6 +171,11 @@ namespace Service
                          ).AsNoTracking().ToListAsync();
 
             return query;
+        }
+
+        public Task<int> DeleteMovimento(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

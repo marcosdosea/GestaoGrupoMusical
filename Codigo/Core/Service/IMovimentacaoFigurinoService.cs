@@ -44,5 +44,15 @@ namespace Core.Service
         Task<int> DeleteAsync(int id);
 
         Task<IEnumerable<EstoqueDTO>> GetEstoque(int idFigurino);
+
+
+        /// <summary>
+        /// remove uma movimentação de figurino
+        /// </summary>
+        /// <param name="id">id da movimentação</param>
+        /// <returns>
+        /// 
+        /// </returns>
+        Task<int> DeleteMovimento(int id);
     }
 }
