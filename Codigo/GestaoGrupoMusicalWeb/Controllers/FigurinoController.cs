@@ -160,6 +160,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 return RedirectToAction(nameof(Index));
             }
         }
+
+        public ActionResult DeleteEstoque()
+        {
+
+        }
     
         public async Task<ActionResult> Estoque(int id)
         {
