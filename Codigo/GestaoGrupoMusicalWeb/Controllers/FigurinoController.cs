@@ -161,9 +161,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
         }
 
+        // POST: FigurinoController/DeleteEstoque/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteEstoque(int idFigurino, int idManequim)
         {
-            int result = _figurinoService.DeleteEstoque(idFigurino, idManequim).Result;
+            int result = await _figurinoService.DeleteEstoque(idFigurino, idManequim);
 
             return RedirectToAction(nameof(Estoque));
         }
