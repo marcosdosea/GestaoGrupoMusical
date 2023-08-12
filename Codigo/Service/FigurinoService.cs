@@ -143,5 +143,21 @@ namespace Service
             await _context.SaveChangesAsync();
             return 200;
         }
+
+        public async Task<int> DeleteEstoque(int idFigurino, int idManequim)
+        {
+            try
+            {
+                var estoque = _context.Figurinomanequims.Find(idFigurino, idManequim);
+                _context.Figurinomanequims.Remove(estoque);
+                await _context.SaveChangesAsync();
+
+                return 200;
+            }
+            catch
+            {
+                return 500;
+            }
+        }
     }
 }

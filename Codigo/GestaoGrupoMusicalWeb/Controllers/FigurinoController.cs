@@ -161,7 +161,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
         }
 
-        public ActionResult DeleteEstoque()
+        public ActionResult DeleteEstoque(int idFigurino, int IdManequim)
         {
 
         }
