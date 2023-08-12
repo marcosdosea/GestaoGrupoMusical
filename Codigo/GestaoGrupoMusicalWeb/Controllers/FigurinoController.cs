@@ -178,7 +178,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 Notificar("<b>Erro</b>! Algo deu errado ao tentar remover estoque.", Notifica.Erro);
             }
 
-            return RedirectToAction(nameof(Estoque));
+            return RedirectToAction(nameof(Estoque), new { id = idFigurino });
         }
     
         public async Task<ActionResult> Estoque(int id)
