@@ -161,9 +161,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
         }
 
-        public ActionResult DeleteEstoque(int idFigurino, int IdManequim)
+        public async Task<ActionResult> DeleteEstoque(int idFigurino, int idManequim)
         {
+            int result = _figurinoService.DeleteEstoque(idFigurino, idManequim).Result;
 
+            return RedirectToAction(nameof(Estoque));
         }
     
         public async Task<ActionResult> Estoque(int id)
