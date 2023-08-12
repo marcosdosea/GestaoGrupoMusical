@@ -15,7 +15,7 @@
             </td>
             <td class="p-3">
                 <a role="button" class="btn btn-secondary btn-sm mb-2 mb-lg-0" asp-controller="" asp-action=""><i class="fa-solid fa-pen-to-square"></i> Editar</a>
-                <form id="@(item.IdFigurino + item.IdManequim + "_confirmar")" asp-action="Delete" asp-route-id="@item.Id" method="post" class="me-2">
+                <form id="@(item.IdFigurino + item.IdManequim + "_confirmar")" asp-action="DeleteEstoque" asp-route-idFigurino="@item.IdFigurino" asp-route-idManequim="@item.IdManequim" method="post" class="me-2">
                     <a onclick="showModal('@(item.IdFigurino + item.IdManequim + "_confirmar")', 'figurinoModal')" class="btn btn-sm btn-secondary" role="button" data-bs-toggle="modal" data-bs-target="#figurinoModal">
                         <i class="fa-solid fa-xmark"> </i>
                         Excluir
