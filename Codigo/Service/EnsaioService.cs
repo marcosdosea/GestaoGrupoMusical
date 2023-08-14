@@ -192,7 +192,7 @@ namespace Service
             return await query;
         }
 
-        public async Task<IEnumerable<EnsaioFrequenciaDTO>> GetFrequencia(int idEnsaio, int idGrupoMusical)
+        public async Task<EnsaioFrequenciaDTO?> GetFrequencia(int idEnsaio, int idGrupoMusical)
         {
             var query = from ensaio in _context.Ensaios
                         where ensaio.Id == idEnsaio && ensaio.IdGrupoMusical == idGrupoMusical
@@ -212,7 +212,7 @@ namespace Service
                                 Justificativa = ensaioPessoa.JustificativaFalta,
                                 Presente = Convert.ToBoolean(ensaioPessoa.Presente),
                                 JustificativaAceita = Convert.ToBoolean(ensaioPessoa.JustificativaAceita),
-                            })
+                            }).AsEnumerable()
                         };
 
             /*var query = from ensaioPessoa in _context.Ensaiopessoas
@@ -227,7 +227,7 @@ namespace Service
                             JustificativaAceita = Convert.ToBoolean(ensaioPessoa.JustificativaAceita),
                         };*/
 
-            return await query.AsNoTracking().ToListAsync();
+            return await query.AsNoTracking().SingleOrDefaultAsync();
         }
     }
 }
