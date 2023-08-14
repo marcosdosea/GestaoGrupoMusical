@@ -1,0 +1,51 @@
+﻿@model IEnumerable<Core.DTO.EnsaioFrequenciaDTO.FrequenciaDTO>
+
+<div class="table-responsive">
+    <table class="table mt-3">
+        <thead>
+            <tr class="bg-danger bg-opacity-75 text-white">
+                <th>
+                    @Html.DisplayNameFor(model => model.Cpf)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.NomeAssociado)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Justificativa)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Presente)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.JustificativaAceita)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr class="border-bottom border-danger border-opacity-75 align-middle">
+                    <td>
+                        @item.Cpf
+                    </td>
+                    <td>
+                        @item.NomeAssociado
+                    </td>
+                    <td>
+                        @item.Justificativa
+                    </td>
+                    <td>
+                        @item.Presente
+                    </td>
+                    <td>
+                        @item.JustificativaAceita
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @if (!Model.Any())
+    {
+        <p class="text-center mt-4 mb-0">Desculpe, nenhuma frequência encontrada :(</p>
+    }
+</div>
