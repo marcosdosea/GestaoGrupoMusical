@@ -175,8 +175,8 @@ namespace Service
         {
             var entregues = await (from movimentacoesFigurino in _context.Movimentacaofigurinos
                              where movimentacoesFigurino.IdAssociado == idAssociado
-                             where movimentacoesFigurino.Status == "ENTREGUE"
-                             orderby movimentacoesFigurino.Data descending
+                             where movimentacoesFigurino.Status == "ENTREGUE" || movimentacoesFigurino.Status == "RECEBIDO"
+                                   orderby movimentacoesFigurino.Data descending
                              select new MovimentacaoAssociadoFigurino
                              {
                                  Id = movimentacoesFigurino.Id,
@@ -189,8 +189,8 @@ namespace Service
 
             var devolucoes = await (from movimentacoesFigurino in _context.Movimentacaofigurinos
                               where movimentacoesFigurino.IdAssociado == idAssociado
-                              where movimentacoesFigurino.Status == "DEVOLVIDO"
-                              orderby movimentacoesFigurino.Data descending
+                              where movimentacoesFigurino.Status == "DEVOLVIDO" || movimentacoesFigurino.Status == "DANIFICADO"
+                                    orderby movimentacoesFigurino.Data descending
                               select new MovimentacaoAssociadoFigurino
                               {
                                   Id = movimentacoesFigurino.Id,
@@ -223,7 +223,7 @@ namespace Service
                     return 404;
                 }else if(movimentacao.IdAssociado == idAssociado && movimentacao.Id == idMovimentacao)
                 {
-                    movimentacao.ConfirmacaoRecebimento = 1;
+                    movimentacao.ConfirmacaoRecebimento = 1; 
                     _context.Update(movimentacao);
                     await _context.SaveChangesAsync();
                     return movimentacao.Status == "ENTREGUE" ? 200 : 201;
