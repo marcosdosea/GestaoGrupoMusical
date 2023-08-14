@@ -1,15 +1,15 @@
 ﻿@model IEnumerable<GestaoGrupoMusicalWeb.Models.FigurinoViewModel>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Figurinos";
 }
 
 <partial name="_Notificar">
 
-<h1>Figurinos</h1>
-<p>
-        <a class="btn btn-secondary m-3" asp-action="Create">Novo Figurino</a>
-</p>
+<div class="d-flex justify-content-between align-items-center">
+    <h1 >@ViewData["Title"]</h1>
+    <a class="btn btn-secondary m-3" asp-action="Create">Novo Figurino</a>
+</div>
 <table class="table">
     <thead>
         <tr>
