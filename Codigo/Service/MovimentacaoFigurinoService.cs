@@ -50,6 +50,7 @@ namespace Service
                 if (movimentacao.Status.Equals("ENTREGUE"))
                 {
                     figurinoEstoque.QuantidadeDisponivel--;
+                    figurinoEstoque.QuantidadeEntregue++;
                 }
                 else if (movimentacao.Status.Equals("DEVOLVIDO") || movimentacao.Status.Equals("DANIFICADO"))
                 {
@@ -61,7 +62,12 @@ namespace Service
                     if (movimentacao.Status.Equals("DEVOLVIDO"))
                     {
                         figurinoEstoque.QuantidadeDisponivel++;
+<<<<<<< HEAD
                     }
+=======
+                        figurinoEstoque.QuantidadeEntregue--;
+                    }     
+>>>>>>> 17c574aac1b18092bb0fd6c08aba0885a42a8d35
                 }
 
 

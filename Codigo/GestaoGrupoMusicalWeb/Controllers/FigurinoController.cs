@@ -163,17 +163,75 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         public async Task<ActionResult> Estoque(int id)
         {
-            EstoqueDTOViewModel estoqueDTOviewModel = new();
+            EstoqueViewModel estoqueViewModel = new();
             var figurino = await _figurinoService.Get(id);
 
             var estoque = await _figurinoService.GetAllEstoqueDTO(id);
 
-            estoqueDTOviewModel.TabelaEstoques = estoque;
+            estoqueViewModel.TabelaEstoques = estoque;
 
-            estoqueDTOviewModel.Nome = figurino.Nome;
-            estoqueDTOviewModel.Data = figurino.Data;
+            estoqueViewModel.Id = figurino.Id;
+            estoqueViewModel.Nome = figurino.Nome;
+            estoqueViewModel.Data = figurino.Data;
 
-            return View(estoqueDTOviewModel);
+            return View(estoqueViewModel);
+        }
+
+        public async Task<ActionResult> CreateEstoque(int idFigurino)
+        {
+            var figurino = await _figurinoService.Get(idFigurino);
+            var manequins = _manequimService.GetAll();
+
+            SelectList listManequins = new SelectList(manequins, "Id", "Tamanho");
+
+            CreateEstoqueViewModel estoqueViewModel = new()
+            {
+                IdFigurino = figurino.Id,
+                Nome = figurino.Nome,
+                Data = figurino.Data.Value.ToString("dd/MM/yyyy"),
+                listManequim = listManequins
+
+            };
+
+            return View(estoqueViewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> CreateEstoque(CreateEstoqueViewModel estoqueViewModel)
+        {
+            Figurinomanequim estoque = new()
+            {
+                IdFigurino = estoqueViewModel.IdFigurino,
+                IdManequim = estoqueViewModel.IdManequim,
+                QuantidadeDisponivel = estoqueViewModel.QuantidadeDisponivel,
+                QuantidadeEntregue = 0
+            };
+
+            int resul = await _figurinoService.CreateEstoque(estoque);
+
+            switch (resul)
+            {
+                case 200:
+                    Notificar("<b>Sucesso</b>! Estoque cadastrado.", Notifica.Sucesso);
+                    break;
+                case 201:
+                    Notificar("<b>Sucesso</b>! Adicionado peças ao estoque.", Notifica.Sucesso);
+                    break;
+                case 400:
+                    Notificar("<b>Alerta</b>! Dados insuficientes.", Notifica.Alerta);
+                    break;
+                case 401:
+                    Notificar("<b>Alerta</b>! Sem quantidade disponível para estoque.", Notifica.Alerta);
+                    break;
+                case 500:
+                    Notificar("<b>Erro</b>! Algum problema ao registrar estoque.", Notifica.Erro);
+                    break;
+                default:
+                    Notificar("<b>Erro</b>! Algum problema ao tentar registrar estoque.", Notifica.Erro);
+                    break;
+            }
+            return RedirectToAction(nameof(Estoque), new { id = estoqueViewModel.IdFigurino });
         }
 
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
