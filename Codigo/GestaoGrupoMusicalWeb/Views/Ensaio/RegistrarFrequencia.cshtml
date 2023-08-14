@@ -5,21 +5,20 @@
 
 <partial name="_Notificar">
 
-<h1 class="fs-5">@ViewData["Title"]</h1>
-
-<div class="container mt-4">
+<div class="container">
+        <h1 class="fs-5 mb-4">@ViewData["Title"]</h1>
         <div class="row">
-            <div>
-                <label asp-for="Inicio"></label>
-                <input asp-for="Inicio" disabled />
+            <div class="col-md-4">
+                <label class="control-label" asp-for="Inicio"></label>
+                <input class="form-control" asp-for="Inicio" disabled />
             </div>
-            <div>
-                <label asp-for="Fim"></label>
-                <input asp-for="Fim" disabled />
+            <div class="col-md-4">
+                <label class="control-label" asp-for="Fim"></label>
+                <input class="form-control" asp-for="Fim" disabled />
             </div>
-            <div>
-                <label asp-for="Tipo"></label>
-                <input asp-for="Tipo" disabled/>
+            <div class="col-md-4">
+                <label class="control-label" asp-for="Tipo"></label>
+                <input class="form-control" asp-for="Tipo" disabled />
             </div>
         </div>
         <partial name="_TabelaFrequencia" model="Model.Frequencias" />
