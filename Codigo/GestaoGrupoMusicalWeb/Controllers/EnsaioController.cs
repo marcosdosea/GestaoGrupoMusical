@@ -27,7 +27,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: EnsaioController
         public async Task<ActionResult> Index()
         {
-            int idGrupo = _grupoMusical.GetIdGrupo(User.Identity.Name);
+            int idGrupo = Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value);
             var ensaios = await _ensaio.GetAllIndexDTO(idGrupo);
             return View(ensaios);
         }
