@@ -3,7 +3,6 @@
 <table>
     <thead>
         <tr>
-            <th>ID</th>
             <th>Data</th>
             <th>Nome do Figurino</th>
             <th>Tamanho</th>
@@ -14,14 +13,45 @@
         @foreach (var movimentacao in Model)
         {
             <tr>
-                <td>@movimentacao.Id</td>
                 <td>@movimentacao.Data</td>
                 <td>@movimentacao.NomeFigurino</td>
                 <td>@movimentacao.Tamanho</td>
                 <td>@movimentacao.Status</td>
+
+
+                <td class="py-3 border-0 d-flex flex-column flex-lg-row gap-3">
+                    <form id="@(movimentacao.Id + "_confirmar")" asp-controller="Figurino" asp-action="ConfirmarMovimentacao" asp-route-idMovimentacao="@movimentacao.Id" method="post">
+                        <a role="button" class="btn btn-sm btn-secondary"
+                       data-bs-toggle="modal" data-bs-target="#associadoDevolucaoModal"
+                       onclick="showModal('@(movimentacao.Id + "_confirmar")', 'associadoDevolucaoModal')">
+                            <i class="fa-solid fa-check"></i>
+                            Confirmar
+                        </a>
+                    </form>
+                </td>
+
             </tr>
         }
     </tbody>
+     @if (!Model.Any())
+    {
+        <p class="text-center mt-4 mb-0">Desculpe, nenhuma <b>Devolução</b> encontrada :(</p>
+    }
 </table>
-@{
-}
+<div class="modal fade" id="associadoDevolucaoModal" tabindex="-1" aria-labelledby="associadoDevolucaoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="associadoDevolucaoLabel">Confirmar Devolução</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Deseja <b>Confirmar</b> essa <b>Devolução?</b>
+            </div>
+            <form method="post" class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary col-3 me-4" data-bs-dismiss="modal">Não</button>
+                <button type="submit" class="btn btn-secondary col-3">Sim</button>
+            </form>
+        </div>
+    </div>
+</div>
