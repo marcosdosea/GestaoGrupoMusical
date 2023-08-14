@@ -39,5 +39,6 @@ namespace Core.Service
         Task<IEnumerable<Ensaio>> GetAll();
         Task<IEnumerable<EnsaioDTO>> GetAllDTO();
         Task<IEnumerable<EnsaioIndexDTO>> GetAllIndexDTO();
+        Task<IEnumerable<EnsaioFrequenciaDTO>> GetFrequencia(int idEnsaio, int idGrupoMusical);
     }
 }

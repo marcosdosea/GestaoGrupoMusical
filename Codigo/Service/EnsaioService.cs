@@ -191,5 +191,18 @@ namespace Service
                 }).AsNoTracking().ToListAsync();
             return await query;
         }
+
+        public async Task<IEnumerable<EnsaioFrequenciaDTO>> GetFrequencia(int idEnsaio, int idGrupoMusical)
+        {
+            var query = from ensaioPessoa in _context.Ensaiopessoas
+                        where ensaioPessoa.IdEnsaio == idEnsaio && ensaioPessoa.IdEnsaioNavigation.IdGrupoMusical == idGrupoMusical
+                        orderby ensaioPessoa.IdPessoaNavigation.Nome
+                        select new EnsaioFrequenciaDTO
+                        {
+                            ensaioPessoa.IdPessoaNavigation.Cpf
+                        };
+
+            return await query.AsNoTracking().ToListAsync();
+        }
     }
 }
