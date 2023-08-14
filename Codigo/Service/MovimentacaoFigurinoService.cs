@@ -104,7 +104,7 @@ namespace Service
 
         public Task<int> DeleteAsync(int id)
         {
-            _context.
+            
             throw new NotImplementedException();
         }
 
