@@ -17,19 +17,19 @@
                 <td>@movimentacao.NomeFigurino</td>
                 <td>@movimentacao.Tamanho</td>
                 <td>@movimentacao.Status</td>
-
-
-                <td class="py-3 border-0 d-flex flex-column flex-lg-row gap-3">
-                    <form id="@(movimentacao.Id + "_confirmar")" asp-controller="Figurino" asp-action="ConfirmarMovimentacao" asp-route-idMovimentacao="@movimentacao.Id" method="post">
-                        <a role="button" class="btn btn-sm btn-secondary"
-                       data-bs-toggle="modal" data-bs-target="#associadoDevolucaoModal"
-                       onclick="showModal('@(movimentacao.Id + "_confirmar")', 'associadoDevolucaoModal')">
-                            <i class="fa-solid fa-check"></i>
-                            Confirmar
-                        </a>
-                    </form>
-                </td>
-
+                @if (@movimentacao.Status.Equals("Agurdando Confirmação"))
+                {
+                    <td class="py-3 border-0 d-flex flex-column flex-lg-row gap-3">
+                        <form id="@(movimentacao.Id + "_confirmar")" asp-controller="Figurino" asp-action="ConfirmarMovimentacao" asp-route-idMovimentacao="@movimentacao.Id" method="post">
+                            <a role="button" class="btn btn-sm btn-secondary"
+                           data-bs-toggle="modal" data-bs-target="#associadoDevolucaoModal"
+                           onclick="showModal('@(movimentacao.Id + "_confirmar")', 'associadoDevolucaoModal')">
+                                <i class="fa-solid fa-check"></i>
+                                Confirmar
+                            </a>
+                        </form>
+                    </td>
+                }  
             </tr>
         }
     </tbody>
