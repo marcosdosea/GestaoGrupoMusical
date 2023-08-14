@@ -157,15 +157,15 @@ namespace Service
         public async Task<IEnumerable<EstoqueDTO>> GetEstoque(int idFigurino)
         {
             var query = await (from estoque in _context.Figurinomanequims
-                               where estoque.IdFigurino == idFigurino
-                               select new EstoqueDTO
-                               {
-                                   IdFigurino = estoque.IdFigurino,
-                                   IdManequim = estoque.IdManequim,
-                                   Tamanho = estoque.IdManequimNavigation.Tamanho,
-                                   Disponivel = estoque.QuantidadeDisponivel,
-                                   Entregues = estoque.QuantidadeEntregue
-                               }
+                              where estoque.IdFigurino == idFigurino
+                              select new EstoqueDTO
+                              {
+                                  IdFigurino = estoque.IdFigurino,
+                                  IdManequim = estoque.IdManequim,
+                                  Tamanho = estoque.IdManequimNavigation.Tamanho,
+                                  Disponivel = estoque.QuantidadeDisponivel,
+                                  Entregues = estoque.QuantidadeEntregue
+                              }
                          ).AsNoTracking().ToListAsync();
 
             return query;
