@@ -10,10 +10,10 @@
     <h1 >@ViewData["Title"]</h1>
     <a class="btn btn-secondary m-3" asp-action="Create">Novo Figurino</a>
 </div>
-    <div class="table-responsive-md">
+<div class="table-responsive-md">
     <table class="table">
         <thead>
-            <tr>
+            <tr class="bg-danger bg-opacity-75 text-white">
                 <th>
                     @Html.DisplayNameFor(model => model.Id)
                 </th>
@@ -29,7 +29,7 @@
         <tbody>
         @foreach (var item in Model)
         {
-            <tr>
+            <tr class="border-bottom border-danger border-opacity-75 align-middle">
                 <td>
                     @Html.DisplayFor(modelItem => item.Id)
                 </td>
@@ -51,7 +51,7 @@
                     <a role="button" class="btn btn-secondary btn-sm  me-2" asp-controller="Figurino" asp-action="Movimentar" asp-route-id="@item.Id"><i class="fa-solid fa-arrow-right-arrow-left"></i> Movimentar </a>
                 </td>
             </tr>
-            }
+         }
         </tbody>
     </table>
 </div>
