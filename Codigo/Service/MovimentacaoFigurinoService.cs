@@ -62,12 +62,8 @@ namespace Service
                     if (movimentacao.Status.Equals("DEVOLVIDO"))
                     {
                         figurinoEstoque.QuantidadeDisponivel++;
-<<<<<<< HEAD
-                    }
-=======
                         figurinoEstoque.QuantidadeEntregue--;
-                    }     
->>>>>>> 17c574aac1b18092bb0fd6c08aba0885a42a8d35
+                    }
                 }
 
 
@@ -106,6 +102,7 @@ namespace Service
             await transaction.CommitAsync();
             return 200;
         }
+
 
         public Task<int> DeleteAsync(int id)
         {
@@ -162,21 +159,17 @@ namespace Service
 
         public async Task<IEnumerable<EstoqueDTO>> GetEstoque(int idFigurino)
         {
-            var query = await (from movimentacoes in _context.Movimentacaofigurinos
-                               where movimentacoes.IdFigurino == idFigurino
-                               orderby movimentacoes.Id descending
-                               select new MovimentacaoFigurinoDTO
+            var query = await (from estoque in _context.Figurinomanequims
+                               where estoque.IdFigurino == idFigurino
+                               select new EstoqueDTO
                                {
-                                   Id = movimentacoes.Id,
-                                   IdFigurino = idFigurino,
-                                   IdManequim = movimentacoes.IdManequim,
-                                   Cpf = movimentacoes.IdAssociadoNavigation.Cpf,
-                                   NomeAssociado = movimentacoes.IdAssociadoNavigation.Nome,
-                                   Data = movimentacoes.Data,
-                                   Movimentacao = movimentacoes.Status,
-                                   Status = movimentacoes.ConfirmacaoRecebimento == 0 ? "Aguardando Confirmação" : "Confirmado",
-                                   Tamanho = movimentacoes.IdManequimNavigation.Tamanho
-                               }).AsNoTracking().ToListAsync();
+                                   IdFigurino = estoque.IdFigurino,
+                                   IdManequim = estoque.IdManequim,
+                                   Tamanho = estoque.IdManequimNavigation.Tamanho,
+                                   Disponivel = estoque.QuantidadeDisponivel,
+                                   Entregues = estoque.QuantidadeEntregue
+                               }
+                         ).AsNoTracking().ToListAsync();
 
             return query;
         }
