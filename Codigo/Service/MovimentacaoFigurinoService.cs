@@ -156,17 +156,21 @@ namespace Service
 
         public async Task<IEnumerable<EstoqueDTO>> GetEstoque(int idFigurino)
         {
-            var query = await (from estoque in _context.Figurinomanequims
-                              where estoque.IdFigurino == idFigurino
-                              select new EstoqueDTO
-                              {
-                                  IdFigurino = estoque.IdFigurino,
-                                  IdManequim = estoque.IdManequim,
-                                  Tamanho = estoque.IdManequimNavigation.Tamanho,
-                                  Disponivel = estoque.QuantidadeDisponivel,
-                                  Entregues = estoque.QuantidadeEntregue
-                              }
-                         ).AsNoTracking().ToListAsync();
+            var query = await (from movimentacoes in _context.Movimentacaofigurinos
+                               where movimentacoes.IdFigurino == idFigurino
+                               orderby movimentacoes.Id descending
+                               select new MovimentacaoFigurinoDTO
+                               {
+                                   Id = movimentacoes.Id,
+                                   IdFigurino = idFigurino,
+                                   IdManequim = movimentacoes.IdManequim,
+                                   Cpf = movimentacoes.IdAssociadoNavigation.Cpf,
+                                   NomeAssociado = movimentacoes.IdAssociadoNavigation.Nome,
+                                   Data = movimentacoes.Data,
+                                   Movimentacao = movimentacoes.Status,
+                                   Status = movimentacoes.ConfirmacaoRecebimento == 0 ? "Aguardando Confirmação" : "Confirmado",
+                                   Tamanho = movimentacoes.IdManequimNavigation.Tamanho
+                               }).AsNoTracking().ToListAsync();
 
             return query;
         }
