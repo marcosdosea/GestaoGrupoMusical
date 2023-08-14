@@ -212,5 +212,31 @@ namespace Service
 
             return movimentacoes;
         }
+
+        public async Task<int> ConfirmarMovimentacao(int idMovimentacao, int idAssociado)
+        {
+            try
+            {
+                var movimentacao = await _context.Movimentacaofigurinos.FindAsync(idMovimentacao);
+                if(movimentacao == null)
+                {
+                    return 404;
+                }else if(movimentacao.IdAssociado == idAssociado && movimentacao.Id == idMovimentacao)
+                {
+                    movimentacao.ConfirmacaoRecebimento = 1;
+                    _context.Update(movimentacao);
+                    await _context.SaveChangesAsync();
+                    return movimentacao.Status == "ENTREGUE" ? 200 : 201;
+                }
+                else
+                {
+                    return movimentacao.Status == "ENTREGUE" ? 400 : 401;
+                }       
+            }
+            catch
+            {
+                return 500;
+            }
+        }
     }
 }
