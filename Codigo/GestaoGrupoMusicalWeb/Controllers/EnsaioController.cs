@@ -161,11 +161,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         public async Task<ActionResult> RegistrarFrequencia(int idEnsaio)
         {
-            var ensaio = await _ensaio.Get(idEnsaio);
-            if(ensaio == null || ensaio.IdGrupoMusical != Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value))
-            {
-                return RedirectToAction(nameof(Index));
+            if (User.FindFirst("IdGrupoMusical")?.Value == null) {
+                return RedirectToAction("Sair", "Identity");
             }
+            var frequencias = await _ensaio.GetFrequencia(idEnsaio, Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
+            return View(frequencias);
         }
     }
 }
