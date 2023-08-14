@@ -199,7 +199,11 @@ namespace Service
                         orderby ensaioPessoa.IdPessoaNavigation.Nome
                         select new EnsaioFrequenciaDTO
                         {
-                            ensaioPessoa.IdPessoaNavigation.Cpf
+                            Cpf = ensaioPessoa.IdPessoaNavigation.Cpf,
+                            NomeAssociado = ensaioPessoa.IdPessoaNavigation.Nome,
+                            Justificativa = ensaioPessoa.JustificativaFalta,
+                            Presente = Convert.ToBoolean(ensaioPessoa.Presente),
+                            JustificativaAceita = Convert.ToBoolean(ensaioPessoa.JustificativaAceita),
                         };
 
             return await query.AsNoTracking().ToListAsync();

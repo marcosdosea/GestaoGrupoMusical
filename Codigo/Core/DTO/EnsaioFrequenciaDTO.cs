@@ -11,7 +11,7 @@ namespace Core.DTO
         public string NomeAssociado { get; set; } = string.Empty;
 
         [Display (Name = "Justificativa Ausência")]
-        public string Justificativa { get; set; } = string.Empty;
+        public string? Justificativa { get; set; }
 
         public bool Presente { get; set; }
         [Display(Name = "Justificativa Aceita")]
