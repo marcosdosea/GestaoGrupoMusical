@@ -4,17 +4,33 @@ namespace Core.DTO
 {
     public class EnsaioFrequenciaDTO
     {
-        [Display(Name = "CPF")]
-        public string Cpf { get; set; } = string.Empty;
+        [Display(Name = "Início")]
+        public DateTime Inicio { get; set; }
 
-        [Display(Name = "Associado")]
-        public string NomeAssociado { get; set; } = string.Empty;
+        public DateTime Fim { get; set; }
 
-        [Display (Name = "Justificativa Ausência")]
-        public string? Justificativa { get; set; }
+        public string Tipo { get; set; } = string.Empty;
 
-        public bool Presente { get; set; }
-        [Display(Name = "Justificativa Aceita")]
-        public bool JustificativaAceita { get; set; }
+        [Display(Name = "Regente")]
+        public string NomeRegnete { get; set; } = string.Empty;
+
+        public string? Local { get; set; }
+        public IEnumerable<FrequenciaDTO>? Frequencias { get; set; }
+
+        public class FrequenciaDTO
+        {
+            [Display(Name = "CPF")]
+            public string Cpf { get; set; } = string.Empty;
+
+            [Display(Name = "Associado")]
+            public string NomeAssociado { get; set; } = string.Empty;
+
+            [Display(Name = "Justificativa Ausência")]
+            public string? Justificativa { get; set; }
+
+            public bool Presente { get; set; }
+            [Display(Name = "Justificativa Aceita")]
+            public bool JustificativaAceita { get; set; }
+        }
     }
 }
