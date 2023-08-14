@@ -38,5 +38,7 @@ namespace Core.Service
         /// 500: nao conseguiu criar o estoque ou atualizar
         /// </returns>
         Task<int> CreateEstoque(Figurinomanequim estoque);
+        Task<int> EditEstoque(Figurinomanequim estoque);
+        Task<EstoqueDTO> GetEstoque(int idFigurino, int idManequim);
     }
 }
