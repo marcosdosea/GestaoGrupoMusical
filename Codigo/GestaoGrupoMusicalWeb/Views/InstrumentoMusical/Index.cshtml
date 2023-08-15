@@ -6,54 +6,77 @@
 
 <partial name="_Notificar">
 
-<div class="d-flex justify-content-between align-items-center">
-    <h5>@ViewData["Title"]</h5>
-    <a role="button" class="btn btn-secondary m-3" asp-controller="InstrumentoMusical" asp-action="Create">Novo Instrumento</a>
-</div>
+    <div class="d-flex justify-content-between align-items-center">
+        <h5>@ViewData["Title"]</h5>
+        <a role="button" class="btn btn-secondary m-3" asp-controller="InstrumentoMusical" asp-action="Create">Novo Instrumento</a>
+    </div>
 
-<div class="table-responsive-md">
-    <table class="table">
-        <thead>
-            <tr class="bg-danger bg-opacity-75 text-white">
-                <th class="px-3">
-                    @Html.DisplayNameFor(m => m.Patrimonio)
-                </th>
-                <th class="px-3">
-                    @Html.DisplayNameFor(m => m.NomeInstrumento)
-                </th>
-                <th class="px-3">
-                    @Html.DisplayNameFor(m => m.Status)
-                </th>
-                <th class="px-3">
-                    @Html.DisplayNameFor(m => m.NomeAssociado)
-                </th>
-                <th class="px-3">
-                    <span>Ações</span>
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model) {
-                <tr class="border-bottom border-danger border-opacity-75 align-middle">
-                    <td class="p-3">
-                        @item.Patrimonio
-                    </td>
-                    <td class="p-3">
-                        @item.NomeInstrumento
-                    </td>
-                    <td class="p-3">
-                        @item.Status
-                    </td>
-                    <td class="p-3">
-                        @item.NomeAssociado
-                    </td>
-                    <td class="d-flex flex-wrap border-0 align-items-center">
-                        <a role="button" class="btn btn-secondary btn-sm  m-2" asp-controller="InstrumentoMusical" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"> </i> Editar </a>
-                        <a role="button" class="btn btn-secondary btn-sm  m-2" asp-controller="InstrumentoMusical" asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-xmark"> </i> Excluir </a>
-                        <a role="button" class="btn btn-secondary btn-sm  m-2" asp-controller="InstrumentoMusical" asp-action="Movimentar" asp-route-id="@item.Id"><i class="fa-solid fa-arrow-right-arrow-left"></i> Movimentar </a>
-                    </td>
+    <div class="table-responsive-md">
+        <table class="table">
+            <thead>
+                <tr class="bg-danger bg-opacity-75 text-white">
+                    <th class="px-3">
+                        @Html.DisplayNameFor(m => m.Patrimonio)
+                    </th>
+                    <th class="px-3">
+                        @Html.DisplayNameFor(m => m.NomeInstrumento)
+                    </th>
+                    <th class="px-3">
+                        @Html.DisplayNameFor(m => m.Status)
+                    </th>
+                    <th class="px-3">
+                        @Html.DisplayNameFor(m => m.NomeAssociado)
+                    </th>
+                    <th class="px-3">
+                        <span>Ações</span>
+                    </th>
                 </tr>
-            }
-        </tbody>
-    </table>
-</div>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr class="border-bottom border-danger border-opacity-75 align-middle">
+                        <td class="p-3">
+                            @item.Patrimonio
+                        </td>
+                        <td class="p-3">
+                            @item.NomeInstrumento
+                        </td>
+                        <td class="p-3">
+                            @item.Status
+                        </td>
+                        <td class="p-3">
+                            @item.NomeAssociado
+                        </td>
+                        <td class="d-flex flex-wrap border-0 align-items-center">
+                            <form id="@(item.Id + "_confirmar")" asp-action="Delete" asp-route-id="@item.Id" method="post">
+                                <a role="button" class="btn btn-secondary btn-sm  m-2" asp-controller="InstrumentoMusical" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"> </i> Editar </a>
+                                <a onclick="showModal('@(item.Id + "_confirmar")', 'instrumentoModal')" class="btn btn-sm btn-secondary" role="button" data-bs-toggle="modal" data-bs-target="#instrumentoModal">
+                                    <i class="fa-solid fa-xmark"> </i>
+                                    Excluir
+                                </a>
+                                <a role="button" class="btn btn-secondary btn-sm  m-2" asp-controller="InstrumentoMusical" asp-action="Movimentar" asp-route-id="@item.Id"><i class="fa-solid fa-arrow-right-arrow-left"></i> Movimentar </a>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="modal fade" id="instrumentoModal" tabindex="-1" aria-labelledby="instrumentoLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="admLabel">Confirmar Exclusão do Instrumento</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Deseja <b>Excluir</b> o <b>Intrumento </b>?
+                </div>
+                <form method="post" class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary col-3 me-4" data-bs-dismiss="modal">Não</button>
+                    <button type="submit" class="btn btn-secondary col-3">Sim</button>
+                </form>
+            </div>
+        </div>
+    </div>
