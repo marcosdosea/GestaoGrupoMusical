@@ -193,7 +193,7 @@ namespace Service
             return await query;
         }
 
-        public async Task<EnsaioFrequenciaDTO?> GetFrequencia(int idEnsaio, int idGrupoMusical)
+        public async Task<EnsaioFrequenciaDTO?> GetFrequenciaAsync(int idEnsaio, int idGrupoMusical)
         {
             var query = from ensaio in _context.Ensaios
                         where ensaio.Id == idEnsaio && ensaio.IdGrupoMusical == idGrupoMusical
@@ -215,18 +215,6 @@ namespace Service
                                 JustificativaAceita = Convert.ToBoolean(ensaioPessoa.JustificativaAceita),
                             }).AsEnumerable()
                         };
-
-            /*var query = from ensaioPessoa in _context.Ensaiopessoas
-                        where ensaioPessoa.IdEnsaio == idEnsaio && ensaioPessoa.IdEnsaioNavigation.IdGrupoMusical == idGrupoMusical
-                        orderby ensaioPessoa.IdPessoaNavigation.Nome
-                        select new EnsaioFrequenciaDTO.FrequenciaDTO
-                        {
-                            Cpf = ensaioPessoa.IdPessoaNavigation.Cpf,
-                            NomeAssociado = ensaioPessoa.IdPessoaNavigation.Nome,
-                            Justificativa = ensaioPessoa.JustificativaFalta,
-                            Presente = Convert.ToBoolean(ensaioPessoa.Presente),
-                            JustificativaAceita = Convert.ToBoolean(ensaioPessoa.JustificativaAceita),
-                        };*/
 
             return await query.AsNoTracking().SingleOrDefaultAsync();
         }

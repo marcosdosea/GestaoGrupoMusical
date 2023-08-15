@@ -165,12 +165,18 @@ namespace GestaoGrupoMusicalWeb.Controllers
             if (User.FindFirst("IdGrupoMusical")?.Value == null) {
                 return RedirectToAction("Sair", "Identity");
             }
-            var frequencias = await _ensaio.GetFrequencia(idEnsaio, Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
+            var frequencias = await _ensaio.GetFrequenciaAsync(idEnsaio, Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
             if(frequencias == null)
             {
                 return RedirectToAction(nameof(Index));
             }
             return View(frequencias);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> RegistrarFrequencia(int idEnsaio)
+        {
+
         }
     }
 }
