@@ -246,13 +246,14 @@ namespace Service
                 }else if(movimentacao.IdAssociado == idAssociado && movimentacao.Id == idMovimentacao)
                 {
                     movimentacao.ConfirmacaoRecebimento = 1;
+                    var status = movimentacao.Status;
                     if (movimentacao.Status.Equals("ENTREGUE"))
                     {
                         movimentacao.Status = "RECEBIDO";
                     }
                     _context.Update(movimentacao);
                     await _context.SaveChangesAsync();
-                    return movimentacao.Status == "ENTREGUE" ? 200 : 201;
+                    return status == "ENTREGUE" ? 200 : 201;
                 }
                 else
                 {
