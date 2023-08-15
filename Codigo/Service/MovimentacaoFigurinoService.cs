@@ -61,6 +61,12 @@ namespace Service
                     }
                     if (movimentacao.Status.Equals("DEVOLVIDO"))
                     {
+                        movimentacao.ConfirmacaoRecebimento = await GetRecebido(movimentacao.IdAssociado, movimentacao.IdFigurino);
+                        if (movimentacao.ConfirmacaoRecebimento != 1)
+                        {
+                            await transaction.RollbackAsync();
+                            return 403; //não ouve confirmação do associado 
+                        }
                         figurinoEstoque.QuantidadeDisponivel++;
                         figurinoEstoque.QuantidadeEntregue--;
                     }
@@ -245,10 +251,11 @@ namespace Service
                     return 404;
                 }else if(movimentacao.IdAssociado == idAssociado && movimentacao.Id == idMovimentacao)
                 {
-                    movimentacao.ConfirmacaoRecebimento = 1;
+
                     var status = movimentacao.Status;
                     if (movimentacao.Status.Equals("ENTREGUE"))
                     {
+                        movimentacao.ConfirmacaoRecebimento = 1;
                         movimentacao.Status = "RECEBIDO";
                     }
                     _context.Update(movimentacao);
@@ -264,6 +271,15 @@ namespace Service
             {
                 return 500;
             }
+        }
+
+        public async Task<sbyte> GetRecebido(int idAssociado, int idFigurino)
+        {
+            var query = await _context.Movimentacaofigurinos
+                .Where(g =>g.IdAssociado == idAssociado && g.IdFigurino == idFigurino)
+                .Select(g => g.ConfirmacaoRecebimento)
+                .FirstOrDefaultAsync();
+            return query;
         }
     }
 }
