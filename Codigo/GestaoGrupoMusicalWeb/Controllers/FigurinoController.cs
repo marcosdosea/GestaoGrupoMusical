@@ -337,7 +337,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteMovimento(int id)
+        public async Task<ActionResult> DeleteMovimento(int id, MovimentacaoFigurinoDTO movimentacaoDTO)
         {
 
 
