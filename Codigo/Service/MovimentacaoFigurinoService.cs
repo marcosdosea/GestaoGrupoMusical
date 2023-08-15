@@ -103,10 +103,29 @@ namespace Service
             return 200;
         }
 
-
-        public Task<int> DeleteAsync(int id)
+        public async Task<int> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            var movimentacao = await _context.Movimentacaofigurinos.FindAsync(id);
+
+            if(movimentacao != null)
+            {
+                try
+                {
+                    _context.Movimentacaofigurinos.Remove(movimentacao);
+                    await _context.SaveChangesAsync();
+                }
+                catch
+                {
+                    return 500; //algo deu errado ao remover e/ou salvar
+                }
+               
+            }
+            else
+            {
+                return 400; //movimentacao nao existe
+            }
+
+            return 200;
         }
 
         public async Task<IEnumerable<MovimentacaoFigurinoDTO>> GetAllByIdFigurino(int idFigurino)

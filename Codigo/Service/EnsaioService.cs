@@ -137,10 +137,11 @@ namespace Service
             return await query;
         }
 
-        public async Task<IEnumerable<EnsaioIndexDTO>> GetAllIndexDTO()
+        public async Task<IEnumerable<EnsaioIndexDTO>> GetAllIndexDTO(int idGrupo)
         {
             var query = _context.Ensaios
                 .OrderBy(g => g.DataHoraInicio)
+                .Where(g => g.IdGrupoMusical ==  idGrupo)
                 .Select(g => new EnsaioIndexDTO
                 {
                     Id = g.Id,

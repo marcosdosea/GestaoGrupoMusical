@@ -272,7 +272,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Movimentar(MovimentacaoFigurinoViewModel movimentacaoViewModel)
         {
-
             var colaborador = await _pessoaService.GetByCpf(User.Identity.Name);
 
             string status = string.Empty;
@@ -334,6 +333,38 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
 
             return RedirectToAction(nameof(Movimentar), new { id = movimentacaoViewModel.IdFigurino });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeleteMovimento(int Id, int idFigurino)
+        {
+            if(Id != null && Id > 0)
+            {
+                int resul = await _movimentacaoService.DeleteAsync(Id);
+
+                switch (resul)
+                {
+                    case 200:
+                        Notificar($"<b>Sucesso!</b> Movimentação foi <b>removida</b>", Notifica.Sucesso);
+                        break;
+                    case 400:
+                        Notificar("<b>Alerta!</b> Não há movimentação com essas informações", Notifica.Alerta);
+                        break;
+                    case 500:
+                        Notificar("<b>Erro!</b> Algo deu errado", Notifica.Erro);
+                        break;
+                    default:
+                        Notificar("<b>Erro!</b> Algo deu errado na operação", Notifica.Erro);
+                        break;
+                }
+            }
+            else
+            {
+                Notificar("<b>Erro!</b> Código inválido!", Notifica.Erro);
+            }
+            
+            return RedirectToAction(nameof(Movimentar), new { id = idFigurino });
         }
 
         [Authorize(Roles = "ASSOCIADO")]
