@@ -4,79 +4,80 @@
     ViewData["Title"] = $"Ensaio";
     ViewData["Details"] = $"Detalhes";
 }
-<div class="row">
-    <div class="col-md-8">
-        <h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">Detalhes do Ensaio</h1>
-        <nav>
-            <ol class="breadcrumb px-3">
-                <li>
-                    <strong>
-                        <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Title"]</a>
-                        <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Details"]</spn>
-                    </strong>
-                </li>
-            </ol>
-        </nav>
-        <hr />
-        <br />
-        
-        <div class="container">
-            <div class="row">
-                <div class="form-group col-xxl-4">
-                    <label asp-for="DataHoraInicio" class="control-label"></label>
-                    <input asp-for="DataHoraInicio" class="form-control" disabled/>
-                </div>
-                <div class="form-group col-xxl-4">
-                    <label asp-for="DataHoraFim" class="control-label"></label>
-                    <input asp-for="DataHoraFim" class="form-control" disabled/>
-                </div>
-                <div class="form-group col-xxl-4">
-                    <label asp-for="Tipo" class="control-label"></label>
-                    <input asp-for="Tipo" class="form-control" disabled />
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">Detalhes do Ensaio</h1>
+            <nav>
+                <ol class="breadcrumb px-3">
+                    <li>
+                        <strong>
+                            <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Title"]</a>
+                            <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Details"]</spn>
+                        </strong>
+                    </li>
+                </ol>
+            </nav>
+            <hr />
+            <br />
+            <div class="container">
+                <div class="row">
+                    <div class="form-group col-xl">
+                        <label asp-for="Tipo" class="control-label"></label>
+                        <input asp-for="Tipo" class="form-control" disabled />
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="container">
-            <div class="row">
-                <div class="form-group col-xl">
-                    <label asp-for="PresencaObrigatoria" class="control-label"></label>
-                    <input asp-for="PresencaObrigatoria" class="form-control" disabled />
+            <div class="container">
+                <div class="row">
+                    <div class="form-group col-xxl-4">
+                        <label asp-for="DataHoraInicio" class="control-label"></label>
+                        <input asp-for="DataHoraInicio" class="form-control" disabled />
+                    </div>
+                    <div class="form-group col-xxl-4">
+                        <label asp-for="DataHoraFim" class="control-label"></label>
+                        <input asp-for="DataHoraFim" class="form-control" disabled />
+                    </div>
+                    <div class="form-group col-xxl-4">
+                        <label asp-for="PresencaObrigatoria" class="control-label"></label>
+                        <input asp-for="PresencaObrigatoria" class="form-control" disabled />
+                    </div>
                 </div>
             </div>
-        </div>
-        
-        <div class="container">
-            <div class="row">
-                <div class="form-group">
-                    <label asp-for="Local" class="control-label"></label>
-                    <input asp-for="Local" class="form-control" disabled/>
+
+            <div class="container">
+                <div class="row">
+                    <div class="form-group">
+                        <label asp-for="Local" class="control-label"></label>
+                        <input asp-for="Local" class="form-control" disabled />
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="container">
-            <div class="row">
-                <div class="form-group col-xl">
-                    <label asp-for="NomeRegente" class="control-label"></label>
-                    <input asp-for="NomeRegente" class="form-control" disabled />
+            <div class="container">
+                <div class="row">
+                    <div class="form-group col-xl">
+                        <label asp-for="NomeRegente" class="control-label"></label>
+                        <input asp-for="NomeRegente" class="form-control" disabled />
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="container">
-            <div class="row">
-                <div class="form-group">
-                    <label asp-for="Repertorio" class="control-label"></label>
-                    <textarea asp-for="Repertorio" class="form-control" disabled></textarea>
+            <div class="container">
+                <div class="row">
+                    <div class="form-group">
+                        <label asp-for="Repertorio" class="control-label"></label>
+                        <textarea asp-for="Repertorio" class="form-control" disabled></textarea>
+                    </div>
                 </div>
             </div>
-        </div>
-        <br />
-        <br />
-        <div class="container">
-            <div class="row d-flex flex-column-reverse d-grid gap-2 mx-auto d-flex flex-sm-column-reverse flex-xl-row">
-                <div class="col-5 d-none d-sm-block"></div>
-                <a class="btn btn-light text-secondary border border-secondary d-grid gap-2 col-sm" role="button" asp-controller="Ensaio" asp-action="Index">Voltar</a>
-                <a class="btn btn-secondary d-grid gap-2 col-sm" role="button" asp-controller="Ensaio" asp-action="Edit" asp-route-id="@Model.Id">Editar</a>
+            <br />
+            <br />
+            <div class="container">
+                <div class="row d-flex flex-column-reverse d-grid gap-2 mx-auto d-flex flex-sm-column-reverse flex-xl-row">
+                    <div class="col-5 d-none d-sm-block"></div>
+                    <a class="btn btn-light text-secondary border border-secondary d-grid gap-2 col-sm" role="button" asp-controller="Ensaio" asp-action="Index">Voltar</a>
+                    <a class="btn btn-secondary d-grid gap-2 col-sm" role="button" asp-controller="Ensaio" asp-action="Edit" asp-route-id="@Model.Id">Editar</a>
+                </div>
             </div>
         </div>
     </div>
