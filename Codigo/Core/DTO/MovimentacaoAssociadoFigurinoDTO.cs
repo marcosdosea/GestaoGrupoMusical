@@ -14,9 +14,13 @@ namespace Core.DTO
         public class MovimentacaoAssociadoFigurino
         {
             public int Id { get; set; }
+            [Display(Name ="Data")]
             public DateTime Data { get; set; }
+            [Display(Name ="Nome Figurino")]
             public string NomeFigurino { get; set; }
+            [Display(Name ="Tamanho")]
             public string Tamanho { get; set; }
+            [Display(Name="Status")]
             public string Status { get; set; }
         }
 
