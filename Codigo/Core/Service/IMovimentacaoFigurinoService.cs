@@ -31,20 +31,7 @@ namespace Core.Service
         /// <param name="idFigurino">id do figurino</param>
         /// <param name="idManequim">id do manequim(tamanho)</param>
         /// <returns>true: nao possue emprestimo `ativo`, false: possue emprestimo `ativo`</returns>
-        Task<bool> AssociadoEmprestimo(int idAssociado, int idFigurino,int idManequim); 
-
-        /// <summary>
-        /// Remove uma movimentação no banco de dados
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns>
-        /// 200 - Sucesso <para />
-        /// 500 - Erro interno
-        /// </returns>
-        Task<int> DeleteAsync(int id);
-
-        Task<IEnumerable<EstoqueDTO>> GetEstoque(int idFigurino);
-
+        Task<bool> AssociadoEmprestimo(int idAssociado, int idFigurino,int idManequim);
 
         /// <summary>
         /// remove uma movimentação de figurino
@@ -55,6 +42,8 @@ namespace Core.Service
         /// 400: movimentacao nao foi encontrada
         /// 500: algo deu errado ao remover/salvar a transação
         /// </returns>
-        Task<int> DeleteMovimento(int id);
+        Task<int> DeleteAsync(int id);
+
+        Task<IEnumerable<EstoqueDTO>> GetEstoque(int idFigurino);
     }
 }
