@@ -67,6 +67,7 @@ namespace Service
                             await transaction.RollbackAsync();
                             return 403; //não ouve confirmação do associado 
                         }
+                        movimentacao.ConfirmacaoRecebimento = 0;
                         figurinoEstoque.QuantidadeDisponivel++;
                         figurinoEstoque.QuantidadeEntregue--;
                     }
@@ -251,11 +252,10 @@ namespace Service
                     return 404;
                 }else if(movimentacao.IdAssociado == idAssociado && movimentacao.Id == idMovimentacao)
                 {
-
+                    movimentacao.ConfirmacaoRecebimento = 1;
                     var status = movimentacao.Status;
                     if (movimentacao.Status.Equals("ENTREGUE"))
                     {
-                        movimentacao.ConfirmacaoRecebimento = 1;
                         movimentacao.Status = "RECEBIDO";
                     }
                     _context.Update(movimentacao);
