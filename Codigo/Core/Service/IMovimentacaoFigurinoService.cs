@@ -69,5 +69,16 @@ namespace Core.Service
         /// 500 - Erro interno
         /// </returns>
         Task<int> ConfirmarMovimentacao(int idMovimentacao, int idAssociado);
+        /// <summary>
+        /// Pegar a confirmação do associado
+        /// </summary>
+        /// <param name="idAssociado"></param>
+        /// <param name="idMovimentacao"></param>
+        /// <param name="idMovimento"></param>
+        /// <returns>
+        /// 0 caso não esteja confirmado
+        /// 1 caso esteja confirmado
+        /// </returns>
+        Task<sbyte> GetRecebido(int idAssociado, int idFigurino);
     }
 }
