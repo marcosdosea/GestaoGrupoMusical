@@ -226,7 +226,11 @@ namespace Service
                     return 404;
                 }else if(movimentacao.IdAssociado == idAssociado && movimentacao.Id == idMovimentacao)
                 {
-                    movimentacao.ConfirmacaoRecebimento = 1; 
+                    movimentacao.ConfirmacaoRecebimento = 1;
+                    if (movimentacao.Status.Equals("ENTREGUE"))
+                    {
+                        movimentacao.Status = "RECEBIDO";
+                    }
                     _context.Update(movimentacao);
                     await _context.SaveChangesAsync();
                     return movimentacao.Status == "ENTREGUE" ? 200 : 201;
