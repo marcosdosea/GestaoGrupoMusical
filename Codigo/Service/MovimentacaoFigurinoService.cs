@@ -191,10 +191,5 @@ namespace Service
 
             return query;
         }
-
-        public Task<int> DeleteMovimento(int id)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
