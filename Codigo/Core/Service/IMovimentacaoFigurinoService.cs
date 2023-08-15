@@ -51,7 +51,9 @@ namespace Core.Service
         /// </summary>
         /// <param name="id">id da movimentação</param>
         /// <returns>
-        /// 
+        /// 200: tudo ocorreu bem
+        /// 400: movimentacao nao foi encontrada
+        /// 500: algo deu errado ao remover/salvar a transação
         /// </returns>
         Task<int> DeleteMovimento(int id);
     }
