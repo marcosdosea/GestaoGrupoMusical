@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Core.DTO.InstrumentoAssociadoDTO;
+using static Core.DTO.MovimentacaoAssociadoFigurinoDTO;
 
 namespace Core.Service
 {
@@ -45,5 +47,27 @@ namespace Core.Service
         Task<int> DeleteAsync(int id);
 
         Task<IEnumerable<EstoqueDTO>> GetEstoque(int idFigurino);
+        /// <summary>
+        /// Consulta os emprestimo e devolucao do usuario
+        /// </summary>
+        /// <param name="MovimentacoesByIdAssociadoAsync"></param>
+        /// <returns>
+        /// retorna os Enumerable de emprestimo e devolução do associado
+        /// </returns>
+        Task<MovimentacoesAssociadoFigurino> MovimentacoesByIdAssociadoAsync(int idAssociado);
+        /// <summary>
+        /// Confirmar um empréstimo/devolução de instrumento
+        /// </summary>
+        /// <param name="idMovimentacao"></param>
+        /// <param name="idAssociado"></param>
+        /// <returns>
+        /// 200 - Sucesso Empréstimo <para />
+        /// 201 - Sucesso Devolução <para />
+        /// 400 - Associado inválido para empréstimo <para />
+        /// 401 - Associado inválido para devolução <para />
+        /// 404 - O id não corresponde a nenhuma movimentação <para />
+        /// 500 - Erro interno
+        /// </returns>
+        Task<int> ConfirmarMovimentacao(int idMovimentacao, int idAssociado);
     }
 }

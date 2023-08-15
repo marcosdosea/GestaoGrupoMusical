@@ -9,6 +9,7 @@ using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Core.DTO.MovimentacaoAssociadoFigurinoDTO;
 
 namespace Service
 {
@@ -51,7 +52,7 @@ namespace Service
                     figurinoEstoque.QuantidadeDisponivel--;
                     figurinoEstoque.QuantidadeEntregue++;
                 }
-                else if(movimentacao.Status.Equals("DEVOLVIDO") || movimentacao.Status.Equals("DANIFICADO"))
+                else if (movimentacao.Status.Equals("DEVOLVIDO") || movimentacao.Status.Equals("DANIFICADO"))
                 {
                     if (await AssociadoEmprestimo(movimentacao.IdAssociado, movimentacao.IdFigurino, movimentacao.IdManequim))
                     {
@@ -62,9 +63,9 @@ namespace Service
                     {
                         figurinoEstoque.QuantidadeDisponivel++;
                         figurinoEstoque.QuantidadeEntregue--;
-                    }     
+                    }
                 }
-                    
+
 
                 _context.Figurinomanequims.Update(figurinoEstoque);
 
@@ -130,20 +131,20 @@ namespace Service
         public async Task<IEnumerable<MovimentacaoFigurinoDTO>> GetAllByIdFigurino(int idFigurino)
         {
             var query = await (from movimentacoes in _context.Movimentacaofigurinos
-                        where movimentacoes.IdFigurino == idFigurino
-                        orderby movimentacoes.Id descending
-                        select new MovimentacaoFigurinoDTO
-                        {
-                            Id = movimentacoes.Id,
-                            IdFigurino = idFigurino,
-                            IdManequim = movimentacoes.IdManequim,
-                            Cpf = movimentacoes.IdAssociadoNavigation.Cpf,
-                            NomeAssociado = movimentacoes.IdAssociadoNavigation.Nome,
-                            Data = movimentacoes.Data,
-                            Movimentacao = movimentacoes.Status,
-                            Status = movimentacoes.ConfirmacaoRecebimento == 0 ? "Aguardando Confirmação" : "Confirmado",
-                            Tamanho = movimentacoes.IdManequimNavigation.Tamanho
-                        }).AsNoTracking().ToListAsync();
+                               where movimentacoes.IdFigurino == idFigurino
+                               orderby movimentacoes.Id descending
+                               select new MovimentacaoFigurinoDTO
+                               {
+                                   Id = movimentacoes.Id,
+                                   IdFigurino = idFigurino,
+                                   IdManequim = movimentacoes.IdManequim,
+                                   Cpf = movimentacoes.IdAssociadoNavigation.Cpf,
+                                   NomeAssociado = movimentacoes.IdAssociadoNavigation.Nome,
+                                   Data = movimentacoes.Data,
+                                   Movimentacao = movimentacoes.Status,
+                                   Status = movimentacoes.ConfirmacaoRecebimento == 0 ? "Aguardando Confirmação" : "Confirmado",
+                                   Tamanho = movimentacoes.IdManequimNavigation.Tamanho
+                               }).AsNoTracking().ToListAsync();
 
             return query;
         }
@@ -172,24 +173,97 @@ namespace Service
                                    select movimentacoes
                                     ).AsNoTracking().CountAsync();
 
-            return (recebidos - devolvidos) <= 0? true: false;
+            return (recebidos - devolvidos) <= 0 ? true : false;
         }
 
         public async Task<IEnumerable<EstoqueDTO>> GetEstoque(int idFigurino)
         {
             var query = await (from estoque in _context.Figurinomanequims
-                         where estoque.IdFigurino == idFigurino
-                         select new EstoqueDTO
-                         {
-                             IdFigurino = estoque.IdFigurino,
-                             IdManequim = estoque.IdManequim,
-                             Tamanho = estoque.IdManequimNavigation.Tamanho,
-                             Disponivel = estoque.QuantidadeDisponivel,
-                             Entregues = estoque.QuantidadeEntregue
-                         }
+                               where estoque.IdFigurino == idFigurino
+                               select new EstoqueDTO
+                               {
+                                   IdFigurino = estoque.IdFigurino,
+                                   IdManequim = estoque.IdManequim,
+                                   Tamanho = estoque.IdManequimNavigation.Tamanho,
+                                   Disponivel = estoque.QuantidadeDisponivel,
+                                   Entregues = estoque.QuantidadeEntregue
+                               }
                          ).AsNoTracking().ToListAsync();
 
             return query;
+        }
+
+        public async Task<MovimentacoesAssociadoFigurino> MovimentacoesByIdAssociadoAsync(int idAssociado)
+        {
+            var entregues = await (from movimentacoesFigurino in _context.Movimentacaofigurinos
+                             where movimentacoesFigurino.IdAssociado == idAssociado
+                             where movimentacoesFigurino.Status == "ENTREGUE" || movimentacoesFigurino.Status == "RECEBIDO"
+                                   orderby movimentacoesFigurino.Data descending
+                             select new MovimentacaoAssociadoFigurino
+                             {
+                                 Id = movimentacoesFigurino.Id,
+                                 Data = movimentacoesFigurino.Data,
+                                 NomeFigurino = movimentacoesFigurino.IdFigurinoNavigation.Nome,
+                                 Tamanho = movimentacoesFigurino.IdManequimNavigation.Tamanho,
+                                 Status = movimentacoesFigurino.ConfirmacaoRecebimento == 1 ? "Confirmado" : "Agurdando Confirmação"
+
+                             }).AsNoTracking().ToListAsync();
+
+            var devolucoes = await (from movimentacoesFigurino in _context.Movimentacaofigurinos
+                              where movimentacoesFigurino.IdAssociado == idAssociado
+                              where movimentacoesFigurino.Status == "DEVOLVIDO" || movimentacoesFigurino.Status == "DANIFICADO"
+                                    orderby movimentacoesFigurino.Data descending
+                              select new MovimentacaoAssociadoFigurino
+                              {
+                                  Id = movimentacoesFigurino.Id,
+                                  Data = movimentacoesFigurino.Data,
+                                  NomeFigurino = movimentacoesFigurino.IdFigurinoNavigation.Nome,
+                                  Tamanho = movimentacoesFigurino.IdManequimNavigation.Tamanho,
+                                  Status = movimentacoesFigurino.ConfirmacaoRecebimento == 1 ? "Confirmado" : "Agurdando Confirmação"
+                              }
+
+                              ).AsNoTracking().ToListAsync();
+
+
+
+            var movimentacoes = new MovimentacoesAssociadoFigurino
+            {
+                Entregue =entregues,
+                Devolucoes = devolucoes
+            };
+
+            return movimentacoes;
+        }
+
+        public async Task<int> ConfirmarMovimentacao(int idMovimentacao, int idAssociado)
+        {
+            try
+            {
+                var movimentacao = await _context.Movimentacaofigurinos.FindAsync(idMovimentacao);
+                if(movimentacao == null)
+                {
+                    return 404;
+                }else if(movimentacao.IdAssociado == idAssociado && movimentacao.Id == idMovimentacao)
+                {
+                    movimentacao.ConfirmacaoRecebimento = 1;
+                    var status = movimentacao.Status;
+                    if (movimentacao.Status.Equals("ENTREGUE"))
+                    {
+                        movimentacao.Status = "RECEBIDO";
+                    }
+                    _context.Update(movimentacao);
+                    await _context.SaveChangesAsync();
+                    return status == "ENTREGUE" ? 200 : 201;
+                }
+                else
+                {
+                    return movimentacao.Status == "ENTREGUE" ? 400 : 401;
+                }       
+            }
+            catch
+            {
+                return 500;
+            }
         }
     }
 }
