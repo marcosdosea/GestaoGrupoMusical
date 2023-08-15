@@ -6,113 +6,113 @@
 
 <partial name="_Notificar">
 
-    <h1 class="fs-5">@ViewData["Title"]</h1>
+<h1 class="fs-5">@ViewData["Title"]</h1>
 
-    <div class="container mt-4">
-        <form asp-action="Movimentar">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="container mt-4">
+    <form asp-action="Movimentar">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <div class="row mb-3">
-                <div class="form-group col-lg-8">
-                    <label asp-for="NomeFigurino" class="control-label"></label>
-                    <input asp-for="NomeFigurino" class="form-control form-control-disabled" readonly />
-                    <span asp-validation-for="NomeFigurino" class="text-danger"></span>
-                </div>
-
-                <div class="form-group col-lg-4">
-                    <label asp-for="Data" class="control-label"></label>
-                    <input asp-for="DataFigurinoString" class="form-control form-control-disabled" readonly />
-                    <span asp-validation-for="Data" class="text-danger"></span>
-                </div>
+        <div class="row mb-3">
+            <div class="form-group col-lg-8">
+                <label asp-for="NomeFigurino" class="control-label"></label>
+                <input asp-for="NomeFigurino" class="form-control form-control-disabled" readonly />
+                <span asp-validation-for="NomeFigurino" class="text-danger"></span>
             </div>
 
-            <div class="form-group">
-                <input asp-for="IdFigurino" class="form-control" type="hidden" />
-                <span asp-validation-for="IdFigurino" class="text-danger"></span>
+            <div class="form-group col-lg-4">
+                <label asp-for="Data" class="control-label"></label>
+                <input asp-for="DataFigurinoString" class="form-control form-control-disabled" readonly />
+                <span asp-validation-for="Data" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <input asp-for="IdFigurino" class="form-control" type="hidden" />
+            <span asp-validation-for="IdFigurino" class="text-danger"></span>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-lg-6">
+                <label asp-for="IdAssociado" class="control-label"></label>
+                @if (Model.IdAssociado != 0)
+                {
+                    <select asp-for="IdAssociado" asp-items="@Model.ListaAssociado" class="form-select" disabled>
+                    </select>
+                    <input asp-for="IdAssociado" type="hidden" />
+                }
+                else
+                {
+                    <select asp-for="IdAssociado" asp-items="@Model.ListaAssociado" class="form-select">
+                    </select>
+                }
+                <span asp-validation-for="IdAssociado" class="text-danger"></span>
             </div>
 
-            <div class="row mb-3">
-                <div class="col-lg-6">
-                    <label asp-for="IdAssociado" class="control-label"></label>
-                    @if (Model.IdAssociado != 0)
-                    {
-                        <select asp-for="IdAssociado" asp-items="@Model.ListaAssociado" class="form-select" disabled>
-                        </select>
-                        <input asp-for="IdAssociado" type="hidden" />
-                    }
-                    else
-                    {
-                        <select asp-for="IdAssociado" asp-items="@Model.ListaAssociado" class="form-select">
-                        </select>
-                    }
-                    <span asp-validation-for="IdAssociado" class="text-danger"></span>
-                </div>
-
-                <div class="form-group col-lg-6">
-                    <label asp-for="IdManequim" class="control-label"></label>
-                    <select asp-for="IdManequim" asp-items="@Model.ListaManequim" class="form-select"></select>
-                    <span asp-validation-for="IdManequim" class="text-danger"></span>
-                </div>
-
+            <div class="form-group col-lg-6">
+                <label asp-for="IdManequim" class="control-label"></label>
+                <select asp-for="IdManequim" asp-items="@Model.ListaManequim" class="form-select"></select>
+                <span asp-validation-for="IdManequim" class="text-danger"></span>
             </div>
-            <div class="row mb-3">
-                <div class="col-lg-6">
-                    <label asp-for="Movimentacao" class="control-label mb-2"></label>
-                    <div class="d-flex justify-content-around">
-                        @{
-                            foreach (var item in Model.MovimentacaoEnum)
-                            {
-                                <div class="col-lg-2">
-                                    <label for="@item.Key">@item.Key</label>
-                                    <input class="form-check-input" type="radio" value="@item.Value" asp-for="Movimentacao" id="@item.Key" />
-                                </div>
-                            }
+
+        </div>
+        <div class="row mb-3">
+            <div class="col-lg-6">
+                <label asp-for="Movimentacao" class="control-label mb-2"></label>
+                <div class="d-flex justify-content-around">
+                    @{
+                        foreach (var item in Model.MovimentacaoEnum)
+                        {
+                            <div class="col-lg-2">
+                                <label for="@item.Key">@item.Key</label>
+                                <input class="form-check-input" type="radio" value="@item.Value" asp-for="Movimentacao" id="@item.Key" />
+                            </div>
                         }
-                        <div id="checkboxContainer" style="display: none;">
-                            <input class="form-check-input" type="checkbox" id="Danificado" asp-for="Danificado" />
-                            <label for="Danificado">Danificado</label>
-                        </div>
+                    }
+                    <div id="checkboxContainer" style="display: none;">
+                        <input class="form-check-input" type="checkbox" id="Danificado" asp-for="Danificado" />
+                        <label for="Danificado">Danificado</label>
                     </div>
-                    <span asp-validation-for="Movimentacao" class="text-danger"></span>
+                </div>
+                <span asp-validation-for="Movimentacao" class="text-danger"></span>
 
 
-                </div>
-                <div class="col-lg-6">
-                    <label asp-for="Data" class="control-label"></label>
-                    <input asp-for="Data" class="form-control" />
-                    <span asp-validation-for="Data" class="text-danger"></span>
-                </div>
             </div>
-
-            <div class="row">
-                <div class="d-flex justify-content-lg-end flex-column-reverse flex-lg-row">
-                    <a class="btn btn-outline-secondary col-lg-2 mt-3 me-lg-3" asp-controller="Figurino" asp-action="Index">Voltar</a>
-                    <input class="btn btn-secondary col-lg-2 mt-3 ml-3" type="submit" value="Adicionar" />
-                </div>
+            <div class="col-lg-6">
+                <label asp-for="Data" class="control-label"></label>
+                <input asp-for="Data" class="form-control" />
+                <span asp-validation-for="Data" class="text-danger"></span>
             </div>
+        </div>
 
-        </form>
-    </div>
+        <div class="row">
+            <div class="d-flex justify-content-lg-end flex-column-reverse flex-lg-row">
+                <a class="btn btn-outline-secondary col-lg-2 mt-3 me-lg-3" asp-controller="Figurino" asp-action="Index">Voltar</a>
+                <input class="btn btn-secondary col-lg-2 mt-3 ml-3" type="submit" value="Adicionar" />
+            </div>
+        </div>
+
+    </form>
+</div>
 
 
 
-    <partial name="_TabelaMovimentacao" model="@Model.Movimentacoes">
+<partial name="_TabelaMovimentacao" model="@Model.Movimentacoes">
 
-        @section Scripts {
-            @{
-                await Html.RenderPartialAsync("_ValidationScriptsPartial");
-            }
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 
-            <script>
-                $(document).ready(function () {
-                    $('input[type="radio"]').change(function () {
-                        if ($(this).val() === 'DEVOLVIDO') {
-                            $('#checkboxContainer').show();
-                        } else {
-                            $('#checkboxContainer').hide();
-                            $('#Danificado').prop('checked', false);
-                        }
-                    });
-                });
-            </script>
-        }
+    <script>
+        $(document).ready(function () {
+            $('input[type="radio"]').change(function () {
+                if ($(this).val() === 'DEVOLVIDO') {
+                    $('#checkboxContainer').show();
+                } else {
+                    $('#checkboxContainer').hide();
+                    $('#Danificado').prop('checked', false);
+                }
+            });
+        });
+    </script>
+}
