@@ -168,12 +168,15 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> DeleteEstoque(int idFigurino, int idManequim)
         {
             int result = await _figurinoService.DeleteEstoque(idFigurino, idManequim);
-
-            if (result == 200)
+            if(result == 400)
+            {
+                Notificar("Não é permitido <b>Excluir Estoque</b> com peças <b>Entregues<b>!", Notifica.Alerta);
+            }
+            else if (result == 200)
             {
                 Notificar("<b>Sucesso</b>! Estoque removido!", Notifica.Sucesso);
             }
-            else
+            else 
             {
                 Notificar("<b>Erro</b>! Algo deu errado ao tentar remover estoque.", Notifica.Erro);
             }

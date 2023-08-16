@@ -148,7 +148,13 @@ namespace Service
         {
             try
             {
-                var estoque = _context.Figurinomanequims.Find(idFigurino, idManequim);
+                var estoque = _context.Figurinomanequims.FindAsync(idFigurino, idManequim).Result;
+
+                if (estoque.QuantidadeEntregue > 0)
+                {
+                    return 400;
+                }
+
                 _context.Figurinomanequims.Remove(estoque);
                 await _context.SaveChangesAsync();
 
