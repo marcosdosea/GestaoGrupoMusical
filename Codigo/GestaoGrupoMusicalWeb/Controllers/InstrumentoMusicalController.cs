@@ -229,6 +229,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 movimentacaoModel.IdAssociado = movimentacao.IdAssociado;
                 movimentacaoModel.Movimentacao = "DEVOLUCAO";
+                var pessoa = _pessoa.Get(movimentacao.IdAssociado);
+                movimentacaoModel.NomeAssociado = pessoa.Nome;
             }
 
             movimentacaoModel.Movimentacoes = await _movimentacaoInstrumento.GetAllByIdInstrumento(id);
@@ -238,7 +240,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             int idGrupo = _grupoMusical.GetIdGrupo(User.Identity.Name);
             var listaPessoas = _pessoa.GetAllPessoasOrder(idGrupo).ToList();
-
 
             movimentacaoModel.ListaAssociado = new SelectList(listaPessoas, "Id", "Nome");
             return View(movimentacaoModel);
