@@ -75,7 +75,7 @@
                 </div>
                 <span asp-validation-for="Movimentacao" class="text-danger"></span>
 
-                
+
             </div>
             <div class="col-lg-6">
                 <label asp-for="Data" class="control-label"></label>
@@ -99,7 +99,9 @@
 <partial name="_TabelaMovimentacao" model="@Model.Movimentacoes">
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 
     <script>
         $(document).ready(function () {
@@ -108,6 +110,7 @@
                     $('#checkboxContainer').show();
                 } else {
                     $('#checkboxContainer').hide();
+                    $('#Danificado').prop('checked', false);
                 }
             });
         });
