@@ -59,8 +59,13 @@ html {
     border-bottom: 1px solid var(--bs-dark);
     border-radius: 0;
 }
-.form-control-disabled {
+.form-control:disabled {
     background-color: #e8e4e4 !important;
+    cursor:not-allowed;
+}
+.form-control:read-only {
+    background-color: #e8e4e4 !important;
+    cursor:not-allowed;
 }
 
 .form-select.input-validation-error {
