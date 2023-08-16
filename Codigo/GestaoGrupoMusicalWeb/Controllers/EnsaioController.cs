@@ -175,7 +175,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> RegistrarFrequencia(List<EnsaioFrequenciaDTO.FrequenciaDTO> listaFrequencia)
+        public async Task<ActionResult> RegistrarFrequencia(List<EnsaioListaFrequenciaDTO> listaFrequencia)
         {
  
             return RedirectToAction(nameof(RegistrarFrequencia), new { idEnsaio = 1 });

@@ -206,7 +206,7 @@ namespace Service
                             Local = ensaio.Local,
                             Frequencias = _context.Ensaiopessoas
                             .OrderBy(ensaioPessoa => ensaioPessoa.IdPessoaNavigation.Nome)
-                            .Select(ensaioPessoa => new EnsaioFrequenciaDTO.FrequenciaDTO
+                            .Select(ensaioPessoa => new EnsaioListaFrequenciaDTO
                             {
                                 IdEnsaio = ensaioPessoa.IdEnsaio,
                                 IdPessoa = ensaioPessoa.IdPessoa,
@@ -219,6 +219,11 @@ namespace Service
                         };
 
             return await query.AsNoTracking().SingleOrDefaultAsync();
+        }
+
+        public async Task<int> RegistrarFrequenciaAsync(List<EnsaioListaFrequenciaDTO> frequencias)
+        {
+            return 1;
         }
     }
 }
