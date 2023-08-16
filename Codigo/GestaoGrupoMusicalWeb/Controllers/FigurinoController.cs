@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.VisualBasic;
 using MySqlX.XDevAPI.Common;
+using NuGet.Versioning;
 using Service;
 using System.Data;
 
@@ -213,7 +214,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 Nome = figurino.Nome,
                 Data = figurino.Data.Value.ToString("dd/MM/yyyy"),
                 listManequim = listManequins
-
             };
 
             return View(estoqueViewModel);
@@ -440,6 +440,54 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
             return RedirectToAction(nameof(Movimentacoes));
         }
+        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
+        public async Task<ActionResult> EditEstoque(int idFigurino, int idManequim)
+        {
+            var figurino = await _figurinoService.Get(idFigurino);
+            var estoque = await _figurinoService.GetEstoque(idFigurino, idManequim);
+            var manequins = _manequimService.GetAll();
+            SelectList listManequins = new SelectList(manequins, "Id", "Tamanho");
+
+            var estoqueviewmodel = new CreateEstoqueViewModel()
+            {
+                IdFigurino = figurino.Id,
+                Nome = figurino.Nome,
+                Data = figurino.Data.Value.ToString("dd/MM/yyyy"),
+                listManequim = listManequins,
+                QuantidadeDisponivel = estoque.Disponivel
+            };
+            return View(estoqueviewmodel);
+        }
+        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> EditEstoque(CreateEstoqueViewModel estoque, int idFigurino, int idManequim)
+        {
+            var estoqueviewModel = new Figurinomanequim()
+            {
+                IdFigurino = idFigurino,
+                IdManequim = idManequim,
+                QuantidadeDisponivel = estoque.QuantidadeDisponivel
+            };
+            int resul = await _figurinoService.EditEstoque(estoqueviewModel);
+            switch (resul)
+            {
+                case 200:
+                    Notificar($"<b>Sucesso!</b> Estoque foi <b>Editado</b>", Notifica.Sucesso);
+                    break;
+                case 404:
+                    Notificar("<b>Alerta!</b> Não há estoque", Notifica.Alerta);
+                    break;
+                case 500:
+                    Notificar("<b>Erro!</b> Algo deu errado", Notifica.Erro);
+                    break;
+                default:
+                    Notificar("<b>Erro!</b> Algo deu errado na operação", Notifica.Erro);
+                    break;
+            }
+            return RedirectToAction(nameof(Estoque), new { id = estoque.IdFigurino });
+        }
+
     }
 }
 
