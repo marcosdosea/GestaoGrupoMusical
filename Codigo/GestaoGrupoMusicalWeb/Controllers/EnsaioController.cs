@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Core;
+using Core.DTO;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -174,9 +175,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> RegistrarFrequencia(int idEnsaio)
+        public async Task<ActionResult> RegistrarFrequencia(List<EnsaioFrequenciaDTO.FrequenciaDTO> listaFrequencia)
         {
-
+ 
+            return RedirectToAction(nameof(RegistrarFrequencia), new { idEnsaio = 1 });
         }
     }
 }

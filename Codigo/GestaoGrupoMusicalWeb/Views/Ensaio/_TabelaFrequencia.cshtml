@@ -1,51 +1,57 @@
-﻿@model IEnumerable<Core.DTO.EnsaioFrequenciaDTO.FrequenciaDTO>
+﻿@model List<Core.DTO.EnsaioFrequenciaDTO.FrequenciaDTO>
 
-<div class="table-responsive">
-    <table class="table mt-3">
-        <thead>
-            <tr class="bg-danger bg-opacity-75 text-white">
-                <th>
-                    @Html.DisplayNameFor(model => model.Cpf)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.NomeAssociado)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Justificativa)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Presente)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.JustificativaAceita)
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr class="border-bottom border-danger border-opacity-75 align-middle">
-                    <td>
-                        @item.Cpf
-                    </td>
-                    <td>
-                        @item.NomeAssociado
-                    </td>
-                    <td>
-                        @item.Justificativa
-                    </td>
-                    <td>
-                        @item.Presente
-                    </td>
-                    <td>
-                        @item.JustificativaAceita
-                    </td>
+<form asp-controller="Ensaio" asp-action="RegistrarFrequencia">
+    <div class="table-responsive">
+        <table class="table mt-3">
+            <thead>
+                <tr class="bg-danger bg-opacity-75 text-white">
+                    <th>
+                        @Html.DisplayNameFor(model => model[0].Cpf)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model[0].NomeAssociado)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model[0].Justificativa)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model[0].Presente)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model[0].JustificativaAceita)
+                    </th>
                 </tr>
-            }
-        </tbody>
-    </table>
-    @if (!Model.Any())
-    {
-        <p class="text-center mt-4 mb-0">Desculpe, nenhuma frequência encontrada :(</p>
-    }
-</div>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Count(); i++)
+                {
+                    <tr class="border-bottom border-danger border-opacity-75 align-middle">
+                        <td>
+                            @Model[i].Cpf
+                        </td>
+                        <td>
+                            @Model[i].NomeAssociado
+                        </td>
+                        <td>
+                            @Model[i].Justificativa
+                        </td>
+                        <td>
+                            @Html.CheckBoxFor(x => x[i].Presente, new { @class = "form-check-input" })
+                        </td>
+                        <td>
+                            @Html.CheckBoxFor(x => x[i].JustificativaAceita, new { @class = "form-check-input" })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @if (!Model.Any())
+        {
+            <p class="text-center mt-4 mb-0">Desculpe, nenhuma frequência encontrada :(</p>
+        }
+    </div>
+    <div class="d-flex justify-content-end">
+        <a class="btn btn-outline-secondary" asp-controller="Ensaio" asp-action="Index">Voltar</a>
+        <button class="btn btn-secondary" type="submit">Salvar</button>
+    </div>
+</form>
