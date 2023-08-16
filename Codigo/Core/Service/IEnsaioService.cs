@@ -38,6 +38,6 @@ namespace Core.Service
         Task<Ensaio> Get(int id);
         Task<IEnumerable<Ensaio>> GetAll();
         Task<IEnumerable<EnsaioDTO>> GetAllDTO();
-        Task<IEnumerable<EnsaioIndexDTO>> GetAllIndexDTO();
+        Task<IEnumerable<EnsaioIndexDTO>> GetAllIndexDTO(int idGrupo);
     }
 }
