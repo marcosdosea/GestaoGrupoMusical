@@ -27,9 +27,7 @@
                 <label asp-for="IdAssociado" class="control-label"></label>
                     @if (Model.IdAssociado != 0)
                     {
-                        <select asp-for="IdAssociado" asp-items="@Model.ListaAssociado" class="form-select" disabled>
-                            <option value=""></option>
-                        </select>
+                        <label class="form-control">@Model.NomeAssociado</label>
                         <input asp-for="IdAssociado" type="hidden"/>
                     }
                     else
