@@ -178,7 +178,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> RegistrarFrequencia(List<EnsaioListaFrequenciaDTO> listaFrequencia)
         {
             await _ensaio.RegistrarFrequenciaAsync(listaFrequencia);
-            return RedirectToAction(nameof(RegistrarFrequencia), new { idEnsaio = 1 });
+            return RedirectToAction(nameof(RegistrarFrequencia), new { idEnsaio = listaFrequencia.First().IdEnsaio });
         }
     }
 }
