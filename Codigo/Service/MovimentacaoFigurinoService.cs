@@ -61,8 +61,9 @@ namespace Service
                     }
                     if (movimentacao.Status.Equals("DEVOLVIDO"))
                     {
-                        movimentacao.ConfirmacaoRecebimento = await GetRecebido(movimentacao.IdAssociado, movimentacao.IdFigurino);
-                        if (movimentacao.ConfirmacaoRecebimento != 1)
+                        sbyte confirmacao = await GetConfirmacaoFigurino(movimentacao.IdAssociado, movimentacao.IdFigurino
+                            , movimentacao.IdManequim);
+                        if ( confirmacao != 1)
                         {
                             await transaction.RollbackAsync();
                             return 403; //não ouve confirmação do associado 
@@ -273,10 +274,11 @@ namespace Service
             }
         }
 
-        public async Task<sbyte> GetRecebido(int idAssociado, int idFigurino)
+        public async Task<sbyte> GetConfirmacaoFigurino(int idAssociado, int idFigurino, int idManequim)
         {
             var query = await _context.Movimentacaofigurinos
-                .Where(g =>g.IdAssociado == idAssociado && g.IdFigurino == idFigurino)
+                .Where(g =>g.IdAssociado == idAssociado && g.IdFigurino == idFigurino
+                    && g.IdManequim == idManequim)
                 .Select(g => g.ConfirmacaoRecebimento)
                 .FirstOrDefaultAsync();
             return query;
