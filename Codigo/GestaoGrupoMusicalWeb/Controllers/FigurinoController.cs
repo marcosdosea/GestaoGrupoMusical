@@ -417,6 +417,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
             return RedirectToAction(nameof(Movimentacoes));
         }
+        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         public async Task<ActionResult> EditEstoque(int idFigurino, int idManequim)
         {
             var figurino = await _figurinoService.Get(idFigurino);
@@ -434,6 +435,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             };
             return View(estoqueviewmodel);
         }
+        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> EditEstoque(CreateEstoqueViewModel estoque, int idFigurino, int idManequim)
