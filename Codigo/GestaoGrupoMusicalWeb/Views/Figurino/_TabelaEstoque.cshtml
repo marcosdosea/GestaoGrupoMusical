@@ -14,8 +14,8 @@
                 @Html.DisplayFor(modelItem => item.Entregues)
             </td>
             <td class="d-flex justify-content-around py-3 flex-wrap">
+                <a role="button" class="btn btn-secondary btn-sm mb-2 mb-lg-0" asp-controller="" asp-action=""><i class="fa-solid fa-pen-to-square"></i> Editar</a>
                 <form id="@(item.IdFigurino + item.IdManequim + "_confirmar")" asp-action="DeleteEstoque" asp-route-idFigurino="@item.IdFigurino" asp-route-idManequim="@item.IdManequim" method="post" class="me-2">
-                    <a role="button" class="btn btn-secondary btn-sm mb-2 mb-lg-0" asp-controller="" asp-action=""><i class="fa-solid fa-pen-to-square"></i> Editar</a>
                     <a onclick="showModal('@(item.IdFigurino + item.IdManequim + "_confirmar")', 'estoqueModal')" class="btn btn-sm btn-secondary" role="button" data-bs-toggle="modal" data-bs-target="#estoqueModal">
                         <i class="fa-solid fa-xmark"> </i>
                         Excluir
@@ -37,12 +37,13 @@
             <div class="modal-body">
                 Deseja <b>Excluir</b> o <b>Estoque</b>?
             </div>
-            <form class="" method="post">
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary col-3 me-4" data-bs-dismiss="modal">Não</button>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary col-3 me-4" data-bs-dismiss="modal">Não</button>
+                <form method="post">
                     <button type="submit" class="btn btn-secondary col-3">Sim</button>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
 </div>
