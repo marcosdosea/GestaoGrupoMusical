@@ -27,6 +27,8 @@
                 {
                     <tr class="border-bottom border-danger border-opacity-75 align-middle">
                         <td>
+                            @Html.HiddenFor(x => x[i].IdEnsaio)
+                            @Html.HiddenFor(x => x[i].IdPessoa)
                             @Model[i].Cpf
                         </td>
                         <td>

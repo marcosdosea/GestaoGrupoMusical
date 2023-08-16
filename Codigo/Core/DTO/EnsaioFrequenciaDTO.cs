@@ -19,6 +19,10 @@ namespace Core.DTO
 
         public class FrequenciaDTO
         {
+            public int IdEnsaio { get; set; }
+
+            public int IdPessoa { get; set; }
+
             [Display(Name = "CPF")]
             public string Cpf { get; set; } = string.Empty;
 
@@ -29,6 +33,7 @@ namespace Core.DTO
             public string? Justificativa { get; set; }
 
             public bool Presente { get; set; }
+
             [Display(Name = "Justificativa Aceita")]
             public bool JustificativaAceita { get; set; }
         }

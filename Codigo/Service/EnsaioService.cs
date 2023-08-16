@@ -208,6 +208,8 @@ namespace Service
                             .OrderBy(ensaioPessoa => ensaioPessoa.IdPessoaNavigation.Nome)
                             .Select(ensaioPessoa => new EnsaioFrequenciaDTO.FrequenciaDTO
                             {
+                                IdEnsaio = ensaioPessoa.IdEnsaio,
+                                IdPessoa = ensaioPessoa.IdPessoa,
                                 Cpf = ensaioPessoa.IdPessoaNavigation.Cpf,
                                 NomeAssociado = ensaioPessoa.IdPessoaNavigation.Nome,
                                 Justificativa = ensaioPessoa.JustificativaFalta,
