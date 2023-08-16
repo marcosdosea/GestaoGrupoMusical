@@ -238,7 +238,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             int idGrupo = _grupoMusical.GetIdGrupo(User.Identity.Name);
             var listaPessoas = _pessoa.GetAllPessoasOrder(idGrupo).ToList();
-           // listaPessoas.Remove(listaPessoas.Single(p => p.Cpf == User.Identity?.Name));
+
 
             movimentacaoModel.ListaAssociado = new SelectList(listaPessoas, "Id", "Nome");
             return View(movimentacaoModel);
