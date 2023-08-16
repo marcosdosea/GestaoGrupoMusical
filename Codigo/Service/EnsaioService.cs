@@ -245,7 +245,7 @@ namespace Service
                     dbFrequencias[i].JustificativaAceita = Convert.ToSByte(frequencias[i].JustificativaAceita);
                     dbFrequencias[i].Presente = Convert.ToSByte(frequencias[i].Presente);
 
-                    await _context.AddAsync(dbFrequencias[i]);
+                    _context.Update(dbFrequencias[i]);
                 }
             }
 
