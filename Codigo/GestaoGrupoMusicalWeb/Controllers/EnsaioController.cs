@@ -177,7 +177,24 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [HttpPost]
         public async Task<ActionResult> RegistrarFrequencia(List<EnsaioListaFrequenciaDTO> listaFrequencia)
         {
-            await _ensaio.RegistrarFrequenciaAsync(listaFrequencia);
+            switch(await _ensaio.RegistrarFrequenciaAsync(listaFrequencia))
+            {
+                case 200:
+                    Notificar("Lista de <b>Frequência</b> salva com <b>Sucesso</b>", Notifica.Sucesso);
+                    break;
+                case 400:
+                    Notificar("A <b>Lista</b> enviada <b>Não</b> possui registros", Notifica.Alerta);
+                    break;
+                case 401:
+                    Notificar("A <b>Lista</b> enviada é <b>Inválida</b>", Notifica.Erro);
+                    break;
+                case 404:
+                    Notificar("A <b>Lista</b> enviada não foi <b>Encontrada</b>", Notifica.Erro);
+                    break;
+                case 500:
+                    Notificar("Desculpe, ocorreu um <b>Erro</b> ao registrar a Lista de <b>Frequência</b>, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                    break;
+            }
             return RedirectToAction(nameof(RegistrarFrequencia), new { idEnsaio = listaFrequencia.First().IdEnsaio });
         }
     }
