@@ -112,7 +112,7 @@ namespace Service
         {
 
              try
-            {
+             {
                 var ensaioDb = await _context.Ensaios.Where(e => e.Id == ensaio.Id).AsNoTracking().SingleOrDefaultAsync();
                 if(ensaioDb != null)
                 {
@@ -138,11 +138,11 @@ namespace Service
                     return 401;
                 }
              
-            }
-            catch
-            {
+             }
+             catch
+             {
                 return 500;
-            }
+             }
         }
         /// <summary>
         /// Consulta um Ensaio no banco de dados
@@ -191,6 +191,25 @@ namespace Service
 
                 }).AsNoTracking().ToListAsync();
             return await query;
+        }
+
+        public EnsaioDetailsDTO GetDetailsDTO(int idEnsaio)
+        {
+            var query = _context.Ensaios
+                .Select(g => new EnsaioDetailsDTO
+                {
+                    Id = g.Id,
+                    DataHoraInicio = g.DataHoraInicio,
+                    DataHoraFim = g.DataHoraFim,
+                    Tipo = g.Tipo,
+                    Local = g.Local,
+                    PresencaObrigatoria = g.PresencaObrigatoria == 1 ? "Sim" : "Não",
+                    Repertorio = g.Repertorio,
+                    NomeRegente = g.IdRegenteNavigation.Nome
+
+                }).Where(g => g.Id == idEnsaio);
+
+            return query.First();
         }
 
         public async Task<EnsaioFrequenciaDTO?> GetFrequenciaAsync(int idEnsaio, int idGrupoMusical)

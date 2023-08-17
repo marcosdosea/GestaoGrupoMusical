@@ -50,7 +50,7 @@ namespace Service
             {
                 return 500;
             }
-            
+
         }
 
         public async Task<int> Edit(Figurino figurino)
@@ -66,7 +66,7 @@ namespace Service
             {
                 return 500;
             }
-            
+
 
         }
 
@@ -142,6 +142,39 @@ namespace Service
 
             await _context.SaveChangesAsync();
             return 200;
+        }
+        public async Task<int> EditEstoque(Figurinomanequim estoque)
+        {
+            try
+            {
+                var estoqueFound = await _context.Figurinomanequims.FindAsync(estoque.IdFigurino, estoque.IdManequim);
+                if (estoqueFound != null)
+                {
+                    estoqueFound.QuantidadeDisponivel = estoque.QuantidadeDisponivel;
+                    _context.Figurinomanequims.Update(estoqueFound);
+                    _context.SaveChanges();
+                    return 200;
+                }
+                return 404;
+            }
+            catch (Exception)
+            {
+                return 500;
+            }
+        }
+        public async Task<EstoqueDTO> GetEstoque(int idFigurino, int idManequim)
+        {
+            var query = from figurinomanequim in _context.Figurinomanequims
+                        where figurinomanequim.IdFigurino == idFigurino && figurinomanequim.IdManequim == idManequim
+                        select new EstoqueDTO
+                        {
+                            IdManequim = figurinomanequim.IdManequim,
+                            IdFigurino = figurinomanequim.IdFigurino,
+                            Tamanho = figurinomanequim.IdManequimNavigation.Tamanho,
+                            Disponivel = figurinomanequim.QuantidadeDisponivel,
+                            Entregues = figurinomanequim.QuantidadeEntregue
+                        };
+            return await query.FirstAsync();
         }
     }
 }
