@@ -242,35 +242,47 @@ namespace Service
 
         public async Task<int> RegistrarFrequenciaAsync(List<EnsaioListaFrequenciaDTO> frequencias)
         {
-            int? idEnsaio = frequencias.FirstOrDefault()?.IdEnsaio;
-            if(!frequencias.Any()) 
-            { 
-                //lista vazia
-            }
-            
-            var dbFrequencias = await _context.Ensaiopessoas
-                                      .Where(ensaioPessoa => ensaioPessoa.IdEnsaio == frequencias.First().IdEnsaio)
-                                      .OrderBy(ensaioPessoa => ensaioPessoa.IdPessoaNavigation.Nome)
-                                      .ToListAsync();
-
-            if (dbFrequencias.Count != frequencias.Count)
+            try
             {
-                //listas não correspondem
-            }
-            for (int i = 0; i < frequencias.Count; i++)
-            {
-                if (dbFrequencias[i].IdEnsaio == frequencias[i].IdEnsaio && dbFrequencias[i].IdPessoa == frequencias[i].IdPessoa)
+                if (!frequencias.Any())
                 {
-                    dbFrequencias[i].JustificativaAceita = Convert.ToSByte(frequencias[i].JustificativaAceita);
-                    dbFrequencias[i].Presente = Convert.ToSByte(frequencias[i].Presente);
-
-                    _context.Update(dbFrequencias[i]);
+                    return 400;
                 }
+                int idEnsaio = frequencias.First().IdEnsaio;
+
+                var dbFrequencias = await _context.Ensaiopessoas
+                                          .Where(ensaioPessoa => ensaioPessoa.IdEnsaio == frequencias.First().IdEnsaio)
+                                          .OrderBy(ensaioPessoa => ensaioPessoa.IdPessoaNavigation.Nome)
+                                          .ToListAsync();
+
+                if (dbFrequencias == null)
+                {
+                    return 404;
+                }
+
+                if (dbFrequencias.Count != frequencias.Count)
+                {
+                    return 401;
+                }
+                for (int i = 0; i < frequencias.Count; i++)
+                {
+                    if (dbFrequencias[i].IdEnsaio == frequencias[i].IdEnsaio && dbFrequencias[i].IdPessoa == frequencias[i].IdPessoa)
+                    {
+                        dbFrequencias[i].JustificativaAceita = Convert.ToSByte(frequencias[i].JustificativaAceita);
+                        dbFrequencias[i].Presente = Convert.ToSByte(frequencias[i].Presente);
+
+                        _context.Update(dbFrequencias[i]);
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+
+                return 200;
             }
-
-            await _context.SaveChangesAsync();
-
-            return 200;
+            catch
+            {
+                return 500;
+            }
         }
     }
 }
