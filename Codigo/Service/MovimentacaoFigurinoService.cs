@@ -277,6 +277,7 @@ namespace Service
         public async Task<sbyte> GetConfirmacaoFigurino(int idAssociado, int idFigurino, int idManequim)
         {
             var query = await _context.Movimentacaofigurinos
+                .AsNoTracking()
                 .Where(g =>g.IdAssociado == idAssociado && g.IdFigurino == idFigurino
                     && g.IdManequim == idManequim)
                 .Select(g => g.ConfirmacaoRecebimento)
