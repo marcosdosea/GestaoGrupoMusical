@@ -1,53 +1,73 @@
 ﻿@model GestaoGrupoMusicalWeb.Models.CreateEstoqueViewModel
 
 @{
-    ViewData["Title"] = "CreateEstoque";
+    ViewData["Titulo"] = "Figurino";
+    ViewData["Create"] = "Novo Estoque";
 }
 
-<h1>CreateEstoque</h1>
-
-<h4>CreateEstoqueViewModel</h4>
-<hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-10 col-lg-6">
+        <h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">Novo Estoque</h1>
+        <nav>
+            <ol class="breadcrumb px-3">
+                <strong>
+                    <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Titulo"]</a>
+                    <span class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Create"]</span>
+                </strong>
+            </ol>
+        </nav>
+        <hr />
+        <br />
         <form asp-action="CreateEstoque">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Nome" class="control-label"></label>
-                <input asp-for="Nome" value="@Model.Nome" class="form-control form-control-disabled" readonly />
-                <span asp-validation-for="Nome" class="text-danger"></span>
+            <div class="container">
+                <div class="row d-flex justify-content-between ">
+                    <div class="form-group col-md-5">
+                        <label asp-for="Nome" class="control-label"></label>
+                        <input asp-for="Nome" value="@Model.Nome" class="form-control form-control-disabled" readonly />
+                        <span asp-validation-for="Nome" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label asp-for="Data" class="control-label"></label>
+                        <input asp-for="Data" class="form-control form-control-disabled" readonly />
+                        <span asp-validation-for="Data" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row d-flex justify-content-between ">
+                    <div class="form-group col-md-5">
+                        <label asp-for="IdManequim" class="control-label"></label>
+                        <select asp-items="@Model.listManequim" asp-for="IdManequim" class="form-select">
+                        </select>
+                        <span asp-validation-for="IdManequim" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label asp-for="QuantidadeDisponivel" class="control-label"></label>
+                        <input asp-for="QuantidadeDisponivel" class="form-control input-number" min="1" max="100" />
+                        <span asp-validation-for="QuantidadeDisponivel" class="text-danger"></span>
+                    </div>
+                </div>
             </div>
             <div class="form-group">
-                <label asp-for="Data" class="control-label"></label>
-                <input asp-for="Data" class="form-control form-control-disabled" readonly/>
-                <span asp-validation-for="Data" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IdManequim" class="control-label"></label>
-                <select asp-items="@Model.listManequim" asp-for="IdManequim" class="form-select">
-                    
-                </select>
-                <span asp-validation-for="IdManequim" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input asp-for="IdFigurino" class="form-control" value="@Model.IdFigurino" type="hidden"/>
+                <input asp-for="IdFigurino" class="form-control" value="@Model.IdFigurino" type="hidden" />
                 <span asp-validation-for="IdFigurino" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="QuantidadeDisponivel" class="control-label"></label>
-                <input asp-for="QuantidadeDisponivel" class="form-control" />
-                <span asp-validation-for="QuantidadeDisponivel" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+            <br />
+            <br />
+            <div class="container">
+                <div class="row">
+                    <div class="col-5"></div>
+                    <a class="btn btn-light text-secondary border border-secondary d-grid gap-2 col-3 mx-auto" asp-action="Index"> Voltar </a>
+                    <input type="submit" value="Adicionar" class="btn btn-secondary d-grid gap-2 col-3 mx-auto" />
+                </div>
             </div>
         </form>
     </div>
 </div>
-<div>
-    <a asp-action="Estoque" asp-route-id="@Model.IdFigurino">Back to List</a>
-</div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
