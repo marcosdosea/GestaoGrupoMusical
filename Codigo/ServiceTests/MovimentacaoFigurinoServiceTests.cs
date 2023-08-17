@@ -1,6 +1,7 @@
 ﻿using Core;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 namespace Service.Tests
 {
     [TestClass]
-    internal class MovimentacaoFigurinoServiceTests
+    public class MovimentacaoFigurinoServiceTests
     {
         private GrupoMusicalContext _context;
         private IMovimentacaoFigurinoService _movimentacaoFigurino;
@@ -21,7 +22,7 @@ namespace Service.Tests
         {
             //Arrange
             var builder = new DbContextOptionsBuilder<GrupoMusicalContext>();
-            builder.UseInMemoryDatabase("GrupoMusical");
+            builder.UseInMemoryDatabase("GrupoMusical").ConfigureWarnings(warning => warning.Ignore(InMemoryEventId.TransactionIgnoredWarning));
             var options = builder.Options;
 
             _context = new GrupoMusicalContext(options);
@@ -66,6 +67,29 @@ namespace Service.Tests
             _context.SaveChanges();
 
             _movimentacaoFigurino = new MovimentacaoFigurinoService(_context);
+        }
+
+        [TestMethod]
+        public void CreateAsyncTest()
+        {
+            // Act
+            var result = _movimentacaoFigurino.CreateAsync(new Movimentacaofigurino
+            {
+                Id = 4,
+                Data = new DateTime(2023, 4, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                IdFigurino = 4,
+                IdAssociado = 4,
+                IdColaborador = 2,
+                Status = "DISPONIVEL",
+                ConfirmacaoRecebimento = 0
+            }).Result;
+
+            // Assert
+            Assert.AreEqual(200, result);
+            var movimentacaoFigurino = _context.Movimentacaofigurinos.FindAsync(4).Result;
+            
+            Assert.IsNotNull(movimentacaoFigurino);
+            Assert.AreEqual(4, movimentacaoFigurino.Id);
         }
     }
 }
