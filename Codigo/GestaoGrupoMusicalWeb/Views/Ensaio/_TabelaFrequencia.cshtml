@@ -38,7 +38,7 @@
                             @Model[i].Justificativa
                         </td>
                         <td>
-                            @Html.CheckBoxFor(x => x[i].Presente, new { @class = "form-check-input" })
+                            @Html.CheckBoxFor(x => x[i].Presente, new { @class = "form-check-input my-3" })
                         </td>
                         <td>
                             @Html.CheckBoxFor(x => x[i].JustificativaAceita, new { @class = "form-check-input" })
@@ -52,8 +52,8 @@
             <p class="text-center mt-4 mb-0">Desculpe, nenhuma frequência encontrada :(</p>
         }
     </div>
-    <div class="d-flex justify-content-end">
-        <a class="btn btn-outline-secondary" asp-controller="Ensaio" asp-action="Index">Voltar</a>
-        <button class="btn btn-secondary" type="submit">Salvar</button>
+    <div class="d-flex justify-content-md-end justify-content-between gap-2 mt-3">
+        <a class="btn btn-outline-secondary col-lg-2 col-md-4 col-5" asp-controller="Ensaio" asp-action="Index">Voltar</a>
+        <button class="btn btn-secondary col-lg-2 col-md-4 col-5" type="submit">Salvar</button>
     </div>
 </form>
