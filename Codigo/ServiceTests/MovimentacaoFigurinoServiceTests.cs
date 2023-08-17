@@ -14,7 +14,7 @@ namespace Service.Tests
     internal class MovimentacaoFigurinoServiceTests
     {
         private GrupoMusicalContext _context;
-        private IMovimentacaoFigurinoService movimentacaoFigurino;
+        private IMovimentacaoFigurinoService _movimentacaoFigurino;
 
         [TestInitialize]
         public void Initialize()
@@ -32,9 +32,40 @@ namespace Service.Tests
             {
                 new Movimentacaofigurino
                 {
-
+                    Id = 1,
+                    Data = new DateTime(2023, 2, 28, 0, 0, 0, 0, DateTimeKind.Local),
+                    IdFigurino = 1,
+                    IdAssociado = 1,
+                    IdColaborador = 2,
+                    Status = "DISPONIVEL",
+                    ConfirmacaoRecebimento = 0 
+                },
+                new Movimentacaofigurino
+                {
+                    Id = 2,
+                    Data = new DateTime(2023, 3, 28, 0, 0, 0, 0, DateTimeKind.Local),
+                    IdFigurino = 2,
+                    IdAssociado = 2,
+                    IdColaborador = 2,
+                    Status = "ENTREGUE",
+                    ConfirmacaoRecebimento = 1
+                },
+                new Movimentacaofigurino
+                {
+                    Id = 3,
+                    Data = new DateTime(2023, 4, 2, 0, 0, 0, 0, DateTimeKind.Local),
+                    IdFigurino = 3,
+                    IdAssociado = 3,
+                    IdColaborador = 2,
+                    Status = "DEVOLVIDO",
+                    ConfirmacaoRecebimento = 1
                 }
             };
+
+            _context.AddRange(movimentacoesFigurinos);
+            _context.SaveChanges();
+
+            _movimentacaoFigurino = new MovimentacaoFigurinoService(_context);
         }
     }
 }
