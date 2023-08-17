@@ -38,6 +38,19 @@ namespace Core.Service
         Task<Ensaio> Get(int id);
         Task<IEnumerable<Ensaio>> GetAll();
         Task<IEnumerable<EnsaioDTO>> GetAllDTO();
+        Task<EnsaioFrequenciaDTO?> GetFrequenciaAsync(int idEnsaio, int idGrupoMusical);
+        /// <summary>
+        /// Registra a lista de frequência no banco de dados
+        /// </summary>
+        /// <param name="frequencias"></param>
+        /// <returns>
+        /// 200 - Sucesso <para />
+        /// 400 - Lista vazia <para />
+        /// 401 - Lista enviada não corresponde a lista existente <para />
+        /// 404 - Lista não encontrada <para />
+        /// 500 - Erro interno
+        /// </returns>
+        Task<int> RegistrarFrequenciaAsync(List<EnsaioListaFrequenciaDTO> frequencias);
         Task<IEnumerable<EnsaioIndexDTO>> GetAllIndexDTO(int idGrupo);
         EnsaioDetailsDTO GetDetailsDTO(int idEnsaio);
     }
