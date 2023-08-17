@@ -251,30 +251,32 @@ namespace Service
                 }
                 int idEnsaio = frequencias.First().IdEnsaio;
 
-                var dbFrequencias = await _context.Ensaiopessoas
-                                          .Where(ensaioPessoa => ensaioPessoa.IdEnsaio == frequencias.First().IdEnsaio)
-                                          .OrderBy(ensaioPessoa => ensaioPessoa.IdPessoaNavigation.Nome)
-                                          .ToListAsync();
+                var dbFrequencias = _context.Ensaiopessoas
+                                    .Where(ensaioPessoa => ensaioPessoa.IdEnsaio == frequencias.First().IdEnsaio)
+                                    .OrderBy(ensaioPessoa => ensaioPessoa.IdPessoaNavigation.Nome);
 
                 if (dbFrequencias == null)
                 {
                     return 404;
                 }
 
-                if (dbFrequencias.Count != frequencias.Count)
+                if (dbFrequencias.Count() != frequencias.Count)
                 {
                     return 401;
                 }
-                for (int i = 0; i < frequencias.Count; i++)
-                {
-                    if (dbFrequencias[i].IdEnsaio == frequencias[i].IdEnsaio && dbFrequencias[i].IdPessoa == frequencias[i].IdPessoa)
-                    {
-                        dbFrequencias[i].JustificativaAceita = Convert.ToSByte(frequencias[i].JustificativaAceita);
-                        dbFrequencias[i].Presente = Convert.ToSByte(frequencias[i].Presente);
 
-                        _context.Update(dbFrequencias[i]);
+                int pos = 0;
+                await dbFrequencias.ForEachAsync(dbFrequencia =>
+                {
+                    if(dbFrequencia.IdEnsaio == frequencias[0].IdEnsaio && dbFrequencia.IdPessoa == frequencias[pos].IdPessoa)
+                    {
+                        dbFrequencia.JustificativaAceita = Convert.ToSByte(frequencias[pos].JustificativaAceita);
+                        dbFrequencia.Presente = Convert.ToSByte(frequencias[pos].Presente);
+
+                        _context.Update(dbFrequencia);
                     }
-                }
+                    pos++;
+                });
 
                 await _context.SaveChangesAsync();
 
