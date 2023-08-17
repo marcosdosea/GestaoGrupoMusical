@@ -184,7 +184,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     break;
                 case 400:
                     Notificar("A <b>Lista</b> enviada <b>Não</b> possui registros", Notifica.Alerta);
-                    break;
+                    return RedirectToAction(nameof(Index));
                 case 401:
                     Notificar("A <b>Lista</b> enviada é <b>Inválida</b>", Notifica.Erro);
                     break;
