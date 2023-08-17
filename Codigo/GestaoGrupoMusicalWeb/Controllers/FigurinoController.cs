@@ -298,7 +298,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             };
 
             int resul = await _movimentacaoService.CreateAsync(movimentacao);
-
+            
             string tipoMov = string.Empty;
 
             if (movimentacaoViewModel.Movimentacao.Equals("ENTREGUE"))
@@ -323,6 +323,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     break;
                 case 402:
                     Notificar("<b>Alerta!</b> Não há nada para devolver", Notifica.Alerta);
+                    break;
+                case 403:
+                    Notificar("<b>Erro</b>, O <b>Associado</b> ainda não confirmou o recebimento do <b>Figurino</b>", Notifica.Alerta);
                     break;
                 case 500:
                     Notificar("<b>Erro!</b> Algo deu errado", Notifica.Erro);
