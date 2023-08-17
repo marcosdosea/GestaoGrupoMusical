@@ -224,6 +224,7 @@ namespace Service
                             Tipo = ensaio.Tipo,
                             Local = ensaio.Local,
                             Frequencias = _context.Ensaiopessoas
+                            .Where(ensaioPessoa => ensaioPessoa.IdEnsaio == idEnsaio)
                             .OrderBy(ensaioPessoa => ensaioPessoa.IdPessoaNavigation.Nome)
                             .Select(ensaioPessoa => new EnsaioListaFrequenciaDTO
                             {
