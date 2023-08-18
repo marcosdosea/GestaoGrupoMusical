@@ -303,5 +303,16 @@ namespace Service.Tests
             // Assert
             Assert.AreEqual(1, movimentacoesFigurinos.Count());
         }
+
+        [TestMethod]
+        public void AssociadoEmprestimoTest()
+        {
+            // Act
+            var result = _movimentacaoFigurino.AssociadoEmprestimo(3, 3, 1).Result;
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result);
+        }
     }
 }
