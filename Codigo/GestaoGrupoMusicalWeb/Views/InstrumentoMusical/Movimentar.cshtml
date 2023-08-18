@@ -27,7 +27,7 @@
                 <label asp-for="IdAssociado" class="control-label"></label>
                     @if (Model.IdAssociado != 0)
                     {
-                        <label class="form-control">@Model.NomeAssociado</label>
+                        <input asp-for="@Model.NomeAssociado" class="form-control" readonly />
                         <input asp-for="IdAssociado" type="hidden"/>
                     }
                     else
