@@ -314,5 +314,15 @@ namespace Service.Tests
             Assert.IsNotNull(result);
             Assert.IsTrue(result);
         }
+
+        [TestMethod]
+        public void GetEstoqueTest() 
+        {
+            // Act 
+            var estoqueFigurinoManequins = _movimentacaoFigurino.GetEstoque(3).Result;
+
+            // Assert
+            Assert.AreEqual(1, estoqueFigurinoManequins.Count());
+        }
     }
 }
