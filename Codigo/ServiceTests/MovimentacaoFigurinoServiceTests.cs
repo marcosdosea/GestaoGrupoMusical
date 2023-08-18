@@ -227,6 +227,7 @@ namespace Service.Tests
                     Id = 1,
                     Data = new DateTime(2023, 2, 28, 0, 0, 0, 0, DateTimeKind.Local),
                     IdFigurino = 1,
+                    IdManequim = 1,
                     IdAssociado = 1,
                     IdColaborador = 2,
                     Status = "DISPONIVEL",
@@ -237,6 +238,7 @@ namespace Service.Tests
                     Id = 2,
                     Data = new DateTime(2023, 3, 28, 0, 0, 0, 0, DateTimeKind.Local),
                     IdFigurino = 2,
+                    IdManequim = 2,
                     IdAssociado = 2,
                     IdColaborador = 2,
                     Status = "ENTREGUE",
@@ -247,6 +249,7 @@ namespace Service.Tests
                     Id = 3,
                     Data = new DateTime(2023, 4, 2, 0, 0, 0, 0, DateTimeKind.Local),
                     IdFigurino = 3,
+                    IdManequim= 3,
                     IdAssociado = 3,
                     IdColaborador = 2,
                     Status = "DEVOLVIDO",
@@ -269,10 +272,12 @@ namespace Service.Tests
                 Id = 4,
                 Data = new DateTime(2023, 4, 1, 0, 0, 0, 0, DateTimeKind.Local),
                 IdFigurino = 4,
+                IdManequim = 4,
                 IdAssociado = 4,
                 IdColaborador = 2,
                 Status = "DISPONIVEL",
                 ConfirmacaoRecebimento = 0
+
             }).Result;
 
             // Assert
@@ -281,6 +286,13 @@ namespace Service.Tests
             
             Assert.IsNotNull(movimentacaoFigurino);
             Assert.AreEqual(4, movimentacaoFigurino.Id);
+            Assert.AreEqual(new DateTime(2023, 4, 1, 0, 0, 0, 0, DateTimeKind.Local), movimentacaoFigurino.Data);
+            Assert.AreEqual(4, movimentacaoFigurino.IdFigurino);
+            Assert.AreEqual(4, movimentacaoFigurino.IdManequim);
+            Assert.AreEqual(4, movimentacaoFigurino.IdAssociado);
+            Assert.AreEqual(2, movimentacaoFigurino.IdColaborador);
+            Assert.AreEqual("DISPONIVEL", movimentacaoFigurino.Status);
+            Assert.AreEqual(0, movimentacaoFigurino.ConfirmacaoRecebimento);
         }
 
         [TestMethod]
