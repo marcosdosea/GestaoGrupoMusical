@@ -339,9 +339,15 @@ namespace Service.Tests
         }
 
         [TestMethod]
-        public void ConfirmarMovimentacao()
+        public void ConfirmarMovimentacaoTest()
         {
+            // Act
+            _movimentacaoFigurino.ConfirmarMovimentacao(1, 1);
 
+            // Assert
+            var movimentacao = _context.Movimentacaofigurinos.FindAsync(1).Result;
+            Assert.IsNotNull(movimentacao);
+            Assert.AreEqual(1, movimentacao.ConfirmacaoRecebimento);
         }
     }
 }
