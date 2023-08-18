@@ -152,13 +152,19 @@ namespace Service
 
                 if (estoque.QuantidadeEntregue > 0)
                 {
+                    estoque.QuantidadeDisponivel = 0;
+                    _context.Figurinomanequims.Update(estoque);
+                    await _context.SaveChangesAsync();
+
                     return 400;
                 }
+                else
+                {
+                    _context.Figurinomanequims.Remove(estoque);
+                    await _context.SaveChangesAsync();
 
-                _context.Figurinomanequims.Remove(estoque);
-                await _context.SaveChangesAsync();
-
-                return 200;
+                    return 200;
+                }
             }
             catch
             {
