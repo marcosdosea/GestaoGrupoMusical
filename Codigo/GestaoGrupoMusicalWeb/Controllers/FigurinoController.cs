@@ -164,7 +164,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             int result = await _figurinoService.DeleteEstoque(idFigurino, idManequim);
             if(result == 400)
             {
-                Notificar("Não é permitido <b>Excluir Estoque</b> com peças <b>Entregues<b>!", Notifica.Alerta);
+                Notificar("<b>Alerta</b>! Não é permitido <b>Excluir Estoque</b> com peças <b>Entregues</b>! Quantidade <b>Disponível</b> foi <b>zerada</b>.", Notifica.Alerta);
             }
             else if (result == 200)
             {
