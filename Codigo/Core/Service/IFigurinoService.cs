@@ -39,5 +39,7 @@ namespace Core.Service
         /// </returns>
         Task<int> CreateEstoque(Figurinomanequim estoque);
         Task<int> DeleteEstoque(int idFigurino, int idManequim);
+        Task<int> EditEstoque(Figurinomanequim estoque);
+        Task<EstoqueDTO> GetEstoque(int idFigurino, int idManequim);
     }
 }
