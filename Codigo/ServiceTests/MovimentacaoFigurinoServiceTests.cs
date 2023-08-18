@@ -240,7 +240,7 @@ namespace Service.Tests
                     IdAssociado = 2,
                     IdColaborador = 2,
                     Status = "ENTREGUE",
-                    ConfirmacaoRecebimento = 1
+                    ConfirmacaoRecebimento = 0
                 },
                 new Movimentacaofigurino
                 {
@@ -336,6 +336,12 @@ namespace Service.Tests
             Assert.IsNotNull(movimentacoesAssociado.Devolucoes);
             Assert.AreEqual(0, movimentacoesAssociado.Entregue.Count());
             Assert.AreEqual(1, movimentacoesAssociado.Devolucoes.Count());
+        }
+
+        [TestMethod]
+        public void ConfirmarMovimentacao()
+        {
+
         }
     }
 }
