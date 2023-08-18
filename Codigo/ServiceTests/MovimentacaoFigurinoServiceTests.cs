@@ -324,5 +324,18 @@ namespace Service.Tests
             // Assert
             Assert.AreEqual(1, estoqueFigurinoManequins.Count());
         }
+
+        [TestMethod]
+        public void MovimentacoesByIdAssociadoAsyncTest()
+        {
+            // Act
+            var movimentacoesAssociado = _movimentacaoFigurino.MovimentacoesByIdAssociadoAsync(3).Result;
+
+            // Assert
+            Assert.IsNotNull(movimentacoesAssociado.Entregue);
+            Assert.IsNotNull(movimentacoesAssociado.Devolucoes);
+            Assert.AreEqual(0, movimentacoesAssociado.Entregue.Count());
+            Assert.AreEqual(1, movimentacoesAssociado.Devolucoes.Count());
+        }
     }
 }
