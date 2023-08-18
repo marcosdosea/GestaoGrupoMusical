@@ -279,8 +279,19 @@ namespace Service.Tests
             Assert.AreEqual(200, result);
             var movimentacaoFigurino = _context.Movimentacaofigurinos.FindAsync(4).Result;
             
-            Assert.IsNotNull(movimentacaoFigurino);
+            Assert.IsNull(movimentacaoFigurino);
             Assert.AreEqual(4, movimentacaoFigurino.Id);
+        }
+
+        [TestMethod]
+        public void DeleteAsyncTest()
+        {
+            // Act
+            _movimentacaoFigurino.DeleteAsync(1).Wait();
+
+            // Assert
+            var movimentacaoFigurino = _context.Movimentacaofigurinos.FindAsync(1).Result;
+            Assert.IsNull(movimentacaoFigurino);
         }
     }
 }
