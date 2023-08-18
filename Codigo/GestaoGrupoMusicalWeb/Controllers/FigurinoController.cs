@@ -1,17 +1,11 @@
 ﻿using AutoMapper;
 using Core;
-using Core.DTO;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.VisualBasic;
-using MySqlX.XDevAPI.Common;
-using Service;
-using System.Data;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
