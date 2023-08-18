@@ -143,6 +143,35 @@ namespace Service
             await _context.SaveChangesAsync();
             return 200;
         }
+
+        public async Task<int> DeleteEstoque(int idFigurino, int idManequim)
+        {
+            try
+            {
+                var estoque = _context.Figurinomanequims.FindAsync(idFigurino, idManequim).Result;
+
+                if (estoque.QuantidadeEntregue > 0)
+                {
+                    estoque.QuantidadeDisponivel = 0;
+                    _context.Figurinomanequims.Update(estoque);
+                    await _context.SaveChangesAsync();
+
+                    return 400;
+                }
+                else
+                {
+                    _context.Figurinomanequims.Remove(estoque);
+                    await _context.SaveChangesAsync();
+
+                    return 200;
+                }
+            }
+            catch
+            {
+                return 500;
+            }
+        }
+
         public async Task<int> EditEstoque(Figurinomanequim estoque)
         {
             try
@@ -162,6 +191,7 @@ namespace Service
                 return 500;
             }
         }
+
         public async Task<EstoqueDTO> GetEstoque(int idFigurino, int idManequim)
         {
             var query = from figurinomanequim in _context.Figurinomanequims

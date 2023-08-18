@@ -1,23 +1,49 @@
 ﻿@model IEnumerable<Core.DTO.EstoqueDTO>
 
-<tbody>
+<tbody class="table-responsive">
     @foreach (var item in Model)
     {
         <tr class="border-bottom border-danger border-opacity-75 p-3 align-middle">
-            <td class="p-3">
+            <td>
                 @Html.DisplayFor(modelItem => item.Tamanho)
             </td>
-            <td class="p-3">
+            <td>
                 @Html.DisplayFor(modelItem => item.Disponivel)
             </td>
-            <td class="p-3">
+            <td>
                 @Html.DisplayFor(modelItem => item.Entregues)
             </td>
-            <td class="p-3">
-                <a role="button" class="btn btn-secondary btn-sm mb-2 mb-lg-0" asp-controller="Figurino" asp-action="EditEstoque" asp-route-IdFigurino="@item.IdFigurino" asp-route-IdManequim="@item.IdManequim"><i class="fa-solid fa-pen-to-square"></i> Editar</a>
-                <a role="button" class="btn btn-secondary btn-sm" asp-controller="" asp-action=""><i class="fa-solid fa-xmark"> </i> Excluir</a>
+            <td class="d-flex justify-content-around py-3 flex-wrap">
+                <a role="button" class="btn btn-secondary btn-sm mb-2 mb-lg-0" asp-controller="" asp-action=""><i class="fa-solid fa-pen-to-square"></i> Editar</a>
+                <form id="@(item.IdFigurino + item.IdManequim + "_confirmar")" asp-action="DeleteEstoque" asp-route-idFigurino="@item.IdFigurino" asp-route-idManequim="@item.IdManequim" method="post" class="me-2">
+                    <a onclick="showModal('@(item.IdFigurino + item.IdManequim + "_confirmar")', 'estoqueModal')" class="btn btn-sm btn-secondary" role="button" data-bs-toggle="modal" data-bs-target="#estoqueModal">
+                        <i class="fa-solid fa-xmark"> </i>
+                        Excluir
+                    </a>
+                </form>
             </td>
         </tr>
     }
 </tbody>
+
+<div class="modal fade" id="estoqueModal" tabindex="-1" aria-labelledby="estoqueLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="admLabel">Confirmar Exclusão do Estoque</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Deseja <b>Excluir</b> o <b>Estoque</b>?
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary col-3 me-4" data-bs-dismiss="modal">Não</button>
+                <form method="post">
+                    <button type="submit" class="btn btn-secondary col-3">Sim</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
