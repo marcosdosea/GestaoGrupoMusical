@@ -78,16 +78,47 @@ namespace Service.Tests
                     Tamanho = "M",
                     Descricao = "MÉDIO"
                 },
-                 new Manequim
+                new Manequim
                 {
                     Id = 4,
                     Tamanho = "G",
                     Descricao = "GRANDE"
                 }
-
-
             };
-            _context.AddRange(manequins);
+            _context.Manequims.AddRange(manequins);
+
+            var estoquesDeFigurinos = new List<Figurinomanequim>
+            {
+                new Figurinomanequim
+                {
+                    IdFigurino = 1,
+                    IdManequim = 1,
+                    QuantidadeDisponivel = 10,
+                    QuantidadeEntregue = 0
+                },
+                new Figurinomanequim
+                {
+                    IdFigurino = 2,
+                    IdManequim = 3,
+                    QuantidadeDisponivel = 10,
+                    QuantidadeEntregue = 0
+                },
+                new Figurinomanequim
+                {
+                    IdFigurino = 3,
+                    IdManequim = 1,
+                    QuantidadeDisponivel = 5,
+                    QuantidadeEntregue = 0
+                },
+                new Figurinomanequim
+                {
+                    IdFigurino = 4,
+                    IdManequim = 4,
+                    QuantidadeDisponivel = 8,
+                    QuantidadeEntregue = 0
+                },
+            };
+            _context.Figurinomanequims.AddRange(estoquesDeFigurinos);
 
             var pessoas = new List<Pessoa>
             {
@@ -187,7 +218,7 @@ namespace Service.Tests
                 }
             };
 
-            _context.AddRange(pessoas);
+            _context.Pessoas.AddRange(pessoas);
 
             var movimentacoesFigurinos = new List<Movimentacaofigurino>
             {
@@ -223,7 +254,7 @@ namespace Service.Tests
                 }
             };
 
-            _context.AddRange(movimentacoesFigurinos);
+            _context.Movimentacaofigurinos.AddRange(movimentacoesFigurinos);
             _context.SaveChanges();
 
             _movimentacaoFigurino = new MovimentacaoFigurinoService(_context);
@@ -245,7 +276,7 @@ namespace Service.Tests
             }).Result;
 
             // Assert
-            //Assert.AreEqual(200, result);
+            Assert.AreEqual(200, result);
             var movimentacaoFigurino = _context.Movimentacaofigurinos.FindAsync(4).Result;
             
             Assert.IsNotNull(movimentacaoFigurino);
