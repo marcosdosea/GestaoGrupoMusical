@@ -279,7 +279,7 @@ namespace Service.Tests
             Assert.AreEqual(200, result);
             var movimentacaoFigurino = _context.Movimentacaofigurinos.FindAsync(4).Result;
             
-            Assert.IsNull(movimentacaoFigurino);
+            Assert.IsNotNull(movimentacaoFigurino);
             Assert.AreEqual(4, movimentacaoFigurino.Id);
         }
 
@@ -292,6 +292,16 @@ namespace Service.Tests
             // Assert
             var movimentacaoFigurino = _context.Movimentacaofigurinos.FindAsync(1).Result;
             Assert.IsNull(movimentacaoFigurino);
+        }
+
+        [TestMethod]
+        public void GetAllByIdFigurinoTest()
+        {
+            // Act
+            var movimentacoesFigurinos = _movimentacaoFigurino.GetAllByIdFigurino(2).Result;
+
+            // Assert
+            Assert.AreEqual(1, movimentacoesFigurinos.Count());
         }
     }
 }
