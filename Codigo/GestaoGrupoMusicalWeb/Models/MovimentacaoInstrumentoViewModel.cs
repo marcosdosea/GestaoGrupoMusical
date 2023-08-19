@@ -16,6 +16,7 @@ namespace GestaoGrupoMusicalWeb.Models
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public int IdAssociado { get; set; }
 
+        public string? NomeAssociado { get;set; }
         public int IdInstrumentoMusical { get; set; }
 
         public DateTime Data { get; set; } = DateTime.Now;

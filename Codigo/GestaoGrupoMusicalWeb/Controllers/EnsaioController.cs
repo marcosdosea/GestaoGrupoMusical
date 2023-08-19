@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Core;
+using Core.DTO;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -35,8 +36,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: EnsaioController/Details/5
         public async Task<ActionResult> Details(int id)
         {
-            var ensaio = await _ensaio.Get(id);
-            return View(_mapper.Map<EnsaioViewModel>(ensaio));
+            var ensaio = _ensaio.GetDetailsDTO(id);
+            return View(ensaio);
         }
 
         // GET: EnsaioController/Create
@@ -158,6 +159,43 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             }
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<ActionResult> RegistrarFrequencia(int idEnsaio)
+        {
+            if (User.FindFirst("IdGrupoMusical")?.Value == null) {
+                return RedirectToAction("Sair", "Identity");
+            }
+            var frequencias = await _ensaio.GetFrequenciaAsync(idEnsaio, Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
+            if(frequencias == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            return View(frequencias);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> RegistrarFrequencia(List<EnsaioListaFrequenciaDTO> listaFrequencia)
+        {
+            switch(await _ensaio.RegistrarFrequenciaAsync(listaFrequencia))
+            {
+                case 200:
+                    Notificar("Lista de <b>Frequência</b> salva com <b>Sucesso</b>", Notifica.Sucesso);
+                    break;
+                case 400:
+                    Notificar("A <b>Lista</b> enviada <b>Não</b> possui registros", Notifica.Alerta);
+                    return RedirectToAction(nameof(Index));
+                case 401:
+                    Notificar("A <b>Lista</b> enviada é <b>Inválida</b>", Notifica.Erro);
+                    break;
+                case 404:
+                    Notificar("A <b>Lista</b> enviada não foi <b>Encontrada</b>", Notifica.Erro);
+                    break;
+                case 500:
+                    Notificar("Desculpe, ocorreu um <b>Erro</b> ao registrar a Lista de <b>Frequência</b>, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                    break;
+            }
+            return RedirectToAction(nameof(RegistrarFrequencia), new { idEnsaio = listaFrequencia.First().IdEnsaio });
         }
     }
 }

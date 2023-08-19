@@ -1,6 +1,7 @@
 ﻿using Core;
 using Core.DTO;
 using Core.Service;
+using Email;
 using Microsoft.EntityFrameworkCore;
 
 namespace Service
@@ -19,30 +20,68 @@ namespace Service
         /// <returns>Verdadeiro(<see langword="true" />) se cadastrou com sucesso ou Falso(<see langword="false" />) se houve algum erro.</returns>
         public async Task<int> Create(Ensaio ensaio)
         {
+            using var transaction = _context.Database.BeginTransaction();
+
             try
             {
-                await _context.Ensaios.AddAsync(ensaio);
                 if (ensaio.DataHoraFim > ensaio.DataHoraInicio)
                 {
                     if(ensaio.DataHoraInicio >= DateTime.Now)
                     {
+                        await _context.Ensaios.AddAsync(ensaio);
+
+                        var associados = _context.Pessoas
+                                         .Where(p => p.IdPapelGrupo == 1 && p.Ativo == 1 && p.IdGrupoMusical == ensaio.IdGrupoMusical)
+                                         .Select(pessoa => new { pessoa.Id, pessoa.Email }).AsNoTracking();
+
                         await _context.SaveChangesAsync();
+
+                        EmailModel email = new()
+                        {
+                            Assunto = "Batalá - Novo Ensaio Cadastrado",
+                            AddresseeName = "Associado",
+                            Body = "<div style=\"text-align: center;\">\r\n    " +
+                                    $"<h3>Um novo ensaio foi cadastrado.</h3>\r\n" +
+                                    "<div style=\"font-size: large;\">\r\n        " +
+                                    $"<dt style=\"font-weight: 700;\">Data e Horário de Início:</dt><dd>{ensaio.DataHoraInicio}</dd>" +
+                                    $"<dt style=\"font-weight: 700;\">Data e Horário de Fim:</dt><dd>{ensaio.DataHoraFim}</dd>\n</div>"
+                        };
+
+                        await associados.ForEachAsync(async associado => {
+                            Ensaiopessoa ensaioPessoa = new()
+                            {
+                                IdEnsaio = ensaio.Id,
+                                IdPessoa = associado.Id,
+                                Presente = 1
+                            };
+                            await _context.Ensaiopessoas.AddAsync(ensaioPessoa);
+                            email.To.Add(associado.Email);
+                        });
+
+                        await EmailService.Enviar(email);
+
+                        await _context.SaveChangesAsync();
+                        await transaction.CommitAsync();
+
                         return 200;
                     }
                     else
                     {
+                        await transaction.RollbackAsync();
                         return 400;
                     }
                    
                 }
                 else 
                 {
+                    await transaction.RollbackAsync();
                     return 401;
                 }
              
             }
             catch
             {
+                await transaction.RollbackAsync();
                 return 500;
             }
         }
@@ -73,7 +112,7 @@ namespace Service
         {
 
              try
-            {
+             {
                 var ensaioDb = await _context.Ensaios.Where(e => e.Id == ensaio.Id).AsNoTracking().SingleOrDefaultAsync();
                 if(ensaioDb != null)
                 {
@@ -99,11 +138,11 @@ namespace Service
                     return 401;
                 }
              
-            }
-            catch
-            {
+             }
+             catch
+             {
                 return 500;
-            }
+             }
         }
         /// <summary>
         /// Consulta um Ensaio no banco de dados
@@ -152,6 +191,101 @@ namespace Service
 
                 }).AsNoTracking().ToListAsync();
             return await query;
+        }
+
+        public EnsaioDetailsDTO GetDetailsDTO(int idEnsaio)
+        {
+            var query = _context.Ensaios
+                .Select(g => new EnsaioDetailsDTO
+                {
+                    Id = g.Id,
+                    DataHoraInicio = g.DataHoraInicio,
+                    DataHoraFim = g.DataHoraFim,
+                    Tipo = g.Tipo,
+                    Local = g.Local,
+                    PresencaObrigatoria = g.PresencaObrigatoria == 1 ? "Sim" : "Não",
+                    Repertorio = g.Repertorio,
+                    NomeRegente = g.IdRegenteNavigation.Nome
+
+                }).Where(g => g.Id == idEnsaio);
+
+            return query.First();
+        }
+
+        public async Task<EnsaioFrequenciaDTO?> GetFrequenciaAsync(int idEnsaio, int idGrupoMusical)
+        {
+            var query = from ensaio in _context.Ensaios
+                        where ensaio.Id == idEnsaio && ensaio.IdGrupoMusical == idGrupoMusical
+                        select new EnsaioFrequenciaDTO
+                        {
+                            Inicio = ensaio.DataHoraInicio,
+                            Fim = ensaio.DataHoraFim,
+                            NomeRegnete = ensaio.IdRegenteNavigation.Nome,
+                            Tipo = ensaio.Tipo,
+                            Local = ensaio.Local,
+                            Frequencias = _context.Ensaiopessoas
+                            .Where(ensaioPessoa => ensaioPessoa.IdEnsaio == idEnsaio)
+                            .OrderBy(ensaioPessoa => ensaioPessoa.IdPessoaNavigation.Nome)
+                            .Select(ensaioPessoa => new EnsaioListaFrequenciaDTO
+                            {
+                                IdEnsaio = ensaioPessoa.IdEnsaio,
+                                IdPessoa = ensaioPessoa.IdPessoa,
+                                Cpf = ensaioPessoa.IdPessoaNavigation.Cpf,
+                                NomeAssociado = ensaioPessoa.IdPessoaNavigation.Nome,
+                                Justificativa = ensaioPessoa.JustificativaFalta,
+                                Presente = Convert.ToBoolean(ensaioPessoa.Presente),
+                                JustificativaAceita = Convert.ToBoolean(ensaioPessoa.JustificativaAceita),
+                            }).AsEnumerable()
+                        };
+
+            return await query.AsNoTracking().SingleOrDefaultAsync();
+        }
+
+        public async Task<int> RegistrarFrequenciaAsync(List<EnsaioListaFrequenciaDTO> frequencias)
+        {
+            try
+            {
+                if (!frequencias.Any())
+                {
+                    return 400;
+                }
+                int idEnsaio = frequencias.First().IdEnsaio;
+
+                var dbFrequencias = _context.Ensaiopessoas
+                                    .Where(ensaioPessoa => ensaioPessoa.IdEnsaio == frequencias.First().IdEnsaio)
+                                    .OrderBy(ensaioPessoa => ensaioPessoa.IdPessoaNavigation.Nome);
+
+                if (dbFrequencias == null)
+                {
+                    return 404;
+                }
+
+                if (dbFrequencias.Count() != frequencias.Count)
+                {
+                    return 401;
+                }
+
+                int pos = 0;
+                await dbFrequencias.ForEachAsync(dbFrequencia =>
+                {
+                    if(dbFrequencia.IdEnsaio == frequencias[0].IdEnsaio && dbFrequencia.IdPessoa == frequencias[pos].IdPessoa)
+                    {
+                        dbFrequencia.JustificativaAceita = Convert.ToSByte(frequencias[pos].JustificativaAceita);
+                        dbFrequencia.Presente = Convert.ToSByte(frequencias[pos].Presente);
+
+                        _context.Update(dbFrequencia);
+                    }
+                    pos++;
+                });
+
+                await _context.SaveChangesAsync();
+
+                return 200;
+            }
+            catch
+            {
+                return 500;
+            }
         }
     }
 }

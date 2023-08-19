@@ -61,6 +61,14 @@ namespace Service
                     }
                     if (movimentacao.Status.Equals("DEVOLVIDO"))
                     {
+                        sbyte confirmacao = await GetConfirmacaoFigurino(movimentacao.IdAssociado, movimentacao.IdFigurino
+                            , movimentacao.IdManequim);
+                        if ( confirmacao != 1)
+                        {
+                            await transaction.RollbackAsync();
+                            return 403; //não ouve confirmação do associado 
+                        }
+                        movimentacao.ConfirmacaoRecebimento = 0;
                         figurinoEstoque.QuantidadeDisponivel++;
                         figurinoEstoque.QuantidadeEntregue--;
                     }
@@ -264,6 +272,17 @@ namespace Service
             {
                 return 500;
             }
+        }
+
+        public async Task<sbyte> GetConfirmacaoFigurino(int idAssociado, int idFigurino, int idManequim)
+        {
+            var query = await _context.Movimentacaofigurinos
+                .AsNoTracking()
+                .Where(g =>g.IdAssociado == idAssociado && g.IdFigurino == idFigurino
+                    && g.IdManequim == idManequim)
+                .Select(g => g.ConfirmacaoRecebimento)
+                .FirstOrDefaultAsync();
+            return query;
         }
     }
 }
