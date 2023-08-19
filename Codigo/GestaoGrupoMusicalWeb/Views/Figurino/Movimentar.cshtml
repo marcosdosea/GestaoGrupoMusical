@@ -98,17 +98,4 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-
-    <script>
-        $(document).ready(function () {
-            $('input[type="radio"]').change(function () {
-                if ($(this).val() === 'DEVOLVIDO') {
-                    $('#checkboxContainer').show();
-                } else {
-                    $('#checkboxContainer').hide();
-                    $('#Danificado').prop('checked', false);
-                }
-            });
-        });
-    </script>
 }
