@@ -292,16 +292,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             string status = string.Empty;
 
-            if (movimentacaoViewModel.Danificado)
-            {
-                status = "DANIFICADO";
-            }
-            else
-            {
-                status = movimentacaoViewModel.Movimentacao;
-            }
-
-
             Movimentacaofigurino movimentacao = new Movimentacaofigurino
             {
                 Data = movimentacaoViewModel.Data,
