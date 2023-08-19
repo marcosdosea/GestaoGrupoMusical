@@ -66,8 +66,6 @@ namespace Service
             {
                 return 500;
             }
-
-
         }
 
         public async Task<Figurino> Get(int id)
