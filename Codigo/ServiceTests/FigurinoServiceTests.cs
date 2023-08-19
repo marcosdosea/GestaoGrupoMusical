@@ -11,7 +11,7 @@ namespace Service.Tests
         private GrupoMusicalContext _context;
         private IFigurinoService _figurino;
 
-        [ClassInitialize]
+        [TestInitialize]
         public void Initialize()
         {
             // Arrange
@@ -59,6 +59,27 @@ namespace Service.Tests
             _context.SaveChanges();
 
             _figurino = new FigurinoService(_context);
+        }
+
+        [TestMethod]
+        public void CreateTest()
+        {
+            // Act
+            _figurino.Create(new Figurino
+            {
+                Id = 5,
+                Nome = "Mulher Maravilha",
+                Data = new DateTime(2022, 8, 15, 0, 0, 0, 0, DateTimeKind.Local),
+                IdGrupoMusical = 1
+            }).Wait();
+
+            // Assert
+            var figurino = _figurino.Get(5).Result;
+            Assert.IsNotNull(figurino);
+            Assert.AreEqual(5, figurino.Id);
+            Assert.AreEqual("Mulher Maravilha", figurino.Nome);
+            Assert.AreEqual(new DateTime(2022, 8, 15, 0, 0, 0, 0, DateTimeKind.Local), figurino.Data);
+            Assert.AreEqual(1, figurino.IdGrupoMusical);
         }
     }
 }
