@@ -52,7 +52,7 @@ namespace Service
                     figurinoEstoque.QuantidadeDisponivel--;
                     figurinoEstoque.QuantidadeEntregue++;
                 }
-                else if (movimentacao.Status.Equals("DEVOLVIDO") || movimentacao.Status.Equals("DANIFICADO"))
+                else if (movimentacao.Status.Equals("DEVOLVIDO"))
                 {
                     if (await AssociadoEmprestimo(movimentacao.IdAssociado, movimentacao.IdFigurino, movimentacao.IdManequim))
                     {
