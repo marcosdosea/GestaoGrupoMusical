@@ -81,5 +81,16 @@ namespace Service.Tests
             Assert.AreEqual(new DateTime(2022, 8, 15, 0, 0, 0, 0, DateTimeKind.Local), figurino.Data);
             Assert.AreEqual(1, figurino.IdGrupoMusical);
         }
+
+        [TestMethod]
+        public void DeleteTest()
+        {
+            // Act 
+            _figurino.Delete(1);
+
+            // Arrange
+            var figurino = _context.Figurinos.FindAsync(1).Result;
+            Assert.IsNull(figurino); 
+        }
     }
 }
