@@ -290,7 +290,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             var colaborador = await _pessoaService.GetByCpf(User.Identity.Name);
 
-            string status = string.Empty;
+            string status = movimentacaoViewModel.Movimentacao;
 
             Movimentacaofigurino movimentacao = new Movimentacaofigurino
             {
