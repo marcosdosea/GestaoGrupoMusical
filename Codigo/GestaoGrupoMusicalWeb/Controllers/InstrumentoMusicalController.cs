@@ -47,6 +47,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> Details(int id)
         {
             var instrumentoMusical = await _instrumentoMusical.Get(id);
+            if (Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value) != instrumentoMusical?.IdGrupoMusical)
+            {
+                Notificar("<b>Instrumento não encontrado!</b>", Notifica.Alerta);
+                return RedirectToAction(nameof(Index));
+            }
             var instrumentoMusicalModel = _mapper.Map<InstrumentoMusicalViewModel>(instrumentoMusical);
             return View(instrumentoMusicalModel);
         }
@@ -102,6 +107,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> Edit(int id)
         {
             var instrumentoMusical = await _instrumentoMusical.Get(id);
+
+            if (Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value) != instrumentoMusical?.IdGrupoMusical)
+            {
+                Notificar("<b>Instrumento não encontrado!</b>", Notifica.Alerta);
+                return RedirectToAction(nameof(Index));
+            }
             var instrumentoMusicalModel = _mapper.Map<InstrumentoMusicalViewModel>(instrumentoMusical);
             if (instrumentoMusicalModel.Status != "EMPRESTADO")
             {
@@ -212,6 +223,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             MovimentacaoInstrumentoViewModel movimentacaoModel = new();
             var instrumento = await _instrumentoMusical.Get(id);
+            if (Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value) != instrumento?.IdGrupoMusical)
+            {
+                Notificar("<b>Instrumento não encontrado!</b>", Notifica.Alerta);
+                return RedirectToAction(nameof(Index));
+            }
             var movimentacao = await _movimentacaoInstrumento.GetEmprestimoByIdInstrumento(id);
             if (instrumento.Status.Equals("DANIFICADO"))
             {
