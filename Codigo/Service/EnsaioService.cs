@@ -300,6 +300,8 @@ namespace Service
                             Presente = Convert.ToBoolean(ensaioPessoa.Presente),
                             Justificativa = ensaioPessoa.JustificativaFalta,
                             JustificativaAceita = Convert.ToBoolean(ensaioPessoa.JustificativaAceita),
+                            Local = ensaioPessoa.IdEnsaioNavigation.Local,
+                            Repertorio = ensaioPessoa.IdEnsaioNavigation.Repertorio
                         };
 
             return await query.AsNoTracking().ToListAsync();

@@ -6,6 +6,11 @@ namespace Core.DTO
     {
         public int IdEnsaio { get; set; }
 
+        public string? Local { get; set; }
+
+        [Display(Name = "Repertório")]
+        public string? Repertorio { get; set; }
+
         [Display(Name = "Início")]
         public DateTime Inicio { get; set; }
 
