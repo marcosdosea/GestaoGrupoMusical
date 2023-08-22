@@ -287,5 +287,21 @@ namespace Service
                 return 500;
             }
         }
+
+        public async Task<IEnumerable<EnsaioAssociadoDTO>> GetEnsaioPessoaAsync(int idEnsaio, int idPessoa) 
+        {
+            var query = from ensaioPessoa in _context.Ensaiopessoas
+                        where ensaioPessoa.IdPessoa == idPessoa && ensaioPessoa.IdEnsaio == idEnsaio
+                        select new EnsaioAssociadoDTO
+                        {
+                            IdEnsaio = ensaioPessoa.IdEnsaio,
+                            Inicio = ensaioPessoa.IdEnsaioNavigation.DataHoraInicio,
+                            Fim = ensaioPessoa.IdEnsaioNavigation.DataHoraFim,
+                            Justificativa = ensaioPessoa.JustificativaFalta,
+                            JustificativaAceita = Convert.ToBoolean(ensaioPessoa.JustificativaAceita),
+                        };
+
+            return await query.AsNoTracking().ToListAsync();
+        }
     }
 }
