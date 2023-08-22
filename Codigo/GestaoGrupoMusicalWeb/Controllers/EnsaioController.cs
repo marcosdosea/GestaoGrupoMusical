@@ -208,6 +208,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return RedirectToAction(nameof(RegistrarFrequencia), new { idEnsaio = listaFrequencia.First().IdEnsaio });
         }
 
+        [Authorize(Roles = "ASSOCIADO")]
         public async Task<ActionResult> RegistrarJustificativa (int idEnsaio)
         {
             var model = await _ensaio.GetEnsaioPessoaAsync(idEnsaio, Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
