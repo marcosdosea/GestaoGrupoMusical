@@ -339,7 +339,21 @@ namespace Service.Tests
             Assert.AreEqual("M", estoqueEditado.Tamanho);
             Assert.AreEqual(9, estoqueEditado.Disponivel);
             Assert.AreEqual(1, estoqueEditado.Entregues);
+        }
 
+        [TestMethod]
+        public void GetEstoqueTest()
+        {
+            // Act
+            var estoque = _figurino.GetEstoque(4, 4).Result;
+
+            // Assert
+            Assert.IsNotNull(estoque);
+            Assert.AreEqual(4, estoque.IdFigurino);
+            Assert.AreEqual(4, estoque.IdManequim);
+            Assert.AreEqual("G", estoque.Tamanho);
+            Assert.AreEqual(8, estoque.Disponivel);
+            Assert.AreEqual(0, estoque.Entregues);
         }
     }
 }
