@@ -2,6 +2,7 @@
 using Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.EntityFrameworkCore;
+using Core.DTO;
 
 namespace Service.Tests
 {
@@ -286,6 +287,28 @@ namespace Service.Tests
             Assert.AreEqual("PP", estoqueDTO.Tamanho);
             Assert.AreEqual(10, estoqueDTO.Disponivel);
             Assert.AreEqual(0, estoqueDTO.Entregues);
+        }
+
+        [TestMethod]
+        public void CreateEstoqueTest() 
+        {
+            // Act
+            _figurino.CreateEstoque(new Figurinomanequim
+            {
+                IdFigurino = 1,
+                IdManequim = 3,
+                QuantidadeDisponivel = 5,
+                QuantidadeEntregue = 0
+            });
+
+            // Assert
+            var estoque = _figurino.GetEstoque(1, 3).Result;
+            Assert.IsNotNull(estoque);
+            Assert.AreEqual(1, estoque.IdFigurino);
+            Assert.AreEqual(3, estoque.IdManequim);
+            Assert.AreEqual("M", estoque.Tamanho);
+            Assert.AreEqual(5, estoque.Disponivel);
+            Assert.AreEqual(0, estoque.Entregues);
         }
     }
 }
