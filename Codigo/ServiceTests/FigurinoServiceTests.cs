@@ -23,6 +23,57 @@ namespace Service.Tests
             _context.Database.EnsureDeleted();
             _context.Database.EnsureCreated();
 
+            var pessoas = new List<Pessoa>
+            {
+                new Pessoa {
+                    Id = 1,
+                    Cpf = "007.587.624-02",
+                    Nome = "José santos",
+                    Sexo = "M",
+                    Cep = "49520-111",
+                    Rua = "Rua 10",
+                    Bairro = "Centro",
+                    Cidade = "Itabaina",
+                    Estado = "SE",
+                    DataNascimento = new DateTime(1998, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                    Telefone1 = "79998567896",
+                    Telefone2 = "79998653284",
+                    Email = "josests@gmail.com",
+                    DataEntrada = new DateTime(1998, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                    DataSaida = new DateTime (1998, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                    MotivoSaida = "Não me acostumei com a cultura",
+                    Ativo = 1,
+                    IsentoPagamento = 1,
+                    IdGrupoMusical = 1,
+                    IdPapelGrupo = 1,
+                    IdManequim = 1
+                },
+                new Pessoa {
+                    Id = 2,
+                    Cpf = "007.457.624-02",
+                    Nome = "Matheus santos",
+                    Sexo = "M",
+                    Cep = "49520-111",
+                    Rua = "Rua 10",
+                    Bairro = "Centro",
+                    Cidade = "Itabaina",
+                    Estado = "SE",
+                    DataNascimento = new DateTime (1998, 2, 1, 0, 0, 0, 0, DateTimeKind.Local),
+                    Telefone1 = "79956567896",
+                    Telefone2 = "79998653654",
+                    Email = "matheussts@gmail.com",
+                    DataEntrada = new DateTime (2013, 2, 24, 0, 0, 0, 0, DateTimeKind.Local),
+                    DataSaida = new DateTime (2021, 6, 5, 0, 0, 0, 0, DateTimeKind.Local),
+                    MotivoSaida = "Não me acostumei com a cultura",
+                    Ativo = 1,
+                    IsentoPagamento = 1,
+                    IdGrupoMusical = 1,
+                    IdPapelGrupo = 1,
+                    IdManequim = 1
+                }
+            };
+            _context.AddRange(pessoas);
+
             var figurinos = new List<Figurino>
             {
                 new Figurino
@@ -122,6 +173,23 @@ namespace Service.Tests
             Assert.AreEqual("Batman", figurino.Nome);
             Assert.AreEqual(new DateTime(2022, 8, 14, 0, 0, 0, 0, DateTimeKind.Local), figurino.Data);
             Assert.AreEqual(1, figurino.IdGrupoMusical) ;
+        }
+
+        [TestMethod]
+        public void GetAllTest()
+        {
+            // Act
+            var figurinos = _figurino.GetAll("007.587.624-02").Result;
+
+            // Assert
+            Assert.IsNotNull(figurinos);
+            Assert.AreEqual(4, figurinos.Count());
+            var figurino = figurinos.FirstOrDefault();
+            Assert.IsNotNull(figurino);
+            Assert.AreEqual(1, figurino.Id);
+            Assert.AreEqual("Galinha Pintadinha", figurino.Nome);
+            Assert.AreEqual(new DateTime(2022, 8, 14, 0, 0, 0, 0, DateTimeKind.Local), figurino.Data);
+            Assert.AreEqual(1, figurino.IdGrupoMusical);
         }
     }
 }
