@@ -297,6 +297,7 @@ namespace Service
                             IdEnsaio = ensaioPessoa.IdEnsaio,
                             Inicio = ensaioPessoa.IdEnsaioNavigation.DataHoraInicio,
                             Fim = ensaioPessoa.IdEnsaioNavigation.DataHoraFim,
+                            Presente = Convert.ToBoolean(ensaioPessoa.Presente),
                             Justificativa = ensaioPessoa.JustificativaFalta,
                             JustificativaAceita = Convert.ToBoolean(ensaioPessoa.JustificativaAceita),
                         };
