@@ -273,7 +273,19 @@ namespace Service.Tests
         [TestMethod]
         public void GetAllEstoqueDTOTest() 
         {
+            // Act
+            var estoques = _figurino.GetAllEstoqueDTO(1).Result;
 
+            // Assert
+            Assert.IsNotNull(estoques);
+            Assert.AreEqual(1, estoques.Count());
+            var estoqueDTO = estoques.First();
+            Assert.IsNotNull(estoqueDTO);
+            Assert.AreEqual(1, estoqueDTO.IdFigurino);
+            Assert.AreEqual(1, estoqueDTO.IdManequim);
+            Assert.AreEqual("PP", estoqueDTO.Tamanho);
+            Assert.AreEqual(10, estoqueDTO.Disponivel);
+            Assert.AreEqual(0, estoqueDTO.Entregues);
         }
     }
 }
