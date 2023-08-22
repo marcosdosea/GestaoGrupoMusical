@@ -92,5 +92,22 @@ namespace Service.Tests
             var figurino = _context.Figurinos.FindAsync(1).Result;
             Assert.IsNull(figurino); 
         }
+
+        [TestMethod]
+        public void EditTest()
+        {
+            // Act
+            var figurino = _figurino.Get(2).Result;
+            figurino.Nome = "Flash";
+            figurino.Data = new DateTime(2022, 8, 21, 0, 0, 0, 0, DateTimeKind.Local);
+            _figurino.Edit(figurino);
+
+            // Assert
+            var figurinoEditado = _figurino.Get(2).Result;
+            Assert.IsNotNull(figurinoEditado);
+            Assert.AreEqual(2, figurinoEditado.Id);
+            Assert.AreEqual("Flash", figurinoEditado.Nome);
+            Assert.AreEqual(new DateTime(2022, 8, 21, 0, 0, 0, 0, DateTimeKind.Local), figurinoEditado.Data);
+        }
     }
 }
