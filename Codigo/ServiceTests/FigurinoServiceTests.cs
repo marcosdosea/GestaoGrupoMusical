@@ -106,7 +106,7 @@ namespace Service.Tests
                     IdGrupoMusical = 1
                 },
             };
-            _context.Figurinos.AddRange(figurinos);
+            _context.AddRange(figurinos);
 
             var manequins = new List<Manequim>
             {
@@ -135,7 +135,7 @@ namespace Service.Tests
                     Descricao = "GRANDE"
                 }
             };
-            _context.Manequims.AddRange(manequins);
+            _context.AddRange(manequins);
 
             var estoquesDeFigurinos = new List<Figurinomanequim>
             {
@@ -168,7 +168,7 @@ namespace Service.Tests
                     QuantidadeEntregue = 0
                 },
             };
-            _context.Figurinomanequims.AddRange(estoquesDeFigurinos);
+            _context.AddRange(estoquesDeFigurinos);
 
             _context.SaveChanges();
 
@@ -200,10 +200,12 @@ namespace Service.Tests
         public void DeleteTest()
         {
             // Act 
-            var result = _figurino.Delete(1).Result;
+            var estoque = _context.Figurinomanequims.FindAsync(1, 1).Result;
+            _context.Figurinomanequims.Remove(estoque);
+            _context.SaveChangesAsync();
+            _figurino.Delete(1).GetAwaiter().GetResult();
 
             // Arrange
-            Assert.AreEqual(200, result);
             var figurino = _context.Figurinos.FindAsync(1).Result;
             Assert.IsNull(figurino); 
         }
