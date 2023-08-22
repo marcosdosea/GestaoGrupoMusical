@@ -288,10 +288,10 @@ namespace Service
             }
         }
 
-        public async Task<IEnumerable<EnsaioAssociadoDTO>> GetEnsaioPessoaAsync(int idEnsaio, int idPessoa) 
+        public async Task<IEnumerable<EnsaioAssociadoDTO>> GetEnsaiosByIdPesoaAsync(int idPessoa) 
         {
             var query = from ensaioPessoa in _context.Ensaiopessoas
-                        where ensaioPessoa.IdPessoa == idPessoa && ensaioPessoa.IdEnsaio == idEnsaio
+                        where ensaioPessoa.IdPessoa == idPessoa
                         select new EnsaioAssociadoDTO
                         {
                             IdEnsaio = ensaioPessoa.IdEnsaio,
