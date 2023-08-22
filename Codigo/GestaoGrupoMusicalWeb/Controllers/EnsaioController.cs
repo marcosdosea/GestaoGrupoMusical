@@ -215,5 +215,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             return View(model);
         }
+
+        [Authorize(Roles = "ASSOCIADO")]
+        public async Task<ActionResult> RegistrarJustificativa(int idEnsaio)
+        {
+            var model = await _ensaio.GetEnsaiosByIdPesoaAsync(Convert.ToInt32(User.FindFirst("Id")?.Value));
+
+            return View(model);
+        }
     }
 }
