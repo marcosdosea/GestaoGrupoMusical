@@ -109,5 +109,19 @@ namespace Service.Tests
             Assert.AreEqual("Flash", figurinoEditado.Nome);
             Assert.AreEqual(new DateTime(2022, 8, 21, 0, 0, 0, 0, DateTimeKind.Local), figurinoEditado.Data);
         }
+
+        [TestMethod]
+        public void GetTest()
+        {
+            // Act
+            var figurino = _figurino.Get(3).Result;
+
+            // Assert
+            Assert.IsNotNull(figurino);
+            Assert.AreEqual(3, figurino.Id);
+            Assert.AreEqual("Batman", figurino.Nome);
+            Assert.AreEqual(new DateTime(2022, 8, 14, 0, 0, 0, 0, DateTimeKind.Local), figurino.Data);
+            Assert.AreEqual(1, figurino.IdGrupoMusical) ;
+        }
     }
 }
