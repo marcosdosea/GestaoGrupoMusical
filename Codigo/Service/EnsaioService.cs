@@ -306,5 +306,10 @@ namespace Service
 
             return await query.AsNoTracking().ToListAsync();
         }
+
+        public async Task<Ensaiopessoa?> GetEnsaioPessoaAsync(int idEnsaio, int idPessoa)
+        {
+            return await _context.Ensaiopessoas.FindAsync(idEnsaio, idPessoa);
+        }
     }
 }
