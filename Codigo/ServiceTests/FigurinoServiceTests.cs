@@ -105,8 +105,72 @@ namespace Service.Tests
                     IdGrupoMusical = 1
                 },
             };
+            _context.Figurinos.AddRange(figurinos);
 
             _context.Figurinos.AddRange(figurinos);
+
+            var manequins = new List<Manequim>
+            {
+                new Manequim
+                {
+                    Id = 1,
+                    Tamanho = "PP",
+                    Descricao = "EXTRA PEQUENO"
+                },
+                new Manequim
+                {
+                    Id = 2,
+                    Tamanho = "P",
+                    Descricao = "PEQUENO"
+                },
+                new Manequim
+                {
+                    Id = 3,
+                    Tamanho = "M",
+                    Descricao = "MÉDIO"
+                },
+                new Manequim
+                {
+                    Id = 4,
+                    Tamanho = "G",
+                    Descricao = "GRANDE"
+                }
+            };
+            _context.Manequims.AddRange(manequins);
+
+            var estoquesDeFigurinos = new List<Figurinomanequim>
+            {
+                new Figurinomanequim
+                {
+                    IdFigurino = 1,
+                    IdManequim = 1,
+                    QuantidadeDisponivel = 10,
+                    QuantidadeEntregue = 0
+                },
+                new Figurinomanequim
+                {
+                    IdFigurino = 2,
+                    IdManequim = 3,
+                    QuantidadeDisponivel = 10,
+                    QuantidadeEntregue = 0
+                },
+                new Figurinomanequim
+                {
+                    IdFigurino = 3,
+                    IdManequim = 1,
+                    QuantidadeDisponivel = 5,
+                    QuantidadeEntregue = 0
+                },
+                new Figurinomanequim
+                {
+                    IdFigurino = 4,
+                    IdManequim = 4,
+                    QuantidadeDisponivel = 8,
+                    QuantidadeEntregue = 0
+                },
+            };
+            _context.Figurinomanequims.AddRange(estoquesDeFigurinos);
+
             _context.SaveChanges();
 
             _figurino = new FigurinoService(_context);
@@ -204,6 +268,12 @@ namespace Service.Tests
             Assert.AreEqual("Batman", figurino.Nome);
             Assert.AreEqual(new DateTime(2022, 8, 14, 0, 0, 0, 0, DateTimeKind.Local), figurino.Data);
             Assert.AreEqual(1, figurino.IdGrupoMusical);
+        }
+
+        [TestMethod]
+        public void GetAllEstoqueDTOTest() 
+        {
+
         }
     }
 }
