@@ -217,7 +217,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         [Authorize(Roles = "ASSOCIADO")]
-        public async Task<ActionResult> RegistrarJustificativa(int idEnsaio)
+        public async Task<ActionResult> JustificarAusencia(int idEnsaio)
         {
             var model = await _ensaio.GetEnsaiosByIdPesoaAsync(Convert.ToInt32(User.FindFirst("Id")?.Value));
 
