@@ -1,17 +1,11 @@
 ﻿using AutoMapper;
 using Core;
-using Core.DTO;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.VisualBasic;
-using NuGet.Versioning;
-using Service;
-using System.Data;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -47,7 +41,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             return View(listFigurinosViewModdel);
         }
-       
+
         // GET: FigurinoController/Details/5
         public ActionResult Details(int id)
         {
@@ -162,6 +156,28 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
         }
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
+        // POST: FigurinoController/DeleteEstoque/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeleteEstoque(int idFigurino, int idManequim)
+        {
+            int result = await _figurinoService.DeleteEstoque(idFigurino, idManequim);
+            if(result == 400)
+            {
+                Notificar("<b>Alerta</b>! Não é permitido <b>Excluir Estoque</b> com peças <b>Entregues</b>! Quantidade <b>Disponível</b> foi <b>zerada</b>.", Notifica.Alerta);
+            }
+            else if (result == 200)
+            {
+                Notificar("<b>Sucesso</b>! Estoque removido!", Notifica.Sucesso);
+            }
+            else 
+            {
+                Notificar("<b>Erro</b>! Algo deu errado ao tentar remover estoque.", Notifica.Erro);
+            }
+
+            return RedirectToAction(nameof(Estoque), new { id = idFigurino });
+        }
+    
         public async Task<ActionResult> Estoque(int id)
         {
             EstoqueViewModel estoqueViewModel = new();
@@ -274,17 +290,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             var colaborador = await _pessoaService.GetByCpf(User.Identity.Name);
 
-            string status = string.Empty;
-
-            if (movimentacaoViewModel.Danificado)
-            {
-                status = "DANIFICADO";
-            }
-            else
-            {
-                status = movimentacaoViewModel.Movimentacao;
-            }
-
+            string status = movimentacaoViewModel.Movimentacao;
 
             Movimentacaofigurino movimentacao = new Movimentacaofigurino
             {
@@ -360,13 +366,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     default:
                         Notificar("<b>Erro!</b> Algo deu errado na operação", Notifica.Erro);
                         break;
-                }
-            }
+    }
+}
             else
             {
                 Notificar("<b>Erro!</b> Código inválido!", Notifica.Erro);
             }
-            
+
             return RedirectToAction(nameof(Movimentar), new { id = idFigurino });
         }
 

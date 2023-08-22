@@ -65,12 +65,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> Create(PessoaViewModel pessoaViewModel)
         {
             String mensagem = String.Empty;
+            IEnumerable<Manequim> listaManequim = _manequim.GetAll();
 
             if (await _pessoaService.AssociadoExist(pessoaViewModel.Email))
             {
                 mensagem = "<b>Alerta!</b> Email já está em uso";
                 Notificar(mensagem, Notifica.Alerta);
-
+                pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", null);
                 return View("Create", pessoaViewModel);
             }
 
@@ -128,14 +129,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 }
 
             }
-            else
-            {
-                IEnumerable<Manequim> listaManequim = _manequim.GetAll();
 
-                pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", null);
-                return View("Create", pessoaViewModel);
-            }
-            return RedirectToAction(nameof(Index));
+            pessoaViewModel.ListaManequim = new SelectList(listaManequim, "Id", "Tamanho", null);
+            return View("Create", pessoaViewModel);
         }
 
         // GET: PessoaController/Edit/5
