@@ -207,5 +207,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
             return RedirectToAction(nameof(RegistrarFrequencia), new { idEnsaio = listaFrequencia.First().IdEnsaio });
         }
+
+        public async Task<ActionResult> RegistrarJustificativa (int idEnsaio)
+        {
+            //var model = _ensaio.
+        }
     }
 }
