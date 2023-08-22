@@ -310,5 +310,16 @@ namespace Service.Tests
             Assert.AreEqual(5, estoque.Disponivel);
             Assert.AreEqual(0, estoque.Entregues);
         }
+
+        [TestMethod]
+        public void DeleteEstoqueTest()
+        {
+            // Act
+            _figurino.DeleteEstoque(1, 1);
+
+            // Assert
+            var estoque = _context.Figurinomanequims.FindAsync(1, 1).Result;
+            Assert.IsNull(estoque);
+        }
     }
 }
