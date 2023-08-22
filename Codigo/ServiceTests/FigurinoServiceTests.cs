@@ -108,8 +108,6 @@ namespace Service.Tests
             };
             _context.Figurinos.AddRange(figurinos);
 
-            _context.Figurinos.AddRange(figurinos);
-
             var manequins = new List<Manequim>
             {
                 new Manequim
@@ -202,9 +200,10 @@ namespace Service.Tests
         public void DeleteTest()
         {
             // Act 
-            _figurino.Delete(1);
+            var result = _figurino.Delete(1).Result;
 
             // Arrange
+            Assert.AreEqual(200, result);
             var figurino = _context.Figurinos.FindAsync(1).Result;
             Assert.IsNull(figurino); 
         }
