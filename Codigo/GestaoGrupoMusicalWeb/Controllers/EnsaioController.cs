@@ -210,7 +210,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         public async Task<ActionResult> RegistrarJustificativa (int idEnsaio)
         {
-            //var model = _ensaio.
+            var model = await _ensaio.GetEnsaioPessoaAsync(idEnsaio, Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
+
+            return View(model);
         }
     }
 }
