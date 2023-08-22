@@ -321,5 +321,25 @@ namespace Service.Tests
             var estoque = _context.Figurinomanequims.FindAsync(1, 1).Result;
             Assert.IsNull(estoque);
         }
+
+        [TestMethod]
+        public void EditEstoqueTest()
+        {
+            // Act
+            var estoque = _context.Figurinomanequims.FindAsync(2, 3).Result;
+            estoque.QuantidadeEntregue = 1;
+            estoque.QuantidadeDisponivel = 9;
+            _figurino.EditEstoque(estoque);
+
+            // Assert
+            var estoqueEditado = _figurino.GetEstoque(2, 3).Result;
+            Assert.IsNotNull(estoqueEditado);
+            Assert.AreEqual(2, estoqueEditado.IdFigurino);
+            Assert.AreEqual(3, estoqueEditado.IdManequim);
+            Assert.AreEqual("M", estoqueEditado.Tamanho);
+            Assert.AreEqual(9, estoqueEditado.Disponivel);
+            Assert.AreEqual(1, estoqueEditado.Entregues);
+
+        }
     }
 }
