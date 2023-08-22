@@ -191,5 +191,19 @@ namespace Service.Tests
             Assert.AreEqual(new DateTime(2022, 8, 14, 0, 0, 0, 0, DateTimeKind.Local), figurino.Data);
             Assert.AreEqual(1, figurino.IdGrupoMusical);
         }
+
+        [TestMethod]
+        public void GetByNameTest()
+        {
+            // Act
+            var figurino = _figurino.GetByName("Batman").Result;
+
+            // Assert
+            Assert.IsNotNull(figurino);
+            Assert.AreEqual(3, figurino.Id);
+            Assert.AreEqual("Batman", figurino.Nome);
+            Assert.AreEqual(new DateTime(2022, 8, 14, 0, 0, 0, 0, DateTimeKind.Local), figurino.Data);
+            Assert.AreEqual(1, figurino.IdGrupoMusical);
+        }
     }
 }
