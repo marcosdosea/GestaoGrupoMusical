@@ -37,6 +37,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> Details(int id)
         {
             var ensaio = _ensaio.GetDetailsDTO(id);
+            var idEnsaio = _ensaio.Get(id);
+            if (Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value) != idEnsaio.Result.IdGrupoMusical)
+            {
+                Notificar("<b>Ensaio não encontrado!</b>", Notifica.Alerta);
+                return RedirectToAction(nameof(Index));
+            }
             return View(ensaio);
         }
 
@@ -92,6 +98,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> Edit(int id)
         {
             var ensaio = await _ensaio.Get(id);
+            var idEnsaio = _ensaio.Get(id);
+            if (Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value) != idEnsaio.Result.IdGrupoMusical)
+            {
+                Notificar("<b>Ensaio não encontrado!</b>", Notifica.Alerta);
+                return RedirectToAction(nameof(Index));
+            }
             EnsaioViewModel ensaioModel = _mapper.Map<EnsaioViewModel>(ensaio);
 
             ensaioModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
