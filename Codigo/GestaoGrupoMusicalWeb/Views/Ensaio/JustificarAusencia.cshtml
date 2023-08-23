@@ -5,22 +5,25 @@
 
 <partial name="_Notificar">
 
-<div class="container">
-    <h1 class="fs-5 mb-4 p-3 bg-danger  bg-opacity-75 text-white">@ViewData["Title"]</h1>
-    <nav>
-        <ol class="breadcrumb px-3">
-            <div>
-                <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Ensaio"]</a>
-                <p class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Create"]</p>
-                </div>
-        </ol>
-    </nav>
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-                <a asp-action="Index">Ensaios</a>
-            </li>
-            <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
-        </ol>
-    </nav>
-</div>
+<h1 class="fs-5 mb-4 p-3 bg-danger  bg-opacity-75 text-white">@ViewData["Title"]</h1>
+<nav class="ps-3" style="--bs-breadcrumb-divider: '';"aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a class="fw-bold text-danger text-opacity-75" asp-action="Index">Ensaios</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <span class="fw-bold">
+                <i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> 
+                @ViewData["Title"]
+            </span>
+        </li>
+    </ol>
+</nav>
+<hr />
+
+<form>
+    <input asp-for="IdEnsaio" type="hidden"/>
+    <label asp-for="Justificativa"></label>
+    <textarea asp-for="Justificativa"></textarea>
+    <span asp-validation-for="Justificativa"></span>
+</form>

@@ -309,7 +309,7 @@ namespace Service
 
         public async Task<Ensaiopessoa?> GetEnsaioPessoaAsync(int idEnsaio, int idPessoa)
         {
-            return await _context.Ensaiopessoas.FindAsync(idEnsaio, idPessoa);
+            return await _context.Ensaiopessoas.Where(ep => ep.IdEnsaio == idEnsaio && ep.IdPessoa == idPessoa).FirstOrDefaultAsync();
         }
     }
 }

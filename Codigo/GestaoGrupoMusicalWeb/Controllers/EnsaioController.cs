@@ -229,7 +229,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 IdEnsaio = model.IdEnsaio,
                 Justificativa = model.JustificativaFalta
             };
-            return View(model);
+            return View(ensaioJustificativa);
         }
     }
 }
