@@ -12,25 +12,25 @@
         <table class="table accordion mt-3">
             <thead>
                 <tr class="bg-danger bg-opacity-75 text-white">
-                    <th>
+                    <th class="col-md-1">
                         @Html.DisplayNameFor(model => model.Local)
                     </th>
-                    <th>
+                    <th class="col-md-1">
                         @Html.DisplayNameFor(model => model.Inicio)
                     </th>
-                    <th>
+                    <th class="col-md-1">
                         @Html.DisplayNameFor(model => model.Fim)
                     </th>
-                    <th>
+                    <th class="col-md-1">
                         @Html.DisplayNameFor(model => model.Presente)
                     </th>
-                    <th>
+                    <th class="col-md-2">
                         @Html.DisplayNameFor(model => model.Justificativa)
                     </th>
-                    <th>
+                    <th class="col-md-2">
                         @Html.DisplayNameFor(model => model.JustificativaAceita)
                     </th>
-                    <th>
+                    <th class="col-md-4">
                         Ações
                     </th>
                 </tr>
@@ -64,7 +64,7 @@
                                 role="button"
                                 class="btn btn-secondary btn-sm dropdown-toggle my-3">
                                 <i class="fa-solid fa-music"></i>
-                                Consultar Repertório
+                                Repertório
                             </a>
                             <a class="btn btn-secondary btn btn-sm" role="button" asp-controller="Ensaio" asp-action="JustificarAusencia" asp-route-idEnsaio="@item.IdEnsaio">
                                 <i class="fa-solid fa-outdent"></i>
