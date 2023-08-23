@@ -20,11 +20,9 @@ namespace Core
         public string? Local { get; set; }
         public string? Repertorio { get; set; }
         public int IdColaboradorResponsavel { get; set; }
-        public int IdRegente { get; set; }
 
         public virtual Pessoa IdColaboradorResponsavelNavigation { get; set; } = null!;
         public virtual Grupomusical IdGrupoMusicalNavigation { get; set; } = null!;
-        public virtual Pessoa IdRegenteNavigation { get; set; } = null!;
         public virtual ICollection<Ensaiopessoa> Ensaiopessoas { get; set; }
 
         public virtual ICollection<Figurino> IdFigurinos { get; set; }

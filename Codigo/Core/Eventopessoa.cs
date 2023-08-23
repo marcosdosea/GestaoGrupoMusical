@@ -12,8 +12,10 @@ namespace Core
         public string? JustificativaFalta { get; set; }
         public sbyte JustificativaAceita { get; set; }
         public string Status { get; set; } = null!;
+        public int IdPapelGrupoPapelGrupo { get; set; }
 
         public virtual Evento IdEventoNavigation { get; set; } = null!;
+        public virtual Papelgrupo IdPapelGrupoPapelGrupoNavigation { get; set; } = null!;
         public virtual Pessoa IdPessoaNavigation { get; set; } = null!;
         public virtual Tipoinstrumento IdTipoInstrumentoNavigation { get; set; } = null!;
     }
