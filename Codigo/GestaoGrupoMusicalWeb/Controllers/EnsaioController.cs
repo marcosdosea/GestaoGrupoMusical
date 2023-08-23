@@ -219,8 +219,16 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [Authorize(Roles = "ASSOCIADO")]
         public async Task<ActionResult> JustificarAusencia(int idEnsaio)
         {
-            var model = await _ensaio.GetEnsaiosByIdPesoaAsync(Convert.ToInt32(User.FindFirst("Id")?.Value));
-
+            var model = await _ensaio.GetEnsaioPessoaAsync(idEnsaio, Convert.ToInt32(User.FindFirst("Id")?.Value));
+            if(model == null)
+            {
+                return RedirectToAction(nameof(EnsaiosAssociado));
+            }
+            EnsaioJustificativaViewModel ensaioJustificativa = new()
+            {
+                IdEnsaio = model.IdEnsaio,
+                Justificativa = model.JustificativaFalta
+            };
             return View(model);
         }
     }

@@ -7,6 +7,6 @@ namespace GestaoGrupoMusicalWeb.Models
         public int IdEnsaio { get; set; }
 
         [Display(Name = "Justificativa de Ausência", Prompt = "Informe a Justificativa...")]
-        public string Justificativa { get; set; } = string.Empty;
+        public string? Justificativa { get; set; }
     }
 }
