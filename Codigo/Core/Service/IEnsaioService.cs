@@ -55,5 +55,6 @@ namespace Core.Service
         EnsaioDetailsDTO GetDetailsDTO(int idEnsaio);
         Task<IEnumerable<EnsaioAssociadoDTO>> GetEnsaiosByIdPesoaAsync(int idPessoa);
         Task<Ensaiopessoa?> GetEnsaioPessoaAsync(int idEnsaio, int idPessoa);
+        Task<int> RegistrarJustificativaAsync(int idEnsaio, int idPessoa, string? justificativa);
     }
 }

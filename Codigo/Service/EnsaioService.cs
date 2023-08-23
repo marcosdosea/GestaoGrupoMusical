@@ -311,5 +311,26 @@ namespace Service
         {
             return await _context.Ensaiopessoas.Where(ep => ep.IdEnsaio == idEnsaio && ep.IdPessoa == idPessoa).FirstOrDefaultAsync();
         }
+
+        public async Task<int> RegistrarJustificativaAsync(int idEnsaio, int idPessoa, string? justificativa)
+        {
+            try
+            {
+                var ensaioPessoa = await GetEnsaioPessoaAsync(idEnsaio, idPessoa);
+                if (ensaioPessoa == null)
+                {
+                    return 404;
+                }
+                ensaioPessoa.JustificativaFalta = justificativa;
+
+                _context.Update(ensaioPessoa);
+                await _context.SaveChangesAsync();
+                return 200;
+            }
+            catch
+            {
+                return 500;
+            }
+        }
     }
 }

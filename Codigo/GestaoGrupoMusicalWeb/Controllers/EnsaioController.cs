@@ -237,12 +237,22 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> JustificarAusencia(EnsaioJustificativaViewModel ensaioJustificativa)
         {
-            var model = await _ensaio.GetEnsaioPessoaAsync(ensaioJustificativa.IdEnsaio, Convert.ToInt32(User.FindFirst("Id")?.Value));
-            if (model == null)
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(EnsaiosAssociado));
+                switch (await _ensaio.RegistrarJustificativaAsync(ensaioJustificativa.IdEnsaio, Convert.ToInt32(User.FindFirst("Id")?.Value), ensaioJustificativa.Justificativa))
+                {
+                    case 200:
+                        Notificar("<b>Justificativa</b> registrada com <b>Sucesso</b>", Notifica.Sucesso);
+                        return RedirectToAction(nameof(EnsaiosAssociado));
+                    case 404:
+                        Notificar("A <b>Justificativa</b> enviada é <b>Inválida</b>", Notifica.Erro);
+                        break;
+                    case 500:
+                        Notificar("Desculpe, ocorreu um <b>Erro</b> ao registrar a <b>Justificativa</b>, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                        break;
+                }
             }
-            model.JustificativaFalta = ensaioJustificativa.Justificativa;
+            
             return View(ensaioJustificativa);
         }
     }
