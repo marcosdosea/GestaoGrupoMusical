@@ -21,9 +21,15 @@
 </nav>
 <hr />
 
-<form>
-    <input asp-for="IdEnsaio" type="hidden"/>
-    <label asp-for="Justificativa"></label>
-    <textarea asp-for="Justificativa"></textarea>
-    <span asp-validation-for="Justificativa"></span>
+<form class="ps-3">
+    <div>
+        <input asp-for="IdEnsaio" type="hidden"/>
+        <label class="control-label" asp-for="Justificativa"></label>
+        <textarea class="form-control" asp-for="Justificativa"></textarea>
+        <span asp-validation-for="Justificativa"></span>
+    </div>
+    <div class="d-flex justify-content-md-end justify-content-between gap-2 mt-3">
+        <a class="btn btn-outline-secondary col-lg-2 col-md-4 col-5" asp-controller="Ensaio" asp-action="EnsaiosAssociado">Voltar</a>
+        <button class="btn btn-secondary col-lg-2 col-md-4 col-5" type="submit">Salvar</button>
+    </div>
 </form>
