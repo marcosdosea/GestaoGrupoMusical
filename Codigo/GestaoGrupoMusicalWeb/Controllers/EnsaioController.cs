@@ -231,5 +231,19 @@ namespace GestaoGrupoMusicalWeb.Controllers
             };
             return View(ensaioJustificativa);
         }
+
+        [Authorize(Roles = "ASSOCIADO")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> JustificarAusencia(EnsaioJustificativaViewModel ensaioJustificativa)
+        {
+            var model = await _ensaio.GetEnsaioPessoaAsync(ensaioJustificativa.IdEnsaio, Convert.ToInt32(User.FindFirst("Id")?.Value));
+            if (model == null)
+            {
+                return RedirectToAction(nameof(EnsaiosAssociado));
+            }
+            model.JustificativaFalta = ensaioJustificativa.Justificativa;
+            return View(ensaioJustificativa);
+        }
     }
 }
