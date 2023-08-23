@@ -63,9 +63,13 @@
                                 data-bs-target="#accordion_@(item.IdEnsaio)" 
                                 role="button"
                                 class="btn btn-secondary btn-sm dropdown-toggle my-3">
+                                <i class="fa-solid fa-music"></i>
                                 Consultar Repertório
                             </a>
-                            <a class="btn btn-secondary btn btn-sm" role="button" asp-controller="Ensaio" asp-action="JustificarAusencia" asp-route-idEnsaio="@item.IdEnsaio">Justificar Ausência</a>
+                            <a class="btn btn-secondary btn btn-sm" role="button" asp-controller="Ensaio" asp-action="JustificarAusencia" asp-route-idEnsaio="@item.IdEnsaio">
+                                <i class="fa-solid fa-outdent"></i>
+                                Justificar Ausência
+                            </a>
                         </td>
                     </tr>
                     <tr class="collapse accordion-collapse border-danger border-opacity-75" id="accordion_@(item.IdEnsaio)">
