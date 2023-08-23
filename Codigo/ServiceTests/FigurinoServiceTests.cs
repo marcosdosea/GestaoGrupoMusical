@@ -201,7 +201,7 @@ namespace Service.Tests
         {
             // Act 
             var estoque = _context.Figurinomanequims.FindAsync(1, 1).Result;
-            _context.Figurinomanequims.Remove(estoque);
+            _context.Figurinomanequims.Remove(estoque!);
             _context.SaveChangesAsync();
             _figurino.Delete(1).GetAwaiter().GetResult();
 
