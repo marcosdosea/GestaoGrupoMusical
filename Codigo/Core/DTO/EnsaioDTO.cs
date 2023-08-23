@@ -37,5 +37,7 @@ namespace Core.DTO
 
         [Display(Name = "Regente")]
         public string? NomeRegente { get; set; }
+
+        public int? IdGrupoMusical { get;  set; }
     }
 }
