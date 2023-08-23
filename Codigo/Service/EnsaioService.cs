@@ -322,6 +322,7 @@ namespace Service
                     return 404;
                 }
                 ensaioPessoa.JustificativaFalta = justificativa;
+                ensaioPessoa.Presente = 0;
 
                 _context.Update(ensaioPessoa);
                 await _context.SaveChangesAsync();
