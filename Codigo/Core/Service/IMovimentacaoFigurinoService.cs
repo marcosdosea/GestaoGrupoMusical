@@ -79,6 +79,6 @@ namespace Core.Service
         /// 1 caso o usuário tenha recebido
         /// 0 caso o usuário não tenha recebido
         /// </returns>
-        Task<sbyte> GetConfirmacaoFigurino(int idAssociado, int idFigurino, int idManequim);
+        Task<MovimentarConfirmaçãoQuantidade> GetConfirmacaoFigurino(int idAssociado, int idFigurino, int idManequim);
     }
 }
