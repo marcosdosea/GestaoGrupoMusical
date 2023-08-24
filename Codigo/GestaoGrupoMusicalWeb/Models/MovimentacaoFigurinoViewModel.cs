@@ -29,6 +29,9 @@ namespace GestaoGrupoMusicalWeb.Models
         [Display(Name = "Associado")]
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public int IdAssociado { get; set; }
+        [Display(Name ="Quantidade")]
+        [Required(ErrorMessage ="O campo {0} é obrigatório")]
+        public int QuantidadeEntregue { get;set; }
 
         public int IdColaborador { get; set; }
 

@@ -205,7 +205,7 @@ namespace Service
                     Local = g.Local,
                     PresencaObrigatoria = g.PresencaObrigatoria == 1 ? "Sim" : "Não",
                     Repertorio = g.Repertorio,
-                    NomeRegente = g.IdRegenteNavigation.Nome,
+                    //NomeRegente = g.IdRegenteNavigation.Nome,
                     IdGrupoMusical = g.IdGrupoMusical
 
                 }).Where(g => g.Id == idEnsaio);
@@ -221,7 +221,7 @@ namespace Service
                         {
                             Inicio = ensaio.DataHoraInicio,
                             Fim = ensaio.DataHoraFim,
-                            NomeRegnete = ensaio.IdRegenteNavigation.Nome,
+                            //NomeRegnete = ensaio.
                             Tipo = ensaio.Tipo,
                             Local = ensaio.Local,
                             Frequencias = _context.Ensaiopessoas

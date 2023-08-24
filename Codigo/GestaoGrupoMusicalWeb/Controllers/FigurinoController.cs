@@ -300,7 +300,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 IdAssociado = movimentacaoViewModel.IdAssociado,
                 IdColaborador = colaborador.Id,
                 Status = status,
-                ConfirmacaoRecebimento = 0
+                ConfirmacaoRecebimento = 0,
+                Quantidade = movimentacaoViewModel.QuantidadeEntregue
             };
 
             int resul = await _movimentacaoService.CreateAsync(movimentacao);
