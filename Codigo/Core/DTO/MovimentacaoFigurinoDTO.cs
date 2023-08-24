@@ -28,7 +28,14 @@ namespace Core.DTO
 
         [Display(Name = "Movimentação")]
         public string Movimentacao { get; set; } = string.Empty;
-
+        [Display(Name ="Quantidade")]
+        public int QuantidadeEntregue { get; set; } 
         public string Status { get; set; } = string.Empty;
+    }
+
+    public class MovimentarConfirmaçãoQuantidade
+    {
+        public int Quantidade { get; set; }
+        public sbyte Confirmar { get; set; }
     }
 }
