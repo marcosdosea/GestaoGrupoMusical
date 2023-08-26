@@ -83,8 +83,8 @@ namespace Service
                         {
                             int movQuantidade = confirmacao.Quantidade - movimentacao.Quantidade;
                             movimentacao.Quantidade= movQuantidade;
-                            movimentacao.ConfirmacaoRecebimento = 1;
-                            movimentacao.Status = "ENTREGUE";
+                            movimentacao.ConfirmacaoRecebimento = 0;
+                            movimentacao.Status = "RECEBIDO";
                             _context.Update(movimentacao);
                             figurinoEstoque.QuantidadeDisponivel += movimentacao.Quantidade;
                             figurinoEstoque.QuantidadeEntregue -= movimentacao.Quantidade;
