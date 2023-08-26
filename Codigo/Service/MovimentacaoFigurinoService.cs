@@ -3,6 +3,7 @@ using Core.DTO;
 using Core.Service;
 using Email;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Crypto.Agreement.Kdf;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Metrics;
@@ -45,8 +46,6 @@ namespace Service
                     return 400; //estoque nao existe, talvez id esteja errado
                 }
 
-                await _context.AddAsync(movimentacao);
-
                 if (movimentacao.Status.Equals("ENTREGUE"))
                 {
                     if (movimentacao.Quantidade <= 0 || movimentacao.Quantidade >
@@ -57,6 +56,7 @@ namespace Service
                     }
                     figurinoEstoque.QuantidadeDisponivel -= movimentacao.Quantidade;
                     figurinoEstoque.QuantidadeEntregue+= movimentacao.Quantidade;
+                    await _context.AddAsync(movimentacao);
                 }
                 else if (movimentacao.Status.Equals("DEVOLVIDO"))
                 {
@@ -74,16 +74,32 @@ namespace Service
                             await transaction.RollbackAsync();
                             return 403; //não ouve confirmação do associado 
                         }
-                        if( confirmacao.Quantidade <= 0)
+                        if (movimentacao.Quantidade <= 0 || movimentacao.Quantidade > confirmacao.Quantidade)
                         {
                             await transaction.RollbackAsync();
                             return 403; //não ouve confirmação do associado 
                         }
-                        movimentacao.ConfirmacaoRecebimento = 0;
-                        figurinoEstoque.QuantidadeDisponivel += confirmacao.Quantidade;
-                        figurinoEstoque.QuantidadeEntregue -= confirmacao.Quantidade;
+                        if(movimentacao.Quantidade < confirmacao.Quantidade)
+                        {
+                            int movQuantidade = confirmacao.Quantidade - movimentacao.Quantidade;
+                            movimentacao.Quantidade= movQuantidade;
+                            movimentacao.ConfirmacaoRecebimento = 1;
+                            movimentacao.Status = "ENTREGUE";
+                            _context.Update(movimentacao);
+                            figurinoEstoque.QuantidadeDisponivel += movimentacao.Quantidade;
+                            figurinoEstoque.QuantidadeEntregue -= movimentacao.Quantidade;
+                        }
+                        else
+                        {
+                            movimentacao.ConfirmacaoRecebimento = 0;
+                            figurinoEstoque.QuantidadeDisponivel += confirmacao.Quantidade;
+                            figurinoEstoque.QuantidadeEntregue -= confirmacao.Quantidade;
+                            await _context.AddAsync(movimentacao);
+                        }
+
                     }
                 }
+
 
 
 
