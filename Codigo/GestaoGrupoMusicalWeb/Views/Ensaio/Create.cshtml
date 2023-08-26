@@ -71,10 +71,10 @@
                 <div class="container">
                     <div class="row">
                         <div class="form-group col-xl">
-                            <label asp-for="IdRegente" class="control-label"></label>
-                            <select multiple asp-for="IdRegente" class="form-select">
+                            <label asp-for="IdRegentes" class="control-label"></label>
+                            <select multiple asp-for="IdRegentes" class="d-none">
                             </select>
-                            <span asp-validation-for="IdRegente" class="text-danger"></span>
+                            <span asp-validation-for="IdRegentes" class="text-danger"></span>
                         </div>
                     </div>
                     <button type="button" onclick="addToList()">Add</button>
@@ -105,7 +105,7 @@
         
 
         function addToList(){
-            var lista = document.getElementById("IdRegente");
+            var lista = document.getElementById("IdRegentes");
             var item = document.createElement("option");
 
             item.text = "Teste";

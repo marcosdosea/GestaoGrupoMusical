@@ -29,9 +29,9 @@ namespace GestaoGrupoMusicalWeb.Models
         [MaxLength(1000, ErrorMessage = "O campo {0} deve ter no máximo 1000 caracteres")]
         public string? Repertorio { get; set; }
 
-        [Display(Name = "Regente")]
+        [Display(Name = "Regentes")]
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
-        public IEnumerable<int> IdRegente { get; set; }
+        public IEnumerable<int>? IdRegentes { get; set; }
 
         public string? JsonLista { get; set; }
 
