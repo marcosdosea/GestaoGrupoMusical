@@ -46,7 +46,8 @@ namespace GestaoGrupoMusicalWeb.Models
         public Dictionary<string, string> MovimentacaoEnum { get; } = new()
         {
             { "Entregar", "ENTREGUE" },
-            { "Devolver", "DEVOLVIDO" }
+            { "Devolver", "DEVOLVIDO" },
+            {"Descartar", "DANIFICADO"}
         };
 
     }
