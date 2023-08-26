@@ -31,8 +31,8 @@ namespace Service
                         await _context.Ensaios.AddAsync(ensaio);
 
                         var associados = _context.Pessoas
-                                         .Where(p => p.IdPapelGrupo == 1 && p.Ativo == 1 && p.IdGrupoMusical == ensaio.IdGrupoMusical)
-                                         .Select(pessoa => new { pessoa.Id, pessoa.Email }).AsNoTracking();
+                                         .Where(p => (p.IdPapelGrupo == 1 || p.IdPapelGrupo == 5) && p.Ativo == 1 && p.IdGrupoMusical == ensaio.IdGrupoMusical)
+                                         .Select(pessoa => new { pessoa.Id, pessoa.Email, pessoa.IdPapelGrupo }).AsNoTracking();
 
                         await _context.SaveChangesAsync();
 
@@ -52,7 +52,8 @@ namespace Service
                             {
                                 IdEnsaio = ensaio.Id,
                                 IdPessoa = associado.Id,
-                                Presente = 1
+                                Presente = 1,
+                                IdPapelGrupoPapelGrupo = associado.IdPapelGrupo
                             };
                             await _context.Ensaiopessoas.AddAsync(ensaioPessoa);
                             email.To.Add(associado.Email);
@@ -205,7 +206,7 @@ namespace Service
                     Local = g.Local,
                     PresencaObrigatoria = g.PresencaObrigatoria == 1 ? "Sim" : "Não",
                     Repertorio = g.Repertorio,
-                    NomeRegente = g.IdRegenteNavigation.Nome,
+                    //NomeRegente = g.IdRegenteNavigation.Nome,
                     IdGrupoMusical = g.IdGrupoMusical
 
                 }).Where(g => g.Id == idEnsaio);
@@ -221,7 +222,7 @@ namespace Service
                         {
                             Inicio = ensaio.DataHoraInicio,
                             Fim = ensaio.DataHoraFim,
-                            NomeRegnete = ensaio.IdRegenteNavigation.Nome,
+                            //NomeRegnete = ensaio.IdRegenteNavigation.Nome,
                             Tipo = ensaio.Tipo,
                             Local = ensaio.Local,
                             Frequencias = _context.Ensaiopessoas
