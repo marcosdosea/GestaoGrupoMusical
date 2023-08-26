@@ -6,6 +6,7 @@ using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using NuGet.Protocol;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -49,9 +50,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public ActionResult Create()
         {
             EnsaioViewModel ensaioModel = new();
+            var lista = _pessoa.GetAll();
+            ensaioModel.ListaPessoa = new SelectList(lista, "Id", "Nome");
 
-            ensaioModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
-
+            ensaioModel.JsonLista = lista.Select(p => new { p.Id, p.Nome }).ToJson();
             return View(ensaioModel);
         }
 

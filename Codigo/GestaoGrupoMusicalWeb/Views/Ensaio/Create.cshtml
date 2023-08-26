@@ -72,12 +72,12 @@
                     <div class="row">
                         <div class="form-group col-xl">
                             <label asp-for="IdRegente" class="control-label"></label>
-                            <select asp-for="IdRegente" asp-items="@Model.ListaPessoa" class="form-select">
-                                <option value=""></option>
+                            <select multiple asp-for="IdRegente" class="form-select">
                             </select>
                             <span asp-validation-for="IdRegente" class="text-danger"></span>
                         </div>
                     </div>
+                    <button type="button" onclick="addToList()">Add</button>
                 </div>
                 <div class="container">
                     <div class="row">
@@ -100,7 +100,21 @@
             </form>
         </div>
     </div>
+    <script>
+        var json = JSON.parse('@(Html.Raw(Model.JsonLista))')
+        
 
+        function addToList(){
+            var lista = document.getElementById("IdRegente");
+            var item = document.createElement("option");
+
+            item.text = "Teste";
+            item.value = 1;
+            item.selected = true;
+
+            lista.appendChild(item);
+        }
+    </script>
 
 
     @section Scripts {

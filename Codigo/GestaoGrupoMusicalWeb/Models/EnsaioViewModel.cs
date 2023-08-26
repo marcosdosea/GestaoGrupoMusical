@@ -31,7 +31,9 @@ namespace GestaoGrupoMusicalWeb.Models
 
         [Display(Name = "Regente")]
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
-        public int IdRegente { get; set; }
+        public IEnumerable<int> IdRegente { get; set; }
+
+        public string? JsonLista { get; set; }
 
         public Dictionary<string, bool> Obrigatorio { get; } = new()
         {
