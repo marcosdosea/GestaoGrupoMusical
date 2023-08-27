@@ -73,7 +73,7 @@
                 <div class="row">
                     <div class="form-group col-xl">
                         <label asp-for="IdRegentes" class="control-label"></label>
-                        <select multiple asp-for="IdRegentes" class="d-none">
+                        <select multiple asp-for="IdRegentes" class="d-none" asp-items="Model.ListaPessoa">
                         </select>
                         <input class="form-control" id="regentes" />
                         <span asp-validation-for="IdRegentes" class="text-danger"></span>
@@ -114,7 +114,7 @@
         lista.appendChild(item);
     }
     window.addEventListener("load", () => {
-        fillAutocomplete('@(Html.Raw(Model.JsonLista))', "regentes");
+            fillAutocomplete('@(Html.Raw(Model.JsonLista))', "regentes", "IdRegentes");
     });
 </script>
 
