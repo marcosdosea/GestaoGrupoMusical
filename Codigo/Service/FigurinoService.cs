@@ -183,7 +183,7 @@ namespace Service
                     _context.SaveChanges();
                     return HttpStatusCode.OK;
                 }
-                return 404;
+                return HttpStatusCode.NotFound;
             }
             catch (Exception)
             {
