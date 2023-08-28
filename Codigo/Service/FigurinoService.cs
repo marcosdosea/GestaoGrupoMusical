@@ -167,7 +167,7 @@ namespace Service
             }
             catch
             {
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
         }
 
