@@ -11,7 +11,7 @@ namespace Core.Service
     public interface IFigurinoService
     {
         Task<HttpStatusCode> Create(Figurino figurino);
-        Task<int> Edit(Figurino figurino);
+        Task<HttpStatusCode> Edit(Figurino figurino);
         Task<int> Delete(int id);
 
         Task<Figurino> Get(int id);
