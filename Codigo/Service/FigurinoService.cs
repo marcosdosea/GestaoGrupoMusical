@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,18 +20,18 @@ namespace Service
             _context = context;
         }
 
-        public async Task<int> Create(Figurino figurino)
+        public async Task<HttpStatusCode> Create(Figurino figurino)
         {
             try
             {
                 await _context.Figurinos.AddAsync(figurino);
                 await _context.SaveChangesAsync();
 
-                return 200;
+                return HttpStatusCode.Created;
             }
             catch
             {
-                return 500; //se tudo der errado
+                return HttpStatusCode.InternalServerError; //se tudo der errado
             }
         }
 
