@@ -12,7 +12,7 @@ namespace Core.Service
     {
         Task<HttpStatusCode> Create(Figurino figurino);
         Task<HttpStatusCode> Edit(Figurino figurino);
-        Task<int> Delete(int id);
+        Task<HttpStatusCode> Delete(int id);
 
         Task<Figurino> Get(int id);
 
