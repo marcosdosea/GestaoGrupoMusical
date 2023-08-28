@@ -243,7 +243,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 case HttpStatusCode.Created:
                     Notificar("<b>Sucesso</b>! Estoque cadastrado.", Notifica.Sucesso);
                     break;
-                case 201:
+                case HttpStatusCode.Accepted:
                     Notificar("<b>Sucesso</b>! Adicionado peças ao estoque.", Notifica.Sucesso);
                     break;
                 case 400:
