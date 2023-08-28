@@ -171,7 +171,7 @@ namespace Service
             }
         }
 
-        public async Task<int> EditEstoque(Figurinomanequim estoque)
+        public async Task<HttpStatusCode> EditEstoque(Figurinomanequim estoque)
         {
             try
             {
