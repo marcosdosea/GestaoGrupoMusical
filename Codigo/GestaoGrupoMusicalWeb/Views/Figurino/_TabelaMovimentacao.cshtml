@@ -1,27 +1,29 @@
-﻿@model IEnumerable<Core.DTO.MovimentacaoFigurinoDTO>
+﻿@model X.PagedList.IPagedList<Core.DTO.MovimentacaoFigurinoDTO>
 
-
+@{
+    int idFigurino = 0; // Variável temporária
+}
 <div class="table-responsive">
     <table class="table mt-3">
         <thead>
             <tr class="bg-danger bg-opacity-75 text-white">
                 <th>
-                    @Html.DisplayNameFor(model => model.Cpf)
+                    @Html.DisplayName("Cpf")
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.NomeAssociado)
+                    @Html.DisplayName("Nome Associado");
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Data)
+                    @Html.DisplayName("Data")
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Tamanho)
+                    @Html.DisplayName("Tamanho")
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Movimentacao)
+                    @Html.DisplayName("Movimentação");
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Status)
+                    @Html.DisplayName("Status");
                 </th>
                 <th>Ações</th>
             </tr>
@@ -29,6 +31,7 @@
         <tbody>
             @foreach (var item in Model)
             {
+                idFigurino = item.IdFigurino;
                 <tr class="border-bottom border-danger border-opacity-75 align-middle">
                     <td>
                         @item.Cpf
@@ -70,6 +73,19 @@
             }
         </tbody>
     </table>
+    <br />
+    <a asp-action="Movimentar"
+       asp-route-id="@idFigurino"
+       asp-route-page="@(Model.PageNumber - 1)"
+       class="btn btn-default @(Model.HasPreviousPage ? "" : "disabled")">
+        Previous
+    </a>
+    <a asp-action="Movimentar"
+       asp-route-id="@idFigurino"
+       asp-route-page="@(Model.PageNumber + 1)"
+       class="btn btn-default @(Model.HasNextPage ? "" : "disabled")">
+        Next
+    </a>
     @if (!Model.Any())
     {
         <p class="text-center mt-4 mb-0">Desculpe, nenhuma movimentação encontrada :(</p>
