@@ -113,7 +113,7 @@ namespace Service
             }
             else if(estoque.QuantidadeDisponivel <= 0)
             {
-                return 401;//nao existe quantidade para disponibilizar
+                return HttpStatusCode.BadRequest;//nao existe quantidade para disponibilizar
             }
 
             try
