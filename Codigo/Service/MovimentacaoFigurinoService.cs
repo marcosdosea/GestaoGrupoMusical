@@ -82,11 +82,7 @@ namespace Service
                         if(movimentacao.Quantidade < confirmacao.Quantidade)
                         {
                             int movQuantidade = confirmacao.Quantidade - movimentacao.Quantidade;
-                            
-                            //movimentacao.ConfirmacaoRecebimento = 0;
-                            //movimentacao.Data = DateTime.Now;
-                            //movimentacao.Status = "DEVOLVIDO";
-
+                           
                             var movimentacaoRecebido = new Movimentacaofigurino
                             {
                                 Data = DateTime.Now,
@@ -117,10 +113,6 @@ namespace Service
 
                             figurinoEstoque.QuantidadeDisponivel += movimentacao.Quantidade;
                             figurinoEstoque.QuantidadeEntregue -= movimentacao.Quantidade;
-                            //movimentacao.Quantidade = movQuantidade;
-                            //movimentacao.Data = DateTime.Now;
-                            //movimentacao.Status = "RECEBIDO";
-
 
                         }
                         else
@@ -354,7 +346,6 @@ namespace Service
                     Id = g.Id
 
                 })
-                //.FirstOrDefaultAsync();
                 .LastOrDefaultAsync();
 
             return query;
