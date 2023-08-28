@@ -135,12 +135,12 @@ namespace Service
             }
             catch
             {
-                return 500;//deu tudo errado
+                return HttpStatusCode.InternalServerError;//deu tudo errado
             }
 
 
             await _context.SaveChangesAsync();
-            return 200;
+            return HttpStatusCode.Created;
         }
 
         public async Task<int> DeleteEstoque(int idFigurino, int idManequim)
