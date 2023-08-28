@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
-    [Authorize(Roles = "ADMINISTRADOR SISTEMA")]
     public class GrupoMusicalController : BaseController
     {
         private readonly IGrupoMusicalService _grupoMusical;
@@ -19,9 +18,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
             _mapper = mapper;
         }
 
-
-
         // GET: GrupoMusicalController
+        [Authorize(Roles = "ADMINISTRADOR SISTEMA")]
         public ActionResult Index()
         {
             var listaGrupoMusical = _grupoMusical.GetAllDTO();
@@ -35,6 +33,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: GrupoMusicalController/Details/5
+        [Authorize(Roles = "ADMINISTRADOR SISTEMA")]
         public ActionResult Details(int id)
         {
             var grupoMusical = _grupoMusical.Get(id);
@@ -43,6 +42,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: GrupoMusicalController/Create
+        [Authorize(Roles = "ADMINISTRADOR SISTEMA")]
         public ActionResult Create()
         {
             GrupoMusicalViewModel grupoMusicalViewModel = new();
@@ -50,6 +50,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // POST: GrupoMusicalController/Create
+        [Authorize(Roles = "ADMINISTRADOR SISTEMA")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(GrupoMusicalViewModel grupoMusicalViewModel)
@@ -84,6 +85,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: GrupoMusicalController/Edit/5
+        [Authorize(Roles = "ADMINISTRADOR SISTEMA")]
         public ActionResult Edit(int id)
         {
             var grupoMusical = _grupoMusical.Get(id);
@@ -93,6 +95,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // POST: GrupoMusicalController/Edit/5
+        [Authorize(Roles = "ADMINISTRADOR SISTEMA")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(int id, GrupoMusicalViewModel grupoMusicalViewModel)
@@ -128,6 +131,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: GrupoMusicalController/Delete/5
+        [Authorize(Roles = "ADMINISTRADOR SISTEMA")]
         public ActionResult Delete(int id)
         {
             var grupoMusical = _grupoMusical.Get(id);
@@ -136,6 +140,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // POST: GrupoMusicalController/Delete/5
+        [Authorize(Roles = "ADMINISTRADOR SISTEMA")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Delete(int id, GrupoMusicalViewModel grupoMusicalViewModel)
