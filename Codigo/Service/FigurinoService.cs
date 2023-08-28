@@ -181,7 +181,7 @@ namespace Service
                     estoqueFound.QuantidadeDisponivel = estoque.QuantidadeDisponivel;
                     _context.Figurinomanequims.Update(estoqueFound);
                     _context.SaveChanges();
-                    return 200;
+                    return HttpStatusCode.OK;
                 }
                 return 404;
             }
