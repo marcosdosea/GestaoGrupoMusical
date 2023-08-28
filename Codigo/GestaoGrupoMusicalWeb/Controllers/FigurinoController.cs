@@ -236,7 +236,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 QuantidadeEntregue = 0
             };
 
-            int resul = await _figurinoService.CreateEstoque(estoque);
+            HttpStatusCode resul = await _figurinoService.CreateEstoque(estoque);
 
             switch (resul)
             {
