@@ -105,7 +105,7 @@ namespace Service
             return await query.AsNoTracking().ToListAsync();
         }
 
-        public async Task<int> CreateEstoque(Figurinomanequim estoque)
+        public async Task<HttpStatusCode> CreateEstoque(Figurinomanequim estoque)
         {
             if(estoque.IdManequim == null || estoque.IdFigurino == null)
             {
