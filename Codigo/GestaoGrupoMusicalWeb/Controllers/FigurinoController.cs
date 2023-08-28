@@ -175,17 +175,20 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             HttpStatusCode result = await _figurinoService.DeleteEstoque(idFigurino, idManequim);
 
-            if(result == 400)
+            switch (result)
             {
-                Notificar("<b>Alerta</b>! Não é permitido <b>Excluir Estoque</b> com peças <b>Entregues</b>! Quantidade <b>Disponível</b> foi <b>zerada</b>.", Notifica.Alerta);
-            }
-            else if (result == 200)
-            {
-                Notificar("<b>Sucesso</b>! Estoque removido!", Notifica.Sucesso);
-            }
-            else 
-            {
-                Notificar("<b>Erro</b>! Algo deu errado ao tentar remover estoque.", Notifica.Erro);
+                case HttpStatusCode.OK:
+                    Notificar("<b>Sucesso</b>! Estoque removido!", Notifica.Sucesso);
+                    break;
+                case HttpStatusCode.BadRequest:
+                    Notificar("<b>Alerta</b>! Não é permitido <b>Excluir Estoque</b> com peças <b>Entregues</b>! Quantidade <b>Disponível</b> foi <b>zerada</b>.", Notifica.Alerta);
+                    break;
+                case HttpStatusCode.InternalServerError:
+                    Notificar("<b>Erro</b>! Algo deu errado ao tentar remover estoque.", Notifica.Erro);
+                    break;
+                default:
+                    Notificar("<b>Erro</b>! Algo deu errado", Notifica.Erro);
+                    break;
             }
 
             return RedirectToAction(nameof(Estoque), new { id = idFigurino });
