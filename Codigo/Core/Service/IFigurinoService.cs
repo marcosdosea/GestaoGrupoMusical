@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,7 +10,7 @@ namespace Core.Service
 {
     public interface IFigurinoService
     {
-        Task<int> Create(Figurino figurino);
+        Task<HttpStatusCode> Create(Figurino figurino);
         Task<int> Edit(Figurino figurino);
         Task<int> Delete(int id);
 
