@@ -35,7 +35,7 @@ namespace Service
             }
         }
 
-        public async Task<int> Delete(int id)
+        public async Task<HttpStatusCode> Delete(int id)
         {
             try
             {
