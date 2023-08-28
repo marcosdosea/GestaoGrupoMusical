@@ -478,7 +478,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             switch (resul)
             {
-                case 200:
+                case HttpStatusCode.OK:
                     Notificar($"<b>Sucesso!</b> Estoque foi <b>Editado</b>", Notifica.Sucesso);
                     break;
                 case 404:
