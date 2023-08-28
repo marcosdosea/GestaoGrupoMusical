@@ -252,7 +252,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 case HttpStatusCode.BadRequest:
                     Notificar("<b>Alerta</b>! Sem quantidade disponível para estoque.", Notifica.Alerta);
                     break;
-                case 500:
+                case HttpStatusCode.InternalServerError:
                     Notificar("<b>Erro</b>! Algum problema ao registrar estoque.", Notifica.Erro);
                     break;
                 default:
