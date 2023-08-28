@@ -162,7 +162,7 @@ namespace Service
                     _context.Figurinomanequims.Remove(estoque);
                     await _context.SaveChangesAsync();
 
-                    return 200;
+                    return HttpStatusCode.OK;
                 }
             }
             catch
