@@ -19,7 +19,7 @@
         </nav>
         <hr />
         <br />
-        <form asp-action="Create">
+        <form id="formCreate" asp-action="Create">
             <div class="container">
                 <div class="row">
                     <div class="form-group col-xl">
@@ -75,7 +75,9 @@
                         <label asp-for="IdRegentes" class="control-label"></label>
                         <select multiple asp-for="IdRegentes" class="d-none" asp-items="Model.ListaPessoa">
                         </select>
-                        <input class="form-control" id="regentes" />
+                        <input class="form-control" id="regentes" placeholder="Informe o Regente."/>
+                        <div id="blockNames" class="d-flex flex-column gap-2">
+                        </div>
                         <span asp-validation-for="IdRegentes" class="text-danger"></span>
                     </div>
                 </div>
