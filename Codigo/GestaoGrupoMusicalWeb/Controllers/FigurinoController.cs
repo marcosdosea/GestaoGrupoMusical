@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
 using Core;
+using Core.DTO;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Org.BouncyCastle.Utilities;
+using X.PagedList;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -251,7 +254,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
-        public async Task<ActionResult> Movimentar(int id)
+        public async Task<ActionResult> Movimentar(int id, int?page)
         {
             var figurino = await _figurinoService.Get(id);
 
@@ -267,6 +270,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
             var associados = _pessoaService.GetAllPessoasOrder(idGrupo);
 
             var movimentacoes = await _movimentacaoService.GetAllByIdFigurino(id);
+            int pageSize = 10; // Número de itens por página
+            int pageNumber = page ?? 1;
+            IPagedList<MovimentacaoFigurinoDTO> movimentacoesPage = movimentacoes.ToPagedList(pageNumber, pageSize);
 
             SelectList listAssociados = new SelectList(associados, "Id", "Nome");
             SelectList listEstoque = new SelectList(manequins, "IdManequim", "TamanhoEstoque");
@@ -278,7 +284,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 DataFigurinoString = figurino.Data.Value.ToString("dd/MM/yyyy"),
                 ListaAssociado = listAssociados,
                 ListaManequim = listEstoque,
-                Movimentacoes = movimentacoes
+                Movimentacoes = movimentacoesPage
             };
 
             return View(movimentarFigurinoViewModel);
