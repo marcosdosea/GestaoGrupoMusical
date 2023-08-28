@@ -249,7 +249,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 case HttpStatusCode.PreconditionFailed:
                     Notificar("<b>Alerta</b>! Dados insuficientes.", Notifica.Alerta);
                     break;
-                case 401:
+                case HttpStatusCode.BadRequest:
                     Notificar("<b>Alerta</b>! Sem quantidade disponível para estoque.", Notifica.Alerta);
                     break;
                 case 500:
