@@ -481,7 +481,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 case HttpStatusCode.OK:
                     Notificar($"<b>Sucesso!</b> Estoque foi <b>Editado</b>", Notifica.Sucesso);
                     break;
-                case 404:
+                case HttpStatusCode.NotFound:
                     Notificar("<b>Alerta!</b> Não há estoque", Notifica.Alerta);
                     break;
                 case 500:
