@@ -54,7 +54,7 @@ namespace Service
 
         }
 
-        public async Task<int> Edit(Figurino figurino)
+        public async Task<HttpStatusCode> Edit(Figurino figurino)
         {
             try
             {
