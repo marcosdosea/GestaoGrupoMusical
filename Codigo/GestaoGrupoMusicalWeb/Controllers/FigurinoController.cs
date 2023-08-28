@@ -114,15 +114,18 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 figurino.IdGrupoMusical = _grupoMusicalService.GetIdGrupo(User.Identity.Name);
 
                 HttpStatusCode resul = await _figurinoService.Edit(figurino);
-                if (resul == 200)
+
+                switch (resul)
                 {
-                    Notificar("<b>Sucesso</b>! Figurino alterado!", Notifica.Sucesso);
-                    return RedirectToAction(nameof(Index));
-                }
-                else
-                {
-                    Notificar("<b>Erro</b>! Há algo errado com os dados", Notifica.Erro);
-                    return View(figurinoViewModel);
+                    case HttpStatusCode.OK:
+                        Notificar("<b>Sucesso</b>! Figurino alterado!", Notifica.Sucesso);
+                        return RedirectToAction(nameof(Index));
+                    case HttpStatusCode.InternalServerError:
+                        Notificar("<b>Erro</b>! Há algo errado com os dados", Notifica.Erro);
+                        return View(figurinoViewModel);
+                    default:
+                        Notificar("<b>Erro</b>! Algo deu errado", Notifica.Erro);
+                        return View(figurinoViewModel);
                 }
             }
             else
