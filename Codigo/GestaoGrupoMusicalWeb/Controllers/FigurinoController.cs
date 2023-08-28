@@ -254,24 +254,46 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
-        public async Task<ActionResult> Movimentar(int id, int?page)
+        public async Task<ActionResult> Movimentar(int id, int?page, string sortOrder)
         {
             var figurino = await _figurinoService.Get(id);
-
-
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
+            ViewData["ConfirmarSort"] = sortOrder == "Confirmar" ? "Aguardando Confirmação" : "Confirmar";
             var manequins = await _movimentacaoService.GetEstoque(id);
             if (manequins == null)
             {
                 Notificar("<b>Alerta</b>! Figurino não possue estoque.", Notifica.Alerta);
                 return RedirectToAction(nameof(Index));
             }
-
+ 
             int idGrupo = _grupoMusicalService.GetIdGrupo(User.Identity.Name);
             var associados = _pessoaService.GetAllPessoasOrder(idGrupo);
+
 
             var movimentacoes = await _movimentacaoService.GetAllByIdFigurino(id);
             int pageSize = 10; // Número de itens por página
             int pageNumber = page ?? 1;
+            switch (sortOrder)
+            {
+                case "Date":
+                    movimentacoes = movimentacoes.OrderBy(s => s.Data);
+                    break;
+                case "date_desc":
+                    movimentacoes = movimentacoes.OrderByDescending(s => s.Data);
+                    break;
+                case "Confirmar":
+                    movimentacoes = movimentacoes.Where(m => m.Status == "Confirmado");
+                    break;
+                case "Aguardando Confirmação":
+                    movimentacoes = movimentacoes.Where(m => m.Status == "Aguardando Confirmação");
+                    break;
+                default:
+                    movimentacoes = await _movimentacaoService.GetAllByIdFigurino(id);
+                    break;
+
+            }
+          
             IPagedList<MovimentacaoFigurinoDTO> movimentacoesPage = movimentacoes.ToPagedList(pageNumber, pageSize);
 
             SelectList listAssociados = new SelectList(associados, "Id", "Nome");
