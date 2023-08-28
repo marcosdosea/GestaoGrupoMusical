@@ -246,7 +246,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 case HttpStatusCode.Accepted:
                     Notificar("<b>Sucesso</b>! Adicionado peças ao estoque.", Notifica.Sucesso);
                     break;
-                case 400:
+                case HttpStatusCode.PreconditionFailed:
                     Notificar("<b>Alerta</b>! Dados insuficientes.", Notifica.Alerta);
                     break;
                 case 401:
