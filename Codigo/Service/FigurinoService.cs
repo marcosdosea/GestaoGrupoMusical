@@ -143,7 +143,7 @@ namespace Service
             return HttpStatusCode.Created;
         }
 
-        public async Task<int> DeleteEstoque(int idFigurino, int idManequim)
+        public async Task<HttpStatusCode> DeleteEstoque(int idFigurino, int idManequim)
         {
             try
             {
