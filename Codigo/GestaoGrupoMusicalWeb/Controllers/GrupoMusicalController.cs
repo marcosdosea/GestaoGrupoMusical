@@ -28,6 +28,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return View(listaGrupoMusical);
         }
 
+        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
+        public ActionResult IndexAdmGrupo()
+        {
+            throw new NotImplementedException();
+        }
+
         // GET: GrupoMusicalController/Details/5
         public ActionResult Details(int id)
         {
