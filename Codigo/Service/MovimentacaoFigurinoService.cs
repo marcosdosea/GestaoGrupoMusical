@@ -34,7 +34,7 @@ namespace Service
 
                 if (figurinoEstoque != null)
                 {
-                    if (figurinoEstoque.QuantidadeDisponivel == 0)
+                    if (figurinoEstoque.QuantidadeDisponivel == 0 && movimentacao.Status.Equals("ENTREGUE"))
                     {
                         await transaction.RollbackAsync();
                         return 401; //não há peças disponiveis para emprestar
@@ -82,15 +82,50 @@ namespace Service
                         if(movimentacao.Quantidade < confirmacao.Quantidade)
                         {
                             int movQuantidade = confirmacao.Quantidade - movimentacao.Quantidade;
-                            movimentacao.Quantidade= movQuantidade;
-                            movimentacao.ConfirmacaoRecebimento = 0;
-                            movimentacao.Status = "RECEBIDO";
-                            _context.Update(movimentacao);
+                            
+                            //movimentacao.ConfirmacaoRecebimento = 0;
+                            //movimentacao.Data = DateTime.Now;
+                            //movimentacao.Status = "DEVOLVIDO";
+
+                            var movimentacaoRecebido = new Movimentacaofigurino
+                            {
+                                Data = DateTime.Now,
+                                IdFigurino = movimentacao.IdFigurino,
+                                IdManequim = movimentacao.IdManequim,
+                                IdAssociado = movimentacao.IdAssociado,
+                                IdColaborador = movimentacao.IdColaborador,
+                                Status = "RECEBIDO",
+                                ConfirmacaoRecebimento = 1,
+                                Quantidade = movQuantidade
+                            };
+
+
+                            var movimentacaoEntregue = new Movimentacaofigurino
+                            {
+                                Data = DateTime.Now,
+                                IdFigurino = movimentacao.IdFigurino,
+                                IdManequim = movimentacao.IdManequim,
+                                IdAssociado = movimentacao.IdAssociado,
+                                IdColaborador = movimentacao.IdColaborador,
+                                Status = "DEVOLVIDO",
+                                ConfirmacaoRecebimento = 0,
+                                Quantidade = movimentacao.Quantidade
+                            };
+
+                            await _context.AddAsync(movimentacaoEntregue);
+                            await _context.AddAsync(movimentacaoRecebido);
+
                             figurinoEstoque.QuantidadeDisponivel += movimentacao.Quantidade;
                             figurinoEstoque.QuantidadeEntregue -= movimentacao.Quantidade;
+                            //movimentacao.Quantidade = movQuantidade;
+                            //movimentacao.Data = DateTime.Now;
+                            //movimentacao.Status = "RECEBIDO";
+
+
                         }
                         else
                         {
+
                             movimentacao.ConfirmacaoRecebimento = 0;
                             figurinoEstoque.QuantidadeDisponivel += confirmacao.Quantidade;
                             figurinoEstoque.QuantidadeEntregue -= confirmacao.Quantidade;
@@ -311,12 +346,17 @@ namespace Service
                 .AsNoTracking()
                 .Where(g => g.IdAssociado == idAssociado && g.IdFigurino == idFigurino
                     && g.IdManequim == idManequim)
+                .OrderBy(g => g.Id)
                 .Select(g => new MovimentarConfirmaçãoQuantidade
                 {
                     Confirmar = g.ConfirmacaoRecebimento,
-                    Quantidade = g.Quantidade
+                    Quantidade = g.Quantidade,
+                    Id = g.Id
+
                 })
-                .FirstOrDefaultAsync();
+                //.FirstOrDefaultAsync();
+                .LastOrDefaultAsync();
+
             return query;
         }
     }
