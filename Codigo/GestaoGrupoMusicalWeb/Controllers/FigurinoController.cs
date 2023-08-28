@@ -71,10 +71,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
                 switch (resul)
                 {
-                    case 200:
+                    case HttpStatusCode.Created:
                         Notificar("<b>Sucesso</b>! Figurino cadastrado!", Notifica.Sucesso);
                         break;
-                    case 500:
+                    case HttpStatusCode.InternalServerError:
                         Notificar("<b>Erro</b>! Algo deu errado ao cadastrar novo figurino", Notifica.Erro);
                         return View(figurinoViewModel);
                     default:
