@@ -134,6 +134,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 return View();
             }
         }
+
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         // GET: FigurinoController/Delete/5
         public async Task<ActionResult> Delete(int id)
@@ -143,13 +144,14 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             return View(figurinoViewModel);
         }
+
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         // POST: FigurinoController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Delete(int id, FigurinoViewModel figurinoViewModel)
         {
-            int resul = await _figurinoService.Delete(id);
+            HttpStatusCode resul = await _figurinoService.Delete(id);
 
             if (resul == 200)
             {
