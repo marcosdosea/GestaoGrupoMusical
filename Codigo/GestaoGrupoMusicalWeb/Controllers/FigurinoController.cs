@@ -153,17 +153,20 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             HttpStatusCode resul = await _figurinoService.Delete(id);
 
-            if (resul == 200)
+            switch (resul)
             {
-                Notificar("<b>Sucesso</b>! Figurino removido!", Notifica.Sucesso);
-                return RedirectToAction(nameof(Index));
-            }
-            else
-            {
-                Notificar("<b>Erro</b>! Algo deu errado ao remover figurino. Verifique se há estoque emprestado.", Notifica.Erro);
-                return RedirectToAction(nameof(Index));
+                case HttpStatusCode.OK:
+                    Notificar("<b>Sucesso</b>! Figurino removido!", Notifica.Sucesso);
+                    return RedirectToAction(nameof(Index));
+                case HttpStatusCode.InternalServerError:
+                    Notificar("<b>Erro</b>! Algo deu errado ao remover figurino. Verifique se há estoque emprestado.", Notifica.Erro);
+                    return RedirectToAction(nameof(Index));
+                default:
+                    Notificar("<b>Erro</b>! Algo deu errado", Notifica.Erro);
+                    return View(figurinoViewModel);
             }
         }
+
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         // POST: FigurinoController/DeleteEstoque/5
         [HttpPost]
