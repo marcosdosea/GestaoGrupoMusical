@@ -221,7 +221,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 IdFigurino = estoqueViewModel.IdFigurino,
                 IdManequim = estoqueViewModel.IdManequim,
                 QuantidadeDisponivel = estoqueViewModel.QuantidadeDisponivel,
-                QuantidadeEntregue = 0
+                QuantidadeEntregue = 0,
+                QuantidadeDescartada = 0
             };
 
             int resul = await _figurinoService.CreateEstoque(estoque);
