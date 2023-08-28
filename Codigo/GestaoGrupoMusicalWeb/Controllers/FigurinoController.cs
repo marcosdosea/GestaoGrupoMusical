@@ -90,6 +90,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 return View();
             }
         }
+
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         // GET: FigurinoController/Edit/5
         public async Task<ActionResult> Edit(int id)
@@ -99,6 +100,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             return View(figurinoViewModel);
         }
+
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         // POST: FigurinoController/Edit/5
         [HttpPost]
@@ -111,7 +113,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
                 figurino.IdGrupoMusical = _grupoMusicalService.GetIdGrupo(User.Identity.Name);
 
-                int resul = await _figurinoService.Edit(figurino);
+                HttpStatusCode resul = await _figurinoService.Edit(figurino);
                 if (resul == 200)
                 {
                     Notificar("<b>Sucesso</b>! Figurino alterado!", Notifica.Sucesso);
