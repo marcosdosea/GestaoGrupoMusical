@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Net;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -65,7 +66,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 figurinoViewModel.IdGrupoMusical = _grupoMusicalService.GetIdGrupo(User.Identity.Name);
 
                 var figurino = _mapper.Map<Figurino>(figurinoViewModel);
-                int resul = await _figurinoService.Create(figurino);
+                HttpStatusCode resul = await _figurinoService.Create(figurino);
 
 
                 switch (resul)
