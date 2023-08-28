@@ -142,5 +142,28 @@ namespace Service
             }
             return false;
         }
+
+        public async Task<IEnumerable<Pessoa>> GetAllColaboradores(int idGrupo)
+        {
+            int idColaborador = (await _context.Papelgrupos
+                                .Where(p => p.Nome.ToUpper() == "COLABORADOR")
+                                .AsNoTracking()
+                                .FirstOrDefaultAsync())
+                                ?.IdPapelGrupo ?? 0;
+
+            int idRegente = (await _context.Papelgrupos
+                            .Where(p => p.Nome.ToUpper() == "REGENTE")
+                            .AsNoTracking()
+                            .FirstOrDefaultAsync())
+                            ?.IdPapelGrupo ?? 0;
+
+            var query = await ( from pessoas in _context.Pessoas
+                          where pessoas.IdGrupoMusical == idGrupo &&
+                                (pessoas.IdPapelGrupo == idRegente || pessoas.IdPapelGrupo == idColaborador)
+                          select pessoas
+                ).AsNoTracking().ToListAsync();
+
+            return query;
+        }
     }
 }
