@@ -14,6 +14,8 @@ namespace Core.DTO
         public int Disponivel { get; set; }
         public int Entregues { get; set; }
 
+        public int Danificados { get; set; }
+
         public string TamanhoEstoque
         {
             get { return Tamanho + " - " + Disponivel + " disponíveis"; }
