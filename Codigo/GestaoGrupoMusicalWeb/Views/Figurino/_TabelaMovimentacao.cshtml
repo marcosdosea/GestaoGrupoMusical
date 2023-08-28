@@ -11,19 +11,19 @@
                     @Html.DisplayName("Cpf")
                 </th>
                 <th>
-                    @Html.DisplayName("Nome Associado");
+                    @Html.DisplayName("Nome Associado")
                 </th>
                 <th>
-                    @Html.DisplayName("Data")
+                    <a asp-action="Movimentar" asp-route-sortOrder="@ViewData["DateSortParm"]">@Html.DisplayName("Data")</a>
                 </th>
                 <th>
                     @Html.DisplayName("Tamanho")
                 </th>
                 <th>
-                    @Html.DisplayName("Movimentação");
+                    @Html.DisplayName("Movimentação")
                 </th>
                 <th>
-                    @Html.DisplayName("Status");
+                    <a asp-action="Movimentar" asp-route-sortOrder="@ViewData["ConfirmarSort"]">@Html.DisplayName("Staus")</a>
                 </th>
                 <th>Ações</th>
             </tr>
@@ -77,12 +77,14 @@
     <a asp-action="Movimentar"
        asp-route-id="@idFigurino"
        asp-route-page="@(Model.PageNumber - 1)"
+       asp-route-sortOrder="@ViewData["CurrentSort"]"
        class="btn btn-default @(Model.HasPreviousPage ? "" : "disabled")">
         Previous
     </a>
     <a asp-action="Movimentar"
        asp-route-id="@idFigurino"
        asp-route-page="@(Model.PageNumber + 1)"
+       asp-route-sortOrder="@ViewData["CurrentSort"]"
        class="btn btn-default @(Model.HasNextPage ? "" : "disabled")">
         Next
     </a>
