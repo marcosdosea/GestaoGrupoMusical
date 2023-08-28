@@ -442,6 +442,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
             return RedirectToAction(nameof(Movimentacoes));
         }
+
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         public async Task<ActionResult> EditEstoque(int idFigurino, int idManequim)
         {
@@ -460,6 +461,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             };
             return View(estoqueviewmodel);
         }
+
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -471,7 +473,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 IdManequim = idManequim,
                 QuantidadeDisponivel = estoque.QuantidadeDisponivel
             };
-            int resul = await _figurinoService.EditEstoque(estoqueviewModel);
+
+            HttpStatusCode resul = await _figurinoService.EditEstoque(estoqueviewModel);
+
             switch (resul)
             {
                 case 200:
