@@ -45,11 +45,11 @@ namespace Service
 
                 await _context.SaveChangesAsync();
 
-                return 200;
+                return HttpStatusCode.OK;
             }
             catch
             {
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
 
         }
