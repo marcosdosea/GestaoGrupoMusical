@@ -155,7 +155,7 @@ namespace Service
                     _context.Figurinomanequims.Update(estoque);
                     await _context.SaveChangesAsync();
 
-                    return 400;
+                    return HttpStatusCode.BadRequest;
                 }
                 else
                 {
