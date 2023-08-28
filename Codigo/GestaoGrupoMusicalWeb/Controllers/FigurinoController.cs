@@ -240,7 +240,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             switch (resul)
             {
-                case 200:
+                case HttpStatusCode.Created:
                     Notificar("<b>Sucesso</b>! Estoque cadastrado.", Notifica.Sucesso);
                     break;
                 case 201:
