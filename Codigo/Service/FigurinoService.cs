@@ -109,7 +109,7 @@ namespace Service
         {
             if(estoque.IdManequim == null || estoque.IdFigurino == null)
             {
-                return 400;//falta algum dos id's
+                return HttpStatusCode.PreconditionFailed;//falta algum dos id's
             }
             else if(estoque.QuantidadeDisponivel <= 0)
             {
@@ -128,7 +128,7 @@ namespace Service
 
                     await _context.SaveChangesAsync();
 
-                    return 201; //caso estoque ja existia
+                    return HttpStatusCode.Accepted; //caso estoque ja existia
                 }
 
                 await _context.Figurinomanequims.AddAsync(estoque);
