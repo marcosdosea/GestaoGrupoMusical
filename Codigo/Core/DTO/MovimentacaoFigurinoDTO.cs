@@ -37,5 +37,6 @@ namespace Core.DTO
     {
         public int Quantidade { get; set; }
         public sbyte Confirmar { get; set; }
+        public int Id { get; set; }
     }
 }
