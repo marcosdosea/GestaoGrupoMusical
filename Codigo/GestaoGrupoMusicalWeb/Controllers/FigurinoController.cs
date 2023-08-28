@@ -484,7 +484,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 case HttpStatusCode.NotFound:
                     Notificar("<b>Alerta!</b> Não há estoque", Notifica.Alerta);
                     break;
-                case 500:
+                case HttpStatusCode.InternalServerError:
                     Notificar("<b>Erro!</b> Algo deu errado", Notifica.Erro);
                     break;
                 default:
