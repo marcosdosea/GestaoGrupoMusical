@@ -40,7 +40,7 @@ namespace Core.Service
         /// </returns>
         Task<HttpStatusCode> CreateEstoque(Figurinomanequim estoque);
         Task<HttpStatusCode> DeleteEstoque(int idFigurino, int idManequim);
-        Task<int> EditEstoque(Figurinomanequim estoque);
+        Task<HttpStatusCode> EditEstoque(Figurinomanequim estoque);
         Task<EstoqueDTO> GetEstoque(int idFigurino, int idManequim);
     }
 }
