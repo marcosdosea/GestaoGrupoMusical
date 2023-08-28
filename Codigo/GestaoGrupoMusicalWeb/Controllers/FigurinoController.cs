@@ -53,6 +53,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             return View();
         }
+
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         // POST: FigurinoController/Create
         [HttpPost]
