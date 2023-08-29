@@ -3,19 +3,26 @@ using Core;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
     public class GrupoMusicalController : BaseController
     {
         private readonly IGrupoMusicalService _grupoMusical;
-        private readonly IMapper _mapper;
+        private readonly IPessoaService _pessoaService;
 
-        public GrupoMusicalController(IGrupoMusicalService grupoMusical, IMapper mapper)
+        private readonly IMapper _mapper;
+        private readonly UserManager<UsuarioIdentity> _userManager;
+
+        public GrupoMusicalController(IGrupoMusicalService grupoMusical, IMapper mapper, UserManager<UsuarioIdentity> userManager, IPessoaService pessoaService)
         {
             _grupoMusical = grupoMusical;
             _mapper = mapper;
+            _userManager = userManager;
+            _pessoaService = pessoaService;
         }
 
         // GET: GrupoMusicalController
@@ -27,9 +34,19 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
-        public ActionResult IndexAdmGrupo()
+        public async Task<ActionResult> IndexAdmGrupo()
         {
-            throw new NotImplementedException();
+            var idGrupoMusical = _grupoMusical.GetIdGrupo(User.Identity.Name);
+
+            GrupoMusicalAdmGrupoViewModel grupoMusicalViewModel = new();
+
+            var associados = _pessoaService.GetAllPessoasOrder(idGrupoMusical);
+            SelectList listAssociados = new SelectList(associados, "Id", "Nome");
+            grupoMusicalViewModel.ListaAssociados = listAssociados;
+
+            grupoMusicalViewModel.ListaColaboradores = await _grupoMusical.GetAllColaboradores(idGrupoMusical);
+            
+            return View(grupoMusicalViewModel);
         }
 
         // GET: GrupoMusicalController/Details/5
