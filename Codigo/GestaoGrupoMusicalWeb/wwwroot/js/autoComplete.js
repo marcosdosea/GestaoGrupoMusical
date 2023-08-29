@@ -27,19 +27,21 @@ function fillAutocomplete(data, inputId, listId, formId, errorMessage) {
 
                 for (var i = 0; i < lista.options.length; i++) {
                     if (lista.options[i].text == ui.item.value) {
-                        lista.options[i].selected = true;
-                        $("#blockNames").addClass("my-4");
-                        $("#blockNames").prepend(`
-                            <h6 id="${ui.item.value.replaceAll(' ','')}">${ui.item.value}
+                        if (!lista.options[i].selected) {
+                            lista.options[i].selected = true;
+                            $("#blockNames").addClass("my-4");
+                            $("#blockNames").prepend(`
+                            <h6 id="${ui.item.value.replaceAll(' ', '')}">${ui.item.value}
                                 <button class="btn btn-secondary badge" title="Excluir Regente" type="button" onclick="removeRegente('${ui.item.value}', '${listId}')">
                                     <i class="fa-solid fa-xmark"> </i>
                                 </button>
                             </h6>
-                        `);
-                        ui.item.value = "";
+                            `);
 
-                        $(`#${inputId}`).removeClass("input-validation-error");
-                        document.querySelector("span[for='" + inputId + "']").textContent = "";
+                            $(`#${inputId}`).removeClass("input-validation-error");
+                            document.querySelector("span[for='" + inputId + "']").textContent = "";
+                        }
+                        ui.item.value = "";
                     }
                 }
                 
