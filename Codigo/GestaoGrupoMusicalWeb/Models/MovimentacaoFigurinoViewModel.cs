@@ -50,5 +50,7 @@ namespace GestaoGrupoMusicalWeb.Models
             {"Descartar", "DANIFICADO"}
         };
 
+        public int quantidade { get; set; } 
+
     }
 }
