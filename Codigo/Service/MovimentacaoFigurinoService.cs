@@ -73,6 +73,11 @@ namespace Service
                         figurinoEstoque.QuantidadeEntregue--;
                     }
                 }
+                else if (movimentacao.Status.Equals("DANIFICADO"))
+                {
+                    figurinoEstoque.QuantidadeDisponivel -= quantidadeMovimentada;
+                    figurinoEstoque.QuantidadeDescartada += quantidadeMovimentada;
+                }
 
 
                 _context.Figurinomanequims.Update(figurinoEstoque);
