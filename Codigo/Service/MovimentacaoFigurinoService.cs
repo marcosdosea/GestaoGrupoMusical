@@ -67,21 +67,21 @@ namespace Service
                     }
                     if (movimentacao.Status.Equals("DEVOLVIDO"))
                     {
-                        var confirmacao = await GetConfirmacaoFigurino(movimentacao.IdAssociado, movimentacao.IdFigurino
+                        var confiQuantAssociado = await GetConfirmacaoFigurino(movimentacao.IdAssociado, movimentacao.IdFigurino
                             , movimentacao.IdManequim);
-                        if (confirmacao.Confirmar != 1)
+                        if (confiQuantAssociado.Confirmar != 1)
                         {
                             await transaction.RollbackAsync();
                             return 403; //não ouve confirmação
                         }
-                        if (movimentacao.Quantidade <= 0 || movimentacao.Quantidade > confirmacao.Quantidade)
+                        if (movimentacao.Quantidade <= 0 || movimentacao.Quantidade > confiQuantAssociado.Quantidade)
                         {
                             await transaction.RollbackAsync();
                             return 403; //tentativa de devolução de figurino a mais ou a menos da quantidade que o associado possui
                         }
-                        if(movimentacao.Quantidade < confirmacao.Quantidade)
+                        if(movimentacao.Quantidade < confiQuantAssociado.Quantidade)
                         {
-                            int movQuantidade = confirmacao.Quantidade - movimentacao.Quantidade;
+                            int movQuantidade = confiQuantAssociado.Quantidade - movimentacao.Quantidade;
                            
                             var movimentacaoRecebido = new Movimentacaofigurino
                             {
@@ -119,8 +119,8 @@ namespace Service
                         {
 
                             movimentacao.ConfirmacaoRecebimento = 0;
-                            figurinoEstoque.QuantidadeDisponivel += confirmacao.Quantidade;
-                            figurinoEstoque.QuantidadeEntregue -= confirmacao.Quantidade;
+                            figurinoEstoque.QuantidadeDisponivel += confiQuantAssociado.Quantidade;
+                            figurinoEstoque.QuantidadeEntregue -= confiQuantAssociado.Quantidade;
                             await _context.AddAsync(movimentacao);
                         }
 
