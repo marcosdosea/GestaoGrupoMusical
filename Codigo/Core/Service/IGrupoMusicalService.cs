@@ -72,6 +72,6 @@ namespace Core.Service
         /// Retorna os papeis: Colaborador e Regente
         /// </summary>
         /// <returns></returns>
-        Task<IEnumerable<ColaboradoresDTO>> GetPapeis();
+        Task<IEnumerable<Papelgrupo>> GetPapeis();
     }
 }
