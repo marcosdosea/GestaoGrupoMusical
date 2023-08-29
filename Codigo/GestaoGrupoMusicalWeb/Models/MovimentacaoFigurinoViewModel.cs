@@ -49,9 +49,5 @@ namespace GestaoGrupoMusicalWeb.Models
             { "Devolver", "DEVOLVIDO" },
             {"Descartar", "DANIFICADO"}
         };
-
-        [Display(Name ="Quantidade")]
-        public int QuantidadeMovimentada { get; set; } 
-
     }
 }

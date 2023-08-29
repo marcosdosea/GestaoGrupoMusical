@@ -23,7 +23,7 @@ namespace Service
         }
 
         //emprestar figurino
-        public async Task<int> CreateAsync(Movimentacaofigurino movimentacao, int quantidadeMovimentada)
+        public async Task<int> CreateAsync(Movimentacaofigurino movimentacao)
         {
             using var transaction = _context.Database.BeginTransaction();
 
@@ -33,7 +33,7 @@ namespace Service
 
                 if (figurinoEstoque != null)
                 {
-                    if (figurinoEstoque.QuantidadeDisponivel == 0 || quantidadeMovimentada > figurinoEstoque.QuantidadeDisponivel)
+                    if (figurinoEstoque.QuantidadeDisponivel == 0)
                     {
                         await transaction.RollbackAsync();
                         return 401; //não há peças disponiveis para emprestar
@@ -101,8 +101,8 @@ namespace Service
                 }
                 else
                 {
-                    figurinoEstoque.QuantidadeDisponivel -= quantidadeMovimentada;
-                    figurinoEstoque.QuantidadeDescartada += quantidadeMovimentada;
+                    figurinoEstoque.QuantidadeDisponivel --;
+                    figurinoEstoque.QuantidadeDescartada ++;
                 }
 
                 _context.Figurinomanequims.Update(figurinoEstoque);

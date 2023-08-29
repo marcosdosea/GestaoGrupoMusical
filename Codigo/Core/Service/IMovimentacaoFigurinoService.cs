@@ -19,7 +19,7 @@ namespace Core.Service
         /// 200 - Sucesso
         /// 500 - Erro interno
         /// </returns>
-        Task<int> CreateAsync(Movimentacaofigurino movimentacao, int quantidadeMovimentada);
+        Task<int> CreateAsync(Movimentacaofigurino movimentacao);
 
         Task<Movimentacaofigurino?> GetEmprestimoByIdFigurino(int idFigurino);
 

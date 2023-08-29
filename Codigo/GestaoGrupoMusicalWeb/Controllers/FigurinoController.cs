@@ -296,7 +296,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 ListaAssociado = listAssociados,
                 ListaManequim = listEstoque,
                 Movimentacoes = movimentacoes,
-                QuantidadeMovimentada = 1
             };
 
             return View(movimentarFigurinoViewModel);
@@ -321,7 +320,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 ConfirmacaoRecebimento = 0
             };
 
-            int resul = await _movimentacaoService.CreateAsync(movimentacao, movimentacaoViewModel.QuantidadeMovimentada);
+            int resul = await _movimentacaoService.CreateAsync(movimentacao);
             
             string tipoMov = string.Empty;
 
@@ -343,7 +342,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     Notificar("<b>Alerta!</b> Não há estoque desse tamanho", Notifica.Alerta);
                     break;
                 case 401:
-                    Notificar("<b>Alerta!</b> Quantidade de peças disponíveis insuficientes", Notifica.Alerta);
+                    Notificar("<b>Alerta!</b> Quantidade de peças disponíveis é insuficiente", Notifica.Alerta);
                     break;
                 case 402:
                     Notificar("<b>Alerta!</b> Não há nada para devolver", Notifica.Alerta);
