@@ -49,8 +49,16 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: EnsaioController/Create
         public async Task<ActionResult> Create()
         {
-            EnsaioViewModel ensaioModel = new();
             var lista = await _pessoa.GetRegentesForAutoCompleteAsync(Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
+
+            if(lista == null || !lista.Any())
+            {
+                Notificar("É necessário cadastrar um Regente para então cadastrar um Ensaio.", Notifica.Informativo);
+                return RedirectToAction(nameof(Index));
+            }
+
+            EnsaioViewModel ensaioModel = new();
+            
             ensaioModel.ListaPessoa = new SelectList(lista, "Id", "Nome");
 
             ViewData["exemploRegente"] = lista.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
