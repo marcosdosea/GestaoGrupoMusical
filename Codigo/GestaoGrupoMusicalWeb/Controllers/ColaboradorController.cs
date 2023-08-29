@@ -47,7 +47,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: ColaboradorController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(int Id, int IdPapelGrupo,CreateColaboradorViewModel pessoaViewModel)
+        public async Task<ActionResult> Create(int Id, int IdPapelGrupo,CreateColaboradorViewModel pessoa)
         {
             HttpStatusCode resul = await _pessoaService.ToCollaborator(Id, IdPapelGrupo);
 
@@ -108,7 +108,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: ColaboradorController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, PessoaViewModel pessoaViewModel)
+        public ActionResult Delete(int id, CreateColaboradorViewModel pessoa)
         {
             _pessoaService.RemoveCollaborator(id);
 
