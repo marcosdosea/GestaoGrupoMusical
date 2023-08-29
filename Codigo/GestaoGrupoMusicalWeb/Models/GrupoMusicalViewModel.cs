@@ -118,6 +118,19 @@ namespace GestaoGrupoMusicalWeb.Models
         //TO DO 
         public IEnumerable<ColaboradoresDTO>? ListaColaboradores { get; set; }
 
+        public CreateColaboradorViewModel ListaAssociados { get; set; }
+    }
+
+    public class CreateColaboradorViewModel
+    {
+        [Required(ErrorMessage = "O campo Nome é obrigatório")]
+        [Display(Name ="Associado")]
+        public int Id { get; set; }
+
+        [Required(ErrorMessage = "O campo Papel é obrigatório")]
+        [Display(Name = "Papel")]
+        public int IdPapelGrupo { get; set; }
+
         public SelectList? ListaAssociados { get; set; }
         public SelectList? ListaPapeis { get; set; }
     }
