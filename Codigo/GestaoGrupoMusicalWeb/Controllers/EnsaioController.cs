@@ -62,16 +62,14 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(EnsaioViewModel ensaioViewModel)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && ensaioViewModel.IdRegentes != null)
             {
                 String mensagem = String.Empty;
                 var ensaio = _mapper.Map<Ensaio>(ensaioViewModel);
-                if(Int32.TryParse(User.FindFirst("IdGrupoMusical")?.Value, out int idGrupoMusical) && Int32.TryParse(User.FindFirst("Id")?.Value, out int id))
-                {
-                    ensaio.IdGrupoMusical = idGrupoMusical;
-                    ensaio.IdColaboradorResponsavel = id;
-                }
-                switch (await _ensaio.Create(ensaio))
+              
+                ensaio.IdGrupoMusical = Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value);
+                ensaio.IdColaboradorResponsavel = Convert.ToInt32(User.FindFirst("Id")?.Value);
+                switch (await _ensaio.Create(ensaio, ensaioViewModel.IdRegentes))
                 {
                     case 200:
                         mensagem = "Ensaio <b>Cadastrado</b> com <b>Sucesso</b>";
