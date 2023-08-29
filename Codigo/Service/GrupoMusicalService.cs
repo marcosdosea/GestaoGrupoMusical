@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Core;
 using Core.DTO;
 using Core.Service;
+using Google.Protobuf.WellKnownTypes;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,8 +20,7 @@ namespace Service
 
         public GrupoMusicalService(GrupoMusicalContext context)
         {
-            _context = context;
-        }
+            _context = context;}
 
         /// <summary>
         /// Metodo usado para adicionar o Grupo Musical
@@ -165,7 +165,7 @@ namespace Service
                               Id = pessoa.Id,
                               Cpf = pessoa.Cpf,
                               Nome = pessoa.Nome,
-                              Data = pessoa.DataEntrada,
+                              Data = pessoa.DataEntrada.Value.ToString("dd/MM/yyyy"),
                               Papel = pessoa.IdPapelGrupoNavigation.Nome
                           }
                 ).AsNoTracking().ToListAsync();
