@@ -81,7 +81,6 @@
                         <span asp-validation-for="IdRegentes" class="text-danger"></span>
                     </div>
                 </div>
-                <button type="button" onclick="addToList()">Add</button>
             </div>
             <div class="container">
                 <div class="row">
@@ -105,16 +104,6 @@
     </div>
 </div>
 <script>
-    function addToList(){
-        var lista = document.getElementById("IdRegentes");
-        var item = document.createElement("option");
-
-        item.text = "Teste";
-        item.value = 1;
-        item.selected = true;
-
-        lista.appendChild(item);
-    }
     window.addEventListener("load", () => {
             fillAutocomplete('@(Html.Raw(Model.JsonLista))', "regentes", "IdRegentes");
     });
