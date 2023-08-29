@@ -96,7 +96,7 @@ namespace Service
                             };
 
 
-                            var movimentacaoEntregue = new Movimentacaofigurino
+                            var movimentacaoDevolvido = new Movimentacaofigurino
                             {
                                 Data = DateTime.Now,
                                 IdFigurino = movimentacao.IdFigurino,
@@ -108,7 +108,7 @@ namespace Service
                                 Quantidade = movimentacao.Quantidade
                             };
 
-                            await _context.AddAsync(movimentacaoEntregue);
+                            await _context.AddAsync(movimentacaoDevolvido);
                             await _context.AddAsync(movimentacaoRecebido);
 
                             figurinoEstoque.QuantidadeDisponivel += movimentacao.Quantidade;
@@ -117,7 +117,6 @@ namespace Service
                         }
                         else
                         {
-
                             movimentacao.ConfirmacaoRecebimento = 0;
                             figurinoEstoque.QuantidadeDisponivel += confiQuantAssociado.Quantidade;
                             figurinoEstoque.QuantidadeEntregue -= confiQuantAssociado.Quantidade;
