@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Email;
 using System.Security.Cryptography;
 using System.Text;
+using System.Net;
 
 namespace Service
 {
@@ -432,27 +433,28 @@ namespace Service
         /// </summary>
         /// <param name="pessoa">objeto pessoa para fazer a mudança</param>
         /// <returns>retorna true caso de tudo certo e false caso nao de certo</returns>
-        public async Task<bool> ToCollaborator(int id)
+        public async Task<HttpStatusCode> ToCollaborator(int id, int idPapelGrupo)
         {
             var pessoa = Get(id);
-
-            //uma query pois pode ser que o id seja alterado futuramente
-            var idPapel = _context.Papelgrupos
-                .Where(p => p.Nome == "Colaborador")
-                .Select(p => p.IdPapelGrupo)
-                .First();
-
-            if (idPapel != null && idPapel.GetType() == typeof(int) && pessoa != null)
+            if(pessoa == null)
             {
-                pessoa.IdPapelGrupo = idPapel;
-                Edit(pessoa);
-                return true;
-            }
-            else
-            {
-                return false;
+                return HttpStatusCode.NotFound;
             }
 
+            try
+            {
+                pessoa.IdPapelGrupo = idPapelGrupo;
+
+                _context.Update(pessoa);
+
+                await _context.SaveChangesAsync();
+
+                return HttpStatusCode.Created;
+            }
+            catch
+            {
+                return HttpStatusCode.InternalServerError;
+            }
         }
 
         public async Task<bool> RemoveCollaborator(int id)
