@@ -7,10 +7,10 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/lib/simple-sidebar/dist/css/styles.css" />
     <link rel="stylesheet" href="~/lib/fontawesome-free-6.4.0-web/css/all.min.css" />
-    <link rel="stylesheet" href="~/lib/jquery-autocomplete/code.jquery.com_ui_1.13.2_themes_base_jquery-ui.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/headerLayout.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/GestaoGrupoMusicalWeb.styles.css" asp-append-version="true" />
+    @await RenderSectionAsync("Header", required: false)
     <link rel="icon" type="image/x-icon" href="~/assets/logo_batalase_SF.png" />
 </head>
 <body>
