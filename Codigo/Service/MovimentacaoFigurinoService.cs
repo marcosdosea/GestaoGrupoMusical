@@ -47,64 +47,66 @@ namespace Service
 
                 await _context.AddAsync(movimentacao);
 
-                if (movimentacao.Status.Equals("ENTREGUE"))
+                if (!movimentacao.Status.Equals("DANIFICADO"))
                 {
-                    figurinoEstoque.QuantidadeDisponivel--;
-                    figurinoEstoque.QuantidadeEntregue++;
-                }
-                else if (movimentacao.Status.Equals("DEVOLVIDO"))
-                {
-                    if (await AssociadoEmprestimo(movimentacao.IdAssociado, movimentacao.IdFigurino, movimentacao.IdManequim))
+                    if (movimentacao.Status.Equals("ENTREGUE"))
                     {
-                        await transaction.RollbackAsync();
-                        return 402; //associado nao possue nada emprestado para devolver
+                        figurinoEstoque.QuantidadeDisponivel--;
+                        figurinoEstoque.QuantidadeEntregue++;
                     }
-                    if (movimentacao.Status.Equals("DEVOLVIDO"))
+                    else if (movimentacao.Status.Equals("DEVOLVIDO"))
                     {
-                        sbyte confirmacao = await GetConfirmacaoFigurino(movimentacao.IdAssociado, movimentacao.IdFigurino
-                            , movimentacao.IdManequim);
-                        if ( confirmacao != 1)
+                        if (await AssociadoEmprestimo(movimentacao.IdAssociado, movimentacao.IdFigurino, movimentacao.IdManequim))
                         {
                             await transaction.RollbackAsync();
-                            return 403; //não ouve confirmação do associado 
+                            return 402; //associado nao possue nada emprestado para devolver
                         }
-                        movimentacao.ConfirmacaoRecebimento = 0;
-                        figurinoEstoque.QuantidadeDisponivel++;
-                        figurinoEstoque.QuantidadeEntregue--;
+                        if (movimentacao.Status.Equals("DEVOLVIDO"))
+                        {
+                            sbyte confirmacao = await GetConfirmacaoFigurino(movimentacao.IdAssociado, movimentacao.IdFigurino
+                                , movimentacao.IdManequim);
+                            if (confirmacao != 1)
+                            {
+                                await transaction.RollbackAsync();
+                                return 403; //não ouve confirmação do associado 
+                            }
+                            movimentacao.ConfirmacaoRecebimento = 0;
+                            figurinoEstoque.QuantidadeDisponivel++;
+                            figurinoEstoque.QuantidadeEntregue--;
+                        }
+                    }
+
+
+                    var associado = await _context.Pessoas.FindAsync(movimentacao.IdAssociado);
+
+                    string? figurinoNome = (await _context.Figurinos.FindAsync(movimentacao.IdFigurino))?.Nome;
+
+                    if (associado != null)
+                    {
+                        EmailModel email = new()
+                        {
+                            Assunto = "Batalá - Empréstimo de Figurino",
+                            AddresseeName = associado.Nome,
+                            Body = "<div style=\"text-align: center;\">\r\n    " +
+                            $"<h3>Estamos aguardando a sua confirmação de Empréstimo.</h3>\r\n" +
+                            "<div style=\"font-size: large;\">\r\n        " +
+                            $"<dt style=\"font-weight: 700;\">Figurino:</dt><dd>{figurinoNome}</dd>" +
+                            $"<dt style=\"font-weight: 700;\">Data de Emprestimo:</dt><dd>{movimentacao.Data:dd/MM/yyyy}</dd>\n</div>"
+                        };
+
+                        email.To.Add(associado.Email);
+
+                        await EmailService.Enviar(email);
                     }
                 }
-                else if (movimentacao.Status.Equals("DANIFICADO"))
+                else
                 {
                     figurinoEstoque.QuantidadeDisponivel -= quantidadeMovimentada;
                     figurinoEstoque.QuantidadeDescartada += quantidadeMovimentada;
                 }
 
-
                 _context.Figurinomanequims.Update(figurinoEstoque);
-
                 await _context.SaveChangesAsync();
-
-                var associado = await _context.Pessoas.FindAsync(movimentacao.IdAssociado);
-
-                string? figurinoNome = (await _context.Figurinos.FindAsync(movimentacao.IdFigurino))?.Nome;
-
-                if (associado != null)
-                {
-                    EmailModel email = new()
-                    {
-                        Assunto = "Batalá - Empréstimo de Figurino",
-                        AddresseeName = associado.Nome,
-                        Body = "<div style=\"text-align: center;\">\r\n    " +
-                        $"<h3>Estamos aguardando a sua confirmação de Empréstimo.</h3>\r\n" +
-                        "<div style=\"font-size: large;\">\r\n        " +
-                        $"<dt style=\"font-weight: 700;\">Figurino:</dt><dd>{figurinoNome}</dd>" +
-                        $"<dt style=\"font-weight: 700;\">Data de Emprestimo:</dt><dd>{movimentacao.Data:dd/MM/yyyy}</dd>\n</div>"
-                    };
-
-                    email.To.Add(associado.Email);
-
-                    await EmailService.Enviar(email);
-                }
             }
             catch
             {
