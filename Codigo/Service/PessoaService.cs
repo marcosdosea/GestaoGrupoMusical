@@ -436,6 +436,7 @@ namespace Service
         public async Task<HttpStatusCode> ToCollaborator(int id, int idPapelGrupo)
         {
             var pessoa = Get(id);
+
             if(pessoa == null)
             {
                 return HttpStatusCode.NotFound;
@@ -457,29 +458,44 @@ namespace Service
             }
         }
 
-        public async Task<bool> RemoveCollaborator(int id)
+        public async Task<HttpStatusCode> RemoveCollaborator(int id)
         {
             var pessoa = Get(id);
 
+            if(pessoa == null)
+            {
+                return HttpStatusCode.NotFound;
+            }
+
+
             //uma query pois pode ser que o id seja alterado futuramente
             var idPapel = _context.Papelgrupos
-                .Where(p => p.Nome == "Associado")
+                .Where(p => p.Nome.ToUpper() == "ASSOCIADO")
                 .Select(p => p.IdPapelGrupo)
                 .First();
 
             //aqui ha uma comparacao com id de papel da pessoa
             //isso e para evitar que um adm de grupo seja
             //rebaixado a associado
-            if (idPapel != null && idPapel.GetType() == typeof(int)
-                && pessoa != null && pessoa.IdPapelGrupo <= (idPapel + 1))
+            if (idPapel != null)
             {
-                pessoa.IdPapelGrupo = idPapel;
-                Edit(pessoa);
-                return true;
+                try
+                {
+                    pessoa.IdPapelGrupo = idPapel;
+
+                    _context.Update(pessoa);
+                    await _context.SaveChangesAsync();
+
+                    return HttpStatusCode.OK;
+                }
+                catch
+                {
+                    return HttpStatusCode.BadRequest;
+                }
             }
             else
             {
-                return false;
+                return HttpStatusCode.InternalServerError;
             }
         }
 
