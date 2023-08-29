@@ -1,4 +1,4 @@
-function fillAutocomplete(data, inputId, listId, formId, message) {
+function fillAutocomplete(data, inputId, listId, formId, errorMessage) {
     if (data != null && inputId != null) {
         data = JSON.parse(data);
         const nomes = data.map((data) => {
@@ -9,7 +9,7 @@ function fillAutocomplete(data, inputId, listId, formId, message) {
             $(`#${formId}`).on("submit", function (event) {
                 if (!$(`#${listId}`).val().length) {
                     $(`#${inputId}`).addClass("input-validation-error");
-                    document.querySelector("span[for='" + inputId + "']").textContent = message;
+                    document.querySelector("span[for='" + inputId + "']").textContent = errorMessage;
 
                     event.preventDefault();
                 }
