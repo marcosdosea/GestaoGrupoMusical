@@ -119,5 +119,6 @@ namespace GestaoGrupoMusicalWeb.Models
         public IEnumerable<ColaboradoresDTO>? ListaColaboradores { get; set; }
 
         public SelectList? ListaAssociados { get; set; }
+        public SelectList? ListaPapeis { get; set; }
     }
 }
