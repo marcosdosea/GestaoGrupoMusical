@@ -76,6 +76,9 @@
                         <select multiple asp-for="IdRegentes" class="d-none" asp-items="Model.ListaPessoa">
                         </select>
                         <input class="form-control" id="regentes" placeholder="Informe o Regente."/>
+                        <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Disabled popover">
+                            <button class="btn btn-primary" type="button" disabled>Disabled button</button>
+                        </span>
                         <div id="blockNames" class="d-flex flex-column gap-2">
                         </div>
                         <span for="regentes" class="text-danger"></span>
@@ -105,12 +108,19 @@
 </div>
 <script>
     window.addEventListener("load", () => {
-            fillAutocomplete('@(Html.Raw(Model.JsonLista))', "regentes", "IdRegentes", "formCreate", "O campo Regentes é obrigatório");
+        fillAutocomplete('@(Html.Raw(Model.JsonLista))', "regentes", "IdRegentes", "formCreate", "O campo Regentes é obrigatório");
     });
 </script>
 
+@section Header {
+    @{
+        await Html.RenderPartialAsync("");
+    }
+}
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        await Html.RenderPartialAsync("_EnablePopoversPartial");
+        await Html.RenderPartialAsync("_AutoCompletePartial");
     }
 }
