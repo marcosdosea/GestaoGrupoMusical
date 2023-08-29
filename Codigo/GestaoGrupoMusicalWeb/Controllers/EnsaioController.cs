@@ -53,6 +53,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             var lista = await _pessoa.GetRegentesForAutoCompleteAsync(Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
             ensaioModel.ListaPessoa = new SelectList(lista, "Id", "Nome");
 
+            ViewData["exemploRegente"] = lista.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
             ensaioModel.JsonLista = lista.ToJson();
             return View(ensaioModel);
         }
