@@ -46,11 +46,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: ColaboradorController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(int Id, CreateColaboradorViewModel pessoaViewModel)
+        public ActionResult Create(int Id, int IdPapelGrupo,CreateColaboradorViewModel pessoaViewModel)
         {
-            _pessoaService.ToCollaborator(id);
+            _pessoaService.ToCollaborator(Id, IdPapelGrupo);
 
-            return RedirectToAction("Index", "Pessoa");
+            return RedirectToAction("IndexAdmGrupo", "GrupoMusical");
         }
 
         // GET: ColaboradorController/Edit/5
