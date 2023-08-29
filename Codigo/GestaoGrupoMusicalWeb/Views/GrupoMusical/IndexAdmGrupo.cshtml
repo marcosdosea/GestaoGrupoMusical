@@ -32,24 +32,8 @@
                 </th>
             </tr>
         </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr class="border-bottom border-danger border-opacity-75 px-3 align-middle">
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Id)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Name)
-                    </td>
-                    <td class="d-flex flex-wrap border-0 align-items-center">
-                        <a role="button" class="btn btn-secondary btn-sm  m-2 " asp-controller="GrupoMusical" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"> </i> Editar</a>
-                        <a role="button" class="btn btn-secondary btn-sm  m-2" asp-controller="GrupoMusical" asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-file"> </i> Detalhes</a>
-                        <a role="button" class="btn btn-secondary btn-sm  m-2" asp-controller="GrupoMusical" asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-xmark"> </i> Excluir</a>
-                        <a role="button" class="btn btn-secondary btn-sm  m-2" asp-controller="AdministradorGrupoMusical" asp-action="Index" asp-route-id="@item.Id"><i class="fa-solid fa-lock-open"></i> Administradores</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
+
+        <Partial name="_TabelaColaboradores" model="Model.ListaColaboradores"/>
+
     </table>
 </div>
