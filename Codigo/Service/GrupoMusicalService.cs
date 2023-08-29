@@ -172,5 +172,15 @@ namespace Service
 
             return query;
         }
+
+        public async Task<IEnumerable<Papelgrupo>> GetPapeis()
+        {
+            var query = await (from papel in _context.Papelgrupos
+                         where papel.Nome.ToUpper() == "COLABORADOR" || papel.Nome.ToUpper() == "REGENTE"
+                         select papel
+                         ).AsNoTracking().ToListAsync();
+
+            return query;
+        }
     }
 }
