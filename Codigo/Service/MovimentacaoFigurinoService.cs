@@ -23,7 +23,7 @@ namespace Service
         }
 
         //emprestar figurino
-        public async Task<int> CreateAsync(Movimentacaofigurino movimentacao)
+        public async Task<int> CreateAsync(Movimentacaofigurino movimentacao, int quantidadeMovimentada)
         {
             using var transaction = _context.Database.BeginTransaction();
 

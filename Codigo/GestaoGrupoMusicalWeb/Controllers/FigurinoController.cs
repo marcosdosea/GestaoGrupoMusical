@@ -305,7 +305,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 ConfirmacaoRecebimento = 0
             };
 
-            int resul = await _movimentacaoService.CreateAsync(movimentacao);
+            int resul = await _movimentacaoService.CreateAsync(movimentacao, movimentacaoViewModel.QuantidadeMovimentada);
             
             string tipoMov = string.Empty;
 
