@@ -33,7 +33,7 @@ namespace Service
 
                 if (figurinoEstoque != null)
                 {
-                    if (figurinoEstoque.QuantidadeDisponivel == 0)
+                    if (figurinoEstoque.QuantidadeDisponivel == 0 || quantidadeMovimentada > figurinoEstoque.QuantidadeDisponivel)
                     {
                         await transaction.RollbackAsync();
                         return 401; //não há peças disponiveis para emprestar

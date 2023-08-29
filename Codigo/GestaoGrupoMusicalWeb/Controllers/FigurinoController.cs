@@ -327,7 +327,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     Notificar("<b>Alerta!</b> Não há estoque desse tamanho", Notifica.Alerta);
                     break;
                 case 401:
-                    Notificar("<b>Alerta!</b> Não há peças disponíveis para empréstimo", Notifica.Alerta);
+                    Notificar("<b>Alerta!</b> Quantidade de peças disponíveis insuficientes", Notifica.Alerta);
                     break;
                 case 402:
                     Notificar("<b>Alerta!</b> Não há nada para devolver", Notifica.Alerta);
