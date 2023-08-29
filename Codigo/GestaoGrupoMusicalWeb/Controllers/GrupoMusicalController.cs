@@ -39,20 +39,22 @@ namespace GestaoGrupoMusicalWeb.Controllers
             var idGrupoMusical = _grupoMusical.GetIdGrupo(User.Identity.Name);
 
             GrupoMusicalAdmGrupoViewModel grupoMusicalViewModel = new();
+            CreateColaboradorViewModel associadosToAdd = new();
 
             //
             var associados = _pessoaService.GetAllPessoasOrder(idGrupoMusical);
             SelectList listAssociados = new SelectList(associados, "Id", "Nome");
-            grupoMusicalViewModel.ListaAssociados = listAssociados;
+            associadosToAdd.ListaAssociados = listAssociados;
 
 
             //
             var papel = await _grupoMusical.GetPapeis();
             SelectList listaPapeis = new SelectList(papel, "IdPapelGrupo", "Nome");
-            grupoMusicalViewModel.ListaPapeis = listaPapeis;
+            associadosToAdd.ListaPapeis = listaPapeis;
 
             //
             grupoMusicalViewModel.ListaColaboradores = await _grupoMusical.GetAllColaboradores(idGrupoMusical);
+            grupoMusicalViewModel.ListaAssociados = associadosToAdd;
             
             return View(grupoMusicalViewModel);
         }
