@@ -67,6 +67,6 @@ namespace Core.Service
         /// <param name="idGrupo">id do grupo alvo</param>
         /// <returns>lista com todas as pessoas filtradas</returns>
 
-        Task<IEnumerable<Pessoa>> GetAllColaboradores(int idGrupo);
+        Task<IEnumerable<ColaboradoresDTO>> GetAllColaboradores(int idGrupo);
     }
 }
