@@ -1,9 +1,24 @@
-function fillAutocomplete(data, inputId, listId) {
+function fillAutocomplete(data, inputId, listId, form, message) {
     if (data != null && inputId != null) {
         data = JSON.parse(data);
         const nomes = data.map((data) => {
             return data["Nome"];
         });
+
+        if (form != null) {
+            $(`#${form}`).on("submit", function (event) {
+                if (!$(`#${listId}`).val().length) {
+                    $(`#${inputId}`).addClass("input-validation-error");
+                    document.querySelector("span[for='" + inputId + "']").textContent = message;
+
+                    event.preventDefault();
+                }
+                else {
+                    $(`#${inputId}`).removeClass("input-validation-error");
+                    document.querySelector("span[for='" + inputId + "']").textContent = "";
+                }
+            });
+        }
 
         $(`#${inputId}`).autocomplete({
             source: nomes,
@@ -22,6 +37,9 @@ function fillAutocomplete(data, inputId, listId) {
                             </h6>
                         `);
                         ui.item.value = "";
+
+                        $(`#${inputId}`).removeClass("input-validation-error");
+                        document.querySelector("span[for='" + inputId + "']").textContent = "";
                     }
                 }
                 

@@ -64,7 +64,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             if (ModelState.IsValid && ensaioViewModel.IdRegentes != null)
             {
-                String mensagem = String.Empty;
+                /*String mensagem = String.Empty;
                 var ensaio = _mapper.Map<Ensaio>(ensaioViewModel);
               
                 ensaio.IdGrupoMusical = Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value);
@@ -87,9 +87,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Cadastro</b> de ensaio, se isso persistir entre em contato com o suporte";
                         Notificar(mensagem, Notifica.Erro);
                         break;
-                }
+                }*/
             }
-            ensaioViewModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
+            var lista = _pessoa.GetAll();
+            ensaioViewModel.ListaPessoa = new SelectList(lista, "Id", "Nome");
+
+            ensaioViewModel.JsonLista = lista.Select(p => new { p.Id, p.Nome }).ToJson();
             return View(ensaioViewModel);
         }
 
