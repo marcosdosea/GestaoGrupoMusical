@@ -46,7 +46,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: ColaboradorController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(int id, PessoaViewModel pessoaViewModel)
+        public ActionResult Create(int Id, CreateColaboradorViewModel pessoaViewModel)
         {
             _pessoaService.ToCollaborator(id);
 
