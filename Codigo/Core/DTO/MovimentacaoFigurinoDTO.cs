@@ -33,7 +33,7 @@ namespace Core.DTO
         public string Status { get; set; } = string.Empty;
     }
 
-    public class MovimentarConfirmaçãoQuantidade
+    public class MovimentarConfirmacaoQuantidade
     {
         public int Quantidade { get; set; }
         public sbyte Confirmar { get; set; }

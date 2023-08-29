@@ -331,14 +331,14 @@ namespace Service
             }
         }
 
-        public async Task<MovimentarConfirmaçãoQuantidade> GetConfirmacaoFigurino(int idAssociado, int idFigurino, int idManequim)
+        public async Task<MovimentarConfirmacaoQuantidade> GetConfirmacaoFigurino(int idAssociado, int idFigurino, int idManequim)
         {
             var query = await _context.Movimentacaofigurinos
                 .AsNoTracking()
                 .Where(g => g.IdAssociado == idAssociado && g.IdFigurino == idFigurino
                     && g.IdManequim == idManequim)
                 .OrderBy(g => g.Id)
-                .Select(g => new MovimentarConfirmaçãoQuantidade
+                .Select(g => new MovimentarConfirmacaoQuantidade
                 {
                     Confirmar = g.ConfirmacaoRecebimento,
                     Quantidade = g.Quantidade,
