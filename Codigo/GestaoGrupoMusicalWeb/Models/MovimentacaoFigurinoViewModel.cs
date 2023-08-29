@@ -50,7 +50,8 @@ namespace GestaoGrupoMusicalWeb.Models
             {"Descartar", "DANIFICADO"}
         };
 
-        public int quantidade { get; set; } 
+        [Display(Name ="Quantidade")]
+        public int QuantidadeMovimentada { get; set; } 
 
     }
 }

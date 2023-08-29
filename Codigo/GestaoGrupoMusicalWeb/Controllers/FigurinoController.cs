@@ -279,7 +279,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 DataFigurinoString = figurino.Data.Value.ToString("dd/MM/yyyy"),
                 ListaAssociado = listAssociados,
                 ListaManequim = listEstoque,
-                Movimentacoes = movimentacoes
+                Movimentacoes = movimentacoes,
+                QuantidadeMovimentada = 1
             };
 
             return View(movimentarFigurinoViewModel);
