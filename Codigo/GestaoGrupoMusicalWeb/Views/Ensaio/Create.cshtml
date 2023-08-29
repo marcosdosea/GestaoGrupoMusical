@@ -69,16 +69,16 @@
                     </div>
                 </div>
             </div>
-            <div class="container">
+            <div class="container mt-2">
                 <div class="row">
                     <div class="form-group col-xl">
                         <label asp-for="IdRegentes" class="control-label"></label>
+                        <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Digite o nome do regente. Ex: Marcos">
+                            <button class="btn btn-outline-secondary btn-sm fw-bold" type="button">?</button>
+                        </span>
                         <select multiple asp-for="IdRegentes" class="d-none" asp-items="Model.ListaPessoa">
                         </select>
                         <input class="form-control" id="regentes" placeholder="Informe o Regente."/>
-                        <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Disabled popover">
-                            <button class="btn btn-primary" type="button" disabled>Disabled button</button>
-                        </span>
                         <div id="blockNames" class="d-flex flex-column gap-2">
                         </div>
                         <span for="regentes" class="text-danger"></span>
