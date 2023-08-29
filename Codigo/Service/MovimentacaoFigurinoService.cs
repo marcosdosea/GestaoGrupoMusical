@@ -72,12 +72,12 @@ namespace Service
                         if (confirmacao.Confirmar != 1)
                         {
                             await transaction.RollbackAsync();
-                            return 403; //não ouve confirmação do associado 
+                            return 403; //não ouve confirmação
                         }
                         if (movimentacao.Quantidade <= 0 || movimentacao.Quantidade > confirmacao.Quantidade)
                         {
                             await transaction.RollbackAsync();
-                            return 403; //não ouve confirmação do associado 
+                            return 403; //tentativa de devolução de figurino a mais ou a menos da quantidade que o associado possui
                         }
                         if(movimentacao.Quantidade < confirmacao.Quantidade)
                         {
