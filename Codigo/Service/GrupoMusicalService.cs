@@ -143,7 +143,7 @@ namespace Service
             return false;
         }
 
-        public async Task<IEnumerable<Pessoa>> GetAllColaboradores(int idGrupo)
+        public async Task<IEnumerable<ColaboradoresDTO>> GetAllColaboradores(int idGrupo)
         {
             int idColaborador = (await _context.Papelgrupos
                                 .Where(p => p.Nome.ToUpper() == "COLABORADOR")
@@ -157,10 +157,17 @@ namespace Service
                             .FirstOrDefaultAsync())
                             ?.IdPapelGrupo ?? 0;
 
-            var query = await ( from pessoas in _context.Pessoas
-                          where pessoas.IdGrupoMusical == idGrupo &&
-                                (pessoas.IdPapelGrupo == idRegente || pessoas.IdPapelGrupo == idColaborador)
-                          select pessoas
+            var query = await ( from pessoa in _context.Pessoas
+                          where pessoa.IdGrupoMusical == idGrupo &&
+                                (pessoa.IdPapelGrupo == idRegente || pessoa.IdPapelGrupo == idColaborador)
+                          select new ColaboradoresDTO
+                          {
+                              Id = pessoa.Id,
+                              Cpf = pessoa.Cpf,
+                              Nome = pessoa.Nome,
+                              Data = pessoa.DataEntrada,
+                              Papel = pessoa.IdPapelGrupoNavigation.Nome
+                          }
                 ).AsNoTracking().ToListAsync();
 
             return query;
