@@ -47,13 +47,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: EnsaioController/Create
-        public ActionResult Create()
+        public async Task<ActionResult> Create()
         {
             EnsaioViewModel ensaioModel = new();
-            var lista = _pessoa.GetAll();
+            var lista = await _pessoa.GetRegentesForAutoCompleteAsync(Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
             ensaioModel.ListaPessoa = new SelectList(lista, "Id", "Nome");
 
-            ensaioModel.JsonLista = lista.Select(p => new { p.Id, p.Nome }).ToJson();
+            ensaioModel.JsonLista = lista.ToJson();
             return View(ensaioModel);
         }
 
@@ -64,7 +64,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             if (ModelState.IsValid && ensaioViewModel.IdRegentes != null)
             {
-                /*String mensagem = String.Empty;
+                String mensagem = String.Empty;
                 var ensaio = _mapper.Map<Ensaio>(ensaioViewModel);
               
                 ensaio.IdGrupoMusical = Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value);
@@ -87,12 +87,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Cadastro</b> de ensaio, se isso persistir entre em contato com o suporte";
                         Notificar(mensagem, Notifica.Erro);
                         break;
-                }*/
+                }
             }
-            var lista = _pessoa.GetAll();
+            var lista = await _pessoa.GetRegentesForAutoCompleteAsync(Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
             ensaioViewModel.ListaPessoa = new SelectList(lista, "Id", "Nome");
 
-            ensaioViewModel.JsonLista = lista.Select(p => new { p.Id, p.Nome }).ToJson();
+            ensaioViewModel.JsonLista = lista.ToJson();
             return View(ensaioViewModel);
         }
 
