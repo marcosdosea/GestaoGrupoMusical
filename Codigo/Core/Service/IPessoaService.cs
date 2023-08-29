@@ -58,7 +58,7 @@ namespace Core.Service
         Task<bool> RemoveAdmGroup(int id);
 
         Task<HttpStatusCode> ToCollaborator(int id, int idPapel);
-        Task<bool> RemoveCollaborator(int id);
+        Task<HttpStatusCode> RemoveCollaborator(int id);
 
         IEnumerable<Papelgrupo> GetAllPapelGrupo();
 
