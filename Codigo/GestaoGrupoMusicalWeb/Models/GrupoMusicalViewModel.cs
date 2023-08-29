@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Core.DTO;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 using Util;
 
 namespace GestaoGrupoMusicalWeb.Models
@@ -109,5 +111,13 @@ namespace GestaoGrupoMusicalWeb.Models
             { "E-mail", "email" }
         };
 
+    }
+
+    public class GrupoMusicalAdmGrupo
+    {
+        //TO DO 
+        public IEnumerable<ColaboradoresDTO>? ListaColaboradores { get; set; }
+
+        public SelectList? ListaAssociados { get; set; }
     }
 }
