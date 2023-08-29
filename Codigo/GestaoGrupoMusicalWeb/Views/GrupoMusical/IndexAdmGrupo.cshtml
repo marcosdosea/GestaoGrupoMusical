@@ -1,0 +1,42 @@
+﻿@model GestaoGrupoMusicalWeb.Models.GrupoMusicalAdmGrupoViewModel
+
+@{
+    ViewData["Title"] = "Grupo Musical";
+    Layout = "_LayoutColaborador";
+}
+
+<partial name="_Notificar">
+
+<div class="d-flex justify-content-between align-items-center">
+    <h5>@ViewData["Title"]</h5>
+</div>
+
+<partial name="_AddColaborador" model="Model.ListaAssociados"/>
+
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr class="bg-danger bg-opacity-75 text-white">
+                <th class="border-0">
+                    <span class="text-white">CPF</span>
+                </th>
+                <th class="border-0">
+                    <span class="text-white">Associado</span>
+                </th>
+
+                <th class=" border-0">
+                    <span class="text-white">Data</span>
+                </th>
+                <th class=" border-0 ">
+                    <span class="text-white">Papel</span>
+                </th>
+                <th class=" border-0">
+                    <span class="text-white">Ações</span>
+                </th>
+            </tr>
+        </thead>
+
+        <Partial name="_TabelaColaboradores" model="Model.ListaColaboradores"/>
+
+    </table>
+</div>

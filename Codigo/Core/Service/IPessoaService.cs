@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -56,8 +57,8 @@ namespace Core.Service
         Task<IEnumerable<AdministradorGrupoMusicalDTO>> GetAllAdmGroup(int id);
         Task<bool> RemoveAdmGroup(int id);
 
-        Task<bool> ToCollaborator(int id);
-        Task<bool> RemoveCollaborator(int id);
+        Task<HttpStatusCode> ToCollaborator(int id, int idPapel);
+        Task<HttpStatusCode> RemoveCollaborator(int id);
 
         IEnumerable<Papelgrupo> GetAllPapelGrupo();
 

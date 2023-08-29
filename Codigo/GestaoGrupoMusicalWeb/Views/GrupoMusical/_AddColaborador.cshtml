@@ -1,0 +1,22 @@
+﻿@model GestaoGrupoMusicalWeb.Models.CreateColaboradorViewModel
+
+<div class="container mt-4">
+    <form asp-action="Create" asp-controller="Colaborador">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="row mb-3 d-flex justify-content-between">
+            <div class="form-group col-5">
+                <label asp-for="Id" class="control-label"></label>
+                <select asp-for="Id" asp-items="@Model.ListaAssociados" class="form-select"></select>
+                <span asp-validation-for="Id" class="text-danger"></span>
+            </div>
+
+            <div class="form-group col-3">
+                <label asp-for="IdPapelGrupo" class="control-label"></label>
+                <select asp-for="IdPapelGrupo" asp-items="@Model.ListaPapeis" class="form-select"></select>
+                <span asp-validation-for="IdPapelGrupo" class="text-danger"></span>
+            </div>
+
+            <input class="btn btn-secondary col-2 mt-3 ml-3" type="submit" value="Adicionar" />
+        </div>
+    </form>
+</div>
