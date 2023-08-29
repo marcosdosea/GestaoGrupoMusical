@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Net;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -53,6 +54,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             return View();
         }
+
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         // POST: FigurinoController/Create
         [HttpPost]
@@ -64,15 +66,15 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 figurinoViewModel.IdGrupoMusical = _grupoMusicalService.GetIdGrupo(User.Identity.Name);
 
                 var figurino = _mapper.Map<Figurino>(figurinoViewModel);
-                int resul = await _figurinoService.Create(figurino);
+                HttpStatusCode resul = await _figurinoService.Create(figurino);
 
 
                 switch (resul)
                 {
-                    case 200:
+                    case HttpStatusCode.Created:
                         Notificar("<b>Sucesso</b>! Figurino cadastrado!", Notifica.Sucesso);
                         break;
-                    case 500:
+                    case HttpStatusCode.InternalServerError:
                         Notificar("<b>Erro</b>! Algo deu errado ao cadastrar novo figurino", Notifica.Erro);
                         return View(figurinoViewModel);
                     default:
@@ -88,6 +90,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 return View();
             }
         }
+
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         // GET: FigurinoController/Edit/5
         public async Task<ActionResult> Edit(int id)
@@ -97,6 +100,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             return View(figurinoViewModel);
         }
+
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         // POST: FigurinoController/Edit/5
         [HttpPost]
@@ -109,16 +113,19 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
                 figurino.IdGrupoMusical = _grupoMusicalService.GetIdGrupo(User.Identity.Name);
 
-                int resul = await _figurinoService.Edit(figurino);
-                if (resul == 200)
+                HttpStatusCode resul = await _figurinoService.Edit(figurino);
+
+                switch (resul)
                 {
-                    Notificar("<b>Sucesso</b>! Figurino alterado!", Notifica.Sucesso);
-                    return RedirectToAction(nameof(Index));
-                }
-                else
-                {
-                    Notificar("<b>Erro</b>! Há algo errado com os dados", Notifica.Erro);
-                    return View(figurinoViewModel);
+                    case HttpStatusCode.OK:
+                        Notificar("<b>Sucesso</b>! Figurino alterado!", Notifica.Sucesso);
+                        return RedirectToAction(nameof(Index));
+                    case HttpStatusCode.InternalServerError:
+                        Notificar("<b>Erro</b>! Há algo errado com os dados", Notifica.Erro);
+                        return View(figurinoViewModel);
+                    default:
+                        Notificar("<b>Erro</b>! Algo deu errado", Notifica.Erro);
+                        return View(figurinoViewModel);
                 }
             }
             else
@@ -127,6 +134,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 return View();
             }
         }
+
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         // GET: FigurinoController/Delete/5
         public async Task<ActionResult> Delete(int id)
@@ -136,43 +144,51 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             return View(figurinoViewModel);
         }
+
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         // POST: FigurinoController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Delete(int id, FigurinoViewModel figurinoViewModel)
         {
-            int resul = await _figurinoService.Delete(id);
+            HttpStatusCode resul = await _figurinoService.Delete(id);
 
-            if (resul == 200)
+            switch (resul)
             {
-                Notificar("<b>Sucesso</b>! Figurino removido!", Notifica.Sucesso);
-                return RedirectToAction(nameof(Index));
-            }
-            else
-            {
-                Notificar("<b>Erro</b>! Algo deu errado ao remover figurino. Verifique se há estoque emprestado.", Notifica.Erro);
-                return RedirectToAction(nameof(Index));
+                case HttpStatusCode.OK:
+                    Notificar("<b>Sucesso</b>! Figurino removido!", Notifica.Sucesso);
+                    return RedirectToAction(nameof(Index));
+                case HttpStatusCode.InternalServerError:
+                    Notificar("<b>Erro</b>! Algo deu errado ao remover figurino. Verifique se há estoque emprestado.", Notifica.Erro);
+                    return RedirectToAction(nameof(Index));
+                default:
+                    Notificar("<b>Erro</b>! Algo deu errado", Notifica.Erro);
+                    return View(figurinoViewModel);
             }
         }
+
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         // POST: FigurinoController/DeleteEstoque/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteEstoque(int idFigurino, int idManequim)
         {
-            int result = await _figurinoService.DeleteEstoque(idFigurino, idManequim);
-            if(result == 400)
+            HttpStatusCode result = await _figurinoService.DeleteEstoque(idFigurino, idManequim);
+
+            switch (result)
             {
-                Notificar("<b>Alerta</b>! Não é permitido <b>Excluir Estoque</b> com peças <b>Entregues</b>! Quantidade <b>Disponível</b> foi <b>zerada</b>.", Notifica.Alerta);
-            }
-            else if (result == 200)
-            {
-                Notificar("<b>Sucesso</b>! Estoque removido!", Notifica.Sucesso);
-            }
-            else 
-            {
-                Notificar("<b>Erro</b>! Algo deu errado ao tentar remover estoque.", Notifica.Erro);
+                case HttpStatusCode.OK:
+                    Notificar("<b>Sucesso</b>! Estoque removido!", Notifica.Sucesso);
+                    break;
+                case HttpStatusCode.BadRequest:
+                    Notificar("<b>Alerta</b>! Não é permitido <b>Excluir Estoque</b> com peças <b>Entregues</b>! Quantidade <b>Disponível</b> foi <b>zerada</b>.", Notifica.Alerta);
+                    break;
+                case HttpStatusCode.InternalServerError:
+                    Notificar("<b>Erro</b>! Algo deu errado ao tentar remover estoque.", Notifica.Erro);
+                    break;
+                default:
+                    Notificar("<b>Erro</b>! Algo deu errado", Notifica.Erro);
+                    break;
             }
 
             return RedirectToAction(nameof(Estoque), new { id = idFigurino });
@@ -225,23 +241,23 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 QuantidadeDescartada = 0
             };
 
-            int resul = await _figurinoService.CreateEstoque(estoque);
+            HttpStatusCode resul = await _figurinoService.CreateEstoque(estoque);
 
             switch (resul)
             {
-                case 200:
+                case HttpStatusCode.Created:
                     Notificar("<b>Sucesso</b>! Estoque cadastrado.", Notifica.Sucesso);
                     break;
-                case 201:
+                case HttpStatusCode.Accepted:
                     Notificar("<b>Sucesso</b>! Adicionado peças ao estoque.", Notifica.Sucesso);
                     break;
-                case 400:
+                case HttpStatusCode.PreconditionFailed:
                     Notificar("<b>Alerta</b>! Dados insuficientes.", Notifica.Alerta);
                     break;
-                case 401:
+                case HttpStatusCode.BadRequest:
                     Notificar("<b>Alerta</b>! Sem quantidade disponível para estoque.", Notifica.Alerta);
                     break;
-                case 500:
+                case HttpStatusCode.InternalServerError:
                     Notificar("<b>Erro</b>! Algum problema ao registrar estoque.", Notifica.Erro);
                     break;
                 default:
@@ -428,6 +444,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
             return RedirectToAction(nameof(Movimentacoes));
         }
+
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         public async Task<ActionResult> EditEstoque(int idFigurino, int idManequim)
         {
@@ -446,6 +463,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             };
             return View(estoqueviewmodel);
         }
+
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -457,16 +475,18 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 IdManequim = idManequim,
                 QuantidadeDisponivel = estoque.QuantidadeDisponivel
             };
-            int resul = await _figurinoService.EditEstoque(estoqueviewModel);
+
+            HttpStatusCode resul = await _figurinoService.EditEstoque(estoqueviewModel);
+
             switch (resul)
             {
-                case 200:
+                case HttpStatusCode.OK:
                     Notificar($"<b>Sucesso!</b> Estoque foi <b>Editado</b>", Notifica.Sucesso);
                     break;
-                case 404:
+                case HttpStatusCode.NotFound:
                     Notificar("<b>Alerta!</b> Não há estoque", Notifica.Alerta);
                     break;
-                case 500:
+                case HttpStatusCode.InternalServerError:
                     Notificar("<b>Erro!</b> Algo deu errado", Notifica.Erro);
                     break;
                 default:
