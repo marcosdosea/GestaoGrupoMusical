@@ -85,7 +85,7 @@ namespace Service
                 catch (Exception ex)
                 {
                     //Aconteceu algum erro do servidor ou interno
-                    return HttpStatusCode.BadRequest;
+                    return HttpStatusCode.InternalServerError;
                 }
 
         }
@@ -94,7 +94,7 @@ namespace Service
         /// Metodo que atualiza os dados de uma pessoa/associado
         /// </summary>
         /// <param name="pessoa">dados do associado</param>
-        public async Task<int> Edit(Pessoa pessoa)
+        public async Task<HttpStatusCode> Edit(Pessoa pessoa)
         {
             //Criar excecao para data de nascimento, etc
             try
@@ -113,7 +113,7 @@ namespace Service
                 if (pessoa.DataEntrada == null && pessoa.DataNascimento == null)
                 {//Mensagem de sucesso
                     await _context.SaveChangesAsync();
-                    return 200;
+                    return HttpStatusCode.OK;
                 }
                 else if (pessoa.DataNascimento != null)
                 {
@@ -124,35 +124,35 @@ namespace Service
                         {//mensagem de sucesso
 
                             await _context.SaveChangesAsync();
-                            return 200;
+                            return HttpStatusCode.OK;
                         }
                         else
                         {
                             // erro 400, data de entrada fora do escopo
-                            return 400;
+                            return HttpStatusCode.BadRequest;
                         }
                     }
                     else
                     {
                         // erro 401, data de nascimento está fora do escopo
-                        return 401;
+                        return HttpStatusCode.NotAcceptable;
                     }
                 }
                 else if (pessoa.DataEntrada == null || pessoa.DataEntrada < DateTime.Now)
                 {
                     await _context.SaveChangesAsync();
-                    return 200;
+                    return HttpStatusCode.OK;
                 }
                 else
                 {
                     // erro 400, data de entrada fora do escopo
-                    return 400;
+                    return HttpStatusCode.BadRequest;
                 }
             }
             catch (Exception ex)
             {
                 //Aconteceu algum erro do servidor ou interno
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
 
 
