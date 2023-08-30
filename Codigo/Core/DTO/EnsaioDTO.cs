@@ -40,4 +40,11 @@ namespace Core.DTO
 
         public int? IdGrupoMusical { get;  set; }
     }
+
+    public class AutoCompleteRegenteDTO
+    {
+        public int Id { get; set; }
+
+        public string Nome { get; set; } = string.Empty;
+    }
 }

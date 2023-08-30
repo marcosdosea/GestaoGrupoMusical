@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/headerLayout.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/GestaoGrupoMusicalWeb.styles.css" asp-append-version="true" />
+    @await RenderSectionAsync("Header", required: false)
     <link rel="icon" type="image/x-icon" href="~/assets/logo_batalase_SF.png" />
 </head>
 <body>
@@ -26,7 +27,8 @@
             </div>
 
             <div class="list-group list-group-flush">
-                <a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" asp-controller="Home" asp-action="Index"> Início</a>
+                <a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" asp-controller="Home" asp-action="Index">Início</a>
+                <a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" asp-controller="GrupoMusical" asp-action="IndexAdmGrupo">Grupo Musical</a>
                 <a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" asp-controller="Ensaio" asp-action="Index">Ensaios</a>
                 <!--<a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" asp-controller="Evento" asp-action="Index">Eventos</a>-->
                 <a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" asp-controller="Pessoa" asp-action="Index">Associados</a>

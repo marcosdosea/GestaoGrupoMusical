@@ -13,8 +13,11 @@
             <td class="p-3">
                 @Html.DisplayFor(modelItem => item.Entregues)
             </td>
+            <td class="p-3">
+                @Html.DisplayFor(modelItem => item.Danificados)
+            </td>
             <td class="d-flex flex-wrap border-0 align-items-center">
-                <a role="button" class="btn btn-secondary btn-sm m-2" asp-controller="" asp-action=""><i class="fa-solid fa-pen-to-square"></i> Editar</a>
+                <a role="button" class="btn btn-secondary btn-sm m-2" asp-controller="Figurino" asp-action="EditEstoque" asp-route-idFigurino="@item.IdFigurino" asp-route-idManequim="@item.IdManequim"><i class="fa-solid fa-pen-to-square"></i> Editar</a>
                 <form id="@(item.IdFigurino + item.IdManequim + "_confirmar")" asp-action="DeleteEstoque" asp-route-idFigurino="@item.IdFigurino" asp-route-idManequim="@item.IdManequim" method="post" class="me-2">
                     <a onclick="showModal('@(item.IdFigurino + item.IdManequim + "_confirmar")', 'estoqueModal')" class="btn btn-sm btn-secondary m-2" role="button" data-bs-toggle="modal" data-bs-target="#estoqueModal">
                         <i class="fa-solid fa-xmark"> </i>

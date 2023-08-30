@@ -1,24 +1,29 @@
-﻿@model IEnumerable<Core.DTO.MovimentacaoFigurinoDTO>
+﻿@model X.PagedList.IPagedList<Core.DTO.MovimentacaoFigurinoDTO>
+@using X.PagedList.Mvc.Core;
+@using X.PagedList;
 
+@{
+    int idFigurino = 0; // Variável temporária
+}
 
 <div class="table-responsive">
     <table class="table mt-3">
         <thead>
             <tr class="bg-danger bg-opacity-75 text-white">
                 <th>
-                    @Html.DisplayNameFor(model => model.Cpf)
+                    @Html.DisplayName("Cpf")
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.NomeAssociado)
+                    @Html.DisplayName("Nome Associado")
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Data)
+                    <a asp-action="Movimentar" asp-route-sortOrder="@ViewData["DateSortParm"]">@Html.DisplayName("Data")</a>
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Tamanho)
+                    @Html.DisplayName("Tamanho")
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Movimentacao)
+                    <a asp-action="Movimentar" asp-route-sortOrder="@ViewData["MovimentacaoSort"]">@Html.DisplayName("Movimentação")</a>
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.QuantidadeEntregue)
@@ -32,6 +37,7 @@
         <tbody>
             @foreach (var item in Model)
             {
+                idFigurino = item.IdFigurino;
                 <tr class="border-bottom border-danger border-opacity-75 align-middle">
                     <td>
                         @item.Cpf
@@ -57,16 +63,16 @@
                     <td class="py-3 border-0 d-flex flex-column flex-lg-row gap-3">
                         <form id="@(item.Id + "_notificar")" asp-controller="" asp-action="" asp-route-Id="@item.Id" asp-route-IdInstrumento="" method="post">
                             <a role="button" class="btn btn-sm btn-secondary"
-                               data-bs-toggle="modal" data-bs-target="#notificarMovimentacaoModal"
-                               onclick="showModal('@(item.Id + "_notificar")', 'notificarMovimentacaoModal')">
+                           data-bs-toggle="modal" data-bs-target="#notificarMovimentacaoModal"
+                           onclick="showModal('@(item.Id + "_notificar")', 'notificarMovimentacaoModal')">
                                 <i class="fa-solid fa-envelope"></i>
                                 Notificar
                             </a>
                         </form>
                         <form id="@(item.Id + "_delete")" asp-controller="Figurino" asp-action="DeleteMovimento" asp-route-Id="@item.Id" asp-route-idFigurino="@item.IdFigurino" method="post">
                             <a role="button" class="btn btn-sm btn-secondary"
-                               data-bs-toggle="modal" data-bs-target="#excluirMovimentacaoModal"
-                               onclick="showModal('@(item.Id + "_delete")', 'excluirMovimentacaoModal')">
+                           data-bs-toggle="modal" data-bs-target="#excluirMovimentacaoModal"
+                           onclick="showModal('@(item.Id + "_delete")', 'excluirMovimentacaoModal')">
                                 <i class="fa-solid fa-xmark"> </i>
                                 Excluir
                             </a>
@@ -76,6 +82,20 @@
             }
         </tbody>
     </table>
+    <br />
+    <br />
+    @Html.PagedListPager((IPagedList)Model, page => Url.Action("Movimentar", new { id = idFigurino, page = page, sortOrder = ViewData["CurrentSort"], currentFilter = ViewData["CurrentFilter"]  }), new X.PagedList.Web.Common.PagedListRenderOptions
+    {
+    PageCountAndCurrentLocationFormat = "Página {0} de {1}",
+    ContainerDivClasses = new[] { "navigation","d-flex","justify-content-center"},
+    PageClasses = new[] { "page-link", },
+    ActiveLiElementClass = "active",
+    DisplayPageCountAndCurrentLocation = true,
+    LinkToPreviousPageFormat = "<<",
+    LinkToNextPageFormat = ">>",
+    LiElementClasses = new[] { "page-item","d-flex","align-items-center", "p" },
+    })
+    
     @if (!Model.Any())
     {
         <p class="text-center mt-4 mb-0">Desculpe, nenhuma movimentação encontrada :(</p>
