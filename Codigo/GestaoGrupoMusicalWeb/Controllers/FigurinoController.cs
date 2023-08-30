@@ -328,9 +328,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 tipoMov = "Entregue";
             }
-            else
+            else if (movimentacaoViewModel.Movimentacao.Equals("DEVOLVIDO"))
             {
                 tipoMov = "Devolvido";
+            }
+            else
+            {
+                tipoMov = "Descartado";
             }
 
             switch (resul)
