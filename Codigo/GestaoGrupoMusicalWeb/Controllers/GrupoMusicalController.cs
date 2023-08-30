@@ -141,9 +141,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
             else
             {
                 idGrupo = _grupoMusical.GetIdGrupo(User.Identity.Name);
+                grupoMusicalViewModel.Id = idGrupo;
             }
-
-
+            
             grupoMusicalViewModel.Cnpj = grupoMusicalViewModel.Cnpj.Replace(".", string.Empty).Replace("-", string.Empty).Replace("/", string.Empty);
            
             if (grupoMusicalViewModel.Cep != null)
@@ -154,7 +154,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
             if (existe)
             {
                 ModelState.Remove("CNPJ");
-                grupoMusicalViewModel.Id = idGrupo;
             }
 
             if (ModelState.IsValid)
