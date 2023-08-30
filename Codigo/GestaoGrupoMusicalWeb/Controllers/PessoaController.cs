@@ -168,17 +168,17 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 String mensagem = String.Empty;
                 switch (await _pessoaService.Edit(pessoa))
                 {
-                    case 200:
+                    case HttpStatusCode.OK:
                         Notificar("Associado <b>Editado</b> com <b>Sucesso</b>", Notifica.Sucesso);
                         return RedirectToAction(nameof(Index));
-                    case 500:
+                    case HttpStatusCode.InternalServerError:
                         Notificar("<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Editar</b> do associado, se isso persistir entre em contato com o suporte", Notifica.Erro);
                         break;
-                    case 400:
+                    case HttpStatusCode.BadRequest:
                         mensagem = "<b>Alerta</b> ! Não foi possível editar, a data de entrada deve ser menor que " + DateTime.Now.ToShortDateString();
                         Notificar(mensagem, Notifica.Alerta);
                         break;
-                    case 401:
+                    case HttpStatusCode.NotAcceptable:
                         mensagem = "<b>Alerta</b> ! Não foi possível editar, a data de nascimento deve ser menor que " + DateTime.Now.ToShortDateString() + " e menor que 120 anos ";
                         Notificar(mensagem, Notifica.Alerta);
                         break;
@@ -222,11 +222,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
             var pessoassociada = _pessoaService.Get(id);
             String mensagem = String.Empty;
             switch (await _pessoaService.RemoverAssociado(pessoassociada, pessoaViewModel.MotivoSaida)){
-                case 200:
+                case HttpStatusCode.OK:
                     mensagem = "Associado <b>Excluído</b> com <b>Sucesso</b>";
                     Notificar(mensagem, Notifica.Sucesso);
                     return RedirectToAction(nameof(Index));
-                case 500:
+                case default:
                     mensagem = "<b>Erro</b> ! erro ao <b>Excluir</b> um associado, se isso persistir entre em contato com o suporte";
                     Notificar(mensagem, Notifica.Erro);
                     return RedirectToAction("Delete", pessoassociada);

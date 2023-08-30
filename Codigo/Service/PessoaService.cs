@@ -484,10 +484,17 @@ namespace Service
 
         public async Task<HttpStatusCode> RemoverAssociado(Pessoa pessoaAssociada, String? motivoSaida)
         {
-            pessoaAssociada.MotivoSaida = motivoSaida;
-            pessoaAssociada.Ativo = 0;
-            pessoaAssociada.DataSaida = DateTime.Now;
-            return await Edit(pessoaAssociada);
+            try
+            {
+                pessoaAssociada.MotivoSaida = motivoSaida;
+                pessoaAssociada.Ativo = 0;
+                pessoaAssociada.DataSaida = DateTime.Now;
+                return await Edit(pessoaAssociada);
+            }
+            catch
+            {
+                return HttpStatusCode.InternalServerError;
+            }
             
 
         }
