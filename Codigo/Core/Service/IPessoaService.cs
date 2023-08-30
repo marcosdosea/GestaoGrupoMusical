@@ -70,7 +70,7 @@ namespace Core.Service
         /// 200 - Sucesso <para />
         /// 500 - Erro interno
         /// </returns>
-        Task<int> RemoverAssociado(Pessoa pessoa, String? motivoSaida);
+        Task<HttpStatusCode> RemoverAssociado(Pessoa pessoa, String? motivoSaida);
 
         Task<bool> NotificarCadastroAdmGrupoAsync(Pessoa pessoa);
 
