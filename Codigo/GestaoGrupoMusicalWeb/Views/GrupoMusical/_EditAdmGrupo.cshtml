@@ -1,16 +1,7 @@
 ﻿@model GestaoGrupoMusicalWeb.Models.GrupoMusicalViewModel
 
 <div class="row">
-    <div class="col-md-8">
-        <nav>
-            <ol class="breadcrumb px-3">
-                <strong>
-                    <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Grupo"]</a>
-                    <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Edit"]</spn>
-                </strong>
-            </ol>
-        </nav>
-        <hr/>
+    <div class="col">
         <br/>
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -167,8 +158,8 @@
             <br/>
             <br/>
             <div class="container">
-                <div class="row d-flex flex-column-reverse d-grig gap-2 mx-auto d-flex flex-sm-column-reverse flex-xl-row">
-                    <div class="col-5 d-none d-sm-block"></div>
+                <div class="row d-flex justify-content-end">
+                    <div class="col-5 d-none d-sm-block w-75"></div>
                     <input type="submit" value="Salvar" class="btn btn-secondary d-grid gap-2 col-sm " />
                 </div>
             </div>
