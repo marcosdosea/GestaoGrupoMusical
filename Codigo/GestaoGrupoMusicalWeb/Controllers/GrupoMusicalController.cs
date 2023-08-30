@@ -59,7 +59,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             //
             grupoMusicalViewModel.ListaColaboradores = await _grupoMusical.GetAllColaboradores(idGrupoMusical);
             grupoMusicalViewModel.ListaAssociados = associadosToAdd;
-            
+
             return View(grupoMusicalViewModel);
         }
 
@@ -126,7 +126,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // POST: GrupoMusicalController/Edit/5
-        [Authorize(Roles = "ADMINISTRADOR SISTEMA")]
+        [Authorize(Roles = "ADMINISTRADOR SISTEMA, ADMINISTRADOR GRUPO")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(int id, GrupoMusicalViewModel grupoMusicalViewModel)
