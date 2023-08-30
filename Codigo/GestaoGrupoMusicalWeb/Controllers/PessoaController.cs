@@ -35,6 +35,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             var numeroPagina = page ?? 1; // se pagina null retorna 1;
             int qtdItem = 10;
             var paginaPessoa = await _pessoaService.GetAllAssociadoDTOByGroup(User.Identity.Name);
+            paginaPessoa = paginaPessoa.OrderBy(order => order.Nome).ThenBy(order => order.Ativo).ToList();
             switch (sortBy)
             {
                 case "ativo":
