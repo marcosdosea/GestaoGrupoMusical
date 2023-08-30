@@ -45,10 +45,9 @@ namespace Service
                     return 400; //estoque nao existe, talvez id esteja errado
                 }
 
-                await _context.AddAsync(movimentacao);
-
                 if (!movimentacao.Status.Equals("DANIFICADO"))
                 {
+
                     if (movimentacao.Status.Equals("ENTREGUE"))
                     {
                         figurinoEstoque.QuantidadeDisponivel--;
@@ -101,9 +100,22 @@ namespace Service
                 }
                 else
                 {
+                    var idAssociadoUltimaMovimentacao = GetIdAssociadoUltimaMovimentacaoAsync(movimentacao.IdFigurino, movimentacao.IdManequim).Result;
+
+                    if (idAssociadoUltimaMovimentacao == 0)
+                    {
+                        await transaction.RollbackAsync();
+                        return 404; // O figurino é novo e não possui nenhum empréstimo
+                    }
+                    else
+                    {
+                        movimentacao.IdAssociado = idAssociadoUltimaMovimentacao;
+                    }
                     figurinoEstoque.QuantidadeDisponivel --;
                     figurinoEstoque.QuantidadeDescartada ++;
                 }
+
+                await _context.AddAsync(movimentacao);
 
                 _context.Figurinomanequims.Update(figurinoEstoque);
                 await _context.SaveChangesAsync();
@@ -116,6 +128,16 @@ namespace Service
 
             await transaction.CommitAsync();
             return 200;
+        }
+
+
+        public async Task<int> GetIdAssociadoUltimaMovimentacaoAsync(int idFigurino, int idManequin)
+        {
+            var query = await (from ultimaMovimentcao in _context.Movimentacaofigurinos
+                               where ultimaMovimentcao.IdFigurino == idFigurino && ultimaMovimentcao.IdManequim == idManequin
+                               orderby ultimaMovimentcao.Data descending
+                               select ultimaMovimentcao.IdAssociado).FirstOrDefaultAsync();
+            return query;
         }
 
         public async Task<int> DeleteAsync(int id)

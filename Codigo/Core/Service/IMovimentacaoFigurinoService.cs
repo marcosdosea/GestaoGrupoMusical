@@ -80,5 +80,7 @@ namespace Core.Service
         /// 0 caso o usuário não tenha recebido
         /// </returns>
         Task<sbyte> GetConfirmacaoFigurino(int idAssociado, int idFigurino, int idManequim);
+
+        Task<int> GetIdAssociadoUltimaMovimentacaoAsync(int idFigurino, int idManequin);
     }
 }
