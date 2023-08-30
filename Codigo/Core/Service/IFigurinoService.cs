@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,9 +10,9 @@ namespace Core.Service
 {
     public interface IFigurinoService
     {
-        Task<int> Create(Figurino figurino);
-        Task<int> Edit(Figurino figurino);
-        Task<int> Delete(int id);
+        Task<HttpStatusCode> Create(Figurino figurino);
+        Task<HttpStatusCode> Edit(Figurino figurino);
+        Task<HttpStatusCode> Delete(int id);
 
         Task<Figurino> Get(int id);
 
@@ -37,9 +38,9 @@ namespace Core.Service
         /// 401: nao existe quantidade para disponibilizar
         /// 500: nao conseguiu criar o estoque ou atualizar
         /// </returns>
-        Task<int> CreateEstoque(Figurinomanequim estoque);
-        Task<int> DeleteEstoque(int idFigurino, int idManequim);
-        Task<int> EditEstoque(Figurinomanequim estoque);
+        Task<HttpStatusCode> CreateEstoque(Figurinomanequim estoque);
+        Task<HttpStatusCode> DeleteEstoque(int idFigurino, int idManequim);
+        Task<HttpStatusCode> EditEstoque(Figurinomanequim estoque);
         Task<EstoqueDTO> GetEstoque(int idFigurino, int idManequim);
     }
 }
