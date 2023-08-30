@@ -462,7 +462,9 @@ namespace Service
         {
             var pessoa = Get(id);
 
-            if(pessoa == null)
+            var user = await _userManager.FindByNameAsync(pessoa.Cpf);
+
+            if (pessoa == null || user == null)
             {
                 return HttpStatusCode.NotFound;
             }
@@ -481,6 +483,24 @@ namespace Service
             {
                 try
                 {
+                    string papelAnterior = (await _context.Papelgrupos.FindAsync(pessoa.IdPapelGrupo)).Nome.ToUpper();
+                    string papelPromoNome = (await _context.Papelgrupos.FindAsync(idPapel)).Nome.ToUpper();
+
+                    pessoa.IdPapelGrupo = idPapel;
+
+                    _context.Update(pessoa);
+
+                    //rebaixamento de role
+                    bool roleExists = await _roleManager.RoleExistsAsync(papelPromoNome);
+
+                    if (!roleExists)
+                    {
+                        await _roleManager.CreateAsync(new IdentityRole(papelPromoNome));
+                    }
+                    await _userManager.RemoveFromRoleAsync(user, papelAnterior);
+                    await _userManager.AddToRoleAsync(user, papelPromoNome);
+                    //======================================================================
+                    
                     pessoa.IdPapelGrupo = idPapel;
 
                     _context.Update(pessoa);
