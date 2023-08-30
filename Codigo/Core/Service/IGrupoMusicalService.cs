@@ -27,12 +27,14 @@ namespace Core.Service
         /// <param name="id"></param>
         /// <returns>200 caso seja sucesso ou 500 se ouver algum erro ao executar o metodo</returns>
         Task<int> Delete(int id);
+
         /// <summary>
         /// Pegar um Grupo Musical
         /// </summary>
         /// <param name="id"></param>
         /// <returns> Retorna 1 grupo musical</returns>
-        Grupomusical Get(int id);
+        Task<Grupomusical> Get(int id);
+
         /// <summary>
         /// Pega todos os grupos musicais
         /// </summary>
