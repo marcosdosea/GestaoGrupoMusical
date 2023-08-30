@@ -33,7 +33,7 @@ namespace Core.Service
         /// 401 - Data de nascimento fora do escopo, ou seja, ou passar do dia atual ou idade passa de 120 anos <para />
         /// 500 - Erro interno
         /// </returns>
-        Task<int> Edit(Pessoa pessoa);
+        Task<HttpStatusCode> Edit(Pessoa pessoa);
         void Delete(int id);
         Pessoa Get(int id);
         IEnumerable<Pessoa> GetAll();
