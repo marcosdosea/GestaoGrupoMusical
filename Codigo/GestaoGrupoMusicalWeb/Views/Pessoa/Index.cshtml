@@ -20,13 +20,27 @@
                     var sortBy = Context.Request.Query["SortBy"] == "nome" ? "nomeDecrescente" : "nome";
                 }
                 <th class="px-3 border-0 w-25">
-                    <a class="text-white" asp-action="Index" asp-route-sortBy="@sortBy">Nome</a>
+                    @if (sortBy.Equals("nome"))
+                    {
+                        <a class="text-white text-decoration-none" asp-action="Index" asp-route-sortBy="@sortBy">Nome <i class="fa-solid fa-chevron-up"></i></a>
+                    }
+                    else
+                    {
+                        <a class="text-white text-decoration-none" asp-action="Index" asp-route-sortBy="@sortBy">Nome <i class="fa-solid fa-chevron-down"></i></a>
+                    }
                 </th>
                 @{
                     sortBy = Context.Request.Query["SortBy"] == "ativo" ? "ativoDecrescente" : "ativo";
                 }
                 <th class="px-3 border-0 w-25">
-                    <a class="text-white" asp-action="Index" asp-route-sortBy="@sortBy">Ativo</a>
+                    @if (sortBy.Equals("ativo"))
+                    {
+                        <a class="text-white text-decoration-none" asp-action="Index" asp-route-sortBy="@sortBy">Ativo <i class="fa-solid fa-chevron-up"></i></a>
+                    }else
+                    {
+                        <a class="text-white text-decoration-none" asp-action="Index" asp-route-sortBy="@sortBy">Ativo <i class="fa-solid fa-chevron-down"></i></a>
+                    }
+                    
                 </th>
                 <th class="px-3 border-0 w-25">
                     <span class="text-white">Ações</span>
