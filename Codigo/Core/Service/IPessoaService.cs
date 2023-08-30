@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,7 +21,7 @@ namespace Core.Service
         /// 401 - Data de nascimento fora do escopo, ou seja, ou passar do dia atual ou idade passa de 120 anos <para />
         /// 500 - Erro interno
         /// </returns>
-        Task<int> Create(Pessoa pessoa);
+        Task<HttpStatusCode> Create(Pessoa pessoa);
 
         /// <summary>
         /// Edita uma pessoa no banco de dados
@@ -84,7 +85,7 @@ namespace Core.Service
         /// 450 - Erro durante o cadastro identity <para />
         /// 500 - Erro interno
         /// </returns>
-        Task<int> AddAssociadoAsync(Pessoa pessoa);
+        Task<HttpStatusCode> AddAssociadoAsync(Pessoa pessoa);
 
         Task<bool> NotificarCadastroAssociadoAsync(Pessoa pessoa);
 
