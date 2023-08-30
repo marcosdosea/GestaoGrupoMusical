@@ -29,7 +29,7 @@
                     <label>Quantidade</label>
                 </th>
                 <th>
-                    <label>Status</label>
+                    <a asp-action="Movimentar" asp-route-sortOrder="@ViewData["ConfirmarSort"]">@Html.DisplayName("Status")</a>
                 </th>
                 <th>Ações</th>
             </tr>
