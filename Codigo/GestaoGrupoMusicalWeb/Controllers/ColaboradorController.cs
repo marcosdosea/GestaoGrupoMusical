@@ -109,9 +109,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: ColaboradorController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(int id, CreateColaboradorViewModel pessoa)
+        public async Task<ActionResult> Delete(int Id, CreateColaboradorViewModel pessoa)
         {
-            HttpStatusCode resul = await _pessoaService.RemoveCollaborator(id);
+            HttpStatusCode resul = await _pessoaService.RemoveCollaborator(Id);
 
             switch (resul)
             {
@@ -132,7 +132,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     break;
             }
 
-            return RedirectToAction("Index", "Pessoa");
+            return RedirectToAction("IndexAdmGrupo", "GrupoMusical");
         }
     }
 }
