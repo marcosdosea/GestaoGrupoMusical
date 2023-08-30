@@ -41,7 +41,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             AdministradorGrupoMusicalViewModel administradorModel = new();
 
             administradorModel.ListaAdministrador = await _pessoaService.GetAllAdmGroup(id);
-            var grupoMusical = _grupoMusicalService.Get(id);
+            var grupoMusical = await _grupoMusicalService.Get(id);
             if(grupoMusical == null)
             {
                 return RedirectToAction(nameof(Index), "GrupoMusical");
