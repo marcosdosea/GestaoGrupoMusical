@@ -1,60 +1,76 @@
-﻿@model IEnumerable<Core.DTO.AssociadoDTO>
+﻿@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+
+@model IEnumerable<Core.DTO.AssociadoDTO>
 <partial name="_Notificar">
-@{
-    ViewData["Title"] = "Index";
-}
-<div class="d-flex justify-content-between align-items-center">
-    <h1 class="fs-5">Associados</h1>
-    <a role="button" class="btn btn-secondary m-3" asp-action="Create">Novo Associado</a>
-</div>
-
-<table class="table">
-    <thead>
-        <tr class="bg-danger opacity-75">
-            <th class="px-3 border-0 w-25">
-                <span class="text-white">Código</span>
-            </th>
-            <th class="px-3 border-0 w-25">
-                <span class="text-white">Nome</span>
-            </th>
-            <th class="px-3 border-0 w-25">
-                <span class="text-white">Ativo</span>
-            </th>
-            <th class="px-3 border-0 w-25">
-                <span class="text-white">Ações</span>
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr class="border-bottom border-danger border-opacity-75 p-3 align-middle">
-                <td class="p-3">
-                    @Html.DisplayFor(modelItem => item.Id)
-                </td>
-                <td class="p-3">
-                    @Html.DisplayFor(modelItem => item.Nome)
-                </td>
-                <td class="p-3">
-                    @{
-                        var result = "";
-
-                        if (item.Ativo.CompareTo(1) == 0)
-                        {
-                            result = "Sim";
-                        }
-                        else
-                        {
-                            result = "Não";
-                        }
-                    }
-                    @result
-                </td>
-                <td class="p-3">
-                    <a role="button" class="btn btn-secondary btn-sm mb-2 mb-lg-0" asp-controller="Pessoa" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"></i> Editar</a>
-                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="Pessoa" asp-action="RemoveAssociado" asp-route-id="@item.Id"><i class="fa-solid fa-xmark"> </i> Excluir</a>
-                </td>
+    @{
+        ViewData["Title"] = "Index";
+    }
+    <div class="d-flex justify-content-between align-items-center">
+        <h1 class="fs-5">Associados</h1>
+        <a role="button" class="btn btn-secondary m-3" asp-action="Create">Novo Associado</a>
+    </div>
+    <table class="table">
+        <thead>
+            <tr class="bg-danger opacity-75">
+                <th class="px-3 border-0 w-25">
+                    <span class="text-white">Código</span>
+                </th>
+                <th class="px-3 border-0 w-25">
+                    <span class="text-white">Nome</span>
+                </th>
+                <th class="px-3 border-0 w-25">
+                    <span class="text-white">Ativo</span>
+                </th>
+                <th class="px-3 border-0 w-25">
+                    <span class="text-white">Ações</span>
+                </th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr class="border-bottom border-danger border-opacity-75 p-3 align-middle">
+                    <td class="p-3">
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td class="p-3">
+                        @Html.DisplayFor(modelItem => item.Nome)
+                    </td>
+                    <td class="p-3">
+                        @{
+                            var result = "";
+
+                            if (item.Ativo.CompareTo(1) == 0)
+                            {
+                                result = "Sim";
+                            }
+                            else
+                            {
+                                result = "Não";
+                            }
+                        }
+                        @result
+                    </td>
+                    <td class="p-3">
+                        <a role="button" class="btn btn-secondary btn-sm mb-2 mb-lg-0" asp-controller="Pessoa" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"></i> Editar</a>
+                        <a role="button" class="btn btn-secondary btn-sm" asp-controller="Pessoa" asp-action="RemoveAssociado" asp-route-id="@item.Id"><i class="fa-solid fa-xmark"> </i> Excluir</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", new { page = page }), new X.PagedList.Web.Common.PagedListRenderOptions
+    {
+    ActiveLiElementClass = "bg-danger",
+    PageCountAndCurrentLocationFormat = "{0} de {1}",
+    ContainerDivClasses = new[] { "navigation","d-flex","justify-content-center"},
+    PageClasses = new[] { "page-link", "bg-danger", "bg-opacity-75", "text-dark"},
+    DisplayPageCountAndCurrentLocation = true,
+    LinkToPreviousPageFormat = "<<",
+    LinkToNextPageFormat = ">>",
+    LiElementClasses = new[] { "d-flex","align-items-center"},
+    })
+
+
+
