@@ -131,15 +131,32 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(int id, GrupoMusicalViewModel grupoMusicalViewModel)
         {
+            Boolean admSystem = false;
+            int idGrupo = id;
+
+            if (User.IsInRole("ADMINISTRADOR SISTEMA"))
+            {
+                admSystem = true;
+            }
+            else
+            {
+                idGrupo = _grupoMusical.GetIdGrupo(User.Identity.Name);
+            }
+
+
             grupoMusicalViewModel.Cnpj = grupoMusicalViewModel.Cnpj.Replace(".", string.Empty).Replace("-", string.Empty).Replace("/", string.Empty);
+           
             if (grupoMusicalViewModel.Cep != null)
                 grupoMusicalViewModel.Cep = grupoMusicalViewModel.Cep.Replace("-", string.Empty);
 
-            var existe = _grupoMusical.GetCNPJExistente(id, grupoMusicalViewModel.Cnpj);
+            var existe = _grupoMusical.GetCNPJExistente(idGrupo, grupoMusicalViewModel.Cnpj);
+
             if (existe)
             {
                 ModelState.Remove("CNPJ");
+                grupoMusicalViewModel.Id = idGrupo;
             }
+
             if (ModelState.IsValid)
             {
                 var grupoMusical = _mapper.Map<Grupomusical>(grupoMusicalViewModel);
@@ -148,17 +165,33 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 {
                     case 200:
                         Notificar("Grupo Musical <b>Editado</b> com <b>Sucesso</b>", Notifica.Sucesso);
-                        return RedirectToAction(nameof(Index));
+                        break;
                     case 500:
-                        Notificar("<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Cadastro</b> do associado, se isso persistir entre em contato com o suporte", Notifica.Erro);
-                        return RedirectToAction(nameof(Index));
+                        Notificar("<b>Erro</b> ! Não foi possível editar as informações do grupo", Notifica.Erro);
+                        break;
                 }
             }
             else
             {
-                return View(grupoMusicalViewModel);
+                if (admSystem)
+                {
+                    return View(grupoMusicalViewModel);
+                }
+                else
+                {
+                    return RedirectToAction(nameof(IndexAdmGrupo));
+                }
             }
-            return RedirectToAction(nameof(Index));
+
+            if(admSystem)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                return RedirectToAction(nameof(IndexAdmGrupo));
+            }
+            
         }
 
         // GET: GrupoMusicalController/Delete/5
