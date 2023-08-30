@@ -30,11 +30,28 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: PessoaController
-        public async Task<IActionResult> Index(int? page)
+        public async Task<IActionResult> Index(int? page, string sortBy)
         {
             var numeroPagina = page ?? 1; // se pagina null retorna 1;
             int qtdItem = 10;
             var paginaPessoa = await _pessoaService.GetAllAssociadoDTOByGroup(User.Identity.Name);
+            switch (sortBy)
+            {
+                case "ativo":
+                    paginaPessoa = paginaPessoa.OrderBy(order => order.Ativo).ToList();
+                    break;
+                case "ativoDecrescente":
+                    paginaPessoa = paginaPessoa.OrderByDescending(order => order.Ativo).ToList();
+                    break;
+                case "nome":
+                    paginaPessoa = paginaPessoa.OrderBy(order => order.Nome).ToList();
+                    break;
+                case "nomeDecrescente":
+                    paginaPessoa = paginaPessoa.OrderByDescending(order => order.Nome).ToList();
+                    break;
+                default:
+                    break;
+            }
             
             return View(paginaPessoa.ToPagedList(numeroPagina, qtdItem));
         }
