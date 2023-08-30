@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Email;
 using System.Security.Cryptography;
 using System.Text;
+using System.Net;
 
 namespace Service
 {
@@ -32,7 +33,7 @@ namespace Service
         /// </summary>
         /// <param name="pessoa">dados do novo associado</param>
         /// <returns>retorna o id referente a nova entidade criada</returns>
-        public async Task<int> Create(Pessoa pessoa)
+        public async Task<HttpStatusCode> Create(Pessoa pessoa)
         {
 
                 try
@@ -45,46 +46,46 @@ namespace Service
                     if (pessoa.DataEntrada == null && pessoa.DataNascimento == null)
                     {//Mensagem de sucesso
                         await _context.SaveChangesAsync();
-                        return 200;
+                        return HttpStatusCode.Created;
                     }
                     else if (pessoa.DataNascimento != null)
                     {
                         int idade = Math.Abs(pessoa.DataNascimento.Value.Year - DateTime.Now.Year);
-                        if (pessoa.DataNascimento <= DateTime.Now && idade < 120)
+                        if (pessoa.DataNascimento <= DateTime.Today && idade < 120)
                         {
-                            if (pessoa.DataEntrada == null || pessoa.DataEntrada < DateTime.Now)
+                            if (pessoa.DataEntrada == null || pessoa.DataEntrada < DateTime.Today)
                             {//mensagem de sucesso
                                
                                 await _context.SaveChangesAsync();
-                                return 200;
+                                return HttpStatusCode.Created;
                             }
                             else
                             {
                                 // erro 400, data de entrada fora do escopo
-                                return 400;
+                                return HttpStatusCode.BadRequest;
                             }
                         }
                         else
                         {
                             // erro 401, data de nascimento está fora do escopo
-                            return 401;
+                            return HttpStatusCode.NotAcceptable;
                         }
                     }
                     else if (pessoa.DataEntrada == null || pessoa.DataEntrada < DateTime.Now)
                     {
                         await _context.SaveChangesAsync();
-                        return 200;
+                        return HttpStatusCode.Created;
                     }
                     else
                     {
                         // erro 400, data de entrada fora do escopo
-                        return 400;
+                        return HttpStatusCode.BadRequest;
                     }
                 }
                 catch (Exception ex)
                 {
                     //Aconteceu algum erro do servidor ou interno
-                    return 500;
+                    return HttpStatusCode.BadRequest;
                 }
 
         }
@@ -211,7 +212,7 @@ namespace Service
                     pessoa.IsentoPagamento = 1;
                     pessoa.Telefone1 = "";
 
-                    if(await Create(pessoa) != 200)
+                    if(await Create(pessoa) != HttpStatusCode.OK)
                     {
                         await transaction.RollbackAsync();
                         return 500;//nao foi possivel criar a pessoa
@@ -363,14 +364,14 @@ namespace Service
             }
         }
 
-        public async Task<int> AddAssociadoAsync(Pessoa pessoa)
+        public async Task<HttpStatusCode> AddAssociadoAsync(Pessoa pessoa)
         {
             using var transaction = _context.Database.BeginTransaction();
 
             try
             {
-                int createResult = await Create(pessoa);
-                if (createResult != 200)
+                HttpStatusCode createResult = await Create(pessoa);
+                if (createResult != HttpStatusCode.OK)
                 {
                     await transaction.RollbackAsync();
                     return createResult;
@@ -395,16 +396,16 @@ namespace Service
                     await _userManager.AddToRoleAsync(userDb, "ASSOCIADO");
 
                     await transaction.CommitAsync();
-                    return createResult;
+                    return HttpStatusCode.OK;
                 }
 
                 await transaction.RollbackAsync();
-                return 450;
+                return HttpStatusCode.BadRequest;
             }
             catch
             {
                 await transaction.RollbackAsync();
-                return 500;
+                return HttpStatusCode.BadRequest;
             }
         }
 
