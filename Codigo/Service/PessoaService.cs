@@ -764,5 +764,14 @@ namespace Service
                 return 501;
             }
         }
+
+        public async Task<IEnumerable<AutoCompleteRegenteDTO>> GetRegentesForAutoCompleteAsync(int idGrupoMusical)
+        {
+            var query = _context.Pessoas
+                        .Where(p => p.IdGrupoMusical == idGrupoMusical && p.IdPapelGrupo == 5)
+                        .Select(p => new AutoCompleteRegenteDTO { Id = p.Id, Nome = p.Nome });
+
+            return await query.AsNoTracking().ToListAsync();
+        }
     }
 }

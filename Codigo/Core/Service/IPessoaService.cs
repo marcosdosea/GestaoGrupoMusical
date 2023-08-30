@@ -146,5 +146,7 @@ namespace Core.Service
         /// 501: Erro na operação
         /// </returns>
         Task<int> AtivarAssociado(string cpf);
+
+        Task<IEnumerable<AutoCompleteRegenteDTO>> GetRegentesForAutoCompleteAsync(int idGrupoMusical);
     }
 }
