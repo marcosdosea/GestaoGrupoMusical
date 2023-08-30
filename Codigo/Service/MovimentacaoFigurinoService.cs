@@ -48,7 +48,7 @@ namespace Service
                 if (movimentacao.Status.Equals("ENTREGUE"))
                 {
                     if (movimentacao.Quantidade <= 0 || movimentacao.Quantidade >
-                        figurinoEstoque.QuantidadeDisponivel || movimentacao.Quantidade == 0)
+                        figurinoEstoque.QuantidadeDisponivel)
                     {
                         await transaction.RollbackAsync();
                         return 401; //não há peças disponiveis para emprestar
