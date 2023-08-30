@@ -482,7 +482,7 @@ namespace Service
             }
         }
 
-        public async Task<int> RemoverAssociado(Pessoa pessoaAssociada, String? motivoSaida)
+        public async Task<HttpStatusCode> RemoverAssociado(Pessoa pessoaAssociada, String? motivoSaida)
         {
             pessoaAssociada.MotivoSaida = motivoSaida;
             pessoaAssociada.Ativo = 0;
