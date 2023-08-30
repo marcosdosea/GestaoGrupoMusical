@@ -41,11 +41,15 @@ namespace GestaoGrupoMusicalWeb.Controllers
             GrupoMusicalAdmGrupoViewModel grupoMusicalViewModel = new();
             CreateColaboradorViewModel associadosToAdd = new();
 
+            GrupoMusicalViewModel grupoMusical = _mapper.Map<GrupoMusicalViewModel>(await _grupoMusical.Get(idGrupoMusical));
+
+            //
+            grupoMusicalViewModel.GrupoMusicalViewModel = grupoMusical;
+
             //
             var associados = _pessoaService.GetAllPessoasOrder(idGrupoMusical);
             SelectList listAssociados = new SelectList(associados, "Id", "Nome");
             associadosToAdd.ListaAssociados = listAssociados;
-
 
             //
             var papel = await _grupoMusical.GetPapeis();
