@@ -483,22 +483,12 @@ namespace Service
             {
                 try
                 {
-                    string papelAnterior = (await _context.Papelgrupos.FindAsync(pessoa.IdPapelGrupo)).Nome.ToUpper();
-                    string papelPromoNome = (await _context.Papelgrupos.FindAsync(idPapel)).Nome.ToUpper();
-
                     pessoa.IdPapelGrupo = idPapel;
 
                     _context.Update(pessoa);
 
                     //rebaixamento de role
-                    bool roleExists = await _roleManager.RoleExistsAsync(papelPromoNome);
-
-                    if (!roleExists)
-                    {
-                        await _roleManager.CreateAsync(new IdentityRole(papelPromoNome));
-                    }
-                    await _userManager.RemoveFromRoleAsync(user, papelAnterior);
-                    await _userManager.AddToRoleAsync(user, papelPromoNome);
+                    ChangeUserRole(user, pessoa.IdPapelGrupo, idPapel);
                     //======================================================================
                     
                     pessoa.IdPapelGrupo = idPapel;
@@ -810,6 +800,37 @@ namespace Service
                         .Select(p => new AutoCompleteRegenteDTO { Id = p.Id, Nome = p.Nome });
 
             return await query.AsNoTracking().ToListAsync();
+        }
+
+        /// <summary>
+        /// Muda a role do user identity por outra
+        /// </summary>
+        /// <param name="user">usuario identity</param>
+        /// <param name="idRoleAtual">id do papel referente a role atual do usuario</param>
+        /// <param name="idRrolePromo">id do papel referente a role que será aplicada ao usuario</param>
+        /// <returns></returns>
+        public async Task<HttpStatusCode> ChangeUserRole(UsuarioIdentity user, int idRoleAtual, int idRrolePromo)
+        {
+            try
+            {
+                string papelAnterior = (await _context.Papelgrupos.FindAsync(idRoleAtual)).Nome.ToUpper();
+                string papelPromoNome = (await _context.Papelgrupos.FindAsync(idRrolePromo)).Nome.ToUpper();
+
+                bool roleExists = await _roleManager.RoleExistsAsync(papelPromoNome);
+
+                if (!roleExists)
+                {
+                    await _roleManager.CreateAsync(new IdentityRole(papelPromoNome));
+                }
+                await _userManager.RemoveFromRoleAsync(user, papelAnterior);
+                await _userManager.AddToRoleAsync(user, papelPromoNome);
+            }
+            catch
+            {
+                throw new InvalidOperationException("Não foi possível fazer a troca de ROLES");
+            }
+
+            return HttpStatusCode.OK;   
         }
     }
 }
