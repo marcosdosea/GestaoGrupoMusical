@@ -12,4 +12,17 @@ namespace Core.DTO
         public string Nome { get; set; } = null!;
         public sbyte Ativo { get; set; }
     }
+
+    public class ColaboradoresDTO
+    {
+        public int Id { get; set; }
+
+        public string? Cpf { get; set; }
+
+        public string? Nome { get; set; }
+
+        public string? Data { get; set; }
+
+        public string? Papel { get; set; }
+    }
 }
