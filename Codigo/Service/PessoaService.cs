@@ -484,17 +484,10 @@ namespace Service
 
         public async Task<HttpStatusCode> RemoverAssociado(Pessoa pessoaAssociada, String? motivoSaida)
         {
-            try
-            {
-                pessoaAssociada.MotivoSaida = motivoSaida;
-                pessoaAssociada.Ativo = 0;
-                pessoaAssociada.DataSaida = DateTime.Now;
-                return await Edit(pessoaAssociada);
-            }
-            catch
-            {
-                return HttpStatusCode.InternalServerError;
-            }
+            pessoaAssociada.MotivoSaida = motivoSaida;
+            pessoaAssociada.Ativo = 0;
+            pessoaAssociada.DataSaida = DateTime.Now;
+            return await Edit(pessoaAssociada);
             
 
         }
@@ -750,20 +743,20 @@ namespace Service
 
                         if (await Edit(pessoa) != HttpStatusCode.OK)
                         {
-                            return HttpStatusCode.NotAcceptable;
+                            return HttpStatusCode.NoContent;
                         }
 
                         return HttpStatusCode.OK;
                     }
                     else
                     {
-                        return HttpStatusCode.BadRequest;
+                        return HttpStatusCode.NotAcceptable;
                     }  
                     //===========================================================//
                 }
                 else
                 {
-                    return HttpStatusCode.NoContent;
+                    return HttpStatusCode.BadRequest;
                 }
                 //=================================//
             }

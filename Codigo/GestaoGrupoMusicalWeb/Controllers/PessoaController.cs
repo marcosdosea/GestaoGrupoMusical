@@ -226,7 +226,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     mensagem = "Associado <b>Excluído</b> com <b>Sucesso</b>";
                     Notificar(mensagem, Notifica.Sucesso);
                     return RedirectToAction(nameof(Index));
-                case default:
+                case HttpStatusCode.InternalServerError:
                     mensagem = "<b>Erro</b> ! erro ao <b>Excluir</b> um associado, se isso persistir entre em contato com o suporte";
                     Notificar(mensagem, Notifica.Erro);
                     return RedirectToAction("Delete", pessoassociada);
