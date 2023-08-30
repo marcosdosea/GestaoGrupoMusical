@@ -65,7 +65,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         // GET: GrupoMusicalController/Details/5
         [Authorize(Roles = "ADMINISTRADOR SISTEMA")]
-        public ActionResult Details(int id)
+        public async Task<ActionResult> Details(int id)
         {
             var grupoMusical = await _grupoMusical.Get(id);
             var grupoModel = _mapper.Map<GrupoMusicalViewModel>(grupoMusical);
@@ -117,7 +117,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         // GET: GrupoMusicalController/Edit/5
         [Authorize(Roles = "ADMINISTRADOR SISTEMA")]
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
             var grupoMusical = await _grupoMusical.Get(id);
             var grupoModel = _mapper.Map<GrupoMusicalViewModel>(grupoMusical);
@@ -163,7 +163,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         // GET: GrupoMusicalController/Delete/5
         [Authorize(Roles = "ADMINISTRADOR SISTEMA")]
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             var grupoMusical = await _grupoMusical.Get(id);
             var grupoModel = _mapper.Map<GrupoMusicalViewModel>(grupoMusical);
