@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Net;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -88,7 +89,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
                 switch (await _pessoaService.AddAssociadoAsync(pessoaModel))
                 {
-                    case 200:
+                    case HttpStatusCode.OK:
                         switch (await RequestPasswordReset(_userManager, pessoaModel.Email, pessoaModel.Nome))
                         {
                             case 200:
@@ -102,22 +103,22 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         }
                         return RedirectToAction(nameof(Index));
 
-                    case 500:
+                    case HttpStatusCode.InternalServerError:
                         mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Cadastro</b> do associado, se isso persistir entre em contato com o suporte";
                         Notificar(mensagem , Notifica.Erro);
                         break;
 
-                    case 400:
+                    case HttpStatusCode.BadRequest:
                         mensagem = "<b>Alerta</b> ! Não foi possível cadastrar, a data de entrada deve ser menor que " + DateTime.Now.ToShortDateString();
                         Notificar(mensagem, Notifica.Alerta);
                         break;
 
-                    case 401:
+                    case HttpStatusCode.NotAcceptable:
                         mensagem = "<b>Alerta</b> ! Não foi possível cadastrar, a data de nascimento deve ser menor que " + DateTime.Now.ToShortDateString() + " e menor que 120 anos ";
                         Notificar(mensagem, Notifica.Alerta);
                         break;
 
-                    case 450:
+                    case HttpStatusCode.Conflict:
                         mensagem = "Ocorreu um <b>Erro</b> durante a liberação de acesso ao <b>Associado</b>, se isso persistir entre em contato com o suporte";
                         Notificar(mensagem, Notifica.Erro);
                         break;
