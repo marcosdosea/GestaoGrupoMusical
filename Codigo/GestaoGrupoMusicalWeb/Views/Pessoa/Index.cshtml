@@ -16,11 +16,17 @@
                 <th class="px-3 border-0 w-25">
                     <span class="text-white">Código</span>
                 </th>
+                @{
+                    var sortBy = Context.Request.Query["SortBy"] == "nome" ? "nomeDecrescente" : "nome";
+                }
                 <th class="px-3 border-0 w-25">
-                    <span class="text-white">Nome</span>
+                    <a class="text-white" asp-action="Index" asp-route-sortBy="@sortBy">Nome</a>
                 </th>
+                @{
+                    sortBy = Context.Request.Query["SortBy"] == "ativo" ? "ativoDecrescente" : "ativo";
+                }
                 <th class="px-3 border-0 w-25">
-                    <span class="text-white">Ativo</span>
+                    <a class="text-white" asp-action="Index" asp-route-sortBy="@sortBy">Ativo</a>
                 </th>
                 <th class="px-3 border-0 w-25">
                     <span class="text-white">Ações</span>
