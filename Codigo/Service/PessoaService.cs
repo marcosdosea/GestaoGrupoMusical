@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Email;
 using System.Security.Cryptography;
 using System.Text;
+using System.Net;
 
 namespace Service
 {
@@ -432,52 +433,69 @@ namespace Service
         /// </summary>
         /// <param name="pessoa">objeto pessoa para fazer a mudança</param>
         /// <returns>retorna true caso de tudo certo e false caso nao de certo</returns>
-        public async Task<bool> ToCollaborator(int id)
+        public async Task<HttpStatusCode> ToCollaborator(int id, int idPapelGrupo)
         {
             var pessoa = Get(id);
 
-            //uma query pois pode ser que o id seja alterado futuramente
-            var idPapel = _context.Papelgrupos
-                .Where(p => p.Nome == "Colaborador")
-                .Select(p => p.IdPapelGrupo)
-                .First();
-
-            if (idPapel != null && idPapel.GetType() == typeof(int) && pessoa != null)
+            if(pessoa == null)
             {
-                pessoa.IdPapelGrupo = idPapel;
-                Edit(pessoa);
-                return true;
-            }
-            else
-            {
-                return false;
+                return HttpStatusCode.NotFound;
             }
 
+            try
+            {
+                pessoa.IdPapelGrupo = idPapelGrupo;
+
+                _context.Update(pessoa);
+
+                await _context.SaveChangesAsync();
+
+                return HttpStatusCode.Created;
+            }
+            catch
+            {
+                return HttpStatusCode.InternalServerError;
+            }
         }
 
-        public async Task<bool> RemoveCollaborator(int id)
+        public async Task<HttpStatusCode> RemoveCollaborator(int id)
         {
             var pessoa = Get(id);
 
+            if(pessoa == null)
+            {
+                return HttpStatusCode.NotFound;
+            }
+
+
             //uma query pois pode ser que o id seja alterado futuramente
             var idPapel = _context.Papelgrupos
-                .Where(p => p.Nome == "Associado")
+                .Where(p => p.Nome.ToUpper() == "ASSOCIADO")
                 .Select(p => p.IdPapelGrupo)
                 .First();
 
             //aqui ha uma comparacao com id de papel da pessoa
             //isso e para evitar que um adm de grupo seja
             //rebaixado a associado
-            if (idPapel != null && idPapel.GetType() == typeof(int)
-                && pessoa != null && pessoa.IdPapelGrupo <= (idPapel + 1))
+            if (idPapel != null)
             {
-                pessoa.IdPapelGrupo = idPapel;
-                Edit(pessoa);
-                return true;
+                try
+                {
+                    pessoa.IdPapelGrupo = idPapel;
+
+                    _context.Update(pessoa);
+                    await _context.SaveChangesAsync();
+
+                    return HttpStatusCode.OK;
+                }
+                catch
+                {
+                    return HttpStatusCode.BadRequest;
+                }
             }
             else
             {
-                return false;
+                return HttpStatusCode.InternalServerError;
             }
         }
 
@@ -763,6 +781,15 @@ namespace Service
             {
                 return 501;
             }
+        }
+
+        public async Task<IEnumerable<AutoCompleteRegenteDTO>> GetRegentesForAutoCompleteAsync(int idGrupoMusical)
+        {
+            var query = _context.Pessoas
+                        .Where(p => p.IdGrupoMusical == idGrupoMusical && p.IdPapelGrupo == 5)
+                        .Select(p => new AutoCompleteRegenteDTO { Id = p.Id, Nome = p.Nome });
+
+            return await query.AsNoTracking().ToListAsync();
         }
     }
 }

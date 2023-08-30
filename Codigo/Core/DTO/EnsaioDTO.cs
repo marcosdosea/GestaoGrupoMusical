@@ -37,5 +37,14 @@ namespace Core.DTO
 
         [Display(Name = "Regente")]
         public string? NomeRegente { get; set; }
+
+        public int? IdGrupoMusical { get;  set; }
+    }
+
+    public class AutoCompleteRegenteDTO
+    {
+        public int Id { get; set; }
+
+        public string Nome { get; set; } = string.Empty;
     }
 }

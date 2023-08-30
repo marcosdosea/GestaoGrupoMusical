@@ -7,12 +7,10 @@ namespace Core
     {
         public Pessoa()
         {
-            EnsaioIdColaboradorResponsavelNavigations = new HashSet<Ensaio>();
-            EnsaioIdRegenteNavigations = new HashSet<Ensaio>();
             Ensaiopessoas = new HashSet<Ensaiopessoa>();
-            EventoIdColaboradorResponsavelNavigations = new HashSet<Evento>();
-            EventoIdRegenteNavigations = new HashSet<Evento>();
+            Ensaios = new HashSet<Ensaio>();
             Eventopessoas = new HashSet<Eventopessoa>();
+            Eventos = new HashSet<Evento>();
             Informativos = new HashSet<Informativo>();
             Materialestudos = new HashSet<Materialestudo>();
             MovimentacaofigurinoIdAssociadoNavigations = new HashSet<Movimentacaofigurino>();
@@ -48,12 +46,10 @@ namespace Core
         public virtual Grupomusical IdGrupoMusicalNavigation { get; set; } = null!;
         public virtual Manequim IdManequimNavigation { get; set; } = null!;
         public virtual Papelgrupo IdPapelGrupoNavigation { get; set; } = null!;
-        public virtual ICollection<Ensaio> EnsaioIdColaboradorResponsavelNavigations { get; set; }
-        public virtual ICollection<Ensaio> EnsaioIdRegenteNavigations { get; set; }
         public virtual ICollection<Ensaiopessoa> Ensaiopessoas { get; set; }
-        public virtual ICollection<Evento> EventoIdColaboradorResponsavelNavigations { get; set; }
-        public virtual ICollection<Evento> EventoIdRegenteNavigations { get; set; }
+        public virtual ICollection<Ensaio> Ensaios { get; set; }
         public virtual ICollection<Eventopessoa> Eventopessoas { get; set; }
+        public virtual ICollection<Evento> Eventos { get; set; }
         public virtual ICollection<Informativo> Informativos { get; set; }
         public virtual ICollection<Materialestudo> Materialestudos { get; set; }
         public virtual ICollection<Movimentacaofigurino> MovimentacaofigurinoIdAssociadoNavigations { get; set; }

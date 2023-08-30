@@ -9,6 +9,7 @@ namespace Core
         public int IdManequim { get; set; }
         public int QuantidadeDisponivel { get; set; }
         public int QuantidadeEntregue { get; set; }
+        public int QuantidadeDescartada { get; set; }
 
         public virtual Figurino IdFigurinoNavigation { get; set; } = null!;
         public virtual Manequim IdManequimNavigation { get; set; } = null!;

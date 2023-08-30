@@ -13,6 +13,7 @@ namespace Core
         public int IdColaborador { get; set; }
         public string Status { get; set; } = null!;
         public sbyte ConfirmacaoRecebimento { get; set; }
+        public int Quantidade { get; set; }
 
         public virtual Pessoa IdAssociadoNavigation { get; set; } = null!;
         public virtual Pessoa IdColaboradorNavigation { get; set; } = null!;

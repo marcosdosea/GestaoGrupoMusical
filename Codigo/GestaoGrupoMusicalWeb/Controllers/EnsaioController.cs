@@ -6,6 +6,7 @@ using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using NuGet.Protocol;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -38,17 +39,32 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> Details(int id)
         {
             var ensaio = _ensaio.GetDetailsDTO(id);
+            if (Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value) != ensaio.IdGrupoMusical)
+            {
+                Notificar("<b>Ensaio não encontrado!</b>", Notifica.Alerta);
+                return RedirectToAction(nameof(Index));
+            }
             return View(ensaio);
         }
 
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         // GET: EnsaioController/Create
-        public ActionResult Create()
+        public async Task<ActionResult> Create()
         {
+            var lista = await _pessoa.GetRegentesForAutoCompleteAsync(Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
+
+            if(lista == null || !lista.Any())
+            {
+                Notificar("É necessário cadastrar um Regente para então cadastrar um Ensaio.", Notifica.Informativo);
+                return RedirectToAction(nameof(Index));
+            }
+
             EnsaioViewModel ensaioModel = new();
+            
+            ensaioModel.ListaPessoa = new SelectList(lista, "Id", "Nome");
 
-            ensaioModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
-
+            ViewData["exemploRegente"] = lista.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
+            ensaioModel.JsonLista = lista.ToJson();
             return View(ensaioModel);
         }
 
@@ -58,16 +74,14 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(EnsaioViewModel ensaioViewModel)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && ensaioViewModel.IdRegentes != null)
             {
                 String mensagem = String.Empty;
                 var ensaio = _mapper.Map<Ensaio>(ensaioViewModel);
-                if(Int32.TryParse(User.FindFirst("IdGrupoMusical")?.Value, out int idGrupoMusical) && Int32.TryParse(User.FindFirst("Id")?.Value, out int id))
-                {
-                    ensaio.IdGrupoMusical = idGrupoMusical;
-                    ensaio.IdColaboradorResponsavel = id;
-                }
-                switch (await _ensaio.Create(ensaio))
+              
+                ensaio.IdGrupoMusical = Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value);
+                ensaio.IdColaboradorResponsavel = Convert.ToInt32(User.FindFirst("Id")?.Value);
+                switch (await _ensaio.Create(ensaio, ensaioViewModel.IdRegentes))
                 {
                     case 200:
                         mensagem = "Ensaio <b>Cadastrado</b> com <b>Sucesso</b>";
@@ -87,7 +101,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         break;
                 }
             }
-            ensaioViewModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
+            var lista = await _pessoa.GetRegentesForAutoCompleteAsync(Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
+            ensaioViewModel.ListaPessoa = new SelectList(lista, "Id", "Nome");
+
+            ensaioViewModel.JsonLista = lista.ToJson();
             return View(ensaioViewModel);
         }
 
@@ -96,6 +113,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> Edit(int id)
         {
             var ensaio = await _ensaio.Get(id);
+            if (Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value) != ensaio.IdGrupoMusical)
+            {
+                Notificar("<b>Ensaio não encontrado!</b>", Notifica.Alerta);
+                return RedirectToAction(nameof(Index));
+            }
             EnsaioViewModel ensaioModel = _mapper.Map<EnsaioViewModel>(ensaio);
 
             ensaioModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");

@@ -14,7 +14,7 @@ namespace Core.Service
         /// 401 - Data de inicio fora do escopo, ou seja, ou seja a data inicio passa da data fim do evento<para />
         /// 500 - Erro interno
         /// </returns>
-        Task<int> Create(Ensaio ensaio);
+        Task<int> Create(Ensaio ensaio, IEnumerable<int> idRegentes);
         /// <summary>
         /// Editar uma ensaio no banco de dados
         /// </summary>
