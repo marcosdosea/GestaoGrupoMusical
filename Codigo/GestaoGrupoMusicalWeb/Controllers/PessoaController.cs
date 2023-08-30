@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using X.PagedList;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -29,11 +30,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: PessoaController
-        public async Task<ActionResult> Index()
+        public async Task<IActionResult> Index(int? page)
         {
-            var listaPessoasDTO = await _pessoaService.GetAllAssociadoDTOByGroup(User.Identity.Name);
-
-            return View(listaPessoasDTO);
+            var numeroPagina = page ?? 1; // se pagina null retorna 1;
+            int qtdItem = 10;
+            var paginaPessoa = await _pessoaService.GetAllAssociadoDTOByGroup(User.Identity.Name);
+            
+            return View(paginaPessoa.ToPagedList(numeroPagina, qtdItem));
         }
 
         // GET: PessoaController/Details/5
