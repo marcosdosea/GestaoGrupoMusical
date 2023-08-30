@@ -146,6 +146,6 @@ namespace Core.Service
         /// 500: Erro ao editar Associado
         /// 501: Erro na operação
         /// </returns>
-        Task<int> AtivarAssociado(string cpf);
+        Task<HttpStatusCode> AtivarAssociado(string cpf);
     }
 }
