@@ -727,7 +727,7 @@ namespace Service
                
         }
 
-        public async Task<int> AtivarAssociado(string cpf)
+        public async Task<HttpStatusCode> AtivarAssociado(string cpf)
         {
             try
             {
@@ -741,28 +741,28 @@ namespace Service
                     {
                         pessoa.Ativo = 1;
 
-                        if (await Edit(pessoa) != 200)
+                        if (await Edit(pessoa) != HttpStatusCode.OK)
                         {
-                            return 500;
+                            return HttpStatusCode.NotAcceptable;
                         }
 
-                        return 200;
+                        return HttpStatusCode.OK;
                     }
                     else
                     {
-                        return 401;
+                        return HttpStatusCode.BadRequest;
                     }  
                     //===========================================================//
                 }
                 else
                 {
-                    return 400;
+                    return HttpStatusCode.NoContent;
                 }
                 //=================================//
             }
             catch
             {
-                return 501;
+                return HttpStatusCode.InternalServerError;
             }
         }
     }
