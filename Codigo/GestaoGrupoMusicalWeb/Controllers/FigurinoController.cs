@@ -350,6 +350,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 case 403:
                     Notificar("<b>Erro</b>, O <b>Associado</b> ainda não confirmou o recebimento do <b>Figurino</b>", Notifica.Alerta);
                     break;
+                case 404:
+                    Notificar("<b>Alerta</b> O <b>Figurino</b> não pode ser descartado. Não possui movimentações passadas.", Notifica.Alerta);
+                    break;
                 case 500:
                     Notificar("<b>Erro!</b> Algo deu errado", Notifica.Erro);
                     break;
