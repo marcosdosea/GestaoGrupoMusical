@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Core.DTO;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 using Util;
 
 namespace GestaoGrupoMusicalWeb.Models
@@ -109,5 +111,27 @@ namespace GestaoGrupoMusicalWeb.Models
             { "E-mail", "email" }
         };
 
+    }
+
+    public class GrupoMusicalAdmGrupoViewModel
+    {
+        public GrupoMusicalViewModel GrupoMusicalViewModel { get; set; }
+        public IEnumerable<ColaboradoresDTO>? ListaColaboradores { get; set; }
+
+        public CreateColaboradorViewModel ListaAssociados { get; set; }
+    }
+
+    public class CreateColaboradorViewModel
+    {
+        [Required(ErrorMessage = "O campo Nome é obrigatório")]
+        [Display(Name ="Associado")]
+        public int Id { get; set; }
+
+        [Required(ErrorMessage = "O campo Papel é obrigatório")]
+        [Display(Name = "Papel")]
+        public int IdPapelGrupo { get; set; }
+
+        public SelectList? ListaAssociados { get; set; }
+        public SelectList? ListaPapeis { get; set; }
     }
 }

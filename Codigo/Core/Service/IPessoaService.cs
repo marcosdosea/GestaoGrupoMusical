@@ -56,8 +56,8 @@ namespace Core.Service
         Task<IEnumerable<AdministradorGrupoMusicalDTO>> GetAllAdmGroup(int id);
         Task<bool> RemoveAdmGroup(int id);
 
-        Task<bool> ToCollaborator(int id);
-        Task<bool> RemoveCollaborator(int id);
+        Task<HttpStatusCode> ToCollaborator(int id, int idPapel);
+        Task<HttpStatusCode> RemoveCollaborator(int id);
 
         IEnumerable<Papelgrupo> GetAllPapelGrupo();
 
@@ -146,5 +146,7 @@ namespace Core.Service
         /// HttpStatusCode.NotImplemented: Erro na operação
         /// </returns>
         Task<HttpStatusCode> AtivarAssociado(string cpf);
+
+        Task<IEnumerable<AutoCompleteRegenteDTO>> GetRegentesForAutoCompleteAsync(int idGrupoMusical);
     }
 }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NuGet.Protocol;
+using System.Net;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -83,14 +84,14 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 var instrumentoMusicalModel = _mapper.Map<Instrumentomusical>(instrumentoMusicalViewModel);
                 switch (await _instrumentoMusical.Create(instrumentoMusicalModel))
                 {
-                    case 100:
+                    case HttpStatusCode.PreconditionFailed:
                         Notificar("A data de aquisição <b>" + instrumentoMusicalModel.DataAquisicao.ToShortDateString() + "</b> é maior que a data de Hoje <b>" + DateTime.Now.ToShortDateString() + "</b>", Notifica.Alerta);
                         break;
-                    case 500:
-                        Notificar("Falha ao <b>cadastrar<b> instrumento.", Notifica.Erro);
+                    case HttpStatusCode.InternalServerError:
+                        Notificar("Falha ao <b>cadastrar</b> instrumento.", Notifica.Erro);
                         break;
-                    case 200:
-                        Notificar("Instrumento <b>Cadastrado<b> com <b>Sucesso<b>.", Notifica.Sucesso);
+                    case HttpStatusCode.Created:
+                        Notificar("Instrumento <b>Cadastrado</b> com <b>Sucesso</b>.", Notifica.Sucesso);
                         return RedirectToAction(nameof(Index));
                 }
 
@@ -150,7 +151,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             if (ModelState.IsValid)
             {
-                if (await _instrumentoMusical.Edit(_mapper.Map<Instrumentomusical>(instrumentoMusicalViewModel)) == 500)
+                if (await _instrumentoMusical.Edit(_mapper.Map<Instrumentomusical>(instrumentoMusicalViewModel)) == HttpStatusCode.InternalServerError)
                 {
                     Notificar("Falha ao <b>Editar</b> instrumento.", Notifica.Erro);
                     return RedirectToAction(nameof(Edit));
@@ -201,16 +202,16 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             switch(await _instrumentoMusical.Delete(id))
             {
-                case 200:
+                case HttpStatusCode.OK:
                     Notificar("Instrumento Musical <b>Excluído</b> com <b>Sucesso</b>.", Notifica.Sucesso);
                     break;
-                case 401:
+                case HttpStatusCode.PreconditionFailed:
                     Notificar($"Desculpe, não é possível <b>Excluir</b> esse <b>Instrumento Musical</b> pois ele está associado a <b>Empréstimos ou Devoluções</b>", Notifica.Erro);
                     return RedirectToAction(nameof(Delete), id);
-                case 404:
+                case HttpStatusCode.NotFound:
                     Notificar($"Nenhum <b>Instrumento Musical</b> corresponde ao id <b>{id}</b>.", Notifica.Erro);
                     break;
-                case 500:
+                case HttpStatusCode.InternalServerError:
                     Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Exclusão</b>, se isso persistir entre em contato com o suporte", Notifica.Erro);
                     return RedirectToAction(nameof(Delete), id);
             }

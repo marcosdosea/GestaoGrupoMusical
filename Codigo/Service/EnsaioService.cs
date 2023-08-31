@@ -3,6 +3,7 @@ using Core.DTO;
 using Core.Service;
 using Email;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace Service
 {
@@ -18,7 +19,7 @@ namespace Service
         /// </summary>
         /// <param name="ensaio"></param>
         /// <returns>Verdadeiro(<see langword="true" />) se cadastrou com sucesso ou Falso(<see langword="false" />) se houve algum erro.</returns>
-        public async Task<int> Create(Ensaio ensaio)
+        public async Task<int> Create(Ensaio ensaio, IEnumerable<int> idRegentes)
         {
             using var transaction = _context.Database.BeginTransaction();
 
@@ -30,32 +31,42 @@ namespace Service
                     {
                         await _context.Ensaios.AddAsync(ensaio);
 
-                        var associados = _context.Pessoas
-                                         .Where(p => p.IdPapelGrupo == 1 && p.Ativo == 1 && p.IdGrupoMusical == ensaio.IdGrupoMusical)
-                                         .Select(pessoa => new { pessoa.Id, pessoa.Email }).AsNoTracking();
+                        var associadosRegentes = _context.Pessoas
+                                         .Where(p => (p.IdPapelGrupo == 1 || p.IdPapelGrupo == 5) && p.Ativo == 1 && p.IdGrupoMusical == ensaio.IdGrupoMusical)
+                                         .Select(pessoa => new { pessoa.Id, pessoa.Email, pessoa.IdPapelGrupo }).AsNoTracking();
 
                         await _context.SaveChangesAsync();
 
                         EmailModel email = new()
                         {
                             Assunto = "Batalá - Novo Ensaio Cadastrado",
-                            AddresseeName = "Associado",
+                            AddresseeName = "Associados e Regentes",
                             Body = "<div style=\"text-align: center;\">\r\n    " +
                                     $"<h3>Um novo ensaio foi cadastrado.</h3>\r\n" +
                                     "<div style=\"font-size: large;\">\r\n        " +
                                     $"<dt style=\"font-weight: 700;\">Data e Horário de Início:</dt><dd>{ensaio.DataHoraInicio}</dd>" +
                                     $"<dt style=\"font-weight: 700;\">Data e Horário de Fim:</dt><dd>{ensaio.DataHoraFim}</dd>\n</div>"
                         };
-
-                        await associados.ForEachAsync(async associado => {
+                        
+                        await associadosRegentes.ForEachAsync(async associadoRegente => {
                             Ensaiopessoa ensaioPessoa = new()
                             {
                                 IdEnsaio = ensaio.Id,
-                                IdPessoa = associado.Id,
+                                IdPessoa = associadoRegente.Id,
                                 Presente = 1
                             };
-                            await _context.Ensaiopessoas.AddAsync(ensaioPessoa);
-                            email.To.Add(associado.Email);
+                            if(associadoRegente.IdPapelGrupo == 5 && idRegentes.Contains(associadoRegente.Id))
+                            {
+                                ensaioPessoa.IdPapelGrupoPapelGrupo = associadoRegente.IdPapelGrupo;
+                                await _context.Ensaiopessoas.AddAsync(ensaioPessoa);
+                                email.To.Add(associadoRegente.Email);
+                            }
+                            else
+                            {
+                                ensaioPessoa.IdPapelGrupoPapelGrupo = associadoRegente.IdPapelGrupo;
+                                await _context.Ensaiopessoas.AddAsync(ensaioPessoa);
+                                email.To.Add(associadoRegente.Email);
+                            }
                         });
 
                         await EmailService.Enviar(email);
@@ -195,7 +206,7 @@ namespace Service
 
         public EnsaioDetailsDTO GetDetailsDTO(int idEnsaio)
         {
-            var query = _context.Ensaios
+            /*var query = _context.Ensaios
                 .Select(g => new EnsaioDetailsDTO
                 {
                     Id = g.Id,
@@ -210,12 +221,13 @@ namespace Service
 
                 }).Where(g => g.Id == idEnsaio);
 
-            return query.First();
+            return query.First();*/
+            throw new NotImplementedException();
         }
 
         public async Task<EnsaioFrequenciaDTO?> GetFrequenciaAsync(int idEnsaio, int idGrupoMusical)
         {
-            var query = from ensaio in _context.Ensaios
+            /*var query = from ensaio in _context.Ensaios
                         where ensaio.Id == idEnsaio && ensaio.IdGrupoMusical == idGrupoMusical
                         select new EnsaioFrequenciaDTO
                         {
@@ -239,7 +251,8 @@ namespace Service
                             }).AsEnumerable()
                         };
 
-            return await query.AsNoTracking().SingleOrDefaultAsync();
+            return await query.AsNoTracking().SingleOrDefaultAsync();*/
+            throw new NotImplementedException();
         }
 
         public async Task<int> RegistrarFrequenciaAsync(List<EnsaioListaFrequenciaDTO> frequencias)

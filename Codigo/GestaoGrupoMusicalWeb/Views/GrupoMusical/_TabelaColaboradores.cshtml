@@ -1,0 +1,50 @@
+﻿@model IEnumerable<Core.DTO.ColaboradoresDTO>
+
+<tbody class="table-responsive">
+    @foreach (var item in Model)
+    {
+        <tr class="border-bottom border-danger border-opacity-75 p-3 align-middle">
+            <td class="p-3">
+                @Html.DisplayFor(modelItem => item.Cpf)
+            </td>
+            <td class="p-3">
+                @Html.DisplayFor(modelItem => item.Nome)
+            </td>
+            <td class="p-3">
+                @Html.DisplayFor(modelItem => item.Data)
+            </td>
+            <td class="p-3">
+                @Html.DisplayFor(modelItem => item.Papel)
+            </td>
+            <td class="d-flex flex-wrap border-0 align-items-center">
+                <form Id="@(item.Id + "_confirmar")" asp-action="Delete" asp-route-Id="@item.Id" method="post" asp-controller="Colaborador" class="me-2">
+                    <a onclick="showModal('@(item.Id + "_confirmar")', 'colaboradorModal')" class="btn btn-sm btn-secondary m-2" role="button" data-bs-toggle="modal" data-bs-target="#colaboradorModal">
+                        <i class="fa-solid fa-xmark"> </i>
+                        Excluir
+                    </a>
+                </form>
+            </td>
+        </tr>
+    }
+</tbody>
+
+<div class="modal fade" id="colaboradorModal" tabindex="-1" aria-labelledby="colaboradorLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="admLabel">Confirmar Exclusão do Colaborador</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Deseja <b>Remover</b> esse <b>Colaborador</b>?
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary col-3 me-4" data-bs-dismiss="modal">Não</button>
+                <form method="post">
+                    <button type="submit" class="btn btn-secondary col-3">Sim</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

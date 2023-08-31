@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,22 +20,22 @@ namespace Service
             _context = context;
         }
 
-        public async Task<int> Create(Figurino figurino)
+        public async Task<HttpStatusCode> Create(Figurino figurino)
         {
             try
             {
                 await _context.Figurinos.AddAsync(figurino);
                 await _context.SaveChangesAsync();
 
-                return 200;
+                return HttpStatusCode.Created;
             }
             catch
             {
-                return 500; //se tudo der errado
+                return HttpStatusCode.InternalServerError; //se tudo der errado
             }
         }
 
-        public async Task<int> Delete(int id)
+        public async Task<HttpStatusCode> Delete(int id)
         {
             try
             {
@@ -44,27 +45,27 @@ namespace Service
 
                 await _context.SaveChangesAsync();
 
-                return 200;
+                return HttpStatusCode.OK;
             }
             catch
             {
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
 
         }
 
-        public async Task<int> Edit(Figurino figurino)
+        public async Task<HttpStatusCode> Edit(Figurino figurino)
         {
             try
             {
                 _context.Update(figurino);
                 await _context.SaveChangesAsync();
 
-                return 200;
+                return HttpStatusCode.OK;
             }
             catch
             {
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
         }
 
@@ -104,15 +105,15 @@ namespace Service
             return await query.AsNoTracking().ToListAsync();
         }
 
-        public async Task<int> CreateEstoque(Figurinomanequim estoque)
+        public async Task<HttpStatusCode> CreateEstoque(Figurinomanequim estoque)
         {
             if(estoque.IdManequim == null || estoque.IdFigurino == null)
             {
-                return 400;//falta algum dos id's
+                return HttpStatusCode.PreconditionFailed;//falta algum dos id's
             }
             else if(estoque.QuantidadeDisponivel <= 0)
             {
-                return 401;//nao existe quantidade para disponibilizar
+                return HttpStatusCode.BadRequest;//nao existe quantidade para disponibilizar
             }
 
             try
@@ -127,22 +128,22 @@ namespace Service
 
                     await _context.SaveChangesAsync();
 
-                    return 201; //caso estoque ja existia
+                    return HttpStatusCode.Accepted; //caso estoque ja existia
                 }
 
                 await _context.Figurinomanequims.AddAsync(estoque);
             }
             catch
             {
-                return 500;//deu tudo errado
+                return HttpStatusCode.InternalServerError;//deu tudo errado
             }
 
 
             await _context.SaveChangesAsync();
-            return 200;
+            return HttpStatusCode.Created;
         }
 
-        public async Task<int> DeleteEstoque(int idFigurino, int idManequim)
+        public async Task<HttpStatusCode> DeleteEstoque(int idFigurino, int idManequim)
         {
             try
             {
@@ -154,23 +155,23 @@ namespace Service
                     _context.Figurinomanequims.Update(estoque);
                     await _context.SaveChangesAsync();
 
-                    return 400;
+                    return HttpStatusCode.BadRequest;
                 }
                 else
                 {
                     _context.Figurinomanequims.Remove(estoque);
                     await _context.SaveChangesAsync();
 
-                    return 200;
+                    return HttpStatusCode.OK;
                 }
             }
             catch
             {
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
         }
 
-        public async Task<int> EditEstoque(Figurinomanequim estoque)
+        public async Task<HttpStatusCode> EditEstoque(Figurinomanequim estoque)
         {
             try
             {
@@ -180,13 +181,13 @@ namespace Service
                     estoqueFound.QuantidadeDisponivel = estoque.QuantidadeDisponivel;
                     _context.Figurinomanequims.Update(estoqueFound);
                     _context.SaveChanges();
-                    return 200;
+                    return HttpStatusCode.OK;
                 }
-                return 404;
+                return HttpStatusCode.NotFound;
             }
             catch (Exception)
             {
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
         }
 
