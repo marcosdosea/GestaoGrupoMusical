@@ -111,6 +111,7 @@ namespace Service
                     {
                         movimentacao.IdAssociado = idAssociadoUltimaMovimentacao;
                     }
+                    movimentacao.ConfirmacaoRecebimento = 1;
                     figurinoEstoque.QuantidadeDisponivel --;
                     figurinoEstoque.QuantidadeDescartada ++;
                 }
