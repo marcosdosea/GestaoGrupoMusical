@@ -14,7 +14,7 @@ namespace Core.Service
         /// </summary>
         /// <param name="instrumentoMusical">Objeto instrumento musical passado</param>
         /// <returns>
-        /// HttpStatusCode.OK - Sucesso instrumento musical deletado<para />
+        /// HttpStatusCode.OK - Sucesso instrumento musical criado<para />
         /// HttpStatusCode.PreconditionFailed - Não passou na condicional, onde a data de aquisição tem que ser maior que o dia atual
         /// HttpStatusCode.InternalServerError - Erro interno
         /// </returns>
