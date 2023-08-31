@@ -83,7 +83,7 @@
     @Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", new { page = page }), new X.PagedList.Web.Common.PagedListRenderOptions
     {
     ActiveLiElementClass = "bg-danger",
-    PageCountAndCurrentLocationFormat = "{0} de {1}",
+    PageCountAndCurrentLocationFormat = "Página {0} de {1}",
     ContainerDivClasses = new[] { "navigation","d-flex","justify-content-center"},
     PageClasses = new[] { "page-link", "bg-danger", "bg-opacity-75", "text-dark"},
     DisplayPageCountAndCurrentLocation = true,
