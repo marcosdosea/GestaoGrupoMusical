@@ -436,14 +436,19 @@ namespace Service
         public async Task<HttpStatusCode> ToCollaborator(int id, int idPapelGrupo)
         {
             var pessoa = Get(id);
+            var user = await _userManager.FindByNameAsync(pessoa.Cpf);
 
-            if(pessoa == null)
+            if (pessoa == null || user == null)
             {
                 return HttpStatusCode.NotFound;
             }
 
             try
             {
+                //promoção de role
+                await ChangeUserRole(user, pessoa.IdPapelGrupo, idPapelGrupo);
+                //==============
+
                 pessoa.IdPapelGrupo = idPapelGrupo;
 
                 _context.Update(pessoa);
@@ -790,6 +795,31 @@ namespace Service
                         .Select(p => new AutoCompleteRegenteDTO { Id = p.Id, Nome = p.Nome });
 
             return await query.AsNoTracking().ToListAsync();
+        }
+
+        public async Task<HttpStatusCode> ChangeUserRole(UsuarioIdentity user, int idRoleAtual, int idRrolePromo)
+        {
+            try
+            {
+                string papelAnterior = (await _context.Papelgrupos.FindAsync(idRoleAtual)).Nome.ToUpper();
+                string papelPromoNome = (await _context.Papelgrupos.FindAsync(idRrolePromo)).Nome.ToUpper();
+
+                bool roleExists = await _roleManager.RoleExistsAsync(papelPromoNome);
+
+                if (!roleExists)
+                {
+                    await _roleManager.CreateAsync(new IdentityRole(papelPromoNome));
+                }
+                await _userManager.RemoveFromRoleAsync(user, papelAnterior);
+
+                await _userManager.AddToRoleAsync(user, papelPromoNome);
+            }
+            catch
+            {
+                return HttpStatusCode.InternalServerError;
+            }
+
+            return HttpStatusCode.OK;
         }
     }
 }
