@@ -271,7 +271,8 @@ namespace Service
                                        Data = movimentacoesFigurino.Data,
                                        NomeFigurino = movimentacoesFigurino.IdFigurinoNavigation.Nome,
                                        Tamanho = movimentacoesFigurino.IdManequimNavigation.Tamanho,
-                                       Status = movimentacoesFigurino.ConfirmacaoRecebimento == 1 ? "Confirmado" : "Agurdando Confirmação"
+                                       Status = movimentacoesFigurino.ConfirmacaoRecebimento == 1 ? "Confirmado" : "Agurdando Confirmação",
+                                       Quantidade = movimentacoesFigurino.Quantidade
 
                                    }).AsNoTracking().ToListAsync();
 
@@ -285,7 +286,8 @@ namespace Service
                                         Data = movimentacoesFigurino.Data,
                                         NomeFigurino = movimentacoesFigurino.IdFigurinoNavigation.Nome,
                                         Tamanho = movimentacoesFigurino.IdManequimNavigation.Tamanho,
-                                        Status = movimentacoesFigurino.ConfirmacaoRecebimento == 1 ? "Confirmado" : "Agurdando Confirmação"
+                                        Status = movimentacoesFigurino.ConfirmacaoRecebimento == 1 ? "Confirmado" : "Agurdando Confirmação",
+                                        Quantidade = movimentacoesFigurino.Quantidade
                                     }
 
                               ).AsNoTracking().ToListAsync();

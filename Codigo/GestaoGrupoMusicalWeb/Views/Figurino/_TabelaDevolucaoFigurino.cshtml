@@ -7,6 +7,7 @@
                 <th>@Html.DisplayNameFor(model => model.Data) </th>
                 <th>@Html.DisplayNameFor(model => model.NomeFigurino)</th>
                 <th>@Html.DisplayNameFor(model => model.Tamanho)</th>
+                <th>@Html.DisplayNameFor(model => model.Quantidade)</th>
                 <th>@Html.DisplayNameFor(model => model.Status)</th>
                 <th>Ações</th>
             </tr>
@@ -18,6 +19,7 @@
                     <td>@movimentacao.Data.ToString("dd/MM/yyyy")</td>
                     <td>@movimentacao.NomeFigurino</td>
                     <td>@movimentacao.Tamanho</td>
+                    <td>@movimentacao.Quantidade</td>
                     <td>@movimentacao.Status</td>
                     @if (@movimentacao.Status.Equals("Agurdando Confirmação"))
                     {

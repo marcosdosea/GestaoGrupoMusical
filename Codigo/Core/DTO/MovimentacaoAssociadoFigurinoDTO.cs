@@ -22,6 +22,7 @@ namespace Core.DTO
             public string Tamanho { get; set; }
             [Display(Name="Status")]
             public string Status { get; set; }
+            public int Quantidade { get; set; } 
         }
 
         public class MovimentacoesAssociadoFigurino
