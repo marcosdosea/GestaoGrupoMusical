@@ -92,7 +92,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     case HttpStatusCode.OK:
                         switch (await RequestPasswordReset(_userManager, pessoaModel.Email, pessoaModel.Nome))
                         {
-                            case 200:
+                            case HttpStatusCode.OK:
                                 mensagem = "<b>Sucesso</b>! Associado cadastrado e enviado email para redefinição de senha.";
                                 Notificar(mensagem, Notifica.Sucesso);
                                 break;

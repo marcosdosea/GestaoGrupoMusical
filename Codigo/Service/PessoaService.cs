@@ -190,10 +190,10 @@ namespace Service
             return _context.Pessoas.AsNoTracking();
         }
 
-        public async Task<int> AddAdmGroup(Pessoa pessoa)
+        public async Task<HttpStatusCode> AddAdmGroup(Pessoa pessoa)
         {
             using var transaction = _context.Database.BeginTransaction();
-            int sucesso; //será usada para o retorno 200/201 de sucesso
+            HttpStatusCode sucesso; //será usada para o retorno 200/201 de sucesso
 
             try
             {
@@ -212,10 +212,10 @@ namespace Service
                     pessoa.IsentoPagamento = 1;
                     pessoa.Telefone1 = "";
 
-                    if(await Create(pessoa) != HttpStatusCode.OK)
+                    if(await Create(pessoa) != HttpStatusCode.Created)
                     {
                         await transaction.RollbackAsync();
-                        return 500;//nao foi possivel criar a pessoa
+                        return HttpStatusCode.NotAcceptable;//nao foi possivel criar a pessoa
                     }
 
                     var user = CreateUser();
@@ -237,7 +237,7 @@ namespace Service
                         var userDb = await _userManager.FindByNameAsync(pessoa.Cpf);
                         await _userManager.AddToRoleAsync(userDb, "ADMINISTRADOR GRUPO");
                     }
-                    sucesso = 200; //usuario CRIADO como administrador de grupo musical
+                    sucesso = HttpStatusCode.Created; //usuario CRIADO como administrador de grupo musical
                 }
                 //caso exista, seja do mesmo grupo musical e não seja adm de grupo (3)
                 else if (pessoaF.IdGrupoMusical == pessoa.IdGrupoMusical && pessoaF.IdPapelGrupo != 3)
@@ -289,20 +289,20 @@ namespace Service
                     catch 
                     {
                         await transaction.RollbackAsync();
-                        return 500;//o usuario já possui cadastro em um grupo musical, não foi possiveç alterar ele para adm grupo musical
+                        return HttpStatusCode.NotAcceptable;//o usuario já possui cadastro em um grupo musical, não foi possivel alterar ele para adm grupo musical
                     }
 
-                    sucesso = 201; //usuario promovido a administrador de grupo musical
+                    sucesso = HttpStatusCode.OK; //usuario promovido a administrador de grupo musical
                 }
                
                 else if (pessoaF.IdGrupoMusical == pessoa.IdGrupoMusical && pessoaF.IdPapelGrupo == 3)
                 {
-                    return 401; // usuario já é administrador de grupo musical
+                    return HttpStatusCode.BadRequest; // usuario já é administrador de grupo musical
                 }
                 else
                 {
                     await transaction.RollbackAsync();
-                    return 400;//erro 400, o usuario associado a outro grupo musical
+                    return HttpStatusCode.NotAcceptable;//erro 400, o usuario associado a outro grupo musical
                 }
 
                 await transaction.CommitAsync();
@@ -311,7 +311,7 @@ namespace Service
             catch
             {
                 await transaction.RollbackAsync();
-                return 501;//erro 500, do servidor
+                return HttpStatusCode.InternalServerError;//erro 500, do servidor
             }
         }
         /// <summary>
@@ -371,7 +371,7 @@ namespace Service
             try
             {
                 HttpStatusCode createResult = await Create(pessoa);
-                if (createResult != HttpStatusCode.OK)
+                if (createResult != HttpStatusCode.Created)
                 {
                     await transaction.RollbackAsync();
                     return createResult;
@@ -405,7 +405,7 @@ namespace Service
             catch
             {
                 await transaction.RollbackAsync();
-                return HttpStatusCode.BadRequest;
+                return HttpStatusCode.InternalServerError;
             }
         }
 
@@ -743,20 +743,20 @@ namespace Service
 
                         if (await Edit(pessoa) != HttpStatusCode.OK)
                         {
-                            return HttpStatusCode.NoContent;
+                            return HttpStatusCode.NotFound;
                         }
 
                         return HttpStatusCode.OK;
                     }
                     else
                     {
-                        return HttpStatusCode.NotAcceptable;
+                        return HttpStatusCode.Unauthorized;
                     }  
                     //===========================================================//
                 }
                 else
                 {
-                    return HttpStatusCode.BadRequest;
+                    return HttpStatusCode.NotImplemented;
                 }
                 //=================================//
             }
