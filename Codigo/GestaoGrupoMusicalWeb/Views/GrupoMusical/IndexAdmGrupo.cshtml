@@ -7,9 +7,17 @@
 
 <partial name="_Notificar">
 
-<div class="d-flex justify-content-between align-items-center">
-    <h5>@ViewData["Title"]</h5>
-</div>
+<h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">@ViewData["Title"]</h1>
+
+<nav>
+    <ol class="breadcrumb px-3">
+        <strong>
+                <a class="text-danger text-opacity-75" asp-action="IndexAdmGrupo"> <i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i>@ViewData["Title"]</a>
+        </strong>
+    </ol>
+</nav>
+
+<partial name="_EditAdmGrupo" model="Model.GrupoMusicalViewModel"/>
 
 <partial name="_AddColaborador" model="Model.ListaAssociados"/>
 
@@ -40,3 +48,9 @@
 
     </table>
 </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
