@@ -436,17 +436,34 @@ namespace Service
         public async Task<HttpStatusCode> ToCollaborator(int id, int idPapelGrupo)
         {
             var pessoa = Get(id);
+            var user = await _userManager.FindByNameAsync(pessoa.Cpf);
 
-            if(pessoa == null)
-            {
-                return HttpStatusCode.NotFound;
-            }
+            if (pessoa == null)
+                if (pessoa == null || user == null)
+                {
+                    return HttpStatusCode.NotFound;
+                }
 
             try
             {
+                string papelAnterior = (await _context.Papelgrupos.FindAsync(pessoa.IdPapelGrupo)).Nome.ToUpper();
+                string papelPromoNome = (await _context.Papelgrupos.FindAsync(idPapelGrupo)).Nome.ToUpper();
+
                 pessoa.IdPapelGrupo = idPapelGrupo;
 
                 _context.Update(pessoa);
+
+                //promoção de role
+                bool roleExists = await _roleManager.RoleExistsAsync(papelPromoNome);
+
+                if (!roleExists)
+                {
+                    await _roleManager.CreateAsync(new IdentityRole(papelPromoNome));
+                }
+                await _userManager.RemoveFromRoleAsync(user, papelAnterior);
+                await _userManager.AddToRoleAsync(user, papelPromoNome);
+
+                //==============
 
                 await _context.SaveChangesAsync();
 
@@ -483,14 +500,15 @@ namespace Service
             {
                 try
                 {
+
+                    //rebaixamento de role
+                    await ChangeUserRole(user, pessoa.IdPapelGrupo, idPapel);
+                    //======================================================================
+
                     pessoa.IdPapelGrupo = idPapel;
 
                     _context.Update(pessoa);
 
-                    //rebaixamento de role
-                    ChangeUserRole(user, pessoa.IdPapelGrupo, idPapel);
-                    //======================================================================
-                    
                     pessoa.IdPapelGrupo = idPapel;
 
                     _context.Update(pessoa);
@@ -823,11 +841,12 @@ namespace Service
                     await _roleManager.CreateAsync(new IdentityRole(papelPromoNome));
                 }
                 await _userManager.RemoveFromRoleAsync(user, papelAnterior);
+
                 await _userManager.AddToRoleAsync(user, papelPromoNome);
             }
             catch
             {
-                throw new InvalidOperationException("Não foi possível fazer a troca de ROLES");
+                return HttpStatusCode.InternalServerError;
             }
 
             return HttpStatusCode.OK;   
