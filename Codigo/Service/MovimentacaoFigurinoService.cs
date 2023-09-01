@@ -154,6 +154,11 @@ namespace Service
                     await EmailService.Enviar(email);
                 } else if (movimentacao.Status.Equals("DANIFICADO"))
                 {
+                    if(movimentacao.Quantidade > figurinoEstoque.QuantidadeDisponivel)
+                    {
+                        await transaction.RollbackAsync();
+                        return 405;
+                    }
                     
                     movimentacao.ConfirmacaoRecebimento = 1;
                     figurinoEstoque.QuantidadeDisponivel -= movimentacao.Quantidade;
