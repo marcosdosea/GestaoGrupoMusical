@@ -438,32 +438,20 @@ namespace Service
             var pessoa = Get(id);
             var user = await _userManager.FindByNameAsync(pessoa.Cpf);
 
-            if (pessoa == null)
-                if (pessoa == null || user == null)
-                {
-                    return HttpStatusCode.NotFound;
-                }
+            if (pessoa == null || user == null)
+            {
+                return HttpStatusCode.NotFound;
+            }
 
             try
             {
-                string papelAnterior = (await _context.Papelgrupos.FindAsync(pessoa.IdPapelGrupo)).Nome.ToUpper();
-                string papelPromoNome = (await _context.Papelgrupos.FindAsync(idPapelGrupo)).Nome.ToUpper();
+                //promoção de role
+                await ChangeUserRole(user, pessoa.IdPapelGrupo, idPapelGrupo);
+                //==============
 
                 pessoa.IdPapelGrupo = idPapelGrupo;
 
                 _context.Update(pessoa);
-
-                //promoção de role
-                bool roleExists = await _roleManager.RoleExistsAsync(papelPromoNome);
-
-                if (!roleExists)
-                {
-                    await _roleManager.CreateAsync(new IdentityRole(papelPromoNome));
-                }
-                await _userManager.RemoveFromRoleAsync(user, papelAnterior);
-                await _userManager.AddToRoleAsync(user, papelPromoNome);
-
-                //==============
 
                 await _context.SaveChangesAsync();
 
@@ -849,7 +837,7 @@ namespace Service
                 return HttpStatusCode.InternalServerError;
             }
 
-            return HttpStatusCode.OK;   
+            return HttpStatusCode.OK;
         }
     }
 }
