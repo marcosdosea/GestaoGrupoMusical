@@ -61,7 +61,7 @@ namespace Core.Service
         /// </summary>
         /// <param name="cpf"></param>
         /// <returns>Id do grupo</returns>
-        int GetIdGrupo(string cpf);
+        Task<int> GetIdGrupo(string cpf);
 
         /// <summary>
         /// Retorna todas as pessoas que possuem um papel acima de associado
