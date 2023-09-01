@@ -13,7 +13,8 @@ namespace Service
 
         public GrupoMusicalService(GrupoMusicalContext context)
         {
-            _context = context;}
+            _context = context;
+        }
 
         /// <summary>
         /// Metodo usado para adicionar o Grupo Musical
@@ -42,7 +43,6 @@ namespace Service
         /// <returns>200 caso seja sucesso ou 500 se ouver algum erro ao executar o metodo</returns>
         public async Task<HttpStatusCode> Delete(int id)
         {
-
             var grupo = await _context.Grupomusicals.FindAsync(id);
 
             try
@@ -56,7 +56,6 @@ namespace Service
             {
                 return HttpStatusCode.InternalServerError;
             }
-
         }
         /// <summary>
         /// Metodo usado para editar um grupo musical
@@ -65,7 +64,6 @@ namespace Service
         /// <returns>200 caso seja sucesso ou 500 se ouver algum erro ao executar o metodo</returns>
         public async Task<HttpStatusCode> Edit(Grupomusical grupomusical)
         {
-
             try
             {
                 _context.Update(grupomusical);
@@ -77,7 +75,6 @@ namespace Service
             {
                 return HttpStatusCode.InternalServerError;
             }
-
         }
         /// <summary>
         /// Pegar um Grupo Musical
@@ -115,11 +112,11 @@ namespace Service
             return query.AsNoTracking();
         }
 
-        public int GetIdGrupo(string cpf)
+        public async Task<int> GetIdGrupo(string cpf)
         {
-            var query = _context.Pessoas
+            var query = await _context.Pessoas
                  .Where(g => g.Cpf == cpf)
-                 .Select(g => g.IdGrupoMusical).FirstOrDefault();
+                 .Select(g => g.IdGrupoMusical).FirstOrDefaultAsync();
             return query;
         }
 
