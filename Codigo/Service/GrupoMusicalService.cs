@@ -32,7 +32,7 @@ namespace Service
             catch (Exception ex)
             {
 
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
         }
         /// <summary>
@@ -47,7 +47,6 @@ namespace Service
 
             try
             {
-
                 _context.Remove(grupo);
                 await _context.SaveChangesAsync();
 
@@ -55,7 +54,7 @@ namespace Service
             }
             catch (Exception ex)
             {
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
 
         }
@@ -76,8 +75,7 @@ namespace Service
             }
             catch
             {
-
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
 
         }
