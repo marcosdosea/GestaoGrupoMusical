@@ -75,7 +75,7 @@ namespace Core.Service
         /// NotFound - O id não corresponde a nenhuma movimentação <para />
         /// 500 - Erro interno
         /// </returns>
-        Task<int> ConfirmarMovimentacao(int idMovimentacao, int idAssociado);
+        Task<HttpStatusCode> ConfirmarMovimentacao(int idMovimentacao, int idAssociado);
         /// <summary>
         /// Buscar a confirmação do usuario
         /// </summary>
