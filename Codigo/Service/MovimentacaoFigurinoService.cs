@@ -37,13 +37,13 @@ namespace Service
                     if (figurinoEstoque.QuantidadeDisponivel == 0 && movimentacao.Status.Equals("ENTREGUE"))
                     {
                         await transaction.RollbackAsync();
-                        return 401; //não há peças disponiveis para emprestar
+                        return HttpStatusCode.NoContent; //não há peças disponiveis para emprestar
                     }
                 }
                 else
                 {
                     await transaction.RollbackAsync();
-                    return 400; //estoque nao existe, talvez id esteja errado
+                    return HttpStatusCode.NotFound; //estoque nao existe, talvez id esteja errado
                 }
 
                 if (movimentacao.Status.Equals("ENTREGUE"))
@@ -52,7 +52,7 @@ namespace Service
                         figurinoEstoque.QuantidadeDisponivel)
                     {
                         await transaction.RollbackAsync();
-                        return 401; //não há peças disponiveis para emprestar
+                        return HttpStatusCode.NoContent; //não há peças disponiveis para emprestar
                     }
                     figurinoEstoque.QuantidadeDisponivel -= movimentacao.Quantidade;
                     figurinoEstoque.QuantidadeEntregue+= movimentacao.Quantidade;
@@ -63,7 +63,7 @@ namespace Service
                     if (await AssociadoEmprestimo(movimentacao.IdAssociado, movimentacao.IdFigurino, movimentacao.IdManequim))
                     {
                         await transaction.RollbackAsync();
-                        return 402; //associado nao possue nada emprestado para devolver
+                        return HttpStatusCode.PreconditionFailed; //associado nao possue nada emprestado para devolver
                     }
                     if (movimentacao.Status.Equals("DEVOLVIDO"))
                     {
@@ -72,12 +72,12 @@ namespace Service
                         if (confiQuantAssociado.Confirmar != 1)
                         {
                             await transaction.RollbackAsync();
-                            return 403; //não houve confirmação
+                            return HttpStatusCode.FailedDependency; //não houve confirmação
                         }
                         if (movimentacao.Quantidade <= 0 || movimentacao.Quantidade > confiQuantAssociado.Quantidade)
                         {
                             await transaction.RollbackAsync();
-                            return 403; //tentativa de devolução de figurino a mais ou a menos da quantidade que o associado possui
+                            return HttpStatusCode.BadRequest; //tentativa de devolução de figurino a mais ou a menos da quantidade que o associado possui
                         }
                         else
                         {
@@ -161,11 +161,11 @@ namespace Service
             catch
             {
                 await transaction.RollbackAsync();
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
 
             await transaction.CommitAsync();
-            return 200;
+            return HttpStatusCode.OK;
         }
 
         public async Task<HttpStatusCode> DeleteAsync(int id)
