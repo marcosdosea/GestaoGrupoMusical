@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using static Core.DTO.InstrumentoAssociadoDTO;
@@ -19,7 +20,7 @@ namespace Core.Service
         /// 200 - Sucesso
         /// 500 - Erro interno
         /// </returns>
-        Task<int> CreateAsync(Movimentacaofigurino movimentacao);
+        Task<HttpStatusCode> CreateAsync(Movimentacaofigurino movimentacao);
 
         Task<Movimentacaofigurino?> GetEmprestimoByIdFigurino(int idFigurino);
 
@@ -44,7 +45,7 @@ namespace Core.Service
         /// 400: movimentacao nao foi encontrada
         /// 500: algo deu errado ao remover/salvar a transação
         /// </returns>
-        Task<int> DeleteAsync(int id);
+        Task<HttpStatusCode> DeleteAsync(int id);
 
         Task<IEnumerable<EstoqueDTO>> GetEstoque(int idFigurino);
         /// <summary>
