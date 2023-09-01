@@ -69,7 +69,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    figurinoViewModel.IdGrupoMusical = _grupoMusicalService.GetIdGrupo(User.Identity.Name);
+                    figurinoViewModel.IdGrupoMusical = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
 
                     var figurino = _mapper.Map<Figurino>(figurinoViewModel);
                     HttpStatusCode resul = await _figurinoService.Create(figurino);
@@ -117,7 +117,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 {
                     var figurino = _mapper.Map<Figurino>(figurinoViewModel);
 
-                    figurino.IdGrupoMusical = _grupoMusicalService.GetIdGrupo(User.Identity.Name);
+                    figurino.IdGrupoMusical = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
 
                     HttpStatusCode resul = await _figurinoService.Edit(figurino);
 
@@ -288,7 +288,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
-                int idGrupo = _grupoMusicalService.GetIdGrupo(User.Identity.Name);
+                int idGrupo = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
                 var associados = _pessoaService.GetAllPessoasOrder(idGrupo);
 
                 var movimentacoes = await _movimentacaoService.GetAllByIdFigurino(id);
