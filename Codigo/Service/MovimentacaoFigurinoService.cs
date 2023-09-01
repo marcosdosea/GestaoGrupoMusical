@@ -157,7 +157,7 @@ namespace Service
                     if(movimentacao.Quantidade > figurinoEstoque.QuantidadeDisponivel)
                     {
                         await transaction.RollbackAsync();
-                        return 405;
+                        return 401;
                     }
                     
                     movimentacao.ConfirmacaoRecebimento = 1;
