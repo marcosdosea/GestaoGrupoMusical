@@ -154,11 +154,14 @@ namespace Service
                     await EmailService.Enviar(email);
                 } else if (movimentacao.Status.Equals("DANIFICADO"))
                 {
+                    
                     movimentacao.ConfirmacaoRecebimento = 1;
                     figurinoEstoque.QuantidadeDisponivel -= movimentacao.Quantidade;
                     figurinoEstoque.QuantidadeDescartada += movimentacao.Quantidade ;
-
+                    
+                    _context.Figurinomanequims.Update(figurinoEstoque);
                     await _context.AddAsync(movimentacao);
+                    await _context.SaveChangesAsync();
                 }
             }
             catch
