@@ -352,7 +352,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 Data = movimentacaoViewModel.Data,
                 IdFigurino = movimentacaoViewModel.IdFigurino,
                 IdManequim = movimentacaoViewModel.IdManequim,
-                IdAssociado = movimentacaoViewModel.IdAssociado,
+                IdAssociado = (movimentacaoViewModel.Movimentacao.Equals("DANIFICADO")) ? colaborador.Id : movimentacaoViewModel.IdAssociado,
                 IdColaborador = colaborador.Id,
                 Status = status,
                 ConfirmacaoRecebimento = 0,
