@@ -77,7 +77,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> Create(InstrumentoMusicalViewModel instrumentoMusicalViewModel)
         {
 
-            int idGrupo = _grupoMusical.GetIdGrupo(User.Identity.Name);
+            int idGrupo = await _grupoMusical.GetIdGrupo(User.Identity.Name);
             instrumentoMusicalViewModel.IdGrupoMusical = idGrupo;
             if (ModelState.IsValid)
             {
@@ -255,7 +255,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             movimentacaoModel.IdInstrumentoMusical = instrumento.Id;
             movimentacaoModel.NomeInstrumento = await _instrumentoMusical.GetNomeInstrumento(id);
 
-            int idGrupo = _grupoMusical.GetIdGrupo(User.Identity.Name);
+            int idGrupo = await _grupoMusical.GetIdGrupo(User.Identity.Name);
             var listaPessoas = _pessoa.GetAllPessoasOrder(idGrupo).ToList();
 
             movimentacaoModel.ListaAssociado = new SelectList(listaPessoas, "Id", "Nome");
