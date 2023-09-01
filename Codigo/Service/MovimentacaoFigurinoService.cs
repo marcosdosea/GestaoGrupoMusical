@@ -175,8 +175,8 @@ namespace Service
                     figurinoEstoque.QuantidadeDescartada += movimentacao.Quantidade ;
                     
                     _context.Figurinomanequims.Update(figurinoEstoque);
-                    await _context.SaveChangesAsync();
                     await _context.AddAsync(movimentacao);
+                    await _context.SaveChangesAsync();
                 }
             }
             catch
