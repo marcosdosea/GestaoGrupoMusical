@@ -37,7 +37,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         public async Task<ActionResult> IndexAdmGrupo()
         {
-            var idGrupoMusical = _grupoMusical.GetIdGrupo(User.Identity.Name);
+            var idGrupoMusical = await _grupoMusical.GetIdGrupo(User.Identity.Name);
 
             GrupoMusicalAdmGrupoViewModel grupoMusicalViewModel = new();
             CreateColaboradorViewModel associadosToAdd = new();
@@ -141,7 +141,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
             else
             {
-                idGrupo = _grupoMusical.GetIdGrupo(User.Identity.Name);
+                idGrupo = await _grupoMusical.GetIdGrupo(User.Identity.Name);
                 grupoMusicalViewModel.Id = idGrupo;
             }
             
