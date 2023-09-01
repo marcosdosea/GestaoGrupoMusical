@@ -99,11 +99,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     case HttpStatusCode.OK:
 
                         Notificar("Grupo <b> Cadastrado </b> com <b> Sucesso </b> ", Notifica.Sucesso);
-                        return RedirectToAction(nameof(Index));
                         break;
                     case HttpStatusCode.InternalServerError:
                         Notificar("<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Cadastro</b> do associado, se isso persistir entre em contato com o suporte", Notifica.Erro);
-                        return RedirectToAction(nameof(Index));
                         break;
                 }
 
