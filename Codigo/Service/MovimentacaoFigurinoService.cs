@@ -128,9 +128,6 @@ namespace Service
                     }
                 }
 
-
-
-
                 _context.Figurinomanequims.Update(figurinoEstoque);
 
                 await _context.SaveChangesAsync();
@@ -155,6 +152,14 @@ namespace Service
                     email.To.Add(associado.Email);
 
                     await EmailService.Enviar(email);
+                } else if (movimentacao.Status.Equals("DANIFICADO"))
+                {
+                    movimentacao.ConfirmacaoRecebimento = 1;
+                    movimentacao.Status = "DANIFICADO";
+                    figurinoEstoque.QuantidadeDisponivel--;
+                    figurinoEstoque.QuantidadeDescartada++;
+
+                    await _context.AddAsync(movimentacao);
                 }
             }
             catch
