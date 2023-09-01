@@ -2,6 +2,7 @@
 using Core.DTO;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace Service
 {
@@ -19,10 +20,8 @@ namespace Service
         /// </summary>
         /// <param name="grupomusical"></param>
         /// <returns>200 caso seja sucesso ou 500 se ouver algum erro ao executar o metodo</returns>
-        public async Task<int> Create(Grupomusical grupomusical)
+        public async Task<HttpStatusCode> Create(Grupomusical grupomusical)
         {
-
-
             try
             {
                 await _context.Grupomusicals.AddAsync(grupomusical);
@@ -41,7 +40,7 @@ namespace Service
         /// </summary>
         /// <param name="id"></param>
         /// <returns>200 caso seja sucesso ou 500 se ouver algum erro ao executar o metodo</returns>
-        public async Task<int> Delete(int id)
+        public async Task<HttpStatusCode> Delete(int id)
         {
 
             var grupo = await _context.Grupomusicals.FindAsync(id);
@@ -64,7 +63,7 @@ namespace Service
         /// </summary>
         /// <param name="grupomusical"></param>
         /// <returns>200 caso seja sucesso ou 500 se ouver algum erro ao executar o metodo</returns>
-        public async Task<int> Edit(Grupomusical grupomusical)
+        public async Task<HttpStatusCode> Edit(Grupomusical grupomusical)
         {
 
             try
