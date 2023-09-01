@@ -155,9 +155,8 @@ namespace Service
                 } else if (movimentacao.Status.Equals("DANIFICADO"))
                 {
                     movimentacao.ConfirmacaoRecebimento = 1;
-                    movimentacao.Status = "DANIFICADO";
-                    figurinoEstoque.QuantidadeDisponivel--;
-                    figurinoEstoque.QuantidadeDescartada++;
+                    figurinoEstoque.QuantidadeDisponivel -= movimentacao.Quantidade;
+                    figurinoEstoque.QuantidadeDescartada += movimentacao.Quantidade;
 
                     await _context.AddAsync(movimentacao);
                 }
