@@ -33,7 +33,7 @@ namespace Service
 
                 if (figurinoEstoque != null)
                 {
-                    if (figurinoEstoque.QuantidadeDisponivel == 0)
+                    if (figurinoEstoque.QuantidadeDisponivel == 0 && movimentacao.Status.Equals("ENTREGUE"))
                     {
                         await transaction.RollbackAsync();
                         return 401; //não há peças disponiveis para emprestar
@@ -45,12 +45,17 @@ namespace Service
                     return 400; //estoque nao existe, talvez id esteja errado
                 }
 
-                await _context.AddAsync(movimentacao);
-
                 if (movimentacao.Status.Equals("ENTREGUE"))
                 {
-                    figurinoEstoque.QuantidadeDisponivel--;
-                    figurinoEstoque.QuantidadeEntregue++;
+                    if (movimentacao.Quantidade <= 0 || movimentacao.Quantidade >
+                        figurinoEstoque.QuantidadeDisponivel)
+                    {
+                        await transaction.RollbackAsync();
+                        return 401; //não há peças disponiveis para emprestar
+                    }
+                    figurinoEstoque.QuantidadeDisponivel -= movimentacao.Quantidade;
+                    figurinoEstoque.QuantidadeEntregue+= movimentacao.Quantidade;
+                    await _context.AddAsync(movimentacao);
                 }
                 else if (movimentacao.Status.Equals("DEVOLVIDO"))
                 {
@@ -61,18 +66,69 @@ namespace Service
                     }
                     if (movimentacao.Status.Equals("DEVOLVIDO"))
                     {
-                        sbyte confirmacao = await GetConfirmacaoFigurino(movimentacao.IdAssociado, movimentacao.IdFigurino
+                        var confiQuantAssociado = await GetConfirmacaoFigurino(movimentacao.IdAssociado, movimentacao.IdFigurino
                             , movimentacao.IdManequim);
-                        if ( confirmacao != 1)
+                        if (confiQuantAssociado.Confirmar != 1)
                         {
                             await transaction.RollbackAsync();
-                            return 403; //não ouve confirmação do associado 
+                            return 403; //não houve confirmação
                         }
-                        movimentacao.ConfirmacaoRecebimento = 0;
-                        figurinoEstoque.QuantidadeDisponivel++;
-                        figurinoEstoque.QuantidadeEntregue--;
+                        if (movimentacao.Quantidade <= 0 || movimentacao.Quantidade > confiQuantAssociado.Quantidade)
+                        {
+                            await transaction.RollbackAsync();
+                            return 403; //tentativa de devolução de figurino a mais ou a menos da quantidade que o associado possui
+                        }
+                        else
+                        {
+                            if (movimentacao.Quantidade < confiQuantAssociado.Quantidade)
+                            {
+                                int movQuantidade = confiQuantAssociado.Quantidade - movimentacao.Quantidade;
+
+                                var movimentacaoRecebido = new Movimentacaofigurino
+                                {
+                                    Data = DateTime.Now,
+                                    IdFigurino = movimentacao.IdFigurino,
+                                    IdManequim = movimentacao.IdManequim,
+                                    IdAssociado = movimentacao.IdAssociado,
+                                    IdColaborador = movimentacao.IdColaborador,
+                                    Status = "RECEBIDO",
+                                    ConfirmacaoRecebimento = 1,
+                                    Quantidade = movQuantidade
+                                };
+
+
+                                var movimentacaoDevolvido = new Movimentacaofigurino
+                                {
+                                    Data = DateTime.Now,
+                                    IdFigurino = movimentacao.IdFigurino,
+                                    IdManequim = movimentacao.IdManequim,
+                                    IdAssociado = movimentacao.IdAssociado,
+                                    IdColaborador = movimentacao.IdColaborador,
+                                    Status = "DEVOLVIDO",
+                                    ConfirmacaoRecebimento = 0,
+                                    Quantidade = movimentacao.Quantidade
+                                };
+
+                                await _context.AddAsync(movimentacaoDevolvido);
+                                await _context.AddAsync(movimentacaoRecebido);
+
+                                figurinoEstoque.QuantidadeDisponivel += movimentacao.Quantidade;
+                                figurinoEstoque.QuantidadeEntregue -= movimentacao.Quantidade;
+
+                            }
+                            else
+                            {
+                                movimentacao.ConfirmacaoRecebimento = 0;
+                                figurinoEstoque.QuantidadeDisponivel += confiQuantAssociado.Quantidade;
+                                figurinoEstoque.QuantidadeEntregue -= confiQuantAssociado.Quantidade;
+                                await _context.AddAsync(movimentacao);
+                            }
+                        }
+
                     }
                 }
+
+
 
 
                 _context.Figurinomanequims.Update(figurinoEstoque);
@@ -115,7 +171,7 @@ namespace Service
         {
             var movimentacao = await _context.Movimentacaofigurinos.FindAsync(id);
 
-            if(movimentacao != null)
+            if (movimentacao != null)
             {
                 try
                 {
@@ -126,7 +182,7 @@ namespace Service
                 {
                     return 500; //algo deu errado ao remover e/ou salvar
                 }
-               
+
             }
             else
             {
@@ -151,7 +207,9 @@ namespace Service
                                    Data = movimentacoes.Data,
                                    Movimentacao = movimentacoes.Status,
                                    Status = movimentacoes.ConfirmacaoRecebimento == 0 ? "Aguardando Confirmação" : "Confirmado",
-                                   Tamanho = movimentacoes.IdManequimNavigation.Tamanho
+                                   Tamanho = movimentacoes.IdManequimNavigation.Tamanho,
+                                   QuantidadeEntregue = movimentacoes.Quantidade,
+
                                }).AsNoTracking().ToListAsync();
 
             return query;
@@ -204,31 +262,33 @@ namespace Service
         public async Task<MovimentacoesAssociadoFigurino> MovimentacoesByIdAssociadoAsync(int idAssociado)
         {
             var entregues = await (from movimentacoesFigurino in _context.Movimentacaofigurinos
-                             where movimentacoesFigurino.IdAssociado == idAssociado
-                             where movimentacoesFigurino.Status == "ENTREGUE" || movimentacoesFigurino.Status == "RECEBIDO"
+                                   where movimentacoesFigurino.IdAssociado == idAssociado
+                                   where movimentacoesFigurino.Status == "ENTREGUE" || movimentacoesFigurino.Status == "RECEBIDO"
                                    orderby movimentacoesFigurino.Data descending
-                             select new MovimentacaoAssociadoFigurino
-                             {
-                                 Id = movimentacoesFigurino.Id,
-                                 Data = movimentacoesFigurino.Data,
-                                 NomeFigurino = movimentacoesFigurino.IdFigurinoNavigation.Nome,
-                                 Tamanho = movimentacoesFigurino.IdManequimNavigation.Tamanho,
-                                 Status = movimentacoesFigurino.ConfirmacaoRecebimento == 1 ? "Confirmado" : "Agurdando Confirmação"
+                                   select new MovimentacaoAssociadoFigurino
+                                   {
+                                       Id = movimentacoesFigurino.Id,
+                                       Data = movimentacoesFigurino.Data,
+                                       NomeFigurino = movimentacoesFigurino.IdFigurinoNavigation.Nome,
+                                       Tamanho = movimentacoesFigurino.IdManequimNavigation.Tamanho,
+                                       Status = movimentacoesFigurino.ConfirmacaoRecebimento == 1 ? "Confirmado" : "Agurdando Confirmação",
+                                       Quantidade = movimentacoesFigurino.Quantidade
 
-                             }).AsNoTracking().ToListAsync();
+                                   }).AsNoTracking().ToListAsync();
 
             var devolucoes = await (from movimentacoesFigurino in _context.Movimentacaofigurinos
-                              where movimentacoesFigurino.IdAssociado == idAssociado
-                              where movimentacoesFigurino.Status == "DEVOLVIDO" || movimentacoesFigurino.Status == "DANIFICADO"
+                                    where movimentacoesFigurino.IdAssociado == idAssociado
+                                    where movimentacoesFigurino.Status == "DEVOLVIDO" || movimentacoesFigurino.Status == "DANIFICADO"
                                     orderby movimentacoesFigurino.Data descending
-                              select new MovimentacaoAssociadoFigurino
-                              {
-                                  Id = movimentacoesFigurino.Id,
-                                  Data = movimentacoesFigurino.Data,
-                                  NomeFigurino = movimentacoesFigurino.IdFigurinoNavigation.Nome,
-                                  Tamanho = movimentacoesFigurino.IdManequimNavigation.Tamanho,
-                                  Status = movimentacoesFigurino.ConfirmacaoRecebimento == 1 ? "Confirmado" : "Agurdando Confirmação"
-                              }
+                                    select new MovimentacaoAssociadoFigurino
+                                    {
+                                        Id = movimentacoesFigurino.Id,
+                                        Data = movimentacoesFigurino.Data,
+                                        NomeFigurino = movimentacoesFigurino.IdFigurinoNavigation.Nome,
+                                        Tamanho = movimentacoesFigurino.IdManequimNavigation.Tamanho,
+                                        Status = movimentacoesFigurino.ConfirmacaoRecebimento == 1 ? "Confirmado" : "Agurdando Confirmação",
+                                        Quantidade = movimentacoesFigurino.Quantidade
+                                    }
 
                               ).AsNoTracking().ToListAsync();
 
@@ -236,7 +296,7 @@ namespace Service
 
             var movimentacoes = new MovimentacoesAssociadoFigurino
             {
-                Entregue =entregues,
+                Entregue = entregues,
                 Devolucoes = devolucoes
             };
 
@@ -248,10 +308,11 @@ namespace Service
             try
             {
                 var movimentacao = await _context.Movimentacaofigurinos.FindAsync(idMovimentacao);
-                if(movimentacao == null)
+                if (movimentacao == null)
                 {
                     return 404;
-                }else if(movimentacao.IdAssociado == idAssociado && movimentacao.Id == idMovimentacao)
+                }
+                else if (movimentacao.IdAssociado == idAssociado && movimentacao.Id == idMovimentacao)
                 {
                     movimentacao.ConfirmacaoRecebimento = 1;
                     var status = movimentacao.Status;
@@ -266,7 +327,7 @@ namespace Service
                 else
                 {
                     return movimentacao.Status == "ENTREGUE" ? 400 : 401;
-                }       
+                }
             }
             catch
             {
@@ -274,14 +335,22 @@ namespace Service
             }
         }
 
-        public async Task<sbyte> GetConfirmacaoFigurino(int idAssociado, int idFigurino, int idManequim)
+        public async Task<MovimentarConfirmacaoQuantidade> GetConfirmacaoFigurino(int idAssociado, int idFigurino, int idManequim)
         {
             var query = await _context.Movimentacaofigurinos
                 .AsNoTracking()
-                .Where(g =>g.IdAssociado == idAssociado && g.IdFigurino == idFigurino
+                .Where(g => g.IdAssociado == idAssociado && g.IdFigurino == idFigurino
                     && g.IdManequim == idManequim)
-                .Select(g => g.ConfirmacaoRecebimento)
-                .FirstOrDefaultAsync();
+                .OrderBy(g => g.Id)
+                .Select(g => new MovimentarConfirmacaoQuantidade
+                {
+                    Confirmar = g.ConfirmacaoRecebimento,
+                    Quantidade = g.Quantidade,
+                    Id = g.Id
+
+                })
+                .LastOrDefaultAsync();
+
             return query;
         }
     }

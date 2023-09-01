@@ -94,9 +94,9 @@ namespace Service
         /// </summary>
         /// <param name="id"></param>
         /// <returns> Retorna 1 grupo musical</returns>
-        public Grupomusical Get(int id)
+        public async Task<Grupomusical> Get(int id)
         {
-            return _context.Grupomusicals.Find(id);
+            return await _context.Grupomusicals.FindAsync(id);
         }
 
         /// <summary>

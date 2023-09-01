@@ -347,16 +347,17 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
                 string status = movimentacaoViewModel.Movimentacao;
 
-                Movimentacaofigurino movimentacao = new Movimentacaofigurino
-                {
-                    Data = movimentacaoViewModel.Data,
-                    IdFigurino = movimentacaoViewModel.IdFigurino,
-                    IdManequim = movimentacaoViewModel.IdManequim,
-                    IdAssociado = movimentacaoViewModel.IdAssociado,
-                    IdColaborador = colaborador.Id,
-                    Status = status,
-                    ConfirmacaoRecebimento = 0
-                };
+            Movimentacaofigurino movimentacao = new Movimentacaofigurino
+            {
+                Data = movimentacaoViewModel.Data,
+                IdFigurino = movimentacaoViewModel.IdFigurino,
+                IdManequim = movimentacaoViewModel.IdManequim,
+                IdAssociado = movimentacaoViewModel.IdAssociado,
+                IdColaborador = colaborador.Id,
+                Status = status,
+                ConfirmacaoRecebimento = 0,
+                Quantidade = movimentacaoViewModel.QuantidadeEntregue
+            };
 
                 int resul = await _movimentacaoService.CreateAsync(movimentacao);
 

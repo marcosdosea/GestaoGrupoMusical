@@ -233,7 +233,7 @@ namespace Service
                         {
                             Inicio = ensaio.DataHoraInicio,
                             Fim = ensaio.DataHoraFim,
-                            //NomeRegnete = ensaio.IdRegenteNavigation.Nome,
+                            //NomeRegnete = ensaio.
                             Tipo = ensaio.Tipo,
                             Local = ensaio.Local,
                             Frequencias = _context.Ensaiopessoas
