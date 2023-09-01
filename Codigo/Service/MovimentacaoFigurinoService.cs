@@ -112,7 +112,6 @@ namespace Service
                         movimentacao.IdAssociado = idAssociadoUltimaMovimentacao;
                     }
                     movimentacao.ConfirmacaoRecebimento = 1;
-                    movimentacao.Status = "DANIFICADO";
                     figurinoEstoque.QuantidadeDisponivel --;
                     figurinoEstoque.QuantidadeDescartada ++;
                 }
@@ -254,7 +253,7 @@ namespace Service
 
             var devolucoes = await (from movimentacoesFigurino in _context.Movimentacaofigurinos
                               where movimentacoesFigurino.IdAssociado == idAssociado
-                              where movimentacoesFigurino.Status == "DEVOLVIDO"
+                              where movimentacoesFigurino.Status == "DEVOLVIDO" || movimentacoesFigurino.Status == "DANIFICADO"
                                     orderby movimentacoesFigurino.Data descending
                               select new MovimentacaoAssociadoFigurino
                               {
