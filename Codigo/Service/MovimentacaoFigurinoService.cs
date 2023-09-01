@@ -156,7 +156,7 @@ namespace Service
                 {
                     movimentacao.ConfirmacaoRecebimento = 1;
                     figurinoEstoque.QuantidadeDisponivel -= movimentacao.Quantidade;
-                    figurinoEstoque.QuantidadeDescartada += movimentacao.Quantidade;
+                    figurinoEstoque.QuantidadeDescartada += movimentacao.Quantidade ;
 
                     await _context.AddAsync(movimentacao);
                 }
