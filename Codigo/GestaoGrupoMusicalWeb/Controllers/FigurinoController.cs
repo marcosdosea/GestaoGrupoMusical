@@ -410,17 +410,17 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 if (Id != null && Id > 0)
                 {
-                    int resul = await _movimentacaoService.DeleteAsync(Id);
+                    HttpStatusCode resul = await _movimentacaoService.DeleteAsync(Id);
 
                     switch (resul)
                     {
-                        case 200:
+                        case HttpStatusCode.OK:
                             Notificar($"<b>Sucesso!</b> Movimentação foi <b>removida</b>", Notifica.Sucesso);
                             break;
-                        case 400:
+                        case HttpStatusCode.NotFound:
                             Notificar("<b>Alerta!</b> Não há movimentação com essas informações", Notifica.Alerta);
                             break;
-                        case 500:
+                        case HttpStatusCode.InternalServerError:
                             Notificar("<b>Erro!</b> Algo deu errado", Notifica.Erro);
                             break;
                         default:
