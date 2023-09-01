@@ -181,16 +181,16 @@ namespace Service
                 }
                 catch
                 {
-                    return 500; //algo deu errado ao remover e/ou salvar
+                    return HttpStatusCode.InternalServerError; //algo deu errado ao remover e/ou salvar
                 }
 
             }
             else
             {
-                return 400; //movimentacao nao existe
+                return HttpStatusCode.NotFound; //movimentacao nao existe
             }
 
-            return 200;
+            return HttpStatusCode.OK;
         }
 
         public async Task<IEnumerable<MovimentacaoFigurinoDTO>> GetAllByIdFigurino(int idFigurino)
