@@ -76,10 +76,9 @@ namespace Core.Service
         /// <param name="idFigurino"></param>
         /// <param name="idManequim"></param>
         /// <returns>
-        /// 1 caso o usuário tenha recebido
-        /// 0 caso o usuário não tenha recebido
+        /// Um objeto de movimentarComfirmacaooQuandtidade 
         /// </returns>
-        Task<sbyte> GetConfirmacaoFigurino(int idAssociado, int idFigurino, int idManequim);
+        Task<MovimentarConfirmacaoQuantidade> GetConfirmacaoFigurino(int idAssociado, int idFigurino, int idManequim);
 
         Task<int> GetIdAssociadoUltimaMovimentacaoAsync(int idFigurino, int idManequin);
     }

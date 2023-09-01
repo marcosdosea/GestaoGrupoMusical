@@ -4,10 +4,12 @@ using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MySqlX.XDevAPI.Common;
+using System.Net;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
-    public class ColaboradorController : Controller
+    public class ColaboradorController : BaseController
     {
         private readonly IPessoaService _pessoaService;
         private readonly IMapper _mapper;
@@ -46,11 +48,27 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: ColaboradorController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(int id, PessoaViewModel pessoaViewModel)
+        public async Task<ActionResult> Create(int Id, int IdPapelGrupo,CreateColaboradorViewModel pessoa)
         {
-            _pessoaService.ToCollaborator(id);
+            HttpStatusCode resul = await _pessoaService.ToCollaborator(Id, IdPapelGrupo);
 
-            return RedirectToAction("Index", "Pessoa");
+            switch (resul)
+            {
+                case HttpStatusCode.Created:
+                    Notificar("<b>Sucesso</b>! Associado promovido.", Notifica.Sucesso);
+                    break;
+                case HttpStatusCode.NotFound:
+                    Notificar("<b>Erro</b>! Associado não encontrado.", Notifica.Erro);
+                    break;
+                case HttpStatusCode.InternalServerError:
+                    Notificar("<b>Erro</b>! Algum problema no servidor.", Notifica.Erro);
+                    break;
+                default:
+                    Notificar("<b>Alerta</b>! Ocorreu um erro desconhecido", Notifica.Alerta);
+                    break;
+            }
+
+            return RedirectToAction("IndexAdmGrupo", "GrupoMusical");
         }
 
         // GET: ColaboradorController/Edit/5
@@ -91,11 +109,30 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: ColaboradorController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, PessoaViewModel pessoaViewModel)
+        public async Task<ActionResult> Delete(int Id, CreateColaboradorViewModel pessoa)
         {
-            _pessoaService.RemoveCollaborator(id);
+            HttpStatusCode resul = await _pessoaService.RemoveCollaborator(Id);
 
-            return RedirectToAction("Index", "Pessoa");
+            switch (resul)
+            {
+                case HttpStatusCode.OK:
+                    Notificar("<b>Sucesso</b>! Associado rebaixado.", Notifica.Sucesso);
+                    break;
+                case HttpStatusCode.NotFound:
+                    Notificar("<b>Erro</b>! Associado não encontrado.", Notifica.Erro);
+                    break;
+                case HttpStatusCode.InternalServerError:
+                    Notificar("<b>Erro</b>! Algum problema no servidor.", Notifica.Erro);
+                    break;
+                case HttpStatusCode.BadRequest:
+                    Notificar("<b>Erro</b>! Não possível completar operação.", Notifica.Erro);
+                    break;
+                default:
+                    Notificar("<b>Alerta</b>! Ocorreu um erro desconhecido", Notifica.Alerta);
+                    break;
+            }
+
+            return RedirectToAction("IndexAdmGrupo", "GrupoMusical");
         }
     }
 }

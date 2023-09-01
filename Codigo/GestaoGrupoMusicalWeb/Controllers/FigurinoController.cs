@@ -1,16 +1,22 @@
 ﻿using AutoMapper;
 using Core;
+using Core.DTO;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Org.BouncyCastle.Utilities;
+using X.PagedList;
 using System.Net;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
     
+    namespace GestaoGrupoMusicalWeb.Controllers
+    {
+
     public class FigurinoController : BaseController
     {
         private readonly IMapper _mapper;
@@ -174,7 +180,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> DeleteEstoque(int idFigurino, int idManequim)
         {
             HttpStatusCode result = await _figurinoService.DeleteEstoque(idFigurino, idManequim);
-
             switch (result)
             {
                 case HttpStatusCode.OK:
@@ -268,10 +273,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
-        public async Task<ActionResult> Movimentar(int id)
+            public async Task<ActionResult> Movimentar(int id, int? page, string sortOrder, string currentFilter)
         {
             var figurino = await _figurinoService.Get(id);
-
+                ViewData["CurrentSort"] = sortOrder;
+                ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
+                ViewData["ConfirmarSort"] = sortOrder == "Confirmar" ? "Aguardando Confirmação" : "Confirmar";
+                ViewData["MovimentacaoSort"] = sortOrder == "ENTREGUE" ? "DEVOLVIDO" : "ENTREGUE";
 
             var manequins = await _movimentacaoService.GetEstoque(id);
             if (manequins == null)
@@ -284,6 +292,36 @@ namespace GestaoGrupoMusicalWeb.Controllers
             var associados = _pessoaService.GetAllPessoasOrder(idGrupo);
 
             var movimentacoes = await _movimentacaoService.GetAllByIdFigurino(id);
+                int pageNumber = 1;
+                int pageSize = 10; // Número de itens por página
+                pageNumber = page ?? 1;
+
+                switch (sortOrder)
+                {
+                    case "Date":
+                        movimentacoes = movimentacoes.OrderBy(s => s.Data);
+                        break;
+                    case "date_desc":
+                        movimentacoes = movimentacoes.OrderByDescending(s => s.Data);
+                        break;
+                    case "Confirmar":
+                        movimentacoes = movimentacoes.Where(m => m.Status == "Confirmado");
+                        break;
+                    case "Aguardando Confirmação":
+                        movimentacoes = movimentacoes.Where(m => m.Status == "Aguardando Confirmação");
+                        break;
+                    case "ENTREGUE":
+                        movimentacoes = movimentacoes.Where(m => m.Movimentacao == "ENTREGUE");
+                        break;
+                    case "DEVOLVIDO":
+                        movimentacoes = movimentacoes.Where(m => m.Movimentacao == "DEVOLVIDO");
+                        break;
+                    default:
+                        break;
+
+                }
+
+                IPagedList<MovimentacaoFigurinoDTO> movimentacoesPage = movimentacoes.ToPagedList(pageNumber, pageSize);
 
             SelectList listAssociados = new SelectList(associados, "Id", "Nome");
             SelectList listEstoque = new SelectList(manequins, "IdManequim", "TamanhoEstoque");
@@ -295,7 +333,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 DataFigurinoString = figurino.Data.Value.ToString("dd/MM/yyyy"),
                 ListaAssociado = listAssociados,
                 ListaManequim = listEstoque,
-                Movimentacoes = movimentacoes,
+                    Movimentacoes = movimentacoesPage
             };
 
             return View(movimentarFigurinoViewModel);
@@ -317,7 +355,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 IdAssociado = movimentacaoViewModel.IdAssociado,
                 IdColaborador = colaborador.Id,
                 Status = status,
-                ConfirmacaoRecebimento = 0
+                ConfirmacaoRecebimento = 0,
+                Quantidade = movimentacaoViewModel.QuantidadeEntregue
             };
 
             int resul = await _movimentacaoService.CreateAsync(movimentacao);
@@ -422,7 +461,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 return RedirectToAction("Sair", "Identity");
             }
             string mensagem = string.Empty;
-            switch(await _movimentacaoService.ConfirmarMovimentacao(idMovimentacao, associado.Id)){
+                switch (await _movimentacaoService.ConfirmarMovimentacao(idMovimentacao, associado.Id))
+                {
                 case 200:
                     mensagem = "Empréstimo <b>Confirmado</b> com <b>Sucesso</b>";
                     Notificar(mensagem, Notifica.Sucesso);
@@ -503,5 +543,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
     }
+}
 }
 

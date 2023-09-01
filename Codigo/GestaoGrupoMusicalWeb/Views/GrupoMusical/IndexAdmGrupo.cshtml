@@ -1,0 +1,56 @@
+﻿@model GestaoGrupoMusicalWeb.Models.GrupoMusicalAdmGrupoViewModel
+
+@{
+    ViewData["Title"] = "Grupo Musical";
+    Layout = "_LayoutColaborador";
+}
+
+<partial name="_Notificar">
+
+<h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">@ViewData["Title"]</h1>
+
+<nav>
+    <ol class="breadcrumb px-3">
+        <strong>
+                <a class="text-danger text-opacity-75" asp-action="IndexAdmGrupo"> <i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i>@ViewData["Title"]</a>
+        </strong>
+    </ol>
+</nav>
+
+<partial name="_EditAdmGrupo" model="Model.GrupoMusicalViewModel"/>
+
+<partial name="_AddColaborador" model="Model.ListaAssociados"/>
+
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr class="bg-danger bg-opacity-75 text-white">
+                <th class="border-0">
+                    <span class="text-white">CPF</span>
+                </th>
+                <th class="border-0">
+                    <span class="text-white">Associado</span>
+                </th>
+
+                <th class=" border-0">
+                    <span class="text-white">Data</span>
+                </th>
+                <th class=" border-0 ">
+                    <span class="text-white">Papel</span>
+                </th>
+                <th class=" border-0">
+                    <span class="text-white">Ações</span>
+                </th>
+            </tr>
+        </thead>
+
+        <Partial name="_TabelaColaboradores" model="Model.ListaColaboradores"/>
+
+    </table>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

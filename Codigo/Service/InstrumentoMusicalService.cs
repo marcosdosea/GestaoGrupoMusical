@@ -4,6 +4,7 @@ using Core.Service;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Data.Common;
+using System.Net;
 
 namespace Service
 {
@@ -16,60 +17,60 @@ namespace Service
             _context = context;
         }
 
-        public async Task<int> Create(Instrumentomusical instrumentoMusical)
+        public async Task<HttpStatusCode> Create(Instrumentomusical instrumentoMusical)
         {
             if (instrumentoMusical.DataAquisicao > DateTime.Now)
             {
-                return 100;
+                return HttpStatusCode.PreconditionFailed;
             }
             try
             {
                 await _context.AddAsync(instrumentoMusical);
                 await _context.SaveChangesAsync();
-                return 200;
+                return HttpStatusCode.Created;
             }
             catch (Exception)
             {
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
 
         }
 
-        public async Task<int> Delete(int id)
+        public async Task<HttpStatusCode> Delete(int id)
         {
             var instrumento = await Get(id);
             if(instrumento == null)
             {
-                return 404;
+                return HttpStatusCode.NotFound;
             }
             try
             {
                 var hasMovimentacao = await _context.Movimentacaoinstrumentos.Where(m => m.IdInstrumentoMusical == id).AsNoTracking().AnyAsync();
                 if (hasMovimentacao)
                 {
-                    return 401;
+                    return HttpStatusCode.PreconditionFailed;
                 }
                 _context.Remove(instrumento);
                 await _context.SaveChangesAsync();
-                return 200;
+                return HttpStatusCode.OK;
             }
             catch
             {
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
         }
 
-        public async Task<int> Edit(Instrumentomusical instrumentoMusical)
+        public async Task<HttpStatusCode> Edit(Instrumentomusical instrumentoMusical)
         {
             try
             {
                 _context.Update(instrumentoMusical);
                 await _context.SaveChangesAsync();
-                return 200;
+                return HttpStatusCode.OK;
             }
             catch
             {
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
 
         }
