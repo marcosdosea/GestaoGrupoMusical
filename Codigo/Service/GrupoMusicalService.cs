@@ -27,7 +27,7 @@ namespace Service
                 await _context.Grupomusicals.AddAsync(grupomusical);
                 await _context.SaveChangesAsync();
 
-                return 200;
+                return HttpStatusCode.OK;
             }
             catch (Exception ex)
             {
@@ -50,7 +50,8 @@ namespace Service
 
                 _context.Remove(grupo);
                 await _context.SaveChangesAsync();
-                return 200;
+
+                return HttpStatusCode.OK;
             }
             catch (Exception ex)
             {
@@ -71,7 +72,7 @@ namespace Service
                 _context.Update(grupomusical);
                 await _context.SaveChangesAsync();
 
-                return 200;
+                return HttpStatusCode.OK;
             }
             catch
             {
