@@ -311,7 +311,7 @@ namespace Service
                 var movimentacao = await _context.Movimentacaofigurinos.FindAsync(idMovimentacao);
                 if (movimentacao == null)
                 {
-                    return 404;
+                    return HttpStatusCode.NotFound;
                 }
                 else if (movimentacao.IdAssociado == idAssociado && movimentacao.Id == idMovimentacao)
                 {
@@ -323,16 +323,16 @@ namespace Service
                     }
                     _context.Update(movimentacao);
                     await _context.SaveChangesAsync();
-                    return status == "ENTREGUE" ? 200 : 201;
+                    return status == "ENTREGUE" ? HttpStatusCode.Created : HttpStatusCode.OK;
                 }
                 else
                 {
-                    return movimentacao.Status == "ENTREGUE" ? 400 : 401;
+                    return movimentacao.Status == "ENTREGUE" ? HttpStatusCode.PreconditionFailed : HttpStatusCode.FailedDependency;
                 }
             }
             catch
             {
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
         }
 
