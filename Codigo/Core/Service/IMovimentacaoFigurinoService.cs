@@ -17,8 +17,14 @@ namespace Core.Service
         /// </summary>
         /// <param name="movimentacao"></param>
         /// <returns>
-        /// 200 - Sucesso
-        /// 500 - Erro interno
+        /// OK - Sucesso
+        /// NoContent; //não há peças disponiveis para emprestar
+        /// NotFound; //estoque nao existe, talvez id esteja errado
+        /// PreconditionFailed; //associado nao possue nada emprestado para devolver
+        /// FailedDependency; //não houve confirmação
+        /// BadRequest; //tentativa de devolução de figurino a mais ou a menos da quantidade que o associado possui
+        /// 
+        /// InternalServerError - Erro interno
         /// </returns>
         Task<HttpStatusCode> CreateAsync(Movimentacaofigurino movimentacao);
 
