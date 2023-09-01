@@ -156,7 +156,7 @@ namespace Service
                         await EmailService.Enviar(email);
                     }
                 }
-                else //if ()
+                else 
                 {
                     if(movimentacao.Quantidade > figurinoEstoque.QuantidadeDisponivel)
                     {
@@ -219,7 +219,7 @@ namespace Service
                                    IdFigurino = idFigurino,
                                    IdManequim = movimentacoes.IdManequim,
                                    Cpf = movimentacoes.IdAssociadoNavigation.Cpf,
-                                   NomeAssociado = movimentacoes.IdAssociadoNavigation.Nome,
+                                   NomeAssociado = (movimentacoes.Status.Equals("DANIFICADO")) ? movimentacoes.IdColaboradorNavigation.Nome : movimentacoes.IdAssociadoNavigation.Nome,
                                    Data = movimentacoes.Data,
                                    Movimentacao = movimentacoes.Status,
                                    Status = movimentacoes.ConfirmacaoRecebimento == 0 ? "Aguardando Confirmação" : "Confirmado",
