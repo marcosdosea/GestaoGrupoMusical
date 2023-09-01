@@ -460,27 +460,27 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 string mensagem = string.Empty;
                 switch (await _movimentacaoService.ConfirmarMovimentacao(idMovimentacao, associado.Id))
                 {
-                    case 200:
+                    case HttpStatusCode.Created:
                         mensagem = "Empréstimo <b>Confirmado</b> com <b>Sucesso</b>";
                         Notificar(mensagem, Notifica.Sucesso);
                         break;
-                    case 201:
+                    case HttpStatusCode.OK:
                         mensagem = "Devolução <b>Confirmada</b> com <b>Sucesso</b>";
                         Notificar(mensagem, Notifica.Sucesso);
                         break;
-                    case 400:
+                    case HttpStatusCode.PreconditionFailed:
                         mensagem = "<b>Erro</b>, O <b>Associado</b> não corresponde ao mesmo do <b>Empréstimo</b>";
                         Notificar(mensagem, Notifica.Erro);
                         break;
-                    case 401:
+                    case HttpStatusCode.FailedDependency:
                         mensagem = "<b>Erro</b>, O <b>Associado</b> não corresponde ao mesmo da <b>Devolução</b>";
                         Notificar(mensagem, Notifica.Erro);
                         break;
-                    case 404:
+                    case HttpStatusCode.NotFound:
                         mensagem = "<b>Erro</b>, A <b>Movimentação</b> não existe !";
                         Notificar(mensagem, Notifica.Erro);
                         break;
-                    case 500:
+                    case HttpStatusCode.InternalServerError:
                         mensagem = "Erro ! Aconteceu um problema durante a confirmação, para detalhes contate o suporte";
                         Notificar(mensagem, Notifica.Erro);
                         break;
