@@ -163,6 +163,12 @@ namespace Service
                         await transaction.RollbackAsync();
                         return 401;
                     }
+
+                    if(movimentacao.Quantidade == 0)
+                    {
+                        await transaction.RollbackAsync();
+                        return 405;
+                    }
                     
                     movimentacao.ConfirmacaoRecebimento = 1;
                     figurinoEstoque.QuantidadeDisponivel -= movimentacao.Quantidade;
