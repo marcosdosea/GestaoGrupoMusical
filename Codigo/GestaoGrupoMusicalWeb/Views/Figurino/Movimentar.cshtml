@@ -79,13 +79,19 @@
                 <span asp-validation-for="Data" class="text-danger"></span>
             </div>
         </div>
-
-        <div class="row">
-            <div class="d-flex justify-content-lg-end flex-column-reverse flex-lg-row">
-                <a class="btn btn-outline-secondary col-lg-2 mt-3 me-lg-3" asp-controller="Figurino" asp-action="Index">Voltar</a>
-                <input class="btn btn-secondary col-lg-2 mt-3 ml-3" type="submit" value="Adicionar" />
+            <div class="col-lg-1">
+                <div class="form-group">
+                    <label asp-for="QuantidadeEntregue" class="control-label"></label>
+                    <input asp-for="QuantidadeEntregue" class="form-control" />
+                </div>
+                <span asp-validation-for="QuantidadeEntregue" class="text-danger"></span>
             </div>
-        </div>
+        <div class="row">
+                <div class="d-flex justify-content-lg-end flex-column-reverse flex-lg-row">
+                    <a class="btn btn-outline-secondary col-lg-2 mt-3 me-lg-3 btn-" asp-controller="Figurino" asp-action="Index">Voltar</a>
+                        <input class="btn btn-secondary col-lg-2 mt-3 ml-3" type="submit" value="Adicionar" />
+                </div>
+                 </div>
 
     </form>
 </div>

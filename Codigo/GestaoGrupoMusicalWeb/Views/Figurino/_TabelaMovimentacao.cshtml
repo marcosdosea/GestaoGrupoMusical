@@ -26,6 +26,9 @@
                     <a asp-action="Movimentar" asp-route-sortOrder="@ViewData["MovimentacaoSort"]">@Html.DisplayName("Movimentação")</a>
                 </th>
                 <th>
+                    <label>Quantidade</label>
+                </th>
+                <th>
                     <a asp-action="Movimentar" asp-route-sortOrder="@ViewData["ConfirmarSort"]">@Html.DisplayName("Status")</a>
                 </th>
                 <th>Ações</th>
@@ -50,6 +53,9 @@
                     </td>
                     <td>
                         @item.Movimentacao
+                    </td>
+                    <td>
+                        @item.QuantidadeEntregue
                     </td>
                     <td>
                         @item.Status
