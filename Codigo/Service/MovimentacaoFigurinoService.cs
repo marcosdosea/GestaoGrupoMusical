@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Metrics;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using static Core.DTO.MovimentacaoAssociadoFigurinoDTO;
@@ -23,7 +24,7 @@ namespace Service
         }
 
         //emprestar figurino
-        public async Task<int> CreateAsync(Movimentacaofigurino movimentacao)
+        public async Task<HttpStatusCode> CreateAsync(Movimentacaofigurino movimentacao)
         {
             using var transaction = _context.Database.BeginTransaction();
 
@@ -167,7 +168,7 @@ namespace Service
             return 200;
         }
 
-        public async Task<int> DeleteAsync(int id)
+        public async Task<HttpStatusCode> DeleteAsync(int id)
         {
             var movimentacao = await _context.Movimentacaofigurinos.FindAsync(id);
 
@@ -303,7 +304,7 @@ namespace Service
             return movimentacoes;
         }
 
-        public async Task<int> ConfirmarMovimentacao(int idMovimentacao, int idAssociado)
+        public async Task<HttpStatusCode> ConfirmarMovimentacao(int idMovimentacao, int idAssociado)
         {
             try
             {
