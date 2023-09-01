@@ -38,7 +38,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> Index()
         {
             
-            var listaInstrumentoMusical = await _instrumentoMusical.GetAllDTO(_grupoMusical.GetIdGrupo(User.Identity.Name));
+            var listaInstrumentoMusical = await _instrumentoMusical.GetAllDTO(await _grupoMusical.GetIdGrupo(User.Identity.Name));
             return View(listaInstrumentoMusical);
         }
 
