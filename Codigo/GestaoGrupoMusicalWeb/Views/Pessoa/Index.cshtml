@@ -30,15 +30,15 @@
                     }
                 </th>
                 @{
-                    sortBy = Context.Request.Query["SortBy"] == "ativo" ? "ativoDecrescente" : "ativo";
+                    sortBy = Context.Request.Query["SortBy"] == "ativo" ? "inativo" : "ativo";
                 }
                 <th class="px-3 border-0 w-25">
                     @if (sortBy.Equals("ativo"))
                     {
-                        <a class="text-white text-decoration-none" asp-action="Index" asp-route-sortBy="@sortBy">Ativo <i class="fa-solid fa-chevron-up"></i></a>
+                        <a class="text-white text-decoration-none" asp-action="Index" asp-route-sortBy="@sortBy">Inativo <i class="fa-solid fa-xmark"></i></a>
                     }else
                     {
-                        <a class="text-white text-decoration-none" asp-action="Index" asp-route-sortBy="@sortBy">Ativo <i class="fa-solid fa-chevron-down"></i></a>
+                        <a class="text-white text-decoration-none" asp-action="Index" asp-route-sortBy="@sortBy">Ativo <i class="fa-solid fa-check"></i></a>
                     }
                     
                 </th>

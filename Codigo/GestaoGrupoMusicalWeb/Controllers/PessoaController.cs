@@ -39,10 +39,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
             switch (sortBy)
             {
                 case "ativo":
-                    paginaPessoa = paginaPessoa.OrderBy(order => order.Ativo).ToList();
+                    paginaPessoa = paginaPessoa. Where(x => x.Ativo == 1).OrderBy(X => X.Nome);
                     break;
-                case "ativoDecrescente":
-                    paginaPessoa = paginaPessoa.OrderByDescending(order => order.Ativo).ToList();
+                case "inativo":
+                    paginaPessoa = paginaPessoa.Where(x => x.Ativo == 0).OrderBy(x => x.Nome);
                     break;
                 case "nome":
                     paginaPessoa = paginaPessoa.OrderBy(order => order.Nome).ToList();
