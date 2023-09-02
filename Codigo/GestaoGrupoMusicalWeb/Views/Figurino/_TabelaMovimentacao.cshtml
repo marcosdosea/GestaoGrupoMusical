@@ -61,14 +61,19 @@
                         @item.Status
                     </td>
                     <td class="py-3 border-0 d-flex flex-column flex-lg-row gap-3">
-                        <form id="@(item.Id + "_notificar")" asp-controller="" asp-action="" asp-route-Id="@item.Id" asp-route-IdInstrumento="" method="post">
-                            <a role="button" class="btn btn-sm btn-secondary"
-                           data-bs-toggle="modal" data-bs-target="#notificarMovimentacaoModal"
-                           onclick="showModal('@(item.Id + "_notificar")', 'notificarMovimentacaoModal')">
-                                <i class="fa-solid fa-envelope"></i>
-                                Notificar
-                            </a>
-                        </form>
+                        @{
+                            if(!@item.Movimentacao.Equals("DANIFICADO"))
+                                {
+                                <form id="@(item.Id + "_notificar")" asp-controller="" asp-action="" asp-route-Id="@item.Id" asp-route-IdInstrumento="" method="post">
+                                    <a role="button" class="btn btn-sm btn-secondary"
+                                       data-bs-toggle="modal" data-bs-target="#notificarMovimentacaoModal"
+                                       onclick="showModal('@(item.Id + "_notificar")', 'notificarMovimentacaoModal')">
+                                        <i class="fa-solid fa-envelope"></i>
+                                        Notificar
+                                    </a>
+                                </form>
+                            }
+                        }
                         <form id="@(item.Id + "_delete")" asp-controller="Figurino" asp-action="DeleteMovimento" asp-route-Id="@item.Id" asp-route-idFigurino="@item.IdFigurino" method="post">
                             <a role="button" class="btn btn-sm btn-secondary"
                            data-bs-toggle="modal" data-bs-target="#excluirMovimentacaoModal"
