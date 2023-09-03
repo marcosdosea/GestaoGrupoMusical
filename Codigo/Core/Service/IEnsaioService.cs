@@ -64,6 +64,7 @@ namespace Core.Service
         /// <returns>
         /// HttpStatusCode.OK - Sucesso <para />
         /// HttpStatusCode.NotFound - Relação ensaio e pessoa não encontrada <para />
+        /// HttpStatusCode.Unauthorized - Usuário não tem permissão para realizar a operação <para/>
         /// HttpStatusCode.InternalServerError - Erro interno
         /// </returns>
         Task<HttpStatusCode> RegistrarJustificativaAsync(int idEnsaio, int idPessoa, string? justificativa);
