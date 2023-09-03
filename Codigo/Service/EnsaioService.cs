@@ -336,6 +336,12 @@ namespace Service
                 {
                     return HttpStatusCode.NotFound;
                 }
+
+                if (ensaioPessoa.IdPapelGrupoPapelGrupo != 1)
+                {
+                    return HttpStatusCode.Unauthorized;
+                }
+
                 ensaioPessoa.JustificativaFalta = justificativa;
                 ensaioPessoa.Presente = 0;
 

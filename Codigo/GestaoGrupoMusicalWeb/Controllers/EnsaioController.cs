@@ -270,6 +270,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     case HttpStatusCode.NotFound:
                         Notificar("A <b>Justificativa</b> enviada é <b>Inválida</b>", Notifica.Erro);
                         break;
+                    case HttpStatusCode.Unauthorized:
+                        Notificar("Desculpe, <b>Não</b> foi possível <b>Registrar</b> a <b>Justificativa</b>", Notifica.Erro);
+                        break;
                     case HttpStatusCode.InternalServerError:
                         Notificar("Desculpe, ocorreu um <b>Erro</b> ao registrar a <b>Justificativa</b>, se isso persistir entre em contato com o suporte", Notifica.Erro);
                         break;
