@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NuGet.Protocol;
+using System.Net;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -263,13 +264,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 switch (await _ensaio.RegistrarJustificativaAsync(ensaioJustificativa.IdEnsaio, Convert.ToInt32(User.FindFirst("Id")?.Value), ensaioJustificativa.Justificativa))
                 {
-                    case 200:
+                    case HttpStatusCode.OK:
                         Notificar("<b>Justificativa</b> registrada com <b>Sucesso</b>", Notifica.Sucesso);
                         return RedirectToAction(nameof(EnsaiosAssociado));
-                    case 404:
+                    case HttpStatusCode.NotFound:
                         Notificar("A <b>Justificativa</b> enviada é <b>Inválida</b>", Notifica.Erro);
                         break;
-                    case 500:
+                    case HttpStatusCode.InternalServerError:
                         Notificar("Desculpe, ocorreu um <b>Erro</b> ao registrar a <b>Justificativa</b>, se isso persistir entre em contato com o suporte", Notifica.Erro);
                         break;
                 }
