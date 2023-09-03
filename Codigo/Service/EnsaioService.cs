@@ -4,6 +4,7 @@ using Core.Service;
 using Email;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Net;
 
 namespace Service
 {
@@ -326,25 +327,25 @@ namespace Service
             return await _context.Ensaiopessoas.Where(ep => ep.IdEnsaio == idEnsaio && ep.IdPessoa == idPessoa).FirstOrDefaultAsync();
         }
 
-        public async Task<int> RegistrarJustificativaAsync(int idEnsaio, int idPessoa, string? justificativa)
+        public async Task<HttpStatusCode> RegistrarJustificativaAsync(int idEnsaio, int idPessoa, string? justificativa)
         {
             try
             {
                 var ensaioPessoa = await GetEnsaioPessoaAsync(idEnsaio, idPessoa);
                 if (ensaioPessoa == null)
                 {
-                    return 404;
+                    return HttpStatusCode.NotFound;
                 }
                 ensaioPessoa.JustificativaFalta = justificativa;
                 ensaioPessoa.Presente = 0;
 
                 _context.Update(ensaioPessoa);
                 await _context.SaveChangesAsync();
-                return 200;
+                return HttpStatusCode.OK;
             }
             catch
             {
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
         }
     }
