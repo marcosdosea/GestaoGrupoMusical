@@ -41,11 +41,15 @@ namespace GestaoGrupoMusicalWeb.Controllers
             GrupoMusicalAdmGrupoViewModel grupoMusicalViewModel = new();
             CreateColaboradorViewModel associadosToAdd = new();
 
+            GrupoMusicalViewModel grupoMusical = _mapper.Map<GrupoMusicalViewModel>(await _grupoMusical.Get(idGrupoMusical));
+
+            //
+            grupoMusicalViewModel.GrupoMusicalViewModel = grupoMusical;
+
             //
             var associados = _pessoaService.GetAllPessoasOrder(idGrupoMusical);
             SelectList listAssociados = new SelectList(associados, "Id", "Nome");
             associadosToAdd.ListaAssociados = listAssociados;
-
 
             //
             var papel = await _grupoMusical.GetPapeis();
@@ -55,15 +59,15 @@ namespace GestaoGrupoMusicalWeb.Controllers
             //
             grupoMusicalViewModel.ListaColaboradores = await _grupoMusical.GetAllColaboradores(idGrupoMusical);
             grupoMusicalViewModel.ListaAssociados = associadosToAdd;
-            
+
             return View(grupoMusicalViewModel);
         }
 
         // GET: GrupoMusicalController/Details/5
         [Authorize(Roles = "ADMINISTRADOR SISTEMA")]
-        public ActionResult Details(int id)
+        public async Task<ActionResult> Details(int id)
         {
-            var grupoMusical = _grupoMusical.Get(id);
+            var grupoMusical = await _grupoMusical.Get(id);
             var grupoModel = _mapper.Map<GrupoMusicalViewModel>(grupoMusical);
             return View(grupoModel);
         }
@@ -113,29 +117,45 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         // GET: GrupoMusicalController/Edit/5
         [Authorize(Roles = "ADMINISTRADOR SISTEMA")]
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
-            var grupoMusical = _grupoMusical.Get(id);
+            var grupoMusical = await _grupoMusical.Get(id);
             var grupoModel = _mapper.Map<GrupoMusicalViewModel>(grupoMusical);
 
             return View(grupoModel);
         }
 
         // POST: GrupoMusicalController/Edit/5
-        [Authorize(Roles = "ADMINISTRADOR SISTEMA")]
+        [Authorize(Roles = "ADMINISTRADOR SISTEMA, ADMINISTRADOR GRUPO")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(int id, GrupoMusicalViewModel grupoMusicalViewModel)
         {
+            Boolean admSystem = false;
+            int idGrupo = id;
+
+            if (User.IsInRole("ADMINISTRADOR SISTEMA"))
+            {
+                admSystem = true;
+            }
+            else
+            {
+                idGrupo = _grupoMusical.GetIdGrupo(User.Identity.Name);
+                grupoMusicalViewModel.Id = idGrupo;
+            }
+            
             grupoMusicalViewModel.Cnpj = grupoMusicalViewModel.Cnpj.Replace(".", string.Empty).Replace("-", string.Empty).Replace("/", string.Empty);
+           
             if (grupoMusicalViewModel.Cep != null)
                 grupoMusicalViewModel.Cep = grupoMusicalViewModel.Cep.Replace("-", string.Empty);
 
-            var existe = _grupoMusical.GetCNPJExistente(id, grupoMusicalViewModel.Cnpj);
+            var existe = _grupoMusical.GetCNPJExistente(idGrupo, grupoMusicalViewModel.Cnpj);
+
             if (existe)
             {
                 ModelState.Remove("CNPJ");
             }
+
             if (ModelState.IsValid)
             {
                 var grupoMusical = _mapper.Map<Grupomusical>(grupoMusicalViewModel);
@@ -144,24 +164,40 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 {
                     case 200:
                         Notificar("Grupo Musical <b>Editado</b> com <b>Sucesso</b>", Notifica.Sucesso);
-                        return RedirectToAction(nameof(Index));
+                        break;
                     case 500:
-                        Notificar("<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Cadastro</b> do associado, se isso persistir entre em contato com o suporte", Notifica.Erro);
-                        return RedirectToAction(nameof(Index));
+                        Notificar("<b>Erro</b> ! Não foi possível editar as informações do grupo", Notifica.Erro);
+                        break;
                 }
             }
             else
             {
-                return View(grupoMusicalViewModel);
+                if (admSystem)
+                {
+                    return View(grupoMusicalViewModel);
+                }
+                else
+                {
+                    return RedirectToAction(nameof(IndexAdmGrupo));
+                }
             }
-            return RedirectToAction(nameof(Index));
+
+            if(admSystem)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                return RedirectToAction(nameof(IndexAdmGrupo));
+            }
+            
         }
 
         // GET: GrupoMusicalController/Delete/5
         [Authorize(Roles = "ADMINISTRADOR SISTEMA")]
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            var grupoMusical = _grupoMusical.Get(id);
+            var grupoMusical = await _grupoMusical.Get(id);
             var grupoModel = _mapper.Map<GrupoMusicalViewModel>(grupoMusical);
             return View(grupoModel);
         }

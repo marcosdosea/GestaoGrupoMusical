@@ -436,14 +436,19 @@ namespace Service
         public async Task<HttpStatusCode> ToCollaborator(int id, int idPapelGrupo)
         {
             var pessoa = Get(id);
+            var user = await _userManager.FindByNameAsync(pessoa.Cpf);
 
-            if(pessoa == null)
+            if (pessoa == null || user == null)
             {
                 return HttpStatusCode.NotFound;
             }
 
             try
             {
+                //promoção de role
+                await ChangeUserRole(user, pessoa.IdPapelGrupo, idPapelGrupo);
+                //==============
+
                 pessoa.IdPapelGrupo = idPapelGrupo;
 
                 _context.Update(pessoa);
@@ -462,7 +467,9 @@ namespace Service
         {
             var pessoa = Get(id);
 
-            if(pessoa == null)
+            var user = await _userManager.FindByNameAsync(pessoa.Cpf);
+
+            if (pessoa == null || user == null)
             {
                 return HttpStatusCode.NotFound;
             }
@@ -481,6 +488,15 @@ namespace Service
             {
                 try
                 {
+
+                    //rebaixamento de role
+                    await ChangeUserRole(user, pessoa.IdPapelGrupo, idPapel);
+                    //======================================================================
+
+                    pessoa.IdPapelGrupo = idPapel;
+
+                    _context.Update(pessoa);
+
                     pessoa.IdPapelGrupo = idPapel;
 
                     _context.Update(pessoa);
@@ -790,6 +806,38 @@ namespace Service
                         .Select(p => new AutoCompleteRegenteDTO { Id = p.Id, Nome = p.Nome });
 
             return await query.AsNoTracking().ToListAsync();
+        }
+
+        /// <summary>
+        /// Muda a role do user identity por outra
+        /// </summary>
+        /// <param name="user">usuario identity</param>
+        /// <param name="idRoleAtual">id do papel referente a role atual do usuario</param>
+        /// <param name="idRrolePromo">id do papel referente a role que será aplicada ao usuario</param>
+        /// <returns></returns>
+        public async Task<HttpStatusCode> ChangeUserRole(UsuarioIdentity user, int idRoleAtual, int idRrolePromo)
+        {
+            try
+            {
+                string papelAnterior = (await _context.Papelgrupos.FindAsync(idRoleAtual)).Nome.ToUpper();
+                string papelPromoNome = (await _context.Papelgrupos.FindAsync(idRrolePromo)).Nome.ToUpper();
+
+                bool roleExists = await _roleManager.RoleExistsAsync(papelPromoNome);
+
+                if (!roleExists)
+                {
+                    await _roleManager.CreateAsync(new IdentityRole(papelPromoNome));
+                }
+                await _userManager.RemoveFromRoleAsync(user, papelAnterior);
+
+                await _userManager.AddToRoleAsync(user, papelPromoNome);
+            }
+            catch
+            {
+                return HttpStatusCode.InternalServerError;
+            }
+
+            return HttpStatusCode.OK;
         }
     }
 }

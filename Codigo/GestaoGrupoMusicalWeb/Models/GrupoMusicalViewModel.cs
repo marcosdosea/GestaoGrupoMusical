@@ -115,7 +115,7 @@ namespace GestaoGrupoMusicalWeb.Models
 
     public class GrupoMusicalAdmGrupoViewModel
     {
-        //TO DO 
+        public GrupoMusicalViewModel GrupoMusicalViewModel { get; set; }
         public IEnumerable<ColaboradoresDTO>? ListaColaboradores { get; set; }
 
         public CreateColaboradorViewModel ListaAssociados { get; set; }
