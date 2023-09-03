@@ -15,7 +15,7 @@ jobs:
       name: producao
     
     env:
-      work-directory: Codigo
+      work-directory: Codigo/GestaoGrupoMusicalWeb
 
     steps:
     - name: Execute checkout in repository
