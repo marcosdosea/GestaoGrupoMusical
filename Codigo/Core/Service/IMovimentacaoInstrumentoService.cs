@@ -1,4 +1,5 @@
 ﻿using Core.DTO;
+using System.Net;
 using static Core.DTO.InstrumentoAssociadoDTO;
 
 namespace Core.Service
@@ -16,7 +17,7 @@ namespace Core.Service
         /// 402 - Ação de devolução inválida pois associado não corresponde ao mesmo do empréstimo <para />
         /// 500 - Erro interno
         /// </returns>
-        Task<int> CreateAsync(Movimentacaoinstrumento movimentacao);
+        Task<HttpStatusCode> CreateAsync(Movimentacaoinstrumento movimentacao);
 
         Task<Movimentacaoinstrumento?> GetEmprestimoByIdInstrumento(int idInstrumento);
 
@@ -32,7 +33,7 @@ namespace Core.Service
         /// 404 - O id não corresponde a nenhuma movimentação <para />
         /// 500 - Erro interno
         /// </returns>
-        Task<int> DeleteAsync(int id);
+        Task<HttpStatusCode> DeleteAsync(int id);
 
         /// <summary>
         /// Envia uma notificação sobre o empréstimo/devolução de instrumento
@@ -47,7 +48,7 @@ namespace Core.Service
         /// 407 - Devolução já está confirmada <para />
         /// 500 - Erro interno
         /// </returns>
-        Task<int> NotificarViaEmailAsync(int id);
+        Task<HttpStatusCode> NotificarViaEmailAsync(int id);
 
         Task<MovimentacoesAssociado> MovimentacoesByIdAssociadoAsync(int idAssociado);
 
@@ -64,6 +65,6 @@ namespace Core.Service
         /// 404 - O id não corresponde a nenhuma movimentação <para />
         /// 500 - Erro interno
         /// </returns>
-        Task<int> ConfirmarMovimentacaoAsync(int idMovimentacao, int idAssociado);
+        Task<HttpStatusCode> ConfirmarMovimentacaoAsync(int idMovimentacao, int idAssociado);
     }
 }
