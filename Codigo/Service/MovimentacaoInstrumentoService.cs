@@ -3,6 +3,7 @@ using Core.DTO;
 using Core.Service;
 using Email;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 using static Core.DTO.InstrumentoAssociadoDTO;
 
 namespace Service
@@ -16,7 +17,7 @@ namespace Service
             _context = context;
         }
 
-        public async Task<int> CreateAsync(Movimentacaoinstrumento movimentacao)
+        public async Task<HttpStatusCode> CreateAsync(Movimentacaoinstrumento movimentacao)
         {
             using var transaction = _context.Database.BeginTransaction();
 
@@ -110,7 +111,7 @@ namespace Service
             }
         }
 
-        public async Task<int> DeleteAsync(int id)
+        public async Task<HttpStatusCode> DeleteAsync(int id)
         {
             try
             {
@@ -218,7 +219,7 @@ namespace Service
             return movimentacoes;
         }
 
-        public async Task<int> ConfirmarMovimentacaoAsync(int idMovimentacao, int idAssociado)
+        public async Task<HttpStatusCode> ConfirmarMovimentacaoAsync(int idMovimentacao, int idAssociado)
         {
             try
             {
@@ -247,7 +248,7 @@ namespace Service
             }
         }
 
-        public async Task<int> NotificarViaEmailAsync(int id)
+        public async Task<HttpStatusCode> NotificarViaEmailAsync(int id)
         {
             try
             {
