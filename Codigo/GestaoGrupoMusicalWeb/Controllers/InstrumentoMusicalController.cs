@@ -359,26 +359,26 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             switch (await _movimentacaoInstrumento.NotificarViaEmailAsync(id))
             {
-                case 200:
+                case HttpStatusCode.OK:
                     Notificar("Notificação <b>Enviada</b> com <b>Sucesso</b>", Notifica.Sucesso);
                     break;
-                case 401:
-                    Notificar("O instrumento <b>Não</b> está <b>Cadastrado</b> no sistema, por favor entre em contato com o suporte", Notifica.Erro);
+                case HttpStatusCode.PreconditionFailed:
+                    Notificar("O instrumento <b>Não</b> está <b>Cadastrado</b> no sistema.", Notifica.Erro);
                     break;
-                case 402:
-                    Notificar("O correspondente <b>Não</b> está <b>Cadastrado</b> no sistema, por favor entre em contato com o suporte", Notifica.Erro);
+                case HttpStatusCode.PreconditionRequired:
+                    Notificar("O correspondente <b>Não</b> está <b>Cadastrado</b> no sistema.", Notifica.Erro);
                     break;
-                case 404:
+                case HttpStatusCode.NotFound:
                     Notificar($"O Id {id} não <b>Corresponde</b> a nenhuma <b>Movimentação</b>", Notifica.Erro);
                     break;
-                case 406:
+                case HttpStatusCode.BadRequest:
                     Notificar("O Associado <b>Confirmou</b> esse <b>Empréstimo</b>", Notifica.Alerta);
                     break;
-                case 407:
+                case HttpStatusCode.BadGateway:
                     Notificar("O Associado <b>Confirmou</b> essa <b>Devolução</b>", Notifica.Alerta);
                     break;
-                case 500:
-                    Notificar("Desculpe, ocorreu um <b>Erro</b> durante o <b>Envio</b> da notificação, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                case HttpStatusCode.InternalServerError:
+                    Notificar("Desculpe, ocorreu um <b>Erro</b> durante o <b>Envio</b> da notificação.", Notifica.Erro);
                     break;
             }
             return RedirectToAction(nameof(Movimentar), new { id = IdInstrumento });
