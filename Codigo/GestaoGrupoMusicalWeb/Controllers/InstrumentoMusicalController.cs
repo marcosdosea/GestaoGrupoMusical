@@ -335,16 +335,16 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             switch (await _movimentacaoInstrumento.DeleteAsync(id))
             {
-                case 200:
+                case HttpStatusCode.OK:
                     Notificar("Movimentação <b>Excluida</b> com <b>Sucesso</b>", Notifica.Sucesso);
                     break;
-                case 400:
+                case HttpStatusCode.PreconditionFailed:
                     Notificar("Não é possível <b>Excluir</b> essa <b>Movimentação</b> de <b>Empréstimo</b> pois o instrumento não foi <b>Devolvido</b>", Notifica.Alerta);
                     break;
-                case 404:
+                case HttpStatusCode.NotFound:
                     Notificar($"O Id {id} não <b>Corresponde</b> a nenhuma <b>Movimentação</b>", Notifica.Erro);
                     break;
-                case 500:
+                case HttpStatusCode.InternalServerError:
                     Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Exclusão</b> da movimentação, se isso persistir entre em contato com o suporte", Notifica.Erro);
                     break;
             }
