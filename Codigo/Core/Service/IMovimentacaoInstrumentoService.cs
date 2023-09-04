@@ -28,10 +28,10 @@ namespace Core.Service
         /// </summary>
         /// <param name="id"></param>
         /// <returns>
-        /// 200 - Sucesso <para />
-        /// 400 - Movimentação de emprestimo com instrumento não devolvido <para />
-        /// 404 - O id não corresponde a nenhuma movimentação <para />
-        /// 500 - Erro interno
+        /// OK - Sucesso <para />
+        /// PreconditionFailed - Movimentação de emprestimo com instrumento não devolvido <para />
+        /// NotFound - O id não corresponde a nenhuma movimentação <para />
+        /// InternalServerError - Erro interno
         /// </returns>
         Task<HttpStatusCode> DeleteAsync(int id);
 
