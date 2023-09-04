@@ -40,13 +40,13 @@ namespace Core.Service
         /// </summary>
         /// <param name="id"></param>
         /// <returns>
-        /// 200 - Sucesso <para />
+        /// ok - Sucesso <para />
         /// 401 - Instrumento não está cadastrado no sistema <para />
         /// 402 - Associado não está cadastrado no sistema <para />
-        /// 404 - O id não corresponde a nenhuma movimentação <para />
+        /// NotFound - O id não corresponde a nenhuma movimentação <para />
         /// 406 - Empréstimo já está confirmado <para />
         /// 407 - Devolução já está confirmada <para />
-        /// 500 - Erro interno
+        /// InternalServerError - Erro interno
         /// </returns>
         Task<HttpStatusCode> NotificarViaEmailAsync(int id);
 
@@ -58,12 +58,12 @@ namespace Core.Service
         /// <param name="idMovimentacao"></param>
         /// <param name="idAssociado"></param>
         /// <returns>
-        /// 200 - Sucesso Empréstimo <para />
-        /// 201 - Sucesso Devolução <para />
-        /// 400 - Associado inválido para empréstimo <para />
-        /// 401 - Associado inválido para devolução <para />
-        /// 404 - O id não corresponde a nenhuma movimentação <para />
-        /// 500 - Erro interno
+        /// Created - Sucesso Empréstimo <para />
+        /// OK - Sucesso Devolução <para />
+        /// PreconditionFailed - Associado inválido para empréstimo <para />
+        /// BadRequest - Associado inválido para devolução <para />
+        /// NotFound - O id não corresponde a nenhuma movimentação <para />
+        /// InternalServerError - Erro interno
         /// </returns>
         Task<HttpStatusCode> ConfirmarMovimentacaoAsync(int idMovimentacao, int idAssociado);
     }
