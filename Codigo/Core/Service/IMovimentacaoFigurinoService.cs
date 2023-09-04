@@ -47,13 +47,14 @@ namespace Core.Service
         /// </summary>
         /// <param name="id">id da movimentação</param>
         /// <returns>
-        /// 200: tudo ocorreu bem
-        /// 400: movimentacao nao foi encontrada
-        /// 500: algo deu errado ao remover/salvar a transação
+        /// OK: tudo ocorreu bem
+        /// NotFound: movimentacao nao foi encontrada
+        /// InternalServerError: algo deu errado ao remover/salvar a transação
         /// </returns>
         Task<HttpStatusCode> DeleteAsync(int id);
 
         Task<IEnumerable<EstoqueDTO>> GetEstoque(int idFigurino);
+        
         /// <summary>
         /// Consulta os emprestimo e devolucao do usuario
         /// </summary>
@@ -62,6 +63,7 @@ namespace Core.Service
         /// retorna os Enumerable de emprestimo e devolução do associado
         /// </returns>
         Task<MovimentacoesAssociadoFigurino> MovimentacoesByIdAssociadoAsync(int idAssociado);
+
         /// <summary>
         /// Confirmar um empréstimo/devolução de instrumento
         /// </summary>
@@ -73,9 +75,10 @@ namespace Core.Service
         /// PreconditionFailed - Associado inválido para empréstimo <para />
         /// FailedDependency - Associado inválido para devolução <para />
         /// NotFound - O id não corresponde a nenhuma movimentação <para />
-        /// 500 - Erro interno
+        /// InternalServerError - Erro interno
         /// </returns>
         Task<HttpStatusCode> ConfirmarMovimentacao(int idMovimentacao, int idAssociado);
+
         /// <summary>
         /// Buscar a confirmação do usuario
         /// </summary>
