@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,19 +15,19 @@ namespace Core.Service
         /// </summary>
         /// <param name="grupomusical"></param>
         /// <returns>200 caso seja sucesso ou 500 se ouver algum erro ao executar o metodo</returns>
-        Task<int> Create (Grupomusical grupomusical);
+        Task<HttpStatusCode> Create (Grupomusical grupomusical);
         /// <summary>
         /// Metodo usado para editar um grupo musical
         /// </summary>
         /// <param name="grupomusical"></param>
         /// <returns>200 caso seja sucesso ou 500 se ouver algum erro ao executar o metodo</returns>
-        Task<int> Edit(Grupomusical grupomusical);
+        Task<HttpStatusCode> Edit(Grupomusical grupomusical);
         /// <summary>
         /// Metodo usado para deletar um grupo musical
         /// </summary>
         /// <param name="id"></param>
         /// <returns>200 caso seja sucesso ou 500 se ouver algum erro ao executar o metodo</returns>
-        Task<int> Delete(int id);
+        Task<HttpStatusCode> Delete(int id);
 
         /// <summary>
         /// Pegar um Grupo Musical
@@ -60,7 +61,7 @@ namespace Core.Service
         /// </summary>
         /// <param name="cpf"></param>
         /// <returns>Id do grupo</returns>
-        int GetIdGrupo(string cpf);
+        Task<int> GetIdGrupo(string cpf);
 
         /// <summary>
         /// Retorna todas as pessoas que possuem um papel acima de associado
