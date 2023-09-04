@@ -59,13 +59,24 @@
             <div class="col-lg-6">
                 <label asp-for="Movimentacao" class="control-label mb-2"></label>
                 <div class="d-flex justify-content-around">
-                    @{
-                        foreach (var item in Model.MovimentacaoEnum)
-                        {
-                            <div class="col-lg-2">
-                                <label for="@item.Key">@item.Key</label>
-                                <input class="form-check-input" type="radio" value="@item.Value" asp-for="Movimentacao" id="@item.Key" />
-                            </div>
+                        @{
+                            foreach (var item in Model.MovimentacaoEnum)
+                            {
+                                if (!item.Key.Equals("Descartar"))
+                                {
+                                    <div class="col-lg-2">
+                                        <label for="@item.Key">@item.Key</label>
+                                        <input class="form-check-input" type="radio" value="@item.Value" asp-for="Movimentacao" id="@item.Key" />
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="col-lg-2">
+                                        <label for="@item.Key" onclick="colocarIdColaborador">@item.Key</label>
+                                        <input class="form-check-input" type="radio" value="@item.Value" asp-for="Movimentacao" id="@item.Key" />
+                                    </div>
+                                }
+
                         }
                     }
                 </div>
