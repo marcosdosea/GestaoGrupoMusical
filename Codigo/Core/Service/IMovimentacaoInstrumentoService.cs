@@ -11,11 +11,11 @@ namespace Core.Service
         /// </summary>
         /// <param name="movimentacao"></param>
         /// <returns>
-        /// 200 - Sucesso <para />
-        /// 400 - Instrumento com status danificado <para />
-        /// 401 - Ação de emprestimo/devolução para instrumento já emprestado/devolvido <para />
-        /// 402 - Ação de devolução inválida pois associado não corresponde ao mesmo do empréstimo <para />
-        /// 500 - Erro interno
+        /// Created             - Sucesso <para />
+        /// BadRequest          - Instrumento com status danificado <para />
+        /// Conflict            - Ação de emprestimo/devolução para instrumento já emprestado/devolvido <para />
+        /// PreconditionFailed  - Ação de devolução inválida pois associado não corresponde ao mesmo do empréstimo <para />
+        /// InternalServerError - Erro interno
         /// </returns>
         Task<HttpStatusCode> CreateAsync(Movimentacaoinstrumento movimentacao);
 
