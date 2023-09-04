@@ -257,7 +257,7 @@ namespace Service
                 {
                     if (Convert.ToBoolean(movimentacao.ConfirmacaoAssociado))
                     {
-                        return movimentacao.TipoMovimento == "DEVOLUCAO" ? 407 : 406;
+                        return movimentacao.TipoMovimento == "DEVOLUCAO" ? HttpStatusCode.BadGateway : HttpStatusCode.BadRequest;
                     }
                     var instrumento = await _context.Instrumentomusicals.FindAsync(movimentacao.IdInstrumentoMusical);
                     var associado = await _context.Pessoas.FindAsync(movimentacao.IdAssociado);
@@ -265,12 +265,12 @@ namespace Service
 
                     if(associado == null)
                     {
-                        return 402;
+                        return HttpStatusCode.PreconditionRequired;
                     }
 
                     if(instrumento == null)
                     {
-                        return 401;
+                        return HttpStatusCode.PreconditionFailed;
                     }
 
                     string? instrumentoNome = (await _context.Tipoinstrumentos.FindAsync(instrumento.IdTipoInstrumento))?.Nome;
@@ -290,14 +290,14 @@ namespace Service
 
                     await EmailService.Enviar(email);
 
-                    return 200;
+                    return HttpStatusCode.OK;
                 }
 
-                return 404;
+                return HttpStatusCode.NotFound;
             }
             catch
             {
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
         }
     }
