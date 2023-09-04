@@ -227,12 +227,12 @@ namespace Service
 
                 if(movimentacao == null)
                 {
-                    return 404;
+                    return HttpStatusCode.NotFound;
                 }
 
                 if(movimentacao.IdAssociado != idAssociado)
                 {
-                    return movimentacao.TipoMovimento == "DEVOLUCAO" ? 401 : 400;
+                    return movimentacao.TipoMovimento == "DEVOLUCAO" ? HttpStatusCode.BadRequest : HttpStatusCode.PreconditionFailed;
                 }
 
                 movimentacao.ConfirmacaoAssociado = 1;
@@ -240,11 +240,11 @@ namespace Service
                 _context.Update(movimentacao);
                 await _context.SaveChangesAsync();
 
-                return movimentacao.TipoMovimento == "DEVOLUCAO" ? 201 : 200;
+                return movimentacao.TipoMovimento == "DEVOLUCAO" ? HttpStatusCode.OK : HttpStatusCode.Created;
             }
             catch
             {
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
         }
 
