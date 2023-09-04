@@ -123,18 +123,18 @@ namespace Service
                     {
                         if (movimentacaoDb.Id == movimentacao.Id)
                         {
-                            return 400;
+                            return HttpStatusCode.PreconditionFailed;
                         }
                          _context.Movimentacaoinstrumentos.Remove(movimentacao);
                         await _context.SaveChangesAsync();
-                        return 200;
+                        return HttpStatusCode.OK;
                     }
                 }
-                return 404;
+                return HttpStatusCode.NotFound;
             }
             catch
             {
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
         }
 
