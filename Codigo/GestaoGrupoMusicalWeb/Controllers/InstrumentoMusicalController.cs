@@ -411,23 +411,23 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             switch(await _movimentacaoInstrumento.ConfirmarMovimentacaoAsync(idMovimentacao, associado.Id))
             {
-                case 200:
+                case HttpStatusCode.Created:
                     Notificar("Empréstimo <b>Confirmado</b> com <b>Sucesso</b>", Notifica.Sucesso);
                     break;
-                case 201:
+                case HttpStatusCode.OK:
                     Notificar("Devolução <b>Confirmada</b> com <b>Sucesso</b>", Notifica.Sucesso);
                     break;
-                case 400:
+                case HttpStatusCode.PreconditionFailed:
                     Notificar("O <b>Associado</b> não corresponde ao mesmo do <b>Empréstimo</b>", Notifica.Erro);
                     break;
-                case 401:
+                case HttpStatusCode.BadRequest:
                     Notificar("O <b>Associado</b> não corresponde ao mesmo da <b>Devolução</b>", Notifica.Erro);
                     break;
-                case 404:
+                case HttpStatusCode.NotFound:
                     Notificar($"O Id {idMovimentacao} não <b>Corresponde</b> a nenhuma <b>Movimentação</b>", Notifica.Erro);
                     break;
-                case 500:
-                    Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Confirmação</b>, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                case HttpStatusCode.InternalServerError:
+                    Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Confirmação</b>.", Notifica.Erro);
                     break;
             }
 
