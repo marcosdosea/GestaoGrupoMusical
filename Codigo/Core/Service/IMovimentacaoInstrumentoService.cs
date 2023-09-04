@@ -41,11 +41,11 @@ namespace Core.Service
         /// <param name="id"></param>
         /// <returns>
         /// ok - Sucesso <para />
-        /// 401 - Instrumento não está cadastrado no sistema <para />
-        /// 402 - Associado não está cadastrado no sistema <para />
+        /// PreconditionFailed - Instrumento não está cadastrado no sistema <para />
+        /// PreconditionRequired - Associado não está cadastrado no sistema <para />
         /// NotFound - O id não corresponde a nenhuma movimentação <para />
-        /// 406 - Empréstimo já está confirmado <para />
-        /// 407 - Devolução já está confirmada <para />
+        /// BadRequest - Empréstimo já está confirmado <para />
+        /// BadGateway - Devolução já está confirmada <para />
         /// InternalServerError - Erro interno
         /// </returns>
         Task<HttpStatusCode> NotificarViaEmailAsync(int id);
