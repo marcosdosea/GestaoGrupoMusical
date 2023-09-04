@@ -115,11 +115,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         break;
 
                     case 500:
-                        mensagem = "<b>Erro</b>! Desculpe, ocorreu um erro durante a <b>Promoção</b> do associado para administrador, se isso persistir entre em contato com o suporte";
+                        mensagem = "<b>Erro</b>! Desculpe, ocorreu um erro durante a <b>Promoção</b> do associado para administrador.";
                         Notificar(mensagem, Notifica.Erro);
                         break;
                     case 501:
-                        mensagem = "<b>Erro</b>! Desculpe, ocorreu um erro durante a <b>Operação</b>, se isso persistir entre em contato com o suporte";
+                        mensagem = "<b>Erro</b>! Desculpe, ocorreu um erro durante a <b>Operação</b>.";
                         Notificar(mensagem, Notifica.Erro);
                         break;
                 }

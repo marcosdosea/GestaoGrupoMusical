@@ -477,7 +477,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         Notificar(mensagem, Notifica.Erro);
                         break;
                     case 500:
-                        mensagem = "Erro ! Aconteceu um problema durante a confirmação, para detalhes contate o suporte";
+                        mensagem = "Erro ! Aconteceu um problema durante a confirmação.";
                         Notificar(mensagem, Notifica.Erro);
                         break;
                 }

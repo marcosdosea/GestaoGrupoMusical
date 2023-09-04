@@ -212,7 +212,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     Notificar($"Nenhum <b>Instrumento Musical</b> corresponde ao id <b>{id}</b>.", Notifica.Erro);
                     break;
                 case HttpStatusCode.InternalServerError:
-                    Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Exclusão</b>, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                    Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Exclusão</b>.", Notifica.Erro);
                     return RedirectToAction(nameof(Delete), id);
             }
             
@@ -315,7 +315,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                             Notificar("Esse <b>Associado</b> não corresponde ao <b>Empréstimo</b> desse <b>Instrumento</b>", Notifica.Erro);
                             break;
                         case HttpStatusCode.InternalServerError:
-                            Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Movimentação</b> do instrumento, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                            Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Movimentação</b> do instrumento.", Notifica.Erro);
                             break;
                     }
                 }
@@ -345,7 +345,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     Notificar($"O Id {id} não <b>Corresponde</b> a nenhuma <b>Movimentação</b>", Notifica.Erro);
                     break;
                 case HttpStatusCode.InternalServerError:
-                    Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Exclusão</b> da movimentação, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                    Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Exclusão</b> da movimentação.", Notifica.Erro);
                     break;
             }
 

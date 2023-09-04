@@ -101,7 +101,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         return RedirectToAction(nameof(Index));
                         break;
                     case 500:
-                        Notificar("<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Cadastro</b> do associado, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                        Notificar("<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Cadastro</b> do associado.", Notifica.Erro);
                         return RedirectToAction(nameof(Index));
                         break;
                 }
@@ -216,7 +216,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     return RedirectToAction(nameof(Index));
                     break;
                 case 500:
-                    Notificar("<b>Erro</b> ! Desculpe, ocorreu um erro durante a <b>Exclusão</b> do Gruppo Musical, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                    Notificar("<b>Erro</b> ! Desculpe, ocorreu um erro durante a <b>Exclusão</b> do Gruppo Musical.", Notifica.Erro);
                     return RedirectToAction(nameof(Index));
                     break;
             }
