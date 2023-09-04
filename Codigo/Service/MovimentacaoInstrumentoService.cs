@@ -57,7 +57,7 @@ namespace Service
                             await EmailService.Enviar(email);
                         }
 
-                        return 200;
+                        return HttpStatusCode.Created;
                     }
                     else if(movimentacao.TipoMovimento == "DEVOLUCAO" && instrumento.Status == "EMPRESTADO")
                     {
@@ -91,23 +91,23 @@ namespace Service
                                 await EmailService.Enviar(email);
                             }
 
-                            return 200;
+                            return HttpStatusCode.Created;
                         }
                         await transaction.RollbackAsync();
-                        return 402;
+                        return HttpStatusCode.PreconditionFailed;
                     }
                     await transaction.RollbackAsync();
-                    return 401;
+                    return HttpStatusCode.Conflict;
                 }
                 
                 await transaction.RollbackAsync();
-                return 400;
+                return HttpStatusCode.BadRequest;
                 
             }
             catch 
             {
                 await transaction.RollbackAsync();
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
         }
 
