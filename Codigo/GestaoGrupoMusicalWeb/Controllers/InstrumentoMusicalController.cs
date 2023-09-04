@@ -288,7 +288,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
                     switch (await _movimentacaoInstrumento.CreateAsync(movimentacao))
                     {
-                        case 200:
+                        case HttpStatusCode.Created:
                             if (movimentacao.TipoMovimento == "EMPRESTIMO")
                             {
                                 Notificar("Instrumento <b>Emprestado</b> com <b>Sucesso</b>. Enviamos um <b>E-mail</b> para o <b>Associado</b> Confirmar.", Notifica.Sucesso);
@@ -298,10 +298,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
                                 Notificar("Instrumento <b>Devolvido</b> com <b>Sucesso</b>. Enviamos um <b>E-mail</b> para o <b>Associado</b> Confirmar.", Notifica.Sucesso);
                             }
                             return RedirectToAction(nameof(Movimentar), new { id = movimentacaoPost.IdInstrumentoMusical });
-                        case 400:
+                        case HttpStatusCode.BadRequest:
                             Notificar("Não é possível <b>Emprestar</b> um instrumento <b>Danificado</b>", Notifica.Alerta);
                             return RedirectToAction(nameof(Movimentar), new { id = movimentacaoPost.IdInstrumentoMusical });
-                        case 401:
+                        case HttpStatusCode.Conflict:
                             if (movimentacao.TipoMovimento == "EMPRESTIMO")
                             {
                                 Notificar("Não é possível <b>Emprestar</b> um instrumento que não está <b>Disponível</b>", Notifica.Alerta);
@@ -311,10 +311,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
                                 Notificar("Não é possível <b>Devolver</b> um instrumento que não está <b>Emprestado</b>", Notifica.Alerta);
                             }
                             break;
-                        case 402:
+                        case HttpStatusCode.PreconditionFailed:
                             Notificar("Esse <b>Associado</b> não corresponde ao <b>Empréstimo</b> desse <b>Instrumento</b>", Notifica.Erro);
                             break;
-                        case 500:
+                        case HttpStatusCode.InternalServerError:
                             Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Movimentação</b> do instrumento, se isso persistir entre em contato com o suporte", Notifica.Erro);
                             break;
                     }
