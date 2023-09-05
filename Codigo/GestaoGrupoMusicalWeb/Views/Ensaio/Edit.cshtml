@@ -76,10 +76,15 @@
                         <div class="row">
                             <div class="form-group col-xl">
                                 <label asp-for="IdRegentes" class="control-label"></label>
-                                <select asp-for="IdRegentes" asp-items="@Model.ListaPessoa" class="form-select">
-                                    <option value=""></option>
+                                <span class="d-inline-block my-2" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Escreva o nome do Regente. Ex: @ViewData["exemploRegente"]">
+                                    <button class="btn btn-outline-secondary btn-sm fw-bold" type="button">?</button>
+                                </span>
+                                <select multiple asp-for="IdRegentes" class="d-none" asp-items="Model.ListaPessoa">
                                 </select>
-                                <span asp-validation-for="IdRegentes" class="text-danger"></span>
+                                <input class="form-control" id="regentes" placeholder="Informe o Regente."/>
+                                <div id="blockNames" class="d-flex flex-column gap-2">
+                                </div>
+                                <span for="regentes" class="text-danger"></span>
                             </div>
                         </div>
                     </div>
@@ -105,8 +110,21 @@
             </div>
         </div>
 </div>
+<script>
+    window.addEventListener("load", () => {
+        fillAutocomplete('@(Html.Raw(Model.JsonLista))', "regentes", "IdRegentes", "formCreate", "O campo Regentes é obrigatório");
+    });
+</script>
+
+@section Header {
+    @{
+        await Html.RenderPartialAsync("_AutoCompleteCssPartial");
+    }
+}
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        await Html.RenderPartialAsync("_EnablePopoversPartial");
+        await Html.RenderPartialAsync("_AutoCompletePartial");
     }
-    }
+}

@@ -114,10 +114,14 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 Notificar("<b>Ensaio não encontrado!</b>", Notifica.Alerta);
                 return RedirectToAction(nameof(Index));
             }
+            var lista = await _pessoa.GetRegentesForAutoCompleteAsync(Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
+
             EnsaioViewModel ensaioModel = _mapper.Map<EnsaioViewModel>(ensaio);
+            
+            ensaioModel.ListaPessoa = new SelectList(lista, "Id", "Nome");
 
-            ensaioModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
-
+            ViewData["exemploRegente"] = lista.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
+            ensaioModel.JsonLista = lista.ToJson();
             return View(ensaioModel);
         }
 
