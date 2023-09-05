@@ -301,5 +301,12 @@ namespace Service
                 return 500;
             }
         }
+
+        public async Task<IEnumerable<int>> GetIdRegentesEnsaioAsync(int idEnsaio)
+        {
+            return await _context.Ensaiopessoas
+                                 .Where(ep => ep.IdEnsaio == idEnsaio && ep.IdPapelGrupoPapelGrupo == 5)
+                                 .Select(ep => ep.IdPessoa).ToListAsync();
+        }
     }
 }

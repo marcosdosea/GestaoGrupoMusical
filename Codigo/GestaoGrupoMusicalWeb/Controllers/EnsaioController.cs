@@ -117,10 +117,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
             var lista = await _pessoa.GetRegentesForAutoCompleteAsync(Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
 
             EnsaioViewModel ensaioModel = _mapper.Map<EnsaioViewModel>(ensaio);
-            
+
             ensaioModel.ListaPessoa = new SelectList(lista, "Id", "Nome");
 
             ViewData["exemploRegente"] = lista.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
+            ViewData["jsonIdRegentes"] = (await _ensaio.GetIdRegentesEnsaioAsync(id)).ToJson();
             ensaioModel.JsonLista = lista.ToJson();
             return View(ensaioModel);
         }
