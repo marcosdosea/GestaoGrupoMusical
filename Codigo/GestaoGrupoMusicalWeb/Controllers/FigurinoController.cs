@@ -357,7 +357,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     IdColaborador = colaborador.Id,
                     Status = status,
                     ConfirmacaoRecebimento = (movimentacaoViewModel.Movimentacao.Equals("DANIFICADO")) ? (sbyte)1 : (sbyte)0,
-                    Quantidade = movimentacaoViewModel.QuantidadeEntregue
+                    Quantidade = movimentacaoViewModel.Quantidade
                 };
 
                 HttpStatusCode resul = await _movimentacaoService.CreateAsync(movimentacao);
