@@ -232,11 +232,13 @@ namespace Service
                         {
                             Inicio = ensaio.DataHoraInicio,
                             Fim = ensaio.DataHoraFim,
-                            Regentes = _context.Ensaiopessoas.Where(ep => ep.IdPapelGrupoPapelGrupo == 5).Select(ep => ep.IdPessoaNavigation.Nome).AsEnumerable(),
+                            Regentes = _context.Ensaiopessoas
+                                       .Where(ep => ep.IdPapelGrupoPapelGrupo == 5 && ep.IdEnsaio == idEnsaio)
+                                       .Select(ep => ep.IdPessoaNavigation.Nome).AsEnumerable(),
                             Tipo = ensaio.Tipo,
                             Local = ensaio.Local,
                             Frequencias = _context.Ensaiopessoas
-                            .Where(ensaioPessoa => ensaioPessoa.IdEnsaio == idEnsaio)
+                            .Where(ensaioPessoa => ensaioPessoa.IdEnsaio == idEnsaio && ensaioPessoa.IdPapelGrupoPapelGrupo != 5)
                             .OrderBy(ensaioPessoa => ensaioPessoa.IdPessoaNavigation.Nome)
                             .Select(ensaioPessoa => new EnsaioListaFrequenciaDTO
                             {

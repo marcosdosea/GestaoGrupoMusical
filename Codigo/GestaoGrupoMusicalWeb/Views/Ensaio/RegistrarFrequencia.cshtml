@@ -24,7 +24,15 @@
     <div class="row">
         <div class="col-12">
             <label class="control-label" asp-for="Regentes"></label>
-            <input class="form-control" asp-for="Regentes" disabled />
+                @{
+                    if (Model.Regentes != null)
+                    {
+                        foreach (var regente in Model.Regentes)
+                        {
+                            <input class="form-control" value="@regente" disabled />
+                        }
+                    }
+                }
         </div>
     </div>
     <div class="row">
