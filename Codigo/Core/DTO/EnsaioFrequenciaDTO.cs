@@ -11,7 +11,6 @@ namespace Core.DTO
 
         public string Tipo { get; set; } = string.Empty;
 
-        [Display(Name = "Regente")]
         public IEnumerable<string>? Regentes { get; set; }
 
         public string? Local { get; set; }
