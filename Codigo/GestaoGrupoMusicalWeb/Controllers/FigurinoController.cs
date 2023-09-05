@@ -394,17 +394,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     case HttpStatusCode.FailedDependency:
                         Notificar("<b>Erro!</b> O <b>Associado</b> ainda não confirmou o recebimento do <b>Figurino</b>", Notifica.Alerta);
                     break;
-<<<<<<< .mine
-                case 405:
-                    Notificar("<b>Alerta!</b> <b>Quantidade</b> não pode ser <b>zero</b>", Notifica.Alerta);
-                    break;
-                case 500:
-=======
                     case HttpStatusCode.BadRequest:
-                        Notificar("<b>Erro!</b> Problema com a quantidade a devolver.", Notifica.Erro);
+                        Notificar("<b>Erro!</b> Problema com a <b>Quantidade</b> movimentada.", Notifica.Erro);
                         break;
                     case HttpStatusCode.InternalServerError:
->>>>>>> .theirs
                     Notificar("<b>Erro!</b> Algo deu errado", Notifica.Erro);
                     break;
                 default:

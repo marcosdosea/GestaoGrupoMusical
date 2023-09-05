@@ -162,13 +162,13 @@ namespace Service
                     if(movimentacao.Quantidade > figurinoEstoque.QuantidadeDisponivel)
                     {
                         await transaction.RollbackAsync();
-                        return 401;
+                        return HttpStatusCode.NoContent;
                     }
 
                     if(movimentacao.Quantidade == 0)
                     {
                         await transaction.RollbackAsync();
-                        return 405;
+                        return HttpStatusCode.BadRequest;
                     }
                     
                     movimentacao.ConfirmacaoRecebimento = 1;
