@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Service;
+using System.Net;
 using static GestaoGrupoMusicalWeb.Controllers.BaseController;
 using static GestaoGrupoMusicalWeb.Models.AdministradorGrupoMusicalViewModel;
 
@@ -81,14 +82,14 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
-                int retAddAdm = await _pessoaService.AddAdmGroup(pessoa);
+                HttpStatusCode retAddAdm = await _pessoaService.AddAdmGroup(pessoa);
 
                 switch (retAddAdm)
                 {
-                    case 200:
+                    case HttpStatusCode.Created:
                         switch (await RequestPasswordReset(_userManager, pessoa.Email, pessoa.Nome))
                         {
-                            case 200:
+                            case HttpStatusCode.OK:
                                 mensagem = "<b>Sucesso</b>! Administrador cadastrado e enviado email para redefinição de senha.";
                                 Notificar(mensagem, Notifica.Sucesso);
                                 break;
@@ -99,26 +100,26 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         }
                         break;
 
-                    case 201:
+                    case HttpStatusCode.OK:
                         mensagem = "<b>Sucesso</b>! Associado promovido a <b>Administrador do Grupo Musical</b>.";
                         Notificar(mensagem, Notifica.Sucesso);
                         break;
 
-                    case 400:
+                    case HttpStatusCode.NotAcceptable:
                         mensagem = "<b>Alerta</b>! Infelizemente não foi possível <b>cadastrar</b>, o usuário faz parte de outro grupo musical";
                         Notificar(mensagem, Notifica.Alerta);
                         break;
 
-                    case 401:
+                    case HttpStatusCode.BadRequest:
                         mensagem = "<b>Erro</b>! Associado já é um administrador deste grupo.";
                         Notificar(mensagem, Notifica.Erro);
                         break;
 
-                    case 500:
+                    case HttpStatusCode.NotImplemented:
                         mensagem = "<b>Erro</b>! Desculpe, ocorreu um erro durante a <b>Promoção</b> do associado para administrador.";
                         Notificar(mensagem, Notifica.Erro);
                         break;
-                    case 501:
+                    case HttpStatusCode.InternalServerError:
                         mensagem = "<b>Erro</b>! Desculpe, ocorreu um erro durante a <b>Operação</b>.";
                         Notificar(mensagem, Notifica.Erro);
                         break;

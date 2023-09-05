@@ -338,6 +338,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
                 return View(movimentarFigurinoViewModel);
             }
+
             [Authorize(Roles = "ADMINISTRADOR GRUPO")]
             [HttpPost]
             [ValidateAntiForgeryToken]
@@ -359,7 +360,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 Quantidade = movimentacaoViewModel.QuantidadeEntregue
             };
 
-                int resul = await _movimentacaoService.CreateAsync(movimentacao);
+                HttpStatusCode resul = await _movimentacaoService.CreateAsync(movimentacao);
 
                 string tipoMov = string.Empty;
 
@@ -374,22 +375,25 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
                 switch (resul)
                 {
-                    case 200:
+                    case HttpStatusCode.OK:
                         Notificar($"<b>Sucesso!</b> Figurino foi <b>{tipoMov}</b>", Notifica.Sucesso);
                         break;
-                    case 400:
+                    case HttpStatusCode.NotFound:
                         Notificar("<b>Alerta!</b> Não há estoque desse tamanho", Notifica.Alerta);
                         break;
-                    case 401:
+                    case HttpStatusCode.NoContent:
                         Notificar("<b>Alerta!</b> Não há peças disponíveis para empréstimo", Notifica.Alerta);
                         break;
-                    case 402:
+                    case HttpStatusCode.PreconditionFailed:
                         Notificar("<b>Alerta!</b> Não há nada para devolver", Notifica.Alerta);
                         break;
-                    case 403:
-                        Notificar("<b>Erro</b>, O <b>Associado</b> ainda não confirmou o recebimento do <b>Figurino</b>", Notifica.Alerta);
+                    case HttpStatusCode.FailedDependency:
+                        Notificar("<b>Erro!</b> O <b>Associado</b> ainda não confirmou o recebimento do <b>Figurino</b>", Notifica.Alerta);
                         break;
-                    case 500:
+                    case HttpStatusCode.BadRequest:
+                        Notificar("<b>Erro!</b> Problema com a quantidade a devolver.", Notifica.Erro);
+                        break;
+                    case HttpStatusCode.InternalServerError:
                         Notificar("<b>Erro!</b> Algo deu errado", Notifica.Erro);
                         break;
                     default:
@@ -406,17 +410,17 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 if (Id != null && Id > 0)
                 {
-                    int resul = await _movimentacaoService.DeleteAsync(Id);
+                    HttpStatusCode resul = await _movimentacaoService.DeleteAsync(Id);
 
                     switch (resul)
                     {
-                        case 200:
+                        case HttpStatusCode.OK:
                             Notificar($"<b>Sucesso!</b> Movimentação foi <b>removida</b>", Notifica.Sucesso);
                             break;
-                        case 400:
+                        case HttpStatusCode.NotFound:
                             Notificar("<b>Alerta!</b> Não há movimentação com essas informações", Notifica.Alerta);
                             break;
-                        case 500:
+                        case HttpStatusCode.InternalServerError:
                             Notificar("<b>Erro!</b> Algo deu errado", Notifica.Erro);
                             break;
                         default:
@@ -456,27 +460,27 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 string mensagem = string.Empty;
                 switch (await _movimentacaoService.ConfirmarMovimentacao(idMovimentacao, associado.Id))
                 {
-                    case 200:
+                    case HttpStatusCode.Created:
                         mensagem = "Empréstimo <b>Confirmado</b> com <b>Sucesso</b>";
                         Notificar(mensagem, Notifica.Sucesso);
                         break;
-                    case 201:
+                    case HttpStatusCode.OK:
                         mensagem = "Devolução <b>Confirmada</b> com <b>Sucesso</b>";
                         Notificar(mensagem, Notifica.Sucesso);
                         break;
-                    case 400:
+                    case HttpStatusCode.PreconditionFailed:
                         mensagem = "<b>Erro</b>, O <b>Associado</b> não corresponde ao mesmo do <b>Empréstimo</b>";
                         Notificar(mensagem, Notifica.Erro);
                         break;
-                    case 401:
+                    case HttpStatusCode.FailedDependency:
                         mensagem = "<b>Erro</b>, O <b>Associado</b> não corresponde ao mesmo da <b>Devolução</b>";
                         Notificar(mensagem, Notifica.Erro);
                         break;
-                    case 404:
+                    case HttpStatusCode.NotFound:
                         mensagem = "<b>Erro</b>, A <b>Movimentação</b> não existe !";
                         Notificar(mensagem, Notifica.Erro);
                         break;
-                    case 500:
+                    case HttpStatusCode.InternalServerError:
                         mensagem = "Erro ! Aconteceu um problema durante a confirmação.";
                         Notificar(mensagem, Notifica.Erro);
                         break;

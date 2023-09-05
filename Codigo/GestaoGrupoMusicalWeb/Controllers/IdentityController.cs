@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using static GestaoGrupoMusicalWeb.Models.IdentityViewModel;
 
 namespace GestaoGrupoMusicalWeb.Controllers
@@ -201,7 +202,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             if (result.Succeeded)
             {
                 //ativa associado
-                int atv = await _pessoaService.AtivarAssociado(user.UserName);
+                HttpStatusCode atv = await _pessoaService.AtivarAssociado(user.UserName);
 
                 return RedirectToAction("PasswordChanged", new { change = true });
             }
