@@ -266,8 +266,8 @@ namespace Service
                 int idEnsaio = frequencias.First().IdEnsaio;
 
                 var dbFrequencias = _context.Ensaiopessoas
-                                    .Where(ensaioPessoa => ensaioPessoa.IdEnsaio == frequencias.First().IdEnsaio)
-                                    .OrderBy(ensaioPessoa => ensaioPessoa.IdPessoaNavigation.Nome);
+                                    .Where(ep => ep.IdEnsaio == frequencias.First().IdEnsaio && ep.IdPapelGrupoPapelGrupo != 5)
+                                    .OrderBy(ep => ep.IdPessoaNavigation.Nome);
 
                 if (dbFrequencias == null)
                 {
