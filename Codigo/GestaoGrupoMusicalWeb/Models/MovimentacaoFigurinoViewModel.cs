@@ -31,6 +31,7 @@ namespace GestaoGrupoMusicalWeb.Models
         public int IdAssociado { get; set; }
         [Display(Name ="Quantidade")]
         [Required(ErrorMessage ="O campo {0} é obrigatório")]
+        [Range(1, int.MaxValue, ErrorMessage = "A quantidade deve ser maior que 0")]
         public int QuantidadeEntregue { get;set; }
 
         public int IdColaborador { get; set; }
