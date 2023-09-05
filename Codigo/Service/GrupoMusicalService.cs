@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
-using Core;
+﻿using Core;
 using Core.DTO;
 using Core.Service;
-using Google.Protobuf.WellKnownTypes;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace Service
 {
@@ -20,28 +13,27 @@ namespace Service
 
         public GrupoMusicalService(GrupoMusicalContext context)
         {
-            _context = context;}
+            _context = context;
+        }
 
         /// <summary>
         /// Metodo usado para adicionar o Grupo Musical
         /// </summary>
         /// <param name="grupomusical"></param>
         /// <returns>200 caso seja sucesso ou 500 se ouver algum erro ao executar o metodo</returns>
-        public async Task<int> Create(Grupomusical grupomusical)
+        public async Task<HttpStatusCode> Create(Grupomusical grupomusical)
         {
-
-
             try
             {
                 await _context.Grupomusicals.AddAsync(grupomusical);
                 await _context.SaveChangesAsync();
 
-                return 200;
+                return HttpStatusCode.OK;
             }
             catch (Exception ex)
             {
 
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
         }
         /// <summary>
@@ -49,45 +41,40 @@ namespace Service
         /// </summary>
         /// <param name="id"></param>
         /// <returns>200 caso seja sucesso ou 500 se ouver algum erro ao executar o metodo</returns>
-        public async Task<int> Delete(int id)
+        public async Task<HttpStatusCode> Delete(int id)
         {
-
             var grupo = await _context.Grupomusicals.FindAsync(id);
 
             try
             {
-
                 _context.Remove(grupo);
                 await _context.SaveChangesAsync();
-                return 200;
+
+                return HttpStatusCode.OK;
             }
             catch (Exception ex)
             {
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
-
         }
         /// <summary>
         /// Metodo usado para editar um grupo musical
         /// </summary>
         /// <param name="grupomusical"></param>
         /// <returns>200 caso seja sucesso ou 500 se ouver algum erro ao executar o metodo</returns>
-        public async Task<int> Edit(Grupomusical grupomusical)
+        public async Task<HttpStatusCode> Edit(Grupomusical grupomusical)
         {
-
             try
             {
                 _context.Update(grupomusical);
                 await _context.SaveChangesAsync();
 
-                return 200;
+                return HttpStatusCode.OK;
             }
             catch
             {
-
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
-
         }
         /// <summary>
         /// Pegar um Grupo Musical
@@ -125,11 +112,11 @@ namespace Service
             return query.AsNoTracking();
         }
 
-        public int GetIdGrupo(string cpf)
+        public async Task<int> GetIdGrupo(string cpf)
         {
-            var query = _context.Pessoas
+            var query = await _context.Pessoas
                  .Where(g => g.Cpf == cpf)
-                 .Select(g => g.IdGrupoMusical).FirstOrDefault();
+                 .Select(g => g.IdGrupoMusical).FirstOrDefaultAsync();
             return query;
         }
 

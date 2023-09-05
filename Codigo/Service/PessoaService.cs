@@ -467,7 +467,9 @@ namespace Service
         {
             var pessoa = Get(id);
 
-            if(pessoa == null)
+            var user = await _userManager.FindByNameAsync(pessoa.Cpf);
+
+            if (pessoa == null || user == null)
             {
                 return HttpStatusCode.NotFound;
             }
@@ -486,6 +488,15 @@ namespace Service
             {
                 try
                 {
+
+                    //rebaixamento de role
+                    await ChangeUserRole(user, pessoa.IdPapelGrupo, idPapel);
+                    //======================================================================
+
+                    pessoa.IdPapelGrupo = idPapel;
+
+                    _context.Update(pessoa);
+
                     pessoa.IdPapelGrupo = idPapel;
 
                     _context.Update(pessoa);
@@ -797,6 +808,13 @@ namespace Service
             return await query.AsNoTracking().ToListAsync();
         }
 
+        /// <summary>
+        /// Muda a role do user identity por outra
+        /// </summary>
+        /// <param name="user">usuario identity</param>
+        /// <param name="idRoleAtual">id do papel referente a role atual do usuario</param>
+        /// <param name="idRrolePromo">id do papel referente a role que será aplicada ao usuario</param>
+        /// <returns></returns>
         public async Task<HttpStatusCode> ChangeUserRole(UsuarioIdentity user, int idRoleAtual, int idRrolePromo)
         {
             try

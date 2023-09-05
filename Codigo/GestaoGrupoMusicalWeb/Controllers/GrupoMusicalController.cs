@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Net;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -36,7 +37,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         public async Task<ActionResult> IndexAdmGrupo()
         {
-            var idGrupoMusical = _grupoMusical.GetIdGrupo(User.Identity.Name);
+            var idGrupoMusical = await _grupoMusical.GetIdGrupo(User.Identity.Name);
 
             GrupoMusicalAdmGrupoViewModel grupoMusicalViewModel = new();
             CreateColaboradorViewModel associadosToAdd = new();
@@ -95,14 +96,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
                 switch (await _grupoMusical.Create(grupoModel))
                 {
-                    case 200:
+                    case HttpStatusCode.OK:
 
                         Notificar("Grupo <b> Cadastrado </b> com <b> Sucesso </b> ", Notifica.Sucesso);
-                        return RedirectToAction(nameof(Index));
                         break;
-                    case 500:
+                    case HttpStatusCode.InternalServerError:
                         Notificar("<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Cadastro</b> do associado, se isso persistir entre em contato com o suporte", Notifica.Erro);
-                        return RedirectToAction(nameof(Index));
                         break;
                 }
 
@@ -140,7 +139,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
             else
             {
-                idGrupo = _grupoMusical.GetIdGrupo(User.Identity.Name);
+                idGrupo = await _grupoMusical.GetIdGrupo(User.Identity.Name);
                 grupoMusicalViewModel.Id = idGrupo;
             }
             
@@ -162,10 +161,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
                 switch (await _grupoMusical.Edit(grupoMusical))
                 {
-                    case 200:
+                    case HttpStatusCode.OK:
                         Notificar("Grupo Musical <b>Editado</b> com <b>Sucesso</b>", Notifica.Sucesso);
                         break;
-                    case 500:
+                    case HttpStatusCode.InternalServerError:
                         Notificar("<b>Erro</b> ! Não foi possível editar as informações do grupo", Notifica.Erro);
                         break;
                 }
@@ -211,11 +210,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             switch (await _grupoMusical.Delete(id))
             {
-                case 200:
+                case HttpStatusCode.OK:
                     Notificar("Grupo <b> Excluido </b> com <b> Sucesso </b> ", Notifica.Sucesso);
                     return RedirectToAction(nameof(Index));
                     break;
-                case 500:
+                case HttpStatusCode.InternalServerError:
                     Notificar("<b>Erro</b> ! Desculpe, ocorreu um erro durante a <b>Exclusão</b> do Gruppo Musical, se isso persistir entre em contato com o suporte", Notifica.Erro);
                     return RedirectToAction(nameof(Index));
                     break;

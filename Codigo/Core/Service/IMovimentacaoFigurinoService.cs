@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using static Core.DTO.InstrumentoAssociadoDTO;
@@ -16,10 +17,16 @@ namespace Core.Service
         /// </summary>
         /// <param name="movimentacao"></param>
         /// <returns>
-        /// 200 - Sucesso
-        /// 500 - Erro interno
+        /// OK - Sucesso
+        /// NoContent; //não há peças disponiveis para emprestar
+        /// NotFound; //estoque nao existe, talvez id esteja errado
+        /// PreconditionFailed; //associado nao possue nada emprestado para devolver
+        /// FailedDependency; //não houve confirmação
+        /// BadRequest; //tentativa de devolução de figurino a mais ou a menos da quantidade que o associado possui
+        /// 
+        /// InternalServerError - Erro interno
         /// </returns>
-        Task<int> CreateAsync(Movimentacaofigurino movimentacao);
+        Task<HttpStatusCode> CreateAsync(Movimentacaofigurino movimentacao);
 
         Task<Movimentacaofigurino?> GetEmprestimoByIdFigurino(int idFigurino);
 
@@ -40,13 +47,14 @@ namespace Core.Service
         /// </summary>
         /// <param name="id">id da movimentação</param>
         /// <returns>
-        /// 200: tudo ocorreu bem
-        /// 400: movimentacao nao foi encontrada
-        /// 500: algo deu errado ao remover/salvar a transação
+        /// OK: tudo ocorreu bem
+        /// NotFound: movimentacao nao foi encontrada
+        /// InternalServerError: algo deu errado ao remover/salvar a transação
         /// </returns>
-        Task<int> DeleteAsync(int id);
+        Task<HttpStatusCode> DeleteAsync(int id);
 
         Task<IEnumerable<EstoqueDTO>> GetEstoque(int idFigurino);
+        
         /// <summary>
         /// Consulta os emprestimo e devolucao do usuario
         /// </summary>
@@ -55,20 +63,22 @@ namespace Core.Service
         /// retorna os Enumerable de emprestimo e devolução do associado
         /// </returns>
         Task<MovimentacoesAssociadoFigurino> MovimentacoesByIdAssociadoAsync(int idAssociado);
+
         /// <summary>
         /// Confirmar um empréstimo/devolução de instrumento
         /// </summary>
         /// <param name="idMovimentacao"></param>
         /// <param name="idAssociado"></param>
         /// <returns>
-        /// 200 - Sucesso Empréstimo <para />
-        /// 201 - Sucesso Devolução <para />
-        /// 400 - Associado inválido para empréstimo <para />
-        /// 401 - Associado inválido para devolução <para />
-        /// 404 - O id não corresponde a nenhuma movimentação <para />
-        /// 500 - Erro interno
+        /// Created - Sucesso Empréstimo <para />
+        /// ok - Sucesso Devolução <para />
+        /// PreconditionFailed - Associado inválido para empréstimo <para />
+        /// FailedDependency - Associado inválido para devolução <para />
+        /// NotFound - O id não corresponde a nenhuma movimentação <para />
+        /// InternalServerError - Erro interno
         /// </returns>
-        Task<int> ConfirmarMovimentacao(int idMovimentacao, int idAssociado);
+        Task<HttpStatusCode> ConfirmarMovimentacao(int idMovimentacao, int idAssociado);
+
         /// <summary>
         /// Buscar a confirmação do usuario
         /// </summary>

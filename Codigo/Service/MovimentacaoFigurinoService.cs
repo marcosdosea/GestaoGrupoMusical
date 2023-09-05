@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Metrics;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using static Core.DTO.MovimentacaoAssociadoFigurinoDTO;
@@ -23,7 +24,7 @@ namespace Service
         }
 
         //emprestar figurino
-        public async Task<int> CreateAsync(Movimentacaofigurino movimentacao)
+        public async Task<HttpStatusCode> CreateAsync(Movimentacaofigurino movimentacao)
         {
             using var transaction = _context.Database.BeginTransaction();
 
@@ -36,13 +37,13 @@ namespace Service
                     if (figurinoEstoque.QuantidadeDisponivel == 0 && movimentacao.Status.Equals("ENTREGUE"))
                     {
                         await transaction.RollbackAsync();
-                        return 401; //não há peças disponiveis para emprestar
+                        return HttpStatusCode.NoContent; //não há peças disponiveis para emprestar
                     }
                 }
                 else
                 {
                     await transaction.RollbackAsync();
-                    return 400; //estoque nao existe, talvez id esteja errado
+                    return HttpStatusCode.NotFound; //estoque nao existe, talvez id esteja errado
                 }
 
                 if(!movimentacao.Status.Equals("DANIFICADO"))
@@ -53,7 +54,7 @@ namespace Service
                             figurinoEstoque.QuantidadeDisponivel)
                         {
                             await transaction.RollbackAsync();
-                            return 401; //não há peças disponiveis para emprestar
+                        return HttpStatusCode.NoContent; //não há peças disponiveis para emprestar
                         }
                         figurinoEstoque.QuantidadeDisponivel -= movimentacao.Quantidade;
                         figurinoEstoque.QuantidadeEntregue += movimentacao.Quantidade;
@@ -64,7 +65,7 @@ namespace Service
                         if (await AssociadoEmprestimo(movimentacao.IdAssociado, movimentacao.IdFigurino, movimentacao.IdManequim))
                         {
                             await transaction.RollbackAsync();
-                            return 402; //associado nao possue nada emprestado para devolver
+                        return HttpStatusCode.PreconditionFailed; //associado nao possue nada emprestado para devolver
                         }
                         if (movimentacao.Status.Equals("DEVOLVIDO"))
                         {
@@ -73,12 +74,12 @@ namespace Service
                             if (confiQuantAssociado.Confirmar != 1)
                             {
                                 await transaction.RollbackAsync();
-                                return 403; //não houve confirmação
+                            return HttpStatusCode.FailedDependency; //não houve confirmação
                             }
                             if (movimentacao.Quantidade <= 0 || movimentacao.Quantidade > confiQuantAssociado.Quantidade)
                             {
                                 await transaction.RollbackAsync();
-                                return 403; //tentativa de devolução de figurino a mais ou a menos da quantidade que o associado possui
+                            return HttpStatusCode.BadRequest; //tentativa de devolução de figurino a mais ou a menos da quantidade que o associado possui
                             }
                             else
                             {
@@ -182,14 +183,14 @@ namespace Service
             catch
             {
                 await transaction.RollbackAsync();
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
 
             await transaction.CommitAsync();
-            return 200;
+            return HttpStatusCode.OK;
         }
 
-        public async Task<int> DeleteAsync(int id)
+        public async Task<HttpStatusCode> DeleteAsync(int id)
         {
             var movimentacao = await _context.Movimentacaofigurinos.FindAsync(id);
 
@@ -202,16 +203,16 @@ namespace Service
                 }
                 catch
                 {
-                    return 500; //algo deu errado ao remover e/ou salvar
+                    return HttpStatusCode.InternalServerError; //algo deu errado ao remover e/ou salvar
                 }
 
             }
             else
             {
-                return 400; //movimentacao nao existe
+                return HttpStatusCode.NotFound; //movimentacao nao existe
             }
 
-            return 200;
+            return HttpStatusCode.OK;
         }
 
         public async Task<IEnumerable<MovimentacaoFigurinoDTO>> GetAllByIdFigurino(int idFigurino)
@@ -325,14 +326,14 @@ namespace Service
             return movimentacoes;
         }
 
-        public async Task<int> ConfirmarMovimentacao(int idMovimentacao, int idAssociado)
+        public async Task<HttpStatusCode> ConfirmarMovimentacao(int idMovimentacao, int idAssociado)
         {
             try
             {
                 var movimentacao = await _context.Movimentacaofigurinos.FindAsync(idMovimentacao);
                 if (movimentacao == null)
                 {
-                    return 404;
+                    return HttpStatusCode.NotFound;
                 }
                 else if (movimentacao.IdAssociado == idAssociado && movimentacao.Id == idMovimentacao)
                 {
@@ -344,16 +345,16 @@ namespace Service
                     }
                     _context.Update(movimentacao);
                     await _context.SaveChangesAsync();
-                    return status == "ENTREGUE" ? 200 : 201;
+                    return status == "ENTREGUE" ? HttpStatusCode.Created : HttpStatusCode.OK;
                 }
                 else
                 {
-                    return movimentacao.Status == "ENTREGUE" ? 400 : 401;
+                    return movimentacao.Status == "ENTREGUE" ? HttpStatusCode.PreconditionFailed : HttpStatusCode.FailedDependency;
                 }
             }
             catch
             {
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
         }
 
