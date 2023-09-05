@@ -12,7 +12,7 @@ namespace Core.DTO
         public string Tipo { get; set; } = string.Empty;
 
         [Display(Name = "Regente")]
-        public string NomeRegnete { get; set; } = string.Empty;
+        public IEnumerable<string>? NomeRegnete { get; set; }
 
         public string? Local { get; set; }
         public IEnumerable<EnsaioListaFrequenciaDTO>? Frequencias { get; set; }

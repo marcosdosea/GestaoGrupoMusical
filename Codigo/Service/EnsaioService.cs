@@ -206,7 +206,7 @@ namespace Service
 
         public EnsaioDetailsDTO GetDetailsDTO(int idEnsaio)
         {
-            /*var query = _context.Ensaios
+            var query = _context.Ensaios
                 .Select(g => new EnsaioDetailsDTO
                 {
                     Id = g.Id,
@@ -221,13 +221,12 @@ namespace Service
 
                 }).Where(g => g.Id == idEnsaio);
 
-            return query.First();*/
-            throw new NotImplementedException();
+            return query.First();
         }
 
         public async Task<EnsaioFrequenciaDTO?> GetFrequenciaAsync(int idEnsaio, int idGrupoMusical)
         {
-            /*var query = from ensaio in _context.Ensaios
+            var query = from ensaio in _context.Ensaios
                         where ensaio.Id == idEnsaio && ensaio.IdGrupoMusical == idGrupoMusical
                         select new EnsaioFrequenciaDTO
                         {
@@ -251,8 +250,7 @@ namespace Service
                             }).AsEnumerable()
                         };
 
-            return await query.AsNoTracking().SingleOrDefaultAsync();*/
-            throw new NotImplementedException();
+            return await query.AsNoTracking().SingleOrDefaultAsync();
         }
 
         public async Task<int> RegistrarFrequenciaAsync(List<EnsaioListaFrequenciaDTO> frequencias)
