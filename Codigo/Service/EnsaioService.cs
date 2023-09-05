@@ -216,7 +216,10 @@ namespace Service
                     Local = g.Local,
                     PresencaObrigatoria = g.PresencaObrigatoria == 1 ? "Sim" : "Não",
                     Repertorio = g.Repertorio,
-                    //NomeRegente = g.IdRegenteNavigation.Nome,
+                    Regentes = _context.Ensaiopessoas
+                                       .Where(ep => ep.IdPapelGrupoPapelGrupo == 5 && ep.IdEnsaio == idEnsaio)
+                                       .OrderBy(ep => ep.IdPessoaNavigation.Nome)
+                                       .Select(ep => ep.IdPessoaNavigation.Nome).AsEnumerable(),
                     IdGrupoMusical = g.IdGrupoMusical
 
                 }).Where(g => g.Id == idEnsaio);
@@ -234,6 +237,7 @@ namespace Service
                             Fim = ensaio.DataHoraFim,
                             Regentes = _context.Ensaiopessoas
                                        .Where(ep => ep.IdPapelGrupoPapelGrupo == 5 && ep.IdEnsaio == idEnsaio)
+                                       .OrderBy(ep => ep.IdPessoaNavigation.Nome)
                                        .Select(ep => ep.IdPessoaNavigation.Nome).AsEnumerable(),
                             Tipo = ensaio.Tipo,
                             Local = ensaio.Local,
