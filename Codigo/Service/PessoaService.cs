@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Email;
 using System.Security.Cryptography;
 using System.Text;
+using System.Net;
 
 namespace Service
 {
@@ -32,7 +33,7 @@ namespace Service
         /// </summary>
         /// <param name="pessoa">dados do novo associado</param>
         /// <returns>retorna o id referente a nova entidade criada</returns>
-        public async Task<int> Create(Pessoa pessoa)
+        public async Task<HttpStatusCode> Create(Pessoa pessoa)
         {
 
                 try
@@ -45,46 +46,46 @@ namespace Service
                     if (pessoa.DataEntrada == null && pessoa.DataNascimento == null)
                     {//Mensagem de sucesso
                         await _context.SaveChangesAsync();
-                        return 200;
+                        return HttpStatusCode.Created;
                     }
                     else if (pessoa.DataNascimento != null)
                     {
                         int idade = Math.Abs(pessoa.DataNascimento.Value.Year - DateTime.Now.Year);
-                        if (pessoa.DataNascimento <= DateTime.Now && idade < 120)
+                        if (pessoa.DataNascimento <= DateTime.Today && idade < 120)
                         {
-                            if (pessoa.DataEntrada == null || pessoa.DataEntrada < DateTime.Now)
+                            if (pessoa.DataEntrada == null || pessoa.DataEntrada < DateTime.Today)
                             {//mensagem de sucesso
                                
                                 await _context.SaveChangesAsync();
-                                return 200;
+                                return HttpStatusCode.Created;
                             }
                             else
                             {
                                 // erro 400, data de entrada fora do escopo
-                                return 400;
+                                return HttpStatusCode.BadRequest;
                             }
                         }
                         else
                         {
                             // erro 401, data de nascimento está fora do escopo
-                            return 401;
+                            return HttpStatusCode.NotAcceptable;
                         }
                     }
                     else if (pessoa.DataEntrada == null || pessoa.DataEntrada < DateTime.Now)
                     {
                         await _context.SaveChangesAsync();
-                        return 200;
+                        return HttpStatusCode.Created;
                     }
                     else
                     {
                         // erro 400, data de entrada fora do escopo
-                        return 400;
+                        return HttpStatusCode.BadRequest;
                     }
                 }
                 catch (Exception ex)
                 {
                     //Aconteceu algum erro do servidor ou interno
-                    return 500;
+                    return HttpStatusCode.InternalServerError;
                 }
 
         }
@@ -93,7 +94,7 @@ namespace Service
         /// Metodo que atualiza os dados de uma pessoa/associado
         /// </summary>
         /// <param name="pessoa">dados do associado</param>
-        public async Task<int> Edit(Pessoa pessoa)
+        public async Task<HttpStatusCode> Edit(Pessoa pessoa)
         {
             //Criar excecao para data de nascimento, etc
             try
@@ -112,7 +113,7 @@ namespace Service
                 if (pessoa.DataEntrada == null && pessoa.DataNascimento == null)
                 {//Mensagem de sucesso
                     await _context.SaveChangesAsync();
-                    return 200;
+                    return HttpStatusCode.OK;
                 }
                 else if (pessoa.DataNascimento != null)
                 {
@@ -123,35 +124,35 @@ namespace Service
                         {//mensagem de sucesso
 
                             await _context.SaveChangesAsync();
-                            return 200;
+                            return HttpStatusCode.OK;
                         }
                         else
                         {
                             // erro 400, data de entrada fora do escopo
-                            return 400;
+                            return HttpStatusCode.BadRequest;
                         }
                     }
                     else
                     {
                         // erro 401, data de nascimento está fora do escopo
-                        return 401;
+                        return HttpStatusCode.NotAcceptable;
                     }
                 }
                 else if (pessoa.DataEntrada == null || pessoa.DataEntrada < DateTime.Now)
                 {
                     await _context.SaveChangesAsync();
-                    return 200;
+                    return HttpStatusCode.OK;
                 }
                 else
                 {
                     // erro 400, data de entrada fora do escopo
-                    return 400;
+                    return HttpStatusCode.BadRequest;
                 }
             }
             catch (Exception ex)
             {
                 //Aconteceu algum erro do servidor ou interno
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
 
 
@@ -189,10 +190,10 @@ namespace Service
             return _context.Pessoas.AsNoTracking();
         }
 
-        public async Task<int> AddAdmGroup(Pessoa pessoa)
+        public async Task<HttpStatusCode> AddAdmGroup(Pessoa pessoa)
         {
             using var transaction = _context.Database.BeginTransaction();
-            int sucesso; //será usada para o retorno 200/201 de sucesso
+            HttpStatusCode sucesso; //será usada para o retorno 200/201 de sucesso
 
             try
             {
@@ -211,10 +212,10 @@ namespace Service
                     pessoa.IsentoPagamento = 1;
                     pessoa.Telefone1 = "";
 
-                    if(await Create(pessoa) != 200)
+                    if(await Create(pessoa) != HttpStatusCode.Created)
                     {
                         await transaction.RollbackAsync();
-                        return 500;//nao foi possivel criar a pessoa
+                        return HttpStatusCode.NotAcceptable;//nao foi possivel criar a pessoa
                     }
 
                     var user = CreateUser();
@@ -236,7 +237,7 @@ namespace Service
                         var userDb = await _userManager.FindByNameAsync(pessoa.Cpf);
                         await _userManager.AddToRoleAsync(userDb, "ADMINISTRADOR GRUPO");
                     }
-                    sucesso = 200; //usuario CRIADO como administrador de grupo musical
+                    sucesso = HttpStatusCode.Created; //usuario CRIADO como administrador de grupo musical
                 }
                 //caso exista, seja do mesmo grupo musical e não seja adm de grupo (3)
                 else if (pessoaF.IdGrupoMusical == pessoa.IdGrupoMusical && pessoaF.IdPapelGrupo != 3)
@@ -288,20 +289,20 @@ namespace Service
                     catch 
                     {
                         await transaction.RollbackAsync();
-                        return 500;//o usuario já possui cadastro em um grupo musical, não foi possiveç alterar ele para adm grupo musical
+                        return HttpStatusCode.NotAcceptable;//o usuario já possui cadastro em um grupo musical, não foi possivel alterar ele para adm grupo musical
                     }
 
-                    sucesso = 201; //usuario promovido a administrador de grupo musical
+                    sucesso = HttpStatusCode.OK; //usuario promovido a administrador de grupo musical
                 }
                
                 else if (pessoaF.IdGrupoMusical == pessoa.IdGrupoMusical && pessoaF.IdPapelGrupo == 3)
                 {
-                    return 401; // usuario já é administrador de grupo musical
+                    return HttpStatusCode.BadRequest; // usuario já é administrador de grupo musical
                 }
                 else
                 {
                     await transaction.RollbackAsync();
-                    return 400;//erro 400, o usuario associado a outro grupo musical
+                    return HttpStatusCode.NotAcceptable;//erro 400, o usuario associado a outro grupo musical
                 }
 
                 await transaction.CommitAsync();
@@ -310,7 +311,7 @@ namespace Service
             catch
             {
                 await transaction.RollbackAsync();
-                return 501;//erro 500, do servidor
+                return HttpStatusCode.InternalServerError;//erro 500, do servidor
             }
         }
         /// <summary>
@@ -363,14 +364,14 @@ namespace Service
             }
         }
 
-        public async Task<int> AddAssociadoAsync(Pessoa pessoa)
+        public async Task<HttpStatusCode> AddAssociadoAsync(Pessoa pessoa)
         {
             using var transaction = _context.Database.BeginTransaction();
 
             try
             {
-                int createResult = await Create(pessoa);
-                if (createResult != 200)
+                HttpStatusCode createResult = await Create(pessoa);
+                if (createResult != HttpStatusCode.Created)
                 {
                     await transaction.RollbackAsync();
                     return createResult;
@@ -395,16 +396,16 @@ namespace Service
                     await _userManager.AddToRoleAsync(userDb, "ASSOCIADO");
 
                     await transaction.CommitAsync();
-                    return createResult;
+                    return HttpStatusCode.OK;
                 }
 
                 await transaction.RollbackAsync();
-                return 450;
+                return HttpStatusCode.BadRequest;
             }
             catch
             {
                 await transaction.RollbackAsync();
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
         }
 
@@ -432,56 +433,89 @@ namespace Service
         /// </summary>
         /// <param name="pessoa">objeto pessoa para fazer a mudança</param>
         /// <returns>retorna true caso de tudo certo e false caso nao de certo</returns>
-        public async Task<bool> ToCollaborator(int id)
+        public async Task<HttpStatusCode> ToCollaborator(int id, int idPapelGrupo)
         {
             var pessoa = Get(id);
+            var user = await _userManager.FindByNameAsync(pessoa.Cpf);
 
-            //uma query pois pode ser que o id seja alterado futuramente
-            var idPapel = _context.Papelgrupos
-                .Where(p => p.Nome == "Colaborador")
-                .Select(p => p.IdPapelGrupo)
-                .First();
-
-            if (idPapel != null && idPapel.GetType() == typeof(int) && pessoa != null)
+            if (pessoa == null || user == null)
             {
-                pessoa.IdPapelGrupo = idPapel;
-                Edit(pessoa);
-                return true;
-            }
-            else
-            {
-                return false;
+                return HttpStatusCode.NotFound;
             }
 
+            try
+            {
+                //promoção de role
+                await ChangeUserRole(user, pessoa.IdPapelGrupo, idPapelGrupo);
+                //==============
+
+                pessoa.IdPapelGrupo = idPapelGrupo;
+
+                _context.Update(pessoa);
+
+                await _context.SaveChangesAsync();
+
+                return HttpStatusCode.Created;
+            }
+            catch
+            {
+                return HttpStatusCode.InternalServerError;
+            }
         }
 
-        public async Task<bool> RemoveCollaborator(int id)
+        public async Task<HttpStatusCode> RemoveCollaborator(int id)
         {
             var pessoa = Get(id);
 
+            var user = await _userManager.FindByNameAsync(pessoa.Cpf);
+
+            if (pessoa == null || user == null)
+            {
+                return HttpStatusCode.NotFound;
+            }
+
+
             //uma query pois pode ser que o id seja alterado futuramente
             var idPapel = _context.Papelgrupos
-                .Where(p => p.Nome == "Associado")
+                .Where(p => p.Nome.ToUpper() == "ASSOCIADO")
                 .Select(p => p.IdPapelGrupo)
                 .First();
 
             //aqui ha uma comparacao com id de papel da pessoa
             //isso e para evitar que um adm de grupo seja
             //rebaixado a associado
-            if (idPapel != null && idPapel.GetType() == typeof(int)
-                && pessoa != null && pessoa.IdPapelGrupo <= (idPapel + 1))
+            if (idPapel != null)
             {
-                pessoa.IdPapelGrupo = idPapel;
-                Edit(pessoa);
-                return true;
+                try
+                {
+
+                    //rebaixamento de role
+                    await ChangeUserRole(user, pessoa.IdPapelGrupo, idPapel);
+                    //======================================================================
+
+                    pessoa.IdPapelGrupo = idPapel;
+
+                    _context.Update(pessoa);
+
+                    pessoa.IdPapelGrupo = idPapel;
+
+                    _context.Update(pessoa);
+                    await _context.SaveChangesAsync();
+
+                    return HttpStatusCode.OK;
+                }
+                catch
+                {
+                    return HttpStatusCode.BadRequest;
+                }
             }
             else
             {
-                return false;
+                return HttpStatusCode.InternalServerError;
             }
         }
 
-        public async Task<int> RemoverAssociado(Pessoa pessoaAssociada, String? motivoSaida)
+        public async Task<HttpStatusCode> RemoverAssociado(Pessoa pessoaAssociada, String? motivoSaida)
         {
             pessoaAssociada.MotivoSaida = motivoSaida;
             pessoaAssociada.Ativo = 0;
@@ -726,7 +760,7 @@ namespace Service
                
         }
 
-        public async Task<int> AtivarAssociado(string cpf)
+        public async Task<HttpStatusCode> AtivarAssociado(string cpf)
         {
             try
             {
@@ -740,29 +774,70 @@ namespace Service
                     {
                         pessoa.Ativo = 1;
 
-                        if (await Edit(pessoa) != 200)
+                        if (await Edit(pessoa) != HttpStatusCode.OK)
                         {
-                            return 500;
+                            return HttpStatusCode.NotFound;
                         }
 
-                        return 200;
+                        return HttpStatusCode.OK;
                     }
                     else
                     {
-                        return 401;
+                        return HttpStatusCode.Unauthorized;
                     }  
                     //===========================================================//
                 }
                 else
                 {
-                    return 400;
+                    return HttpStatusCode.NotImplemented;
                 }
                 //=================================//
             }
             catch
             {
-                return 501;
+                return HttpStatusCode.InternalServerError;
             }
+        }
+
+        public async Task<IEnumerable<AutoCompleteRegenteDTO>> GetRegentesForAutoCompleteAsync(int idGrupoMusical)
+        {
+            var query = _context.Pessoas
+                        .Where(p => p.IdGrupoMusical == idGrupoMusical && p.IdPapelGrupo == 5)
+                        .Select(p => new AutoCompleteRegenteDTO { Id = p.Id, Nome = p.Nome });
+
+            return await query.AsNoTracking().ToListAsync();
+        }
+
+        /// <summary>
+        /// Muda a role do user identity por outra
+        /// </summary>
+        /// <param name="user">usuario identity</param>
+        /// <param name="idRoleAtual">id do papel referente a role atual do usuario</param>
+        /// <param name="idRrolePromo">id do papel referente a role que será aplicada ao usuario</param>
+        /// <returns></returns>
+        public async Task<HttpStatusCode> ChangeUserRole(UsuarioIdentity user, int idRoleAtual, int idRrolePromo)
+        {
+            try
+            {
+                string papelAnterior = (await _context.Papelgrupos.FindAsync(idRoleAtual)).Nome.ToUpper();
+                string papelPromoNome = (await _context.Papelgrupos.FindAsync(idRrolePromo)).Nome.ToUpper();
+
+                bool roleExists = await _roleManager.RoleExistsAsync(papelPromoNome);
+
+                if (!roleExists)
+                {
+                    await _roleManager.CreateAsync(new IdentityRole(papelPromoNome));
+                }
+                await _userManager.RemoveFromRoleAsync(user, papelAnterior);
+
+                await _userManager.AddToRoleAsync(user, papelPromoNome);
+            }
+            catch
+            {
+                return HttpStatusCode.InternalServerError;
+            }
+
+            return HttpStatusCode.OK;
         }
     }
 }

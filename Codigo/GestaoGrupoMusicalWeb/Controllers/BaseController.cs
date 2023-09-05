@@ -2,6 +2,7 @@
 using Email;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -45,7 +46,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         /// <param name="_userManager">UserManager do identity</param>
         /// <param name="userEmail">Email do usuario</param>
         /// <returns>200: Sucesso; 400: usuario não encontrado; 500: problema na geração do token</returns>
-        public async Task<int> RequestPasswordReset(UserManager<UsuarioIdentity> _userManager, string userEmail, string userName)
+        public async Task<HttpStatusCode> RequestPasswordReset(UserManager<UsuarioIdentity> _userManager, string userEmail, string userName)
         {
             var user = await _userManager.FindByEmailAsync(userEmail);
 
@@ -54,7 +55,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             if (user == null /*|| !(await _userManager.IsEmailConfirmedAsync(user))*/)
             {
                 //usuario não encontrado
-                return 400;
+                return HttpStatusCode.NotFound;
             }
 
             string code = "";
@@ -67,7 +68,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             catch(Exception ex)
             {
                 //erro na geração do token
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
 
             //gera link para a view da controladora ja passando codigo e id do usuario
@@ -86,7 +87,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             await EmailService.Enviar(email);
 
-            return 200;
+            return HttpStatusCode.OK;
         }
     }
 }

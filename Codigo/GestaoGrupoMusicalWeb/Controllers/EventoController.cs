@@ -54,10 +54,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: EventoController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(EventoViewModel eventoModel)
+        public async Task<ActionResult> Create(EventoViewModel eventoModel)
         {
 
-            int idGrupo = _grupoMusical.GetIdGrupo(User.Identity.Name);
+            int idGrupo = await _grupoMusical.GetIdGrupo(User.Identity.Name);
             eventoModel.IdGrupoMusical = idGrupo;
 
             if (ModelState.IsValid)
@@ -68,6 +68,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
             eventoModel.ListaGrupoMusical = new SelectList(_grupoMusical.GetAll(), "Id", "Nome");
             eventoModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
+
             return RedirectToAction(nameof(Index));
         }
 

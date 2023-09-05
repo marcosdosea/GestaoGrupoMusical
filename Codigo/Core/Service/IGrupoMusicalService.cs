@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,25 +15,27 @@ namespace Core.Service
         /// </summary>
         /// <param name="grupomusical"></param>
         /// <returns>200 caso seja sucesso ou 500 se ouver algum erro ao executar o metodo</returns>
-        Task<int> Create (Grupomusical grupomusical);
+        Task<HttpStatusCode> Create (Grupomusical grupomusical);
         /// <summary>
         /// Metodo usado para editar um grupo musical
         /// </summary>
         /// <param name="grupomusical"></param>
         /// <returns>200 caso seja sucesso ou 500 se ouver algum erro ao executar o metodo</returns>
-        Task<int> Edit(Grupomusical grupomusical);
+        Task<HttpStatusCode> Edit(Grupomusical grupomusical);
         /// <summary>
         /// Metodo usado para deletar um grupo musical
         /// </summary>
         /// <param name="id"></param>
         /// <returns>200 caso seja sucesso ou 500 se ouver algum erro ao executar o metodo</returns>
-        Task<int> Delete(int id);
+        Task<HttpStatusCode> Delete(int id);
+
         /// <summary>
         /// Pegar um Grupo Musical
         /// </summary>
         /// <param name="id"></param>
         /// <returns> Retorna 1 grupo musical</returns>
-        Grupomusical Get(int id);
+        Task<Grupomusical> Get(int id);
+
         /// <summary>
         /// Pega todos os grupos musicais
         /// </summary>
@@ -58,6 +61,20 @@ namespace Core.Service
         /// </summary>
         /// <param name="cpf"></param>
         /// <returns>Id do grupo</returns>
-        int GetIdGrupo(string cpf);
+        Task<int> GetIdGrupo(string cpf);
+
+        /// <summary>
+        /// Retorna todas as pessoas que possuem um papel acima de associado
+        /// dentro do grupo
+        /// </summary>
+        /// <param name="idGrupo">id do grupo alvo</param>
+        /// <returns>lista com todas as pessoas filtradas</returns>
+        Task<IEnumerable<ColaboradoresDTO>> GetAllColaboradores(int idGrupo);
+
+        /// <summary>
+        /// Retorna os papeis: Colaborador e Regente
+        /// </summary>
+        /// <returns></returns>
+        Task<IEnumerable<Papelgrupo>> GetPapeis();
     }
 }

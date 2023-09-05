@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
-using Core;
+﻿using Core;
 using Core.DTO;
 using Core.Service;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace Service
 {
@@ -27,21 +21,19 @@ namespace Service
         /// </summary>
         /// <param name="grupomusical"></param>
         /// <returns>200 caso seja sucesso ou 500 se ouver algum erro ao executar o metodo</returns>
-        public async Task<int> Create(Grupomusical grupomusical)
+        public async Task<HttpStatusCode> Create(Grupomusical grupomusical)
         {
-
-
             try
             {
                 await _context.Grupomusicals.AddAsync(grupomusical);
                 await _context.SaveChangesAsync();
 
-                return 200;
+                return HttpStatusCode.OK;
             }
             catch (Exception ex)
             {
 
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
         }
         /// <summary>
@@ -49,54 +41,49 @@ namespace Service
         /// </summary>
         /// <param name="id"></param>
         /// <returns>200 caso seja sucesso ou 500 se ouver algum erro ao executar o metodo</returns>
-        public async Task<int> Delete(int id)
+        public async Task<HttpStatusCode> Delete(int id)
         {
-
             var grupo = await _context.Grupomusicals.FindAsync(id);
 
             try
             {
-
                 _context.Remove(grupo);
                 await _context.SaveChangesAsync();
-                return 200;
+
+                return HttpStatusCode.OK;
             }
             catch (Exception ex)
             {
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
-
         }
         /// <summary>
         /// Metodo usado para editar um grupo musical
         /// </summary>
         /// <param name="grupomusical"></param>
         /// <returns>200 caso seja sucesso ou 500 se ouver algum erro ao executar o metodo</returns>
-        public async Task<int> Edit(Grupomusical grupomusical)
+        public async Task<HttpStatusCode> Edit(Grupomusical grupomusical)
         {
-
             try
             {
                 _context.Update(grupomusical);
                 await _context.SaveChangesAsync();
 
-                return 200;
+                return HttpStatusCode.OK;
             }
             catch
             {
-
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
-
         }
         /// <summary>
         /// Pegar um Grupo Musical
         /// </summary>
         /// <param name="id"></param>
         /// <returns> Retorna 1 grupo musical</returns>
-        public Grupomusical Get(int id)
+        public async Task<Grupomusical> Get(int id)
         {
-            return _context.Grupomusicals.Find(id);
+            return await _context.Grupomusicals.FindAsync(id);
         }
 
         /// <summary>
@@ -125,11 +112,11 @@ namespace Service
             return query.AsNoTracking();
         }
 
-        public int GetIdGrupo(string cpf)
+        public async Task<int> GetIdGrupo(string cpf)
         {
-            var query = _context.Pessoas
+            var query = await _context.Pessoas
                  .Where(g => g.Cpf == cpf)
-                 .Select(g => g.IdGrupoMusical).FirstOrDefault();
+                 .Select(g => g.IdGrupoMusical).FirstOrDefaultAsync();
             return query;
         }
 
@@ -141,6 +128,46 @@ namespace Service
                 return true;
             }
             return false;
+        }
+
+        public async Task<IEnumerable<ColaboradoresDTO>> GetAllColaboradores(int idGrupo)
+        {
+            int idColaborador = (await _context.Papelgrupos
+                                .Where(p => p.Nome.ToUpper() == "COLABORADOR")
+                                .AsNoTracking()
+                                .FirstOrDefaultAsync())
+                                ?.IdPapelGrupo ?? 0;
+
+            int idRegente = (await _context.Papelgrupos
+                            .Where(p => p.Nome.ToUpper() == "REGENTE")
+                            .AsNoTracking()
+                            .FirstOrDefaultAsync())
+                            ?.IdPapelGrupo ?? 0;
+
+            var query = await ( from pessoa in _context.Pessoas
+                          where pessoa.IdGrupoMusical == idGrupo &&
+                                (pessoa.IdPapelGrupo == idRegente || pessoa.IdPapelGrupo == idColaborador)
+                          select new ColaboradoresDTO
+                          {
+                              Id = pessoa.Id,
+                              Cpf = pessoa.Cpf,
+                              Nome = pessoa.Nome,
+                              Data = pessoa.DataEntrada.Value.ToString("dd/MM/yyyy"),
+                              Papel = pessoa.IdPapelGrupoNavigation.Nome
+                          }
+                ).AsNoTracking().ToListAsync();
+
+            return query;
+        }
+
+        public async Task<IEnumerable<Papelgrupo>> GetPapeis()
+        {
+            var query = await (from papel in _context.Papelgrupos
+                         where papel.Nome.ToUpper() == "COLABORADOR" || papel.Nome.ToUpper() == "REGENTE"
+                         select papel
+                         ).AsNoTracking().ToListAsync();
+
+            return query;
         }
     }
 }
