@@ -32,19 +32,19 @@
         </div>
 
         <div class="row mb-3">
-            <div class="col-lg-6">
+            <div class="col-lg-6" >
                 <label asp-for="IdAssociado" class="control-label"></label>
-                @if (Model.IdAssociado != 0)
-                {
-                    <select asp-for="IdAssociado" asp-items="@Model.ListaAssociado" class="form-select" disabled>
-                    </select>
-                    <input asp-for="IdAssociado" type="hidden" />
-                }
-                else
-                {
-                    <select asp-for="IdAssociado" asp-items="@Model.ListaAssociado" class="form-select">
-                    </select>
-                }
+                        @if (Model.IdAssociado != 0)
+                        {
+                            <select asp-for="IdAssociado" asp-items="@Model.ListaAssociado" class="form-select" disabled>
+                            </select>
+                            <input asp-for="IdAssociado" type="hidden" />
+                        }
+                        else
+                        {
+                        <select asp-for="IdAssociado" asp-items="@Model.ListaAssociado" class="form-select" id="listaDeAssociados">
+                            </select>
+                        }
                 <span asp-validation-for="IdAssociado" class="text-danger"></span>
             </div>
 
@@ -66,14 +66,14 @@
                                 {
                                     <div class="col-lg-2">
                                         <label for="@item.Key">@item.Key</label>
-                                        <input class="form-check-input" type="radio" value="@item.Value" asp-for="Movimentacao" id="@item.Key" />
+                                        <input class="form-check-input" onclick="permitirSelecaoAssociado()"  type="radio" value="@item.Value" asp-for="Movimentacao" id="@item.Key" />
                                     </div>
                                 }
                                 else
                                 {
                                     <div class="col-lg-2">
-                                        <label for="@item.Key" onclick="colocarIdColaborador">@item.Key</label>
-                                        <input class="form-check-input" type="radio" value="@item.Value" asp-for="Movimentacao" id="@item.Key" />
+                                        <label for="@item.Key">@item.Key</label>
+                                        <input class="form-check-input" onclick="bloquearSelecaoAssociado()" type="radio" value="@item.Value" asp-for="Movimentacao" id="@item.Key" />
                                     </div>
                                 }
 
@@ -106,8 +106,6 @@
 
     </form>
 </div>
-
-
 
 <partial name="_TabelaMovimentacao" model="@Model.Movimentacoes">
 
