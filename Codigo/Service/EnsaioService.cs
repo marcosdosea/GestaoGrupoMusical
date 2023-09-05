@@ -232,7 +232,7 @@ namespace Service
                         {
                             Inicio = ensaio.DataHoraInicio,
                             Fim = ensaio.DataHoraFim,
-                            //NomeRegnete = ensaio.
+                            Regentes = _context.Ensaiopessoas.Where(ep => ep.IdPapelGrupoPapelGrupo == 5).Select(ep => ep.IdPessoaNavigation.Nome),
                             Tipo = ensaio.Tipo,
                             Local = ensaio.Local,
                             Frequencias = _context.Ensaiopessoas
