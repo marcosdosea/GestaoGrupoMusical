@@ -4,6 +4,7 @@ using Core.Service;
 using Email;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Net;
 
 namespace Service
 {
@@ -299,6 +300,58 @@ namespace Service
             catch
             {
                 return 500;
+            }
+        }
+
+        public async Task<IEnumerable<EnsaioAssociadoDTO>> GetEnsaiosByIdPesoaAsync(int idPessoa) 
+        {
+            var query = from ensaioPessoa in _context.Ensaiopessoas
+                        where ensaioPessoa.IdPessoa == idPessoa
+                        select new EnsaioAssociadoDTO
+                        {
+                            IdEnsaio = ensaioPessoa.IdEnsaio,
+                            Inicio = ensaioPessoa.IdEnsaioNavigation.DataHoraInicio,
+                            Fim = ensaioPessoa.IdEnsaioNavigation.DataHoraFim,
+                            Presente = Convert.ToBoolean(ensaioPessoa.Presente),
+                            Justificativa = ensaioPessoa.JustificativaFalta,
+                            JustificativaAceita = Convert.ToBoolean(ensaioPessoa.JustificativaAceita),
+                            Local = ensaioPessoa.IdEnsaioNavigation.Local,
+                            Repertorio = ensaioPessoa.IdEnsaioNavigation.Repertorio
+                        };
+
+            return await query.AsNoTracking().ToListAsync();
+        }
+
+        public async Task<Ensaiopessoa?> GetEnsaioPessoaAsync(int idEnsaio, int idPessoa)
+        {
+            return await _context.Ensaiopessoas.Where(ep => ep.IdEnsaio == idEnsaio && ep.IdPessoa == idPessoa).FirstOrDefaultAsync();
+        }
+
+        public async Task<HttpStatusCode> RegistrarJustificativaAsync(int idEnsaio, int idPessoa, string? justificativa)
+        {
+            try
+            {
+                var ensaioPessoa = await GetEnsaioPessoaAsync(idEnsaio, idPessoa);
+                if (ensaioPessoa == null)
+                {
+                    return HttpStatusCode.NotFound;
+                }
+
+                if (ensaioPessoa.IdPapelGrupoPapelGrupo != 1)
+                {
+                    return HttpStatusCode.Unauthorized;
+                }
+
+                ensaioPessoa.JustificativaFalta = justificativa;
+                ensaioPessoa.Presente = 0;
+
+                _context.Update(ensaioPessoa);
+                await _context.SaveChangesAsync();
+                return HttpStatusCode.OK;
+            }
+            catch
+            {
+                return HttpStatusCode.InternalServerError;
             }
         }
     }

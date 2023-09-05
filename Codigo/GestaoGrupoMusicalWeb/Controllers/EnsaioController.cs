@@ -7,10 +7,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NuGet.Protocol;
+using System.Net;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
-    [Authorize(Roles = "ADMINISTRADOR GRUPO")]
     public class EnsaioController : BaseController
     {
         private readonly IEnsaioService _ensaio;
@@ -26,6 +26,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             _grupoMusical = grupoMusical;
         }
 
+        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         // GET: EnsaioController
         public async Task<ActionResult> Index()
         {
@@ -34,6 +35,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return View(ensaios);
         }
 
+        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         // GET: EnsaioController/Details/5
         public async Task<ActionResult> Details(int id)
         {
@@ -46,6 +48,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return View(ensaio);
         }
 
+        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         // GET: EnsaioController/Create
         public async Task<ActionResult> Create()
         {
@@ -66,6 +69,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return View(ensaioModel);
         }
 
+        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         // POST: EnsaioController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -105,6 +109,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return View(ensaioViewModel);
         }
 
+        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         // GET: EnsaioController/Edit/5
         public async Task<ActionResult> Edit(int id)
         {
@@ -121,6 +126,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return View(ensaioModel);
         }
 
+        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         // POST: EnsaioController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -155,6 +161,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return View(ensaioViewModel);
         }
 
+        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         // GET: EnsaioController/Delete/5
         public async Task<ActionResult> Delete(int id)
         {
@@ -162,6 +169,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return View(_mapper.Map<EnsaioViewModel>(ensaio));
         }
 
+        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         // POST: EnsaioController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -183,6 +191,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         public async Task<ActionResult> RegistrarFrequencia(int idEnsaio)
         {
             if (User.FindFirst("IdGrupoMusical")?.Value == null) {
@@ -196,7 +205,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return View(frequencias);
         }
 
+        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> RegistrarFrequencia(List<EnsaioListaFrequenciaDTO> listaFrequencia)
         {
             switch(await _ensaio.RegistrarFrequenciaAsync(listaFrequencia))
@@ -218,6 +229,57 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     break;
             }
             return RedirectToAction(nameof(RegistrarFrequencia), new { idEnsaio = listaFrequencia.First().IdEnsaio });
+        }
+
+        [Authorize(Roles = "ASSOCIADO")]
+        public async Task<ActionResult> EnsaiosAssociado ()
+        {
+            var model = await _ensaio.GetEnsaiosByIdPesoaAsync(Convert.ToInt32(User.FindFirst("Id")?.Value));
+
+            return View(model);
+        }
+
+        [Authorize(Roles = "ASSOCIADO")]
+        public async Task<ActionResult> JustificarAusencia(int idEnsaio)
+        {
+            var model = await _ensaio.GetEnsaioPessoaAsync(idEnsaio, Convert.ToInt32(User.FindFirst("Id")?.Value));
+            if(model == null)
+            {
+                return RedirectToAction(nameof(EnsaiosAssociado));
+            }
+            EnsaioJustificativaViewModel ensaioJustificativa = new()
+            {
+                IdEnsaio = model.IdEnsaio,
+                Justificativa = model.JustificativaFalta
+            };
+            return View(ensaioJustificativa);
+        }
+
+        [Authorize(Roles = "ASSOCIADO")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> JustificarAusencia(EnsaioJustificativaViewModel ensaioJustificativa)
+        {
+            if (ModelState.IsValid)
+            {
+                switch (await _ensaio.RegistrarJustificativaAsync(ensaioJustificativa.IdEnsaio, Convert.ToInt32(User.FindFirst("Id")?.Value), ensaioJustificativa.Justificativa))
+                {
+                    case HttpStatusCode.OK:
+                        Notificar("<b>Justificativa</b> registrada com <b>Sucesso</b>", Notifica.Sucesso);
+                        return RedirectToAction(nameof(EnsaiosAssociado));
+                    case HttpStatusCode.NotFound:
+                        Notificar("A <b>Justificativa</b> enviada é <b>Inválida</b>", Notifica.Erro);
+                        break;
+                    case HttpStatusCode.Unauthorized:
+                        Notificar("Desculpe, <b>Não</b> foi possível <b>Registrar</b> a <b>Justificativa</b>", Notifica.Erro);
+                        break;
+                    case HttpStatusCode.InternalServerError:
+                        Notificar("Desculpe, ocorreu um <b>Erro</b> ao registrar a <b>Justificativa</b>, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                        break;
+                }
+            }
+            
+            return View(ensaioJustificativa);
         }
     }
 }
