@@ -53,5 +53,6 @@ namespace Core.Service
         Task<int> RegistrarFrequenciaAsync(List<EnsaioListaFrequenciaDTO> frequencias);
         Task<IEnumerable<EnsaioIndexDTO>> GetAllIndexDTO(int idGrupo);
         EnsaioDetailsDTO GetDetailsDTO(int idEnsaio);
+        Task<IEnumerable<int>> GetIdRegentesEnsaioAsync(int idEnsaio);
     }
 }
