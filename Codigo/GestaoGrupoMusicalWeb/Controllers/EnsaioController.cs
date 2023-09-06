@@ -137,10 +137,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(EnsaioViewModel ensaioViewModel)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && ensaioViewModel.IdRegentes != null)
             {
                 String mensagem = String.Empty;
-                switch (await _ensaio.Edit(_mapper.Map<Ensaio>(ensaioViewModel)))
+                switch (await _ensaio.Edit(_mapper.Map<Ensaio>(ensaioViewModel), ensaioViewModel.IdRegentes))
                 {
                     case HttpStatusCode.OK:
                         mensagem = "Ensaio <b>Editado</b> com <b>Sucesso</b>";

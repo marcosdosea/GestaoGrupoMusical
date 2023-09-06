@@ -121,7 +121,7 @@ namespace Service
         /// </summary>
         /// <param name="ensaio"></param>
         /// <returns>retorna um inteiro.</returns>
-        public async Task<HttpStatusCode> Edit(Ensaio ensaio)
+        public async Task<HttpStatusCode> Edit(Ensaio ensaio, IEnumerable<int> idRegentes)
         {
              try
              {
