@@ -104,7 +104,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         return RedirectToAction(nameof(Index));
 
                     case HttpStatusCode.InternalServerError:
-                        mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Cadastro</b> do associado, se isso persistir entre em contato com o suporte";
+                        mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Cadastro</b> do associado.";
                         Notificar(mensagem , Notifica.Erro);
                         break;
 
@@ -119,7 +119,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         break;
 
                     case HttpStatusCode.Conflict:
-                        mensagem = "Ocorreu um <b>Erro</b> durante a liberação de acesso ao <b>Associado</b>, se isso persistir entre em contato com o suporte";
+                        mensagem = "Ocorreu um <b>Erro</b> durante a liberação de acesso ao <b>Associado</b>.";
                         Notificar(mensagem, Notifica.Erro);
                         break;
 
@@ -172,7 +172,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         Notificar("Associado <b>Editado</b> com <b>Sucesso</b>", Notifica.Sucesso);
                         return RedirectToAction(nameof(Index));
                     case HttpStatusCode.InternalServerError:
-                        Notificar("<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Editar</b> do associado, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                        Notificar("<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Editar</b> do associado.", Notifica.Erro);
                         break;
                     case HttpStatusCode.BadRequest:
                         mensagem = "<b>Alerta</b> ! Não foi possível editar, a data de entrada deve ser menor que " + DateTime.Now.ToShortDateString();
@@ -227,7 +227,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     Notificar(mensagem, Notifica.Sucesso);
                     return RedirectToAction(nameof(Index));
                 case HttpStatusCode.InternalServerError:
-                    mensagem = "<b>Erro</b> ! erro ao <b>Excluir</b> um associado, se isso persistir entre em contato com o suporte";
+                    mensagem = "<b>Erro</b> ! erro ao <b>Excluir</b> um associado.";
                     Notificar(mensagem, Notifica.Erro);
                     return RedirectToAction("Delete", pessoassociada);
 

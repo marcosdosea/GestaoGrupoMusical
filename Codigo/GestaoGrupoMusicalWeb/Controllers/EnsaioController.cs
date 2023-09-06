@@ -97,7 +97,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         Notificar(mensagem, Notifica.Alerta);
                         break;
                     case 500:
-                        mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Cadastro</b> de ensaio, se isso persistir entre em contato com o suporte";
+                        mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Cadastro</b> de ensaio.";
                         Notificar(mensagem, Notifica.Erro);
                         break;
                 }
@@ -150,7 +150,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         Notificar(mensagem, Notifica.Alerta);
                         break;
                     case 500:
-                        mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Editar</b> de ensaio, se isso persistir entre em contato com o suporte";
+                        mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Editar</b> de ensaio.";
                         Notificar(mensagem, Notifica.Erro);
                         break;
 
@@ -183,7 +183,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     Notificar(mensagem, Notifica.Sucesso);
                     break;
                 case 500:
-                    mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante ao <b>Excluir</b> um ensaio, se isso persistir entre em contato com o suporte";
+                    mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante ao <b>Excluir</b> um ensaio.";
                     Notificar(mensagem, Notifica.Erro);
                     break;
 
@@ -225,7 +225,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     Notificar("A <b>Lista</b> enviada não foi <b>Encontrada</b>", Notifica.Erro);
                     break;
                 case 500:
-                    Notificar("Desculpe, ocorreu um <b>Erro</b> ao registrar a Lista de <b>Frequência</b>, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                    Notificar("Desculpe, ocorreu um <b>Erro</b> ao registrar a Lista de <b>Frequência</b>.", Notifica.Erro);
                     break;
             }
             return RedirectToAction(nameof(RegistrarFrequencia), new { idEnsaio = listaFrequencia.First().IdEnsaio });
