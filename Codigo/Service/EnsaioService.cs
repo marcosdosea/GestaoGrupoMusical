@@ -20,7 +20,7 @@ namespace Service
         /// </summary>
         /// <param name="ensaio"></param>
         /// <returns>Verdadeiro(<see langword="true" />) se cadastrou com sucesso ou Falso(<see langword="false" />) se houve algum erro.</returns>
-        public async Task<int> Create(Ensaio ensaio, IEnumerable<int> idRegentes)
+        public async Task<HttpStatusCode> Create(Ensaio ensaio, IEnumerable<int> idRegentes)
         {
             using var transaction = _context.Database.BeginTransaction();
 
@@ -75,26 +75,26 @@ namespace Service
                         await _context.SaveChangesAsync();
                         await transaction.CommitAsync();
 
-                        return 200;
+                        return HttpStatusCode.OK;
                     }
                     else
                     {
                         await transaction.RollbackAsync();
-                        return 400;
+                        return HttpStatusCode.BadRequest;
                     }
                    
                 }
                 else 
                 {
                     await transaction.RollbackAsync();
-                    return 401;
+                    return HttpStatusCode.PreconditionFailed;
                 }
              
             }
             catch
             {
                 await transaction.RollbackAsync();
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
         }
         /// <summary>
@@ -102,27 +102,27 @@ namespace Service
         /// </summary>
         /// <param name="id"></param>
         /// <returns>Verdadeiro(<see langword="true" />) se deletou com sucesso ou Falso(<see langword="false" />) se houve algum erro.</returns>
-        public async Task<int> Delete(int id)
+        public async Task<HttpStatusCode> Delete(int id)
         {
             try
             {
                 _context.Ensaios.Remove(await Get(id));
                 await _context.SaveChangesAsync();
-                return 200;
+                return HttpStatusCode.OK;
             }
             catch
             {
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
         }
+
         /// <summary>
         /// Edita um Ensaio do banco de dados
         /// </summary>
         /// <param name="ensaio"></param>
         /// <returns>retorna um inteiro.</returns>
-        public async Task<int> Edit(Ensaio ensaio)
+        public async Task<HttpStatusCode> Edit(Ensaio ensaio)
         {
-
              try
              {
                 var ensaioDb = await _context.Ensaios.Where(e => e.Id == ensaio.Id).AsNoTracking().SingleOrDefaultAsync();
@@ -137,23 +137,21 @@ namespace Service
                     if(ensaio.DataHoraInicio >= DateTime.Now)
                     {
                         await _context.SaveChangesAsync();
-                        return 200;
+                        return HttpStatusCode.OK;
                     }
                     else
                     {
-                        return 400;
+                        return HttpStatusCode.BadRequest;
                     }
-                   
                 }
                 else 
                 {
-                    return 401;
+                    return HttpStatusCode.PreconditionFailed;
                 }
-             
              }
              catch
              {
-                return 500;
+                return HttpStatusCode.InternalServerError;
              }
         }
         /// <summary>
@@ -260,13 +258,13 @@ namespace Service
             return await query.AsNoTracking().SingleOrDefaultAsync();
         }
 
-        public async Task<int> RegistrarFrequenciaAsync(List<EnsaioListaFrequenciaDTO> frequencias)
+        public async Task<HttpStatusCode> RegistrarFrequenciaAsync(List<EnsaioListaFrequenciaDTO> frequencias)
         {
             try
             {
                 if (!frequencias.Any())
                 {
-                    return 400;
+                    return HttpStatusCode.BadRequest;
                 }
                 int idEnsaio = frequencias.First().IdEnsaio;
 
@@ -276,12 +274,12 @@ namespace Service
 
                 if (dbFrequencias == null)
                 {
-                    return 404;
+                    return HttpStatusCode.NotFound;
                 }
 
                 if (dbFrequencias.Count() != frequencias.Count)
                 {
-                    return 401;
+                    return HttpStatusCode.Conflict;
                 }
 
                 int pos = 0;
@@ -299,11 +297,11 @@ namespace Service
 
                 await _context.SaveChangesAsync();
 
-                return 200;
+                return HttpStatusCode.OK ;
             }
             catch
             {
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
         }
 

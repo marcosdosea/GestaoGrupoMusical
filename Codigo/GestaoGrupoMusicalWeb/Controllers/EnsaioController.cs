@@ -84,19 +84,19 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 ensaio.IdColaboradorResponsavel = Convert.ToInt32(User.FindFirst("Id")?.Value);
                 switch (await _ensaio.Create(ensaio, ensaioViewModel.IdRegentes))
                 {
-                    case 200:
+                    case HttpStatusCode.OK:
                         mensagem = "Ensaio <b>Cadastrado</b> com <b>Sucesso</b>";
                         Notificar(mensagem, Notifica.Sucesso);
                         return RedirectToAction(nameof(Index));
-                    case 400:
+                    case HttpStatusCode.BadRequest:
                         mensagem = "Alerta ! A <b>data de início</b> deve ser menor que a data de <b>fim</b>";
                         Notificar(mensagem, Notifica.Alerta);
                         break;
-                    case 401:
+                    case HttpStatusCode.PreconditionFailed:
                         mensagem = "Alerta ! A <b>data de início</b> deve ser maior que a data de hoje " + DateTime.Now;
                         Notificar(mensagem, Notifica.Alerta);
                         break;
-                    case 500:
+                    case HttpStatusCode.InternalServerError:
                         mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Cadastro</b> de ensaio.";
                         Notificar(mensagem, Notifica.Erro);
                         break;
@@ -137,24 +137,22 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 String mensagem = String.Empty;
                 switch (await _ensaio.Edit(_mapper.Map<Ensaio>(ensaioViewModel)))
                 {
-                    case 200:
+                    case HttpStatusCode.OK:
                         mensagem = "Ensaio <b>Editado</b> com <b>Sucesso</b>";
                         Notificar(mensagem, Notifica.Sucesso);
                         return RedirectToAction(nameof(Index));
-                    case 401:
+                    case HttpStatusCode.PreconditionFailed:
                         mensagem = "Alerta ! A <b>data de início</b> deve ser menor que a data de <b>a data de fim</b>, ou a <b>a data de fim</b> tem que ser maior";
                         Notificar(mensagem, Notifica.Alerta);
                         break;
-                    case 400:
+                    case HttpStatusCode.BadRequest:
                         mensagem = "Alerta ! A <b>data de início</b> deve ser maior que a data de hoje " + DateTime.Now;
                         Notificar(mensagem, Notifica.Alerta);
                         break;
-                    case 500:
+                    case HttpStatusCode.InternalServerError:
                         mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Editar</b> de ensaio.";
                         Notificar(mensagem, Notifica.Erro);
                         break;
-
-
                 }
             }
             ensaioViewModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
@@ -178,11 +176,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
             String mensagem = String.Empty;
             switch (await _ensaio.Delete(ensaioModel.Id))
             {
-                case 200:
+                case HttpStatusCode.OK:
                     mensagem = "Ensaio <b>Deletado</b> com <b>Sucesso</b>";
                     Notificar(mensagem, Notifica.Sucesso);
                     break;
-                case 500:
+                case HttpStatusCode.InternalServerError:
                     mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante ao <b>Excluir</b> um ensaio.";
                     Notificar(mensagem, Notifica.Erro);
                     break;
@@ -212,19 +210,19 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             switch(await _ensaio.RegistrarFrequenciaAsync(listaFrequencia))
             {
-                case 200:
+                case HttpStatusCode.OK:
                     Notificar("Lista de <b>Frequência</b> salva com <b>Sucesso</b>", Notifica.Sucesso);
                     break;
-                case 400:
+                case HttpStatusCode.BadRequest:
                     Notificar("A <b>Lista</b> enviada <b>Não</b> possui registros", Notifica.Alerta);
                     return RedirectToAction(nameof(Index));
-                case 401:
+                case HttpStatusCode.Conflict:
                     Notificar("A <b>Lista</b> enviada é <b>Inválida</b>", Notifica.Erro);
                     break;
-                case 404:
+                case HttpStatusCode.NotFound:
                     Notificar("A <b>Lista</b> enviada não foi <b>Encontrada</b>", Notifica.Erro);
                     break;
-                case 500:
+                case HttpStatusCode.InternalServerError:
                     Notificar("Desculpe, ocorreu um <b>Erro</b> ao registrar a Lista de <b>Frequência</b>.", Notifica.Erro);
                     break;
             }
