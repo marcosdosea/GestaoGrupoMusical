@@ -132,19 +132,19 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 String mensagem = String.Empty;
                 switch (await _ensaio.Edit(_mapper.Map<Ensaio>(ensaioViewModel)))
                 {
-                    case 200:
+                    case HttpStatusCode.OK:
                         mensagem = "Ensaio <b>Editado</b> com <b>Sucesso</b>";
                         Notificar(mensagem, Notifica.Sucesso);
                         return RedirectToAction(nameof(Index));
-                    case 401:
+                    case HttpStatusCode.PreconditionFailed:
                         mensagem = "Alerta ! A <b>data de início</b> deve ser menor que a data de <b>a data de fim</b>, ou a <b>a data de fim</b> tem que ser maior";
                         Notificar(mensagem, Notifica.Alerta);
                         break;
-                    case 400:
+                    case HttpStatusCode.BadRequest:
                         mensagem = "Alerta ! A <b>data de início</b> deve ser maior que a data de hoje " + DateTime.Now;
                         Notificar(mensagem, Notifica.Alerta);
                         break;
-                    case 500:
+                    case HttpStatusCode.InternalServerError:
                         mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Editar</b> de ensaio, se isso persistir entre em contato com o suporte";
                         Notificar(mensagem, Notifica.Erro);
                         break;
@@ -171,11 +171,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
             String mensagem = String.Empty;
             switch (await _ensaio.Delete(ensaioModel.Id))
             {
-                case 200:
+                case HttpStatusCode.OK:
                     mensagem = "Ensaio <b>Deletado</b> com <b>Sucesso</b>";
                     Notificar(mensagem, Notifica.Sucesso);
                     break;
-                case 500:
+                case HttpStatusCode.InternalServerError:
                     mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante ao <b>Excluir</b> um ensaio, se isso persistir entre em contato com o suporte";
                     Notificar(mensagem, Notifica.Erro);
                     break;
