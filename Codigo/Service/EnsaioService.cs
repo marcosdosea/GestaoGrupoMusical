@@ -4,6 +4,7 @@ using Core.Service;
 using Email;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Net;
 
 namespace Service
 {
@@ -19,7 +20,7 @@ namespace Service
         /// </summary>
         /// <param name="ensaio"></param>
         /// <returns>Verdadeiro(<see langword="true" />) se cadastrou com sucesso ou Falso(<see langword="false" />) se houve algum erro.</returns>
-        public async Task<int> Create(Ensaio ensaio, IEnumerable<int> idRegentes)
+        public async Task<HttpStatusCode> Create(Ensaio ensaio, IEnumerable<int> idRegentes)
         {
             using var transaction = _context.Database.BeginTransaction();
 
@@ -74,26 +75,26 @@ namespace Service
                         await _context.SaveChangesAsync();
                         await transaction.CommitAsync();
 
-                        return 200;
+                        return HttpStatusCode.OK;
                     }
                     else
                     {
                         await transaction.RollbackAsync();
-                        return 400;
+                        return HttpStatusCode.BadRequest;
                     }
                    
                 }
                 else 
                 {
                     await transaction.RollbackAsync();
-                    return 401;
+                    return HttpStatusCode.PreconditionFailed;
                 }
              
             }
             catch
             {
                 await transaction.RollbackAsync();
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
         }
         /// <summary>
@@ -101,27 +102,27 @@ namespace Service
         /// </summary>
         /// <param name="id"></param>
         /// <returns>Verdadeiro(<see langword="true" />) se deletou com sucesso ou Falso(<see langword="false" />) se houve algum erro.</returns>
-        public async Task<int> Delete(int id)
+        public async Task<HttpStatusCode> Delete(int id)
         {
             try
             {
                 _context.Ensaios.Remove(await Get(id));
                 await _context.SaveChangesAsync();
-                return 200;
+                return HttpStatusCode.OK;
             }
             catch
             {
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
         }
+
         /// <summary>
         /// Edita um Ensaio do banco de dados
         /// </summary>
         /// <param name="ensaio"></param>
         /// <returns>retorna um inteiro.</returns>
-        public async Task<int> Edit(Ensaio ensaio)
+        public async Task<HttpStatusCode> Edit(Ensaio ensaio)
         {
-
              try
              {
                 var ensaioDb = await _context.Ensaios.Where(e => e.Id == ensaio.Id).AsNoTracking().SingleOrDefaultAsync();
@@ -136,23 +137,21 @@ namespace Service
                     if(ensaio.DataHoraInicio >= DateTime.Now)
                     {
                         await _context.SaveChangesAsync();
-                        return 200;
+                        return HttpStatusCode.OK;
                     }
                     else
                     {
-                        return 400;
+                        return HttpStatusCode.BadRequest;
                     }
-                   
                 }
                 else 
                 {
-                    return 401;
+                    return HttpStatusCode.PreconditionFailed;
                 }
-             
              }
              catch
              {
-                return 500;
+                return HttpStatusCode.InternalServerError;
              }
         }
         /// <summary>
@@ -206,7 +205,7 @@ namespace Service
 
         public EnsaioDetailsDTO GetDetailsDTO(int idEnsaio)
         {
-            /*var query = _context.Ensaios
+            var query = _context.Ensaios
                 .Select(g => new EnsaioDetailsDTO
                 {
                     Id = g.Id,
@@ -216,28 +215,33 @@ namespace Service
                     Local = g.Local,
                     PresencaObrigatoria = g.PresencaObrigatoria == 1 ? "Sim" : "Não",
                     Repertorio = g.Repertorio,
-                    //NomeRegente = g.IdRegenteNavigation.Nome,
+                    Regentes = _context.Ensaiopessoas
+                                       .Where(ep => ep.IdPapelGrupoPapelGrupo == 5 && ep.IdEnsaio == idEnsaio)
+                                       .OrderBy(ep => ep.IdPessoaNavigation.Nome)
+                                       .Select(ep => ep.IdPessoaNavigation.Nome).AsEnumerable(),
                     IdGrupoMusical = g.IdGrupoMusical
 
                 }).Where(g => g.Id == idEnsaio);
 
-            return query.First();*/
-            throw new NotImplementedException();
+            return query.First();
         }
 
         public async Task<EnsaioFrequenciaDTO?> GetFrequenciaAsync(int idEnsaio, int idGrupoMusical)
         {
-            /*var query = from ensaio in _context.Ensaios
+            var query = from ensaio in _context.Ensaios
                         where ensaio.Id == idEnsaio && ensaio.IdGrupoMusical == idGrupoMusical
                         select new EnsaioFrequenciaDTO
                         {
                             Inicio = ensaio.DataHoraInicio,
                             Fim = ensaio.DataHoraFim,
-                            //NomeRegnete = ensaio.
+                            Regentes = _context.Ensaiopessoas
+                                       .Where(ep => ep.IdPapelGrupoPapelGrupo == 5 && ep.IdEnsaio == idEnsaio)
+                                       .OrderBy(ep => ep.IdPessoaNavigation.Nome)
+                                       .Select(ep => ep.IdPessoaNavigation.Nome).AsEnumerable(),
                             Tipo = ensaio.Tipo,
                             Local = ensaio.Local,
                             Frequencias = _context.Ensaiopessoas
-                            .Where(ensaioPessoa => ensaioPessoa.IdEnsaio == idEnsaio)
+                            .Where(ensaioPessoa => ensaioPessoa.IdEnsaio == idEnsaio && ensaioPessoa.IdPapelGrupoPapelGrupo != 5)
                             .OrderBy(ensaioPessoa => ensaioPessoa.IdPessoaNavigation.Nome)
                             .Select(ensaioPessoa => new EnsaioListaFrequenciaDTO
                             {
@@ -251,32 +255,31 @@ namespace Service
                             }).AsEnumerable()
                         };
 
-            return await query.AsNoTracking().SingleOrDefaultAsync();*/
-            throw new NotImplementedException();
+            return await query.AsNoTracking().SingleOrDefaultAsync();
         }
 
-        public async Task<int> RegistrarFrequenciaAsync(List<EnsaioListaFrequenciaDTO> frequencias)
+        public async Task<HttpStatusCode> RegistrarFrequenciaAsync(List<EnsaioListaFrequenciaDTO> frequencias)
         {
             try
             {
                 if (!frequencias.Any())
                 {
-                    return 400;
+                    return HttpStatusCode.BadRequest;
                 }
                 int idEnsaio = frequencias.First().IdEnsaio;
 
                 var dbFrequencias = _context.Ensaiopessoas
-                                    .Where(ensaioPessoa => ensaioPessoa.IdEnsaio == frequencias.First().IdEnsaio)
-                                    .OrderBy(ensaioPessoa => ensaioPessoa.IdPessoaNavigation.Nome);
+                                    .Where(ep => ep.IdEnsaio == frequencias.First().IdEnsaio && ep.IdPapelGrupoPapelGrupo != 5)
+                                    .OrderBy(ep => ep.IdPessoaNavigation.Nome);
 
                 if (dbFrequencias == null)
                 {
-                    return 404;
+                    return HttpStatusCode.NotFound;
                 }
 
                 if (dbFrequencias.Count() != frequencias.Count)
                 {
-                    return 401;
+                    return HttpStatusCode.Conflict;
                 }
 
                 int pos = 0;
@@ -294,11 +297,63 @@ namespace Service
 
                 await _context.SaveChangesAsync();
 
-                return 200;
+                return HttpStatusCode.OK ;
             }
             catch
             {
-                return 500;
+                return HttpStatusCode.InternalServerError;
+            }
+        }
+
+        public async Task<IEnumerable<EnsaioAssociadoDTO>> GetEnsaiosByIdPesoaAsync(int idPessoa) 
+        {
+            var query = from ensaioPessoa in _context.Ensaiopessoas
+                        where ensaioPessoa.IdPessoa == idPessoa
+                        select new EnsaioAssociadoDTO
+                        {
+                            IdEnsaio = ensaioPessoa.IdEnsaio,
+                            Inicio = ensaioPessoa.IdEnsaioNavigation.DataHoraInicio,
+                            Fim = ensaioPessoa.IdEnsaioNavigation.DataHoraFim,
+                            Presente = Convert.ToBoolean(ensaioPessoa.Presente),
+                            Justificativa = ensaioPessoa.JustificativaFalta,
+                            JustificativaAceita = Convert.ToBoolean(ensaioPessoa.JustificativaAceita),
+                            Local = ensaioPessoa.IdEnsaioNavigation.Local,
+                            Repertorio = ensaioPessoa.IdEnsaioNavigation.Repertorio
+                        };
+
+            return await query.AsNoTracking().ToListAsync();
+        }
+
+        public async Task<Ensaiopessoa?> GetEnsaioPessoaAsync(int idEnsaio, int idPessoa)
+        {
+            return await _context.Ensaiopessoas.Where(ep => ep.IdEnsaio == idEnsaio && ep.IdPessoa == idPessoa).FirstOrDefaultAsync();
+        }
+
+        public async Task<HttpStatusCode> RegistrarJustificativaAsync(int idEnsaio, int idPessoa, string? justificativa)
+        {
+            try
+            {
+                var ensaioPessoa = await GetEnsaioPessoaAsync(idEnsaio, idPessoa);
+                if (ensaioPessoa == null)
+                {
+                    return HttpStatusCode.NotFound;
+                }
+
+                if (ensaioPessoa.IdPapelGrupoPapelGrupo != 1)
+                {
+                    return HttpStatusCode.Unauthorized;
+                }
+
+                ensaioPessoa.JustificativaFalta = justificativa;
+                ensaioPessoa.Presente = 0;
+
+                _context.Update(ensaioPessoa);
+                await _context.SaveChangesAsync();
+                return HttpStatusCode.OK;
+            }
+            catch
+            {
+                return HttpStatusCode.InternalServerError;
             }
         }
 

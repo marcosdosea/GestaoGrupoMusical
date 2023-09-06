@@ -1,4 +1,5 @@
 ﻿using Core.DTO;
+using System.Net;
 using static Core.DTO.InstrumentoAssociadoDTO;
 
 namespace Core.Service
@@ -10,13 +11,13 @@ namespace Core.Service
         /// </summary>
         /// <param name="movimentacao"></param>
         /// <returns>
-        /// 200 - Sucesso <para />
-        /// 400 - Instrumento com status danificado <para />
-        /// 401 - Ação de emprestimo/devolução para instrumento já emprestado/devolvido <para />
-        /// 402 - Ação de devolução inválida pois associado não corresponde ao mesmo do empréstimo <para />
-        /// 500 - Erro interno
+        /// Created             - Sucesso <para />
+        /// BadRequest          - Instrumento com status danificado <para />
+        /// Conflict            - Ação de emprestimo/devolução para instrumento já emprestado/devolvido <para />
+        /// PreconditionFailed  - Ação de devolução inválida pois associado não corresponde ao mesmo do empréstimo <para />
+        /// InternalServerError - Erro interno
         /// </returns>
-        Task<int> CreateAsync(Movimentacaoinstrumento movimentacao);
+        Task<HttpStatusCode> CreateAsync(Movimentacaoinstrumento movimentacao);
 
         Task<Movimentacaoinstrumento?> GetEmprestimoByIdInstrumento(int idInstrumento);
 
@@ -27,27 +28,27 @@ namespace Core.Service
         /// </summary>
         /// <param name="id"></param>
         /// <returns>
-        /// 200 - Sucesso <para />
-        /// 400 - Movimentação de emprestimo com instrumento não devolvido <para />
-        /// 404 - O id não corresponde a nenhuma movimentação <para />
-        /// 500 - Erro interno
+        /// OK - Sucesso <para />
+        /// PreconditionFailed - Movimentação de emprestimo com instrumento não devolvido <para />
+        /// NotFound - O id não corresponde a nenhuma movimentação <para />
+        /// InternalServerError - Erro interno
         /// </returns>
-        Task<int> DeleteAsync(int id);
+        Task<HttpStatusCode> DeleteAsync(int id);
 
         /// <summary>
         /// Envia uma notificação sobre o empréstimo/devolução de instrumento
         /// </summary>
         /// <param name="id"></param>
         /// <returns>
-        /// 200 - Sucesso <para />
-        /// 401 - Instrumento não está cadastrado no sistema <para />
-        /// 402 - Associado não está cadastrado no sistema <para />
-        /// 404 - O id não corresponde a nenhuma movimentação <para />
-        /// 406 - Empréstimo já está confirmado <para />
-        /// 407 - Devolução já está confirmada <para />
-        /// 500 - Erro interno
+        /// ok - Sucesso <para />
+        /// PreconditionFailed - Instrumento não está cadastrado no sistema <para />
+        /// PreconditionRequired - Associado não está cadastrado no sistema <para />
+        /// NotFound - O id não corresponde a nenhuma movimentação <para />
+        /// BadRequest - Empréstimo já está confirmado <para />
+        /// BadGateway - Devolução já está confirmada <para />
+        /// InternalServerError - Erro interno
         /// </returns>
-        Task<int> NotificarViaEmailAsync(int id);
+        Task<HttpStatusCode> NotificarViaEmailAsync(int id);
 
         Task<MovimentacoesAssociado> MovimentacoesByIdAssociadoAsync(int idAssociado);
 
@@ -57,13 +58,13 @@ namespace Core.Service
         /// <param name="idMovimentacao"></param>
         /// <param name="idAssociado"></param>
         /// <returns>
-        /// 200 - Sucesso Empréstimo <para />
-        /// 201 - Sucesso Devolução <para />
-        /// 400 - Associado inválido para empréstimo <para />
-        /// 401 - Associado inválido para devolução <para />
-        /// 404 - O id não corresponde a nenhuma movimentação <para />
-        /// 500 - Erro interno
+        /// Created - Sucesso Empréstimo <para />
+        /// OK - Sucesso Devolução <para />
+        /// PreconditionFailed - Associado inválido para empréstimo <para />
+        /// BadRequest - Associado inválido para devolução <para />
+        /// NotFound - O id não corresponde a nenhuma movimentação <para />
+        /// InternalServerError - Erro interno
         /// </returns>
-        Task<int> ConfirmarMovimentacaoAsync(int idMovimentacao, int idAssociado);
+        Task<HttpStatusCode> ConfirmarMovimentacaoAsync(int idMovimentacao, int idAssociado);
     }
 }
