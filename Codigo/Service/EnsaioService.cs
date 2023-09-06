@@ -4,6 +4,7 @@ using Core.Service;
 using Email;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Net;
 
 namespace Service
 {
@@ -19,7 +20,7 @@ namespace Service
         /// </summary>
         /// <param name="ensaio"></param>
         /// <returns>Verdadeiro(<see langword="true" />) se cadastrou com sucesso ou Falso(<see langword="false" />) se houve algum erro.</returns>
-        public async Task<int> Create(Ensaio ensaio, IEnumerable<int> idRegentes)
+        public async Task<HttpStatusCode> Create(Ensaio ensaio, IEnumerable<int> idRegentes)
         {
             using var transaction = _context.Database.BeginTransaction();
 
@@ -101,7 +102,7 @@ namespace Service
         /// </summary>
         /// <param name="id"></param>
         /// <returns>Verdadeiro(<see langword="true" />) se deletou com sucesso ou Falso(<see langword="false" />) se houve algum erro.</returns>
-        public async Task<int> Delete(int id)
+        public async Task<HttpStatusCode> Delete(int id)
         {
             try
             {
@@ -119,7 +120,7 @@ namespace Service
         /// </summary>
         /// <param name="ensaio"></param>
         /// <returns>retorna um inteiro.</returns>
-        public async Task<int> Edit(Ensaio ensaio)
+        public async Task<HttpStatusCode> Edit(Ensaio ensaio)
         {
 
              try
@@ -255,7 +256,7 @@ namespace Service
             throw new NotImplementedException();
         }
 
-        public async Task<int> RegistrarFrequenciaAsync(List<EnsaioListaFrequenciaDTO> frequencias)
+        public async Task<HttpStatusCode> RegistrarFrequenciaAsync(List<EnsaioListaFrequenciaDTO> frequencias)
         {
             try
             {
