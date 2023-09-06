@@ -123,7 +123,6 @@ namespace Service
         /// <returns>retorna um inteiro.</returns>
         public async Task<HttpStatusCode> Edit(Ensaio ensaio)
         {
-
              try
              {
                 var ensaioDb = await _context.Ensaios.Where(e => e.Id == ensaio.Id).AsNoTracking().SingleOrDefaultAsync();
@@ -261,7 +260,7 @@ namespace Service
             {
                 if (!frequencias.Any())
                 {
-                    return 400;
+                    return HttpStatusCode.BadRequest;
                 }
                 int idEnsaio = frequencias.First().IdEnsaio;
 
@@ -271,12 +270,12 @@ namespace Service
 
                 if (dbFrequencias == null)
                 {
-                    return 404;
+                    return HttpStatusCode.NotFound;
                 }
 
                 if (dbFrequencias.Count() != frequencias.Count)
                 {
-                    return 401;
+                    return HttpStatusCode.Conflict;
                 }
 
                 int pos = 0;
@@ -294,11 +293,11 @@ namespace Service
 
                 await _context.SaveChangesAsync();
 
-                return 200;
+                return HttpStatusCode.OK ;
             }
             catch
             {
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
         }
     }
