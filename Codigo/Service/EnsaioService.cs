@@ -115,6 +115,7 @@ namespace Service
                 return HttpStatusCode.InternalServerError;
             }
         }
+
         /// <summary>
         /// Edita um Ensaio do banco de dados
         /// </summary>
@@ -137,23 +138,21 @@ namespace Service
                     if(ensaio.DataHoraInicio >= DateTime.Now)
                     {
                         await _context.SaveChangesAsync();
-                        return 200;
+                        return HttpStatusCode.OK;
                     }
                     else
                     {
-                        return 400;
+                        return HttpStatusCode.BadRequest;
                     }
-                   
                 }
                 else 
                 {
-                    return 401;
+                    return HttpStatusCode.PreconditionFailed;
                 }
-             
              }
              catch
              {
-                return 500;
+                return HttpStatusCode.InternalServerError;
              }
         }
         /// <summary>
