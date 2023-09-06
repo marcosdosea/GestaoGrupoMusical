@@ -75,26 +75,26 @@ namespace Service
                         await _context.SaveChangesAsync();
                         await transaction.CommitAsync();
 
-                        return 200;
+                        return HttpStatusCode.OK;
                     }
                     else
                     {
                         await transaction.RollbackAsync();
-                        return 400;
+                        return HttpStatusCode.BadRequest;
                     }
                    
                 }
                 else 
                 {
                     await transaction.RollbackAsync();
-                    return 401;
+                    return HttpStatusCode.PreconditionFailed;
                 }
              
             }
             catch
             {
                 await transaction.RollbackAsync();
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
         }
         /// <summary>
