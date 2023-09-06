@@ -108,11 +108,11 @@ namespace Service
             {
                 _context.Ensaios.Remove(await Get(id));
                 await _context.SaveChangesAsync();
-                return 200;
+                return HttpStatusCode.OK;
             }
             catch
             {
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
         }
         /// <summary>
