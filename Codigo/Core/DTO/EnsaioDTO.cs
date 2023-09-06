@@ -35,8 +35,7 @@ namespace Core.DTO
         [Display(Name = "Repertório", Prompt = "Informe o repertório.")]
         public string? Repertorio { get; set; }
 
-        [Display(Name = "Regente")]
-        public string? NomeRegente { get; set; }
+        public IEnumerable<string>? Regentes { get; set; }
 
         public int? IdGrupoMusical { get;  set; }
     }

@@ -207,7 +207,7 @@ namespace Service
 
         public EnsaioDetailsDTO GetDetailsDTO(int idEnsaio)
         {
-            /*var query = _context.Ensaios
+            var query = _context.Ensaios
                 .Select(g => new EnsaioDetailsDTO
                 {
                     Id = g.Id,
@@ -217,28 +217,33 @@ namespace Service
                     Local = g.Local,
                     PresencaObrigatoria = g.PresencaObrigatoria == 1 ? "Sim" : "Não",
                     Repertorio = g.Repertorio,
-                    //NomeRegente = g.IdRegenteNavigation.Nome,
+                    Regentes = _context.Ensaiopessoas
+                                       .Where(ep => ep.IdPapelGrupoPapelGrupo == 5 && ep.IdEnsaio == idEnsaio)
+                                       .OrderBy(ep => ep.IdPessoaNavigation.Nome)
+                                       .Select(ep => ep.IdPessoaNavigation.Nome).AsEnumerable(),
                     IdGrupoMusical = g.IdGrupoMusical
 
                 }).Where(g => g.Id == idEnsaio);
 
-            return query.First();*/
-            throw new NotImplementedException();
+            return query.First();
         }
 
         public async Task<EnsaioFrequenciaDTO?> GetFrequenciaAsync(int idEnsaio, int idGrupoMusical)
         {
-            /*var query = from ensaio in _context.Ensaios
+            var query = from ensaio in _context.Ensaios
                         where ensaio.Id == idEnsaio && ensaio.IdGrupoMusical == idGrupoMusical
                         select new EnsaioFrequenciaDTO
                         {
                             Inicio = ensaio.DataHoraInicio,
                             Fim = ensaio.DataHoraFim,
-                            //NomeRegnete = ensaio.
+                            Regentes = _context.Ensaiopessoas
+                                       .Where(ep => ep.IdPapelGrupoPapelGrupo == 5 && ep.IdEnsaio == idEnsaio)
+                                       .OrderBy(ep => ep.IdPessoaNavigation.Nome)
+                                       .Select(ep => ep.IdPessoaNavigation.Nome).AsEnumerable(),
                             Tipo = ensaio.Tipo,
                             Local = ensaio.Local,
                             Frequencias = _context.Ensaiopessoas
-                            .Where(ensaioPessoa => ensaioPessoa.IdEnsaio == idEnsaio)
+                            .Where(ensaioPessoa => ensaioPessoa.IdEnsaio == idEnsaio && ensaioPessoa.IdPapelGrupoPapelGrupo != 5)
                             .OrderBy(ensaioPessoa => ensaioPessoa.IdPessoaNavigation.Nome)
                             .Select(ensaioPessoa => new EnsaioListaFrequenciaDTO
                             {
@@ -252,8 +257,7 @@ namespace Service
                             }).AsEnumerable()
                         };
 
-            return await query.AsNoTracking().SingleOrDefaultAsync();*/
-            throw new NotImplementedException();
+            return await query.AsNoTracking().SingleOrDefaultAsync();
         }
 
         public async Task<int> RegistrarFrequenciaAsync(List<EnsaioListaFrequenciaDTO> frequencias)
@@ -267,8 +271,8 @@ namespace Service
                 int idEnsaio = frequencias.First().IdEnsaio;
 
                 var dbFrequencias = _context.Ensaiopessoas
-                                    .Where(ensaioPessoa => ensaioPessoa.IdEnsaio == frequencias.First().IdEnsaio)
-                                    .OrderBy(ensaioPessoa => ensaioPessoa.IdPessoaNavigation.Nome);
+                                    .Where(ep => ep.IdEnsaio == frequencias.First().IdEnsaio && ep.IdPapelGrupoPapelGrupo != 5)
+                                    .OrderBy(ep => ep.IdPessoaNavigation.Nome);
 
                 if (dbFrequencias == null)
                 {

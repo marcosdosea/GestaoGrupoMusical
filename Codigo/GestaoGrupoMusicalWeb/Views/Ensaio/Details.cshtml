@@ -57,8 +57,16 @@
             <div class="container">
                 <div class="row">
                     <div class="form-group col-xl">
-                        <label asp-for="NomeRegente" class="control-label"></label>
-                        <input asp-for="NomeRegente" class="form-control" disabled />
+                        <label asp-for="Regentes" class="control-label"></label>
+                        @{
+                            if (Model.Regentes != null)
+                            {
+                                foreach (var regente in Model.Regentes)
+                                {
+                                    <input class="form-control" value="@regente" disabled />
+                                }
+                            }
+                        }
                     </div>
                 </div>
             </div>
