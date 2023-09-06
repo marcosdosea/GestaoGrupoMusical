@@ -1,4 +1,5 @@
 ﻿using Core.DTO;
+using System.Net;
 
 namespace Core.Service
 {
@@ -14,7 +15,7 @@ namespace Core.Service
         /// 401 - Data de inicio fora do escopo, ou seja, ou seja a data inicio passa da data fim do evento<para />
         /// 500 - Erro interno
         /// </returns>
-        Task<int> Create(Ensaio ensaio, IEnumerable<int> idRegentes);
+        Task<HttpStatusCode> Create(Ensaio ensaio, IEnumerable<int> idRegentes);
         /// <summary>
         /// Editar uma ensaio no banco de dados
         /// </summary>
@@ -25,7 +26,7 @@ namespace Core.Service
         /// 401 - Data de inicio fora do escopo, ou seja, ou seja a data inicio passa da data fim do evento<para />
         /// 500 - Erro interno
         /// </returns>
-        Task<int> Edit(Ensaio ensaio);
+        Task<HttpStatusCode> Edit(Ensaio ensaio);
         /// <summary>
         /// Excluir uma ensaio no banco de dados
         /// </summary>
@@ -34,7 +35,7 @@ namespace Core.Service
         /// 200 - Sucesso <para />
         /// 500 - Erro interno
         /// </returns>
-        Task<int> Delete(int id);
+        Task<HttpStatusCode> Delete(int id);
         Task<Ensaio> Get(int id);
         Task<IEnumerable<Ensaio>> GetAll();
         Task<IEnumerable<EnsaioDTO>> GetAllDTO();
@@ -50,7 +51,7 @@ namespace Core.Service
         /// 404 - Lista não encontrada <para />
         /// 500 - Erro interno
         /// </returns>
-        Task<int> RegistrarFrequenciaAsync(List<EnsaioListaFrequenciaDTO> frequencias);
+        Task<HttpStatusCode> RegistrarFrequenciaAsync(List<EnsaioListaFrequenciaDTO> frequencias);
         Task<IEnumerable<EnsaioIndexDTO>> GetAllIndexDTO(int idGrupo);
         EnsaioDetailsDTO GetDetailsDTO(int idEnsaio);
     }
