@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NuGet.Protocol;
+using System.Net;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -80,19 +81,19 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 ensaio.IdColaboradorResponsavel = Convert.ToInt32(User.FindFirst("Id")?.Value);
                 switch (await _ensaio.Create(ensaio, ensaioViewModel.IdRegentes))
                 {
-                    case 200:
+                    case HttpStatusCode.OK:
                         mensagem = "Ensaio <b>Cadastrado</b> com <b>Sucesso</b>";
                         Notificar(mensagem, Notifica.Sucesso);
                         return RedirectToAction(nameof(Index));
-                    case 400:
+                    case HttpStatusCode.BadRequest:
                         mensagem = "Alerta ! A <b>data de início</b> deve ser menor que a data de <b>fim</b>";
                         Notificar(mensagem, Notifica.Alerta);
                         break;
-                    case 401:
+                    case HttpStatusCode.PreconditionFailed:
                         mensagem = "Alerta ! A <b>data de início</b> deve ser maior que a data de hoje " + DateTime.Now;
                         Notificar(mensagem, Notifica.Alerta);
                         break;
-                    case 500:
+                    case HttpStatusCode.InternalServerError:
                         mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Cadastro</b> de ensaio, se isso persistir entre em contato com o suporte";
                         Notificar(mensagem, Notifica.Erro);
                         break;
