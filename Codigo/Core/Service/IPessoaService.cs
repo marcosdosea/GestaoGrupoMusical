@@ -62,7 +62,7 @@ namespace Core.Service
         /// HttpStatusCode.OK - Administrador removido com sucesso
         /// HttpStatusCode.NotFound - Administrador não encontrado
         /// HttpStatusCode.InternalServerError - Erro no servidor ou em alguma operação 
-        ///  return HttpStatusCode.NotAcceptable - Não permiter remover o unico administrador do grupo
+        ///  return HttpStatusCode.NotAcceptable - Não permitir remover o unico administrador do grupo
         /// </returns>
         Task<HttpStatusCode> RemoveAdmGroup(int id);
 
