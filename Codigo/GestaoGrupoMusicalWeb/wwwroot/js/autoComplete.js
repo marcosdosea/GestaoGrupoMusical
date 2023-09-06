@@ -1,5 +1,18 @@
-function fillAutocomplete(data, inputId, listId, formId, errorMessage) {
+function fillAutocomplete(data, inputId, listId, formId, errorMessage, dataFilled) {
     if (data != null && inputId != null) {
+        if(dataFilled != null){
+            dataFilled = JSON.parse(dataFilled);
+            var lista = document.getElementById(listId);
+
+            dataFilled.forEach( (element) => {
+                for (var i = 0; i < lista.options.length; i++) {
+                    if(lista.options[i].value == element){
+                        console.log(element);
+                    }
+                }
+            });
+        }
+        
         data = JSON.parse(data);
         const nomes = data.map((data) => {
             return data["Nome"];

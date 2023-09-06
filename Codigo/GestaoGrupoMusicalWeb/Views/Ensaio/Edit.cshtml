@@ -112,8 +112,7 @@
 </div>
 <script>
     window.addEventListener("load", () => {
-        console.log('@(Html.Raw(ViewData["jsonIdRegentes"]))');
-        fillAutocomplete('@(Html.Raw(Model.JsonLista))', "regentes", "IdRegentes", "formCreate", "O campo Regentes é obrigatório");
+        fillAutocomplete('@(Html.Raw(Model.JsonLista))', "regentes", "IdRegentes", "formCreate", "O campo Regentes é obrigatório", '@(Html.Raw(ViewData["jsonIdRegentes"]))');
     });
 </script>
 
