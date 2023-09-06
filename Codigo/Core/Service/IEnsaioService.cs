@@ -16,6 +16,7 @@ namespace Core.Service
         /// InternalServerError - Erro interno
         /// </returns>
         Task<HttpStatusCode> Create(Ensaio ensaio, IEnumerable<int> idRegentes);
+
         /// <summary>
         /// Editar uma ensaio no banco de dados
         /// </summary>
@@ -27,13 +28,14 @@ namespace Core.Service
         /// 500 - Erro interno
         /// </returns>
         Task<HttpStatusCode> Edit(Ensaio ensaio);
+
         /// <summary>
         /// Excluir uma ensaio no banco de dados
         /// </summary>
         /// <param name="ensaio"></param>
         /// <returns>
-        /// 200 - Sucesso <para />
-        /// 500 - Erro interno
+        /// OK - Sucesso <para />
+        /// InternalServerError - Erro interno
         /// </returns>
         Task<HttpStatusCode> Delete(int id);
         Task<Ensaio> Get(int id);
