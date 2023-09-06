@@ -212,7 +212,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     Notificar($"Nenhum <b>Instrumento Musical</b> corresponde ao id <b>{id}</b>.", Notifica.Erro);
                     break;
                 case HttpStatusCode.InternalServerError:
-                    Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Exclusão</b>, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                    Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Exclusão</b>.", Notifica.Erro);
                     return RedirectToAction(nameof(Delete), id);
             }
             
@@ -288,7 +288,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
                     switch (await _movimentacaoInstrumento.CreateAsync(movimentacao))
                     {
-                        case 200:
+                        case HttpStatusCode.Created:
                             if (movimentacao.TipoMovimento == "EMPRESTIMO")
                             {
                                 Notificar("Instrumento <b>Emprestado</b> com <b>Sucesso</b>. Enviamos um <b>E-mail</b> para o <b>Associado</b> Confirmar.", Notifica.Sucesso);
@@ -298,10 +298,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
                                 Notificar("Instrumento <b>Devolvido</b> com <b>Sucesso</b>. Enviamos um <b>E-mail</b> para o <b>Associado</b> Confirmar.", Notifica.Sucesso);
                             }
                             return RedirectToAction(nameof(Movimentar), new { id = movimentacaoPost.IdInstrumentoMusical });
-                        case 400:
+                        case HttpStatusCode.BadRequest:
                             Notificar("Não é possível <b>Emprestar</b> um instrumento <b>Danificado</b>", Notifica.Alerta);
                             return RedirectToAction(nameof(Movimentar), new { id = movimentacaoPost.IdInstrumentoMusical });
-                        case 401:
+                        case HttpStatusCode.Conflict:
                             if (movimentacao.TipoMovimento == "EMPRESTIMO")
                             {
                                 Notificar("Não é possível <b>Emprestar</b> um instrumento que não está <b>Disponível</b>", Notifica.Alerta);
@@ -311,11 +311,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
                                 Notificar("Não é possível <b>Devolver</b> um instrumento que não está <b>Emprestado</b>", Notifica.Alerta);
                             }
                             break;
-                        case 402:
+                        case HttpStatusCode.PreconditionFailed:
                             Notificar("Esse <b>Associado</b> não corresponde ao <b>Empréstimo</b> desse <b>Instrumento</b>", Notifica.Erro);
                             break;
-                        case 500:
-                            Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Movimentação</b> do instrumento, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                        case HttpStatusCode.InternalServerError:
+                            Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Movimentação</b> do instrumento.", Notifica.Erro);
                             break;
                     }
                 }
@@ -335,17 +335,17 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             switch (await _movimentacaoInstrumento.DeleteAsync(id))
             {
-                case 200:
+                case HttpStatusCode.OK:
                     Notificar("Movimentação <b>Excluida</b> com <b>Sucesso</b>", Notifica.Sucesso);
                     break;
-                case 400:
+                case HttpStatusCode.PreconditionFailed:
                     Notificar("Não é possível <b>Excluir</b> essa <b>Movimentação</b> de <b>Empréstimo</b> pois o instrumento não foi <b>Devolvido</b>", Notifica.Alerta);
                     break;
-                case 404:
+                case HttpStatusCode.NotFound:
                     Notificar($"O Id {id} não <b>Corresponde</b> a nenhuma <b>Movimentação</b>", Notifica.Erro);
                     break;
-                case 500:
-                    Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Exclusão</b> da movimentação, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                case HttpStatusCode.InternalServerError:
+                    Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Exclusão</b> da movimentação.", Notifica.Erro);
                     break;
             }
 
@@ -359,26 +359,26 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             switch (await _movimentacaoInstrumento.NotificarViaEmailAsync(id))
             {
-                case 200:
+                case HttpStatusCode.OK:
                     Notificar("Notificação <b>Enviada</b> com <b>Sucesso</b>", Notifica.Sucesso);
                     break;
-                case 401:
-                    Notificar("O instrumento <b>Não</b> está <b>Cadastrado</b> no sistema, por favor entre em contato com o suporte", Notifica.Erro);
+                case HttpStatusCode.PreconditionFailed:
+                    Notificar("O instrumento <b>Não</b> está <b>Cadastrado</b> no sistema.", Notifica.Erro);
                     break;
-                case 402:
-                    Notificar("O correspondente <b>Não</b> está <b>Cadastrado</b> no sistema, por favor entre em contato com o suporte", Notifica.Erro);
+                case HttpStatusCode.PreconditionRequired:
+                    Notificar("O correspondente <b>Não</b> está <b>Cadastrado</b> no sistema.", Notifica.Erro);
                     break;
-                case 404:
+                case HttpStatusCode.NotFound:
                     Notificar($"O Id {id} não <b>Corresponde</b> a nenhuma <b>Movimentação</b>", Notifica.Erro);
                     break;
-                case 406:
+                case HttpStatusCode.BadRequest:
                     Notificar("O Associado <b>Confirmou</b> esse <b>Empréstimo</b>", Notifica.Alerta);
                     break;
-                case 407:
+                case HttpStatusCode.BadGateway:
                     Notificar("O Associado <b>Confirmou</b> essa <b>Devolução</b>", Notifica.Alerta);
                     break;
-                case 500:
-                    Notificar("Desculpe, ocorreu um <b>Erro</b> durante o <b>Envio</b> da notificação, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                case HttpStatusCode.InternalServerError:
+                    Notificar("Desculpe, ocorreu um <b>Erro</b> durante o <b>Envio</b> da notificação.", Notifica.Erro);
                     break;
             }
             return RedirectToAction(nameof(Movimentar), new { id = IdInstrumento });
@@ -411,23 +411,23 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             switch(await _movimentacaoInstrumento.ConfirmarMovimentacaoAsync(idMovimentacao, associado.Id))
             {
-                case 200:
+                case HttpStatusCode.Created:
                     Notificar("Empréstimo <b>Confirmado</b> com <b>Sucesso</b>", Notifica.Sucesso);
                     break;
-                case 201:
+                case HttpStatusCode.OK:
                     Notificar("Devolução <b>Confirmada</b> com <b>Sucesso</b>", Notifica.Sucesso);
                     break;
-                case 400:
+                case HttpStatusCode.PreconditionFailed:
                     Notificar("O <b>Associado</b> não corresponde ao mesmo do <b>Empréstimo</b>", Notifica.Erro);
                     break;
-                case 401:
+                case HttpStatusCode.BadRequest:
                     Notificar("O <b>Associado</b> não corresponde ao mesmo da <b>Devolução</b>", Notifica.Erro);
                     break;
-                case 404:
+                case HttpStatusCode.NotFound:
                     Notificar($"O Id {idMovimentacao} não <b>Corresponde</b> a nenhuma <b>Movimentação</b>", Notifica.Erro);
                     break;
-                case 500:
-                    Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Confirmação</b>, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                case HttpStatusCode.InternalServerError:
+                    Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Confirmação</b>.", Notifica.Erro);
                     break;
             }
 

@@ -57,5 +57,19 @@ namespace Core.Service
         Task<HttpStatusCode> RegistrarFrequenciaAsync(List<EnsaioListaFrequenciaDTO> frequencias);
         Task<IEnumerable<EnsaioIndexDTO>> GetAllIndexDTO(int idGrupo);
         EnsaioDetailsDTO GetDetailsDTO(int idEnsaio);
+        Task<IEnumerable<EnsaioAssociadoDTO>> GetEnsaiosByIdPesoaAsync(int idPessoa);
+        Task<Ensaiopessoa?> GetEnsaioPessoaAsync(int idEnsaio, int idPessoa);
+
+        /// <summary>
+        /// Registra justificativa de ensaio
+        /// </summary>
+        /// <param name="frequencias"></param>
+        /// <returns>
+        /// HttpStatusCode.OK - Sucesso <para />
+        /// HttpStatusCode.NotFound - Relação ensaio e pessoa não encontrada <para />
+        /// HttpStatusCode.Unauthorized - Usuário não tem permissão para realizar a operação <para/>
+        /// HttpStatusCode.InternalServerError - Erro interno
+        /// </returns>
+        Task<HttpStatusCode> RegistrarJustificativaAsync(int idEnsaio, int idPessoa, string? justificativa);
     }
 }
