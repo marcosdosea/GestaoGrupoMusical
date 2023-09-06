@@ -148,8 +148,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Editar</b> de ensaio, se isso persistir entre em contato com o suporte";
                         Notificar(mensagem, Notifica.Erro);
                         break;
-
-
                 }
             }
             ensaioViewModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
@@ -202,19 +200,19 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             switch(await _ensaio.RegistrarFrequenciaAsync(listaFrequencia))
             {
-                case 200:
+                case HttpStatusCode.OK:
                     Notificar("Lista de <b>Frequência</b> salva com <b>Sucesso</b>", Notifica.Sucesso);
                     break;
-                case 400:
+                case HttpStatusCode.BadRequest:
                     Notificar("A <b>Lista</b> enviada <b>Não</b> possui registros", Notifica.Alerta);
                     return RedirectToAction(nameof(Index));
-                case 401:
+                case HttpStatusCode.Conflict:
                     Notificar("A <b>Lista</b> enviada é <b>Inválida</b>", Notifica.Erro);
                     break;
-                case 404:
+                case HttpStatusCode.NotFound:
                     Notificar("A <b>Lista</b> enviada não foi <b>Encontrada</b>", Notifica.Erro);
                     break;
-                case 500:
+                case HttpStatusCode.InternalServerError:
                     Notificar("Desculpe, ocorreu um <b>Erro</b> ao registrar a Lista de <b>Frequência</b>, se isso persistir entre em contato com o suporte", Notifica.Erro);
                     break;
             }
