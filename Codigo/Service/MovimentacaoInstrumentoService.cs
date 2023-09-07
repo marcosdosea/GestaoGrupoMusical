@@ -3,6 +3,7 @@ using Core.DTO;
 using Core.Service;
 using Email;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 using static Core.DTO.InstrumentoAssociadoDTO;
 
 namespace Service
@@ -16,7 +17,7 @@ namespace Service
             _context = context;
         }
 
-        public async Task<int> CreateAsync(Movimentacaoinstrumento movimentacao)
+        public async Task<HttpStatusCode> CreateAsync(Movimentacaoinstrumento movimentacao)
         {
             using var transaction = _context.Database.BeginTransaction();
 
@@ -56,7 +57,7 @@ namespace Service
                             await EmailService.Enviar(email);
                         }
 
-                        return 200;
+                        return HttpStatusCode.Created;
                     }
                     else if(movimentacao.TipoMovimento == "DEVOLUCAO" && instrumento.Status == "EMPRESTADO")
                     {
@@ -90,27 +91,27 @@ namespace Service
                                 await EmailService.Enviar(email);
                             }
 
-                            return 200;
+                            return HttpStatusCode.Created;
                         }
                         await transaction.RollbackAsync();
-                        return 402;
+                        return HttpStatusCode.PreconditionFailed;
                     }
                     await transaction.RollbackAsync();
-                    return 401;
+                    return HttpStatusCode.Conflict;
                 }
                 
                 await transaction.RollbackAsync();
-                return 400;
+                return HttpStatusCode.BadRequest;
                 
             }
             catch 
             {
                 await transaction.RollbackAsync();
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
         }
 
-        public async Task<int> DeleteAsync(int id)
+        public async Task<HttpStatusCode> DeleteAsync(int id)
         {
             try
             {
@@ -122,18 +123,18 @@ namespace Service
                     {
                         if (movimentacaoDb.Id == movimentacao.Id)
                         {
-                            return 400;
+                            return HttpStatusCode.PreconditionFailed;
                         }
                          _context.Movimentacaoinstrumentos.Remove(movimentacao);
                         await _context.SaveChangesAsync();
-                        return 200;
+                        return HttpStatusCode.OK;
                     }
                 }
-                return 404;
+                return HttpStatusCode.NotFound;
             }
             catch
             {
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
         }
 
@@ -218,7 +219,7 @@ namespace Service
             return movimentacoes;
         }
 
-        public async Task<int> ConfirmarMovimentacaoAsync(int idMovimentacao, int idAssociado)
+        public async Task<HttpStatusCode> ConfirmarMovimentacaoAsync(int idMovimentacao, int idAssociado)
         {
             try
             {
@@ -226,12 +227,12 @@ namespace Service
 
                 if(movimentacao == null)
                 {
-                    return 404;
+                    return HttpStatusCode.NotFound;
                 }
 
                 if(movimentacao.IdAssociado != idAssociado)
                 {
-                    return movimentacao.TipoMovimento == "DEVOLUCAO" ? 401 : 400;
+                    return movimentacao.TipoMovimento == "DEVOLUCAO" ? HttpStatusCode.BadRequest : HttpStatusCode.PreconditionFailed;
                 }
 
                 movimentacao.ConfirmacaoAssociado = 1;
@@ -239,15 +240,15 @@ namespace Service
                 _context.Update(movimentacao);
                 await _context.SaveChangesAsync();
 
-                return movimentacao.TipoMovimento == "DEVOLUCAO" ? 201 : 200;
+                return movimentacao.TipoMovimento == "DEVOLUCAO" ? HttpStatusCode.OK : HttpStatusCode.Created;
             }
             catch
             {
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
         }
 
-        public async Task<int> NotificarViaEmailAsync(int id)
+        public async Task<HttpStatusCode> NotificarViaEmailAsync(int id)
         {
             try
             {
@@ -256,7 +257,7 @@ namespace Service
                 {
                     if (Convert.ToBoolean(movimentacao.ConfirmacaoAssociado))
                     {
-                        return movimentacao.TipoMovimento == "DEVOLUCAO" ? 407 : 406;
+                        return movimentacao.TipoMovimento == "DEVOLUCAO" ? HttpStatusCode.BadGateway : HttpStatusCode.BadRequest;
                     }
                     var instrumento = await _context.Instrumentomusicals.FindAsync(movimentacao.IdInstrumentoMusical);
                     var associado = await _context.Pessoas.FindAsync(movimentacao.IdAssociado);
@@ -264,12 +265,12 @@ namespace Service
 
                     if(associado == null)
                     {
-                        return 402;
+                        return HttpStatusCode.PreconditionRequired;
                     }
 
                     if(instrumento == null)
                     {
-                        return 401;
+                        return HttpStatusCode.PreconditionFailed;
                     }
 
                     string? instrumentoNome = (await _context.Tipoinstrumentos.FindAsync(instrumento.IdTipoInstrumento))?.Nome;
@@ -289,14 +290,14 @@ namespace Service
 
                     await EmailService.Enviar(email);
 
-                    return 200;
+                    return HttpStatusCode.OK;
                 }
 
-                return 404;
+                return HttpStatusCode.NotFound;
             }
             catch
             {
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
         }
     }

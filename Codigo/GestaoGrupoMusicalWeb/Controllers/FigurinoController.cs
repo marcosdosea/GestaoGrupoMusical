@@ -485,11 +485,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     Notificar(mensagem, Notifica.Erro);
                     break;
                     case HttpStatusCode.InternalServerError:
-                    mensagem = "Erro ! Aconteceu um problema durante a confirmação, para detalhes contate o suporte";
-                    Notificar(mensagem, Notifica.Erro);
-                    break;
-            }
-            return RedirectToAction(nameof(Movimentacoes));
+                        mensagem = "Erro ! Aconteceu um problema durante a confirmação.";
+                        Notificar(mensagem, Notifica.Erro);
+                        break;
+                }
+                return RedirectToAction(nameof(Movimentacoes));
         }
 
         [Authorize(Roles = "ADMINISTRADOR GRUPO")]

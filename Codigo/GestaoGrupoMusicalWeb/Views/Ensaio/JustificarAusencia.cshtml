@@ -1,0 +1,36 @@
+﻿@model GestaoGrupoMusicalWeb.Models.EnsaioJustificativaViewModel
+@{
+    ViewData["Title"] = "Justificar Ausência";
+    Layout = "_LayoutAssociado";
+}
+
+<partial name="_Notificar">
+
+<h1 class="fs-5 mb-4 p-3 bg-danger  bg-opacity-75 text-white">@ViewData["Title"]</h1>
+<nav class="ps-3" style="--bs-breadcrumb-divider: '';"aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a class="fw-bold text-danger text-opacity-75" asp-action="Index">Ensaios</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <span class="fw-bold">
+                <i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> 
+                @ViewData["Title"]
+            </span>
+        </li>
+    </ol>
+</nav>
+<hr />
+
+<form asp-controller="Ensaio" asp-action="JustificarAusencia" class="ps-3">
+    <div>
+        <input asp-for="IdEnsaio" type="hidden"/>
+        <label class="control-label" asp-for="Justificativa"></label>
+        <textarea class="form-control" asp-for="Justificativa"></textarea>
+        <span asp-validation-for="Justificativa"></span>
+    </div>
+    <div class="d-flex justify-content-md-end justify-content-between gap-2 mt-3">
+        <a class="btn btn-outline-secondary col-lg-2 col-md-4 col-5" asp-controller="Ensaio" asp-action="EnsaiosAssociado">Voltar</a>
+        <button class="btn btn-secondary col-lg-2 col-md-4 col-5" type="submit">Salvar</button>
+    </div>
+</form>

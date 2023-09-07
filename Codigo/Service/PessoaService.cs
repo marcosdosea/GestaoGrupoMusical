@@ -33,7 +33,7 @@ namespace Service
         /// </summary>
         /// <param name="pessoa">dados do novo associado</param>
         /// <returns>retorna o id referente a nova entidade criada</returns>
-        public async Task<int> Create(Pessoa pessoa)
+        public async Task<HttpStatusCode> Create(Pessoa pessoa)
         {
 
                 try
@@ -46,46 +46,46 @@ namespace Service
                     if (pessoa.DataEntrada == null && pessoa.DataNascimento == null)
                     {//Mensagem de sucesso
                         await _context.SaveChangesAsync();
-                        return 200;
+                        return HttpStatusCode.Created;
                     }
                     else if (pessoa.DataNascimento != null)
                     {
                         int idade = Math.Abs(pessoa.DataNascimento.Value.Year - DateTime.Now.Year);
-                        if (pessoa.DataNascimento <= DateTime.Now && idade < 120)
+                        if (pessoa.DataNascimento <= DateTime.Today && idade < 120)
                         {
-                            if (pessoa.DataEntrada == null || pessoa.DataEntrada < DateTime.Now)
+                            if (pessoa.DataEntrada == null || pessoa.DataEntrada < DateTime.Today)
                             {//mensagem de sucesso
                                
                                 await _context.SaveChangesAsync();
-                                return 200;
+                                return HttpStatusCode.Created;
                             }
                             else
                             {
                                 // erro 400, data de entrada fora do escopo
-                                return 400;
+                                return HttpStatusCode.BadRequest;
                             }
                         }
                         else
                         {
                             // erro 401, data de nascimento está fora do escopo
-                            return 401;
+                            return HttpStatusCode.NotAcceptable;
                         }
                     }
                     else if (pessoa.DataEntrada == null || pessoa.DataEntrada < DateTime.Now)
                     {
                         await _context.SaveChangesAsync();
-                        return 200;
+                        return HttpStatusCode.Created;
                     }
                     else
                     {
                         // erro 400, data de entrada fora do escopo
-                        return 400;
+                        return HttpStatusCode.BadRequest;
                     }
                 }
                 catch (Exception ex)
                 {
                     //Aconteceu algum erro do servidor ou interno
-                    return 500;
+                    return HttpStatusCode.InternalServerError;
                 }
 
         }
@@ -94,7 +94,7 @@ namespace Service
         /// Metodo que atualiza os dados de uma pessoa/associado
         /// </summary>
         /// <param name="pessoa">dados do associado</param>
-        public async Task<int> Edit(Pessoa pessoa)
+        public async Task<HttpStatusCode> Edit(Pessoa pessoa)
         {
             //Criar excecao para data de nascimento, etc
             try
@@ -113,7 +113,7 @@ namespace Service
                 if (pessoa.DataEntrada == null && pessoa.DataNascimento == null)
                 {//Mensagem de sucesso
                     await _context.SaveChangesAsync();
-                    return 200;
+                    return HttpStatusCode.OK;
                 }
                 else if (pessoa.DataNascimento != null)
                 {
@@ -124,35 +124,35 @@ namespace Service
                         {//mensagem de sucesso
 
                             await _context.SaveChangesAsync();
-                            return 200;
+                            return HttpStatusCode.OK;
                         }
                         else
                         {
                             // erro 400, data de entrada fora do escopo
-                            return 400;
+                            return HttpStatusCode.BadRequest;
                         }
                     }
                     else
                     {
                         // erro 401, data de nascimento está fora do escopo
-                        return 401;
+                        return HttpStatusCode.NotAcceptable;
                     }
                 }
                 else if (pessoa.DataEntrada == null || pessoa.DataEntrada < DateTime.Now)
                 {
                     await _context.SaveChangesAsync();
-                    return 200;
+                    return HttpStatusCode.OK;
                 }
                 else
                 {
                     // erro 400, data de entrada fora do escopo
-                    return 400;
+                    return HttpStatusCode.BadRequest;
                 }
             }
             catch (Exception ex)
             {
                 //Aconteceu algum erro do servidor ou interno
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
 
 
@@ -190,10 +190,10 @@ namespace Service
             return _context.Pessoas.AsNoTracking();
         }
 
-        public async Task<int> AddAdmGroup(Pessoa pessoa)
+        public async Task<HttpStatusCode> AddAdmGroup(Pessoa pessoa)
         {
             using var transaction = _context.Database.BeginTransaction();
-            int sucesso; //será usada para o retorno 200/201 de sucesso
+            HttpStatusCode sucesso; //será usada para o retorno 200/201 de sucesso
 
             try
             {
@@ -212,10 +212,10 @@ namespace Service
                     pessoa.IsentoPagamento = 1;
                     pessoa.Telefone1 = "";
 
-                    if(await Create(pessoa) != 200)
+                    if(await Create(pessoa) != HttpStatusCode.Created)
                     {
                         await transaction.RollbackAsync();
-                        return 500;//nao foi possivel criar a pessoa
+                        return HttpStatusCode.NotAcceptable;//nao foi possivel criar a pessoa
                     }
 
                     var user = CreateUser();
@@ -237,7 +237,7 @@ namespace Service
                         var userDb = await _userManager.FindByNameAsync(pessoa.Cpf);
                         await _userManager.AddToRoleAsync(userDb, "ADMINISTRADOR GRUPO");
                     }
-                    sucesso = 200; //usuario CRIADO como administrador de grupo musical
+                    sucesso = HttpStatusCode.Created; //usuario CRIADO como administrador de grupo musical
                 }
                 //caso exista, seja do mesmo grupo musical e não seja adm de grupo (3)
                 else if (pessoaF.IdGrupoMusical == pessoa.IdGrupoMusical && pessoaF.IdPapelGrupo != 3)
@@ -289,20 +289,20 @@ namespace Service
                     catch 
                     {
                         await transaction.RollbackAsync();
-                        return 500;//o usuario já possui cadastro em um grupo musical, não foi possiveç alterar ele para adm grupo musical
+                        return HttpStatusCode.NotAcceptable;//o usuario já possui cadastro em um grupo musical, não foi possivel alterar ele para adm grupo musical
                     }
 
-                    sucesso = 201; //usuario promovido a administrador de grupo musical
+                    sucesso = HttpStatusCode.OK; //usuario promovido a administrador de grupo musical
                 }
                
                 else if (pessoaF.IdGrupoMusical == pessoa.IdGrupoMusical && pessoaF.IdPapelGrupo == 3)
                 {
-                    return 401; // usuario já é administrador de grupo musical
+                    return HttpStatusCode.BadRequest; // usuario já é administrador de grupo musical
                 }
                 else
                 {
                     await transaction.RollbackAsync();
-                    return 400;//erro 400, o usuario associado a outro grupo musical
+                    return HttpStatusCode.NotAcceptable;//erro 400, o usuario associado a outro grupo musical
                 }
 
                 await transaction.CommitAsync();
@@ -311,7 +311,7 @@ namespace Service
             catch
             {
                 await transaction.RollbackAsync();
-                return 501;//erro 500, do servidor
+                return HttpStatusCode.InternalServerError;//erro 500, do servidor
             }
         }
         /// <summary>
@@ -335,43 +335,54 @@ namespace Service
             return await AdmGroupList.ToListAsync();
         }
 
-        public async Task<bool> RemoveAdmGroup(int id)
+        public async Task<HttpStatusCode> RemoveAdmGroup(int id)
         {
-            try
-            {
-                var pessoa = await _context.Pessoas.FindAsync(id);
-                if (pessoa != null)
+            var pessoa = await _context.Pessoas.FindAsync(id);
+            var lista = await GetAllAdmGroup(pessoa.IdGrupoMusical);
+            int count = lista.Count();
+            if(count > 1) {
+                try
                 {
-                    var user = await _userManager.FindByNameAsync(pessoa.Cpf);
-                    if (user != null)
+
+                    if (pessoa != null)
                     {
-                        await _userManager.RemoveFromRoleAsync(user, "ADMINISTRADOR GRUPO");
-                        await _userManager.AddToRoleAsync(user, "ASSOCIADO");
+                        var user = await _userManager.FindByNameAsync(pessoa.Cpf);
+                        if (user != null)
+                        {
+                            await _userManager.RemoveFromRoleAsync(user, "ADMINISTRADOR GRUPO");
+                            await _userManager.AddToRoleAsync(user, "ASSOCIADO");
 
-                        pessoa.IdPapelGrupo = 1;
+                            pessoa.IdPapelGrupo = 1;
 
-                        _context.Pessoas.Update(pessoa);
+                            _context.Pessoas.Update(pessoa);
 
-                        await _context.SaveChangesAsync();
+                            await _context.SaveChangesAsync();
+                        }
+                        return HttpStatusCode.OK;
                     }
-                    return true;
+                    return HttpStatusCode.NotFound;
                 }
-                return false;
+                catch
+                {
+                    return HttpStatusCode.InternalServerError;
+                }
+
             }
-            catch
+            else
             {
-                return false;
+                return HttpStatusCode.NotAcceptable;
             }
+
         }
 
-        public async Task<int> AddAssociadoAsync(Pessoa pessoa)
+        public async Task<HttpStatusCode> AddAssociadoAsync(Pessoa pessoa)
         {
             using var transaction = _context.Database.BeginTransaction();
 
             try
             {
-                int createResult = await Create(pessoa);
-                if (createResult != 200)
+                HttpStatusCode createResult = await Create(pessoa);
+                if (createResult != HttpStatusCode.Created)
                 {
                     await transaction.RollbackAsync();
                     return createResult;
@@ -396,16 +407,16 @@ namespace Service
                     await _userManager.AddToRoleAsync(userDb, "ASSOCIADO");
 
                     await transaction.CommitAsync();
-                    return createResult;
+                    return HttpStatusCode.OK;
                 }
 
                 await transaction.RollbackAsync();
-                return 450;
+                return HttpStatusCode.BadRequest;
             }
             catch
             {
                 await transaction.RollbackAsync();
-                return 500;
+                return HttpStatusCode.InternalServerError;
             }
         }
 
@@ -515,7 +526,7 @@ namespace Service
             }
         }
 
-        public async Task<int> RemoverAssociado(Pessoa pessoaAssociada, String? motivoSaida)
+        public async Task<HttpStatusCode> RemoverAssociado(Pessoa pessoaAssociada, String? motivoSaida)
         {
             pessoaAssociada.MotivoSaida = motivoSaida;
             pessoaAssociada.Ativo = 0;
@@ -760,7 +771,7 @@ namespace Service
                
         }
 
-        public async Task<int> AtivarAssociado(string cpf)
+        public async Task<HttpStatusCode> AtivarAssociado(string cpf)
         {
             try
             {
@@ -774,28 +785,28 @@ namespace Service
                     {
                         pessoa.Ativo = 1;
 
-                        if (await Edit(pessoa) != 200)
+                        if (await Edit(pessoa) != HttpStatusCode.OK)
                         {
-                            return 500;
+                            return HttpStatusCode.NotFound;
                         }
 
-                        return 200;
+                        return HttpStatusCode.OK;
                     }
                     else
                     {
-                        return 401;
+                        return HttpStatusCode.Unauthorized;
                     }  
                     //===========================================================//
                 }
                 else
                 {
-                    return 400;
+                    return HttpStatusCode.NotImplemented;
                 }
                 //=================================//
             }
             catch
             {
-                return 501;
+                return HttpStatusCode.InternalServerError;
             }
         }
 

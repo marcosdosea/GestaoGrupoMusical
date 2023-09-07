@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Service;
+using System.Net;
 using static GestaoGrupoMusicalWeb.Controllers.BaseController;
 using static GestaoGrupoMusicalWeb.Models.AdministradorGrupoMusicalViewModel;
 
@@ -22,7 +23,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         private readonly UserManager<UsuarioIdentity> _userManager;
 
-        public AdministradorGrupoMusicalController(IPessoaService pessoaService,IGrupoMusicalService grupoMusicalService,
+        public AdministradorGrupoMusicalController(IPessoaService pessoaService, IGrupoMusicalService grupoMusicalService,
                                                    IMapper mapper, UserManager<UsuarioIdentity> userManager)
         {
             _pessoaService = pessoaService;
@@ -42,7 +43,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             administradorModel.ListaAdministrador = await _pessoaService.GetAllAdmGroup(id);
             var grupoMusical = await _grupoMusicalService.Get(id);
-            if(grupoMusical == null)
+            if (grupoMusical == null)
             {
                 return RedirectToAction(nameof(Index), "GrupoMusical");
             }
@@ -81,14 +82,14 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
-                int retAddAdm = await _pessoaService.AddAdmGroup(pessoa);
+                HttpStatusCode retAddAdm = await _pessoaService.AddAdmGroup(pessoa);
 
                 switch (retAddAdm)
                 {
-                    case 200:
+                    case HttpStatusCode.Created:
                         switch (await RequestPasswordReset(_userManager, pessoa.Email, pessoa.Nome))
                         {
-                            case 200:
+                            case HttpStatusCode.OK:
                                 mensagem = "<b>Sucesso</b>! Administrador cadastrado e enviado email para redefinição de senha.";
                                 Notificar(mensagem, Notifica.Sucesso);
                                 break;
@@ -99,31 +100,31 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         }
                         break;
 
-                    case 201:
+                    case HttpStatusCode.OK:
                         mensagem = "<b>Sucesso</b>! Associado promovido a <b>Administrador do Grupo Musical</b>.";
                         Notificar(mensagem, Notifica.Sucesso);
                         break;
 
-                    case 400:
+                    case HttpStatusCode.NotAcceptable:
                         mensagem = "<b>Alerta</b>! Infelizemente não foi possível <b>cadastrar</b>, o usuário faz parte de outro grupo musical";
                         Notificar(mensagem, Notifica.Alerta);
                         break;
 
-                    case 401:
+                    case HttpStatusCode.BadRequest:
                         mensagem = "<b>Erro</b>! Associado já é um administrador deste grupo.";
                         Notificar(mensagem, Notifica.Erro);
                         break;
 
-                    case 500:
-                        mensagem = "<b>Erro</b>! Desculpe, ocorreu um erro durante a <b>Promoção</b> do associado para administrador, se isso persistir entre em contato com o suporte";
+                    case HttpStatusCode.NotImplemented:
+                        mensagem = "<b>Erro</b>! Desculpe, ocorreu um erro durante a <b>Promoção</b> do associado para administrador.";
                         Notificar(mensagem, Notifica.Erro);
                         break;
-                    case 501:
-                        mensagem = "<b>Erro</b>! Desculpe, ocorreu um erro durante a <b>Operação</b>, se isso persistir entre em contato com o suporte";
+                    case HttpStatusCode.InternalServerError:
+                        mensagem = "<b>Erro</b>! Desculpe, ocorreu um erro durante a <b>Operação</b>.";
                         Notificar(mensagem, Notifica.Erro);
                         break;
                 }
-               
+
             }
             return RedirectToAction(nameof(Index), new { id = admViewModel.IdGrupoMusical });
         }
@@ -155,8 +156,30 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Delete(int id, int idGrupoMusical)
         {
-            await _pessoaService.RemoveAdmGroup(id);
-            return RedirectToAction(nameof(Index), new { id= idGrupoMusical });
+            HttpStatusCode result = await _pessoaService.RemoveAdmGroup(id);
+            String mensagem = String.Empty;
+            switch (result)
+            {
+                case HttpStatusCode.OK:
+                    mensagem = "<b>Sucesso</b>! Administrador removido.";
+                    Notificar(mensagem, Notifica.Sucesso);
+                    break;
+
+                case HttpStatusCode.NotFound:
+                    mensagem = "<b>Erro</b>! Administrador não encontrado.";
+                    Notificar(mensagem, Notifica.Erro);
+                    break;
+                case HttpStatusCode.NotAcceptable:
+                    mensagem = "<b>Alerta</b>! Não é possível <b>remover</b> o único adminstrador do grupo.";
+                    Notificar(mensagem, Notifica.Alerta);
+                    break;
+                case HttpStatusCode.InternalServerError:
+                    mensagem = "<b>Erro</b>! Desculpe, ocorreu um erro durante a <b>Operação</b>.";
+                    Notificar(mensagem, Notifica.Erro);
+                    break;
+
+            }
+            return RedirectToAction(nameof(Index), new { id = idGrupoMusical });
         }
 
         public async Task<ActionResult> Notificar(int id)

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using static GestaoGrupoMusicalWeb.Models.IdentityViewModel;
 
 namespace GestaoGrupoMusicalWeb.Controllers
@@ -61,7 +62,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 else
                 {
                    
-                        Notificar("<span class=\"fw-bold fs-5 mt-3\">Erro ! Houve um erro no login, não é possível realizar a autenticação. Qualquer dúvida contate o suporte",
+                        Notificar("<span class=\"fw-bold fs-5 mt-3\">Erro ! Houve um erro no login, não é possível realizar a autenticação.",
                Notifica.Erro);
                  
                 }
@@ -201,7 +202,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             if (result.Succeeded)
             {
                 //ativa associado
-                int atv = await _pessoaService.AtivarAssociado(user.UserName);
+                HttpStatusCode atv = await _pessoaService.AtivarAssociado(user.UserName);
 
                 return RedirectToAction("PasswordChanged", new { change = true });
             }

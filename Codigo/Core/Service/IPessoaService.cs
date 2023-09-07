@@ -16,24 +16,24 @@ namespace Core.Service
         /// </summary>
         /// <param name="pessoa"></param>
         /// <returns>
-        /// 200 - Sucesso <para />
-        /// 400 - Data de entrada fora do escopo,ou seja, passa do dia atual<para />
-        /// 401 - Data de nascimento fora do escopo, ou seja, ou passar do dia atual ou idade passa de 120 anos <para />
-        /// 500 - Erro interno
+        /// HttpStatusCode.Created - Sucesso <para />
+        /// HttpStatusCode.BadRequest - Data de entrada fora do escopo,ou seja, passa do dia atual<para />
+        /// HttpStatusCode.NotAcceptable - Data de nascimento fora do escopo, ou seja, ou passar do dia atual ou idade passa de 120 anos <para />
+        /// HttpStatusCode.InternalServerError - Erro interno
         /// </returns>
-        Task<int> Create(Pessoa pessoa);
+        Task<HttpStatusCode> Create(Pessoa pessoa);
 
         /// <summary>
         /// Edita uma pessoa no banco de dados
         /// </summary>
         /// <param name="pessoa"></param>
         /// <returns>
-        /// 200 - Sucesso <para />
-        /// 400 - Data de entrada fora do escopo,ou seja, passa do dia atual<para />
-        /// 401 - Data de nascimento fora do escopo, ou seja, ou passar do dia atual ou idade passa de 120 anos <para />
-        /// 500 - Erro interno
+        /// HttpStatusCode.OK - Sucesso <para />
+        /// HttpStatusCode.BadRequest - Data de entrada fora do escopo,ou seja, passa do dia atual<para />
+        /// HttpStatusCode.NotAcceptable - Data de nascimento fora do escopo, ou seja, ou passar do dia atual ou idade passa de 120 anos <para />
+        /// HttpStatusCodeInternalServerError - Erro interno
         /// </returns>
-        Task<int> Edit(Pessoa pessoa);
+        Task<HttpStatusCode> Edit(Pessoa pessoa);
         void Delete(int id);
         Pessoa Get(int id);
         IEnumerable<Pessoa> GetAll();
@@ -46,16 +46,25 @@ namespace Core.Service
         /// </summary>
         /// <param name="pessoa"></param>
         /// <returns>
-        /// 200 - Associado não existia, mas foi criado como administrador de grupo musical
-        /// 201 - Associado existia e foi promovido
-        /// 400 - O associado faz parte de outro grupo musical
-        /// 401 - O associado já é um administrador daquele grupo musical
-        /// 500 - O associado já possui cadastro em um grupo musical, não foi possivel alterar ele para adm grupo musical
-        /// 501 - Erro na operação
+        /// HttpStatusCode.Created - Associado não existia, mas foi criado como administrador de grupo musical
+        /// HttpStatusCode.OK - Associado existia e foi promovido
+        /// HttpStatusCode.NotAcceptable - O associado faz parte de outro grupo musical
+        /// HttpStatusCode.BadRequest - O associado já é um administrador daquele grupo musical
+        /// HttpStatusCode.InternalServerError - Erro na operação
         /// </returns>
-        Task<int> AddAdmGroup(Pessoa pessoa);
+        Task<HttpStatusCode> AddAdmGroup(Pessoa pessoa);
         Task<IEnumerable<AdministradorGrupoMusicalDTO>> GetAllAdmGroup(int id);
-        Task<bool> RemoveAdmGroup(int id);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>
+        /// HttpStatusCode.OK - Administrador removido com sucesso
+        /// HttpStatusCode.NotFound - Administrador não encontrado
+        /// HttpStatusCode.InternalServerError - Erro no servidor ou em alguma operação 
+        ///  return HttpStatusCode.NotAcceptable - Não permitir remover o unico administrador do grupo
+        /// </returns>
+        Task<HttpStatusCode> RemoveAdmGroup(int id);
 
         Task<HttpStatusCode> ToCollaborator(int id, int idPapel);
         Task<HttpStatusCode> RemoveCollaborator(int id);
@@ -67,10 +76,10 @@ namespace Core.Service
         /// </summary>
         /// <param name="pessoa"></param>
         /// <returns>
-        /// 200 - Sucesso <para />
-        /// 500 - Erro interno
+        /// HttpStatusCode.OK - Sucesso <para />
+        /// HttpStatusCode.InternalServerError - Erro interno
         /// </returns>
-        Task<int> RemoverAssociado(Pessoa pessoa, String? motivoSaida);
+        Task<HttpStatusCode> RemoverAssociado(Pessoa pessoa, String? motivoSaida);
 
         Task<bool> NotificarCadastroAdmGrupoAsync(Pessoa pessoa);
 
@@ -81,11 +90,11 @@ namespace Core.Service
         /// </summary>
         /// <param name="pessoa"></param>
         /// <returns>
-        /// 200 - Sucesso <para />
-        /// 450 - Erro durante o cadastro identity <para />
-        /// 500 - Erro interno
+        /// HttpStatusCode.OK - Sucesso <para />
+        /// HttpStatusCode.BadRequest - Erro durante o cadastro identity <para />
+        /// HttpStatusCode.InternalServerError - Erro interno
         /// </returns>
-        Task<int> AddAssociadoAsync(Pessoa pessoa);
+        Task<HttpStatusCode> AddAssociadoAsync(Pessoa pessoa);
 
         Task<bool> NotificarCadastroAssociadoAsync(Pessoa pessoa);
 
@@ -141,12 +150,12 @@ namespace Core.Service
         /// </summary>
         /// <param name="email">cpf do associado</param>
         /// <returns>
-        /// 400: Associado não encontrado
-        /// 401: Associado desativado por adm de grupo musical
-        /// 500: Erro ao editar Associado
-        /// 501: Erro na operação
+        /// HttpStatusCode.NotFound: Associado não encontrado
+        /// HttpStatusCode.Unauthorized: Associado desativado por adm de grupo musical
+        /// HttpStatusCode.InternalServerError: Erro ao editar Associado
+        /// HttpStatusCode.NotImplemented: Erro na operação
         /// </returns>
-        Task<int> AtivarAssociado(string cpf);
+        Task<HttpStatusCode> AtivarAssociado(string cpf);
 
         Task<IEnumerable<AutoCompleteRegenteDTO>> GetRegentesForAutoCompleteAsync(int idGrupoMusical);
     }
