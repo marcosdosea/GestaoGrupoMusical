@@ -130,7 +130,6 @@ namespace Service
                 var ensaioDb = await _context.Ensaios.Where(e => e.Id == ensaio.Id).AsNoTracking().SingleOrDefaultAsync();
                 if(ensaioDb == null)
                 {
-                    //TODO: Add notificação
                     await transaction.RollbackAsync();
                     return HttpStatusCode.NotFound;
                 }
@@ -164,7 +163,7 @@ namespace Service
                             }
                         }
                         _context.Ensaios.Update(ensaio);
-                        
+
                         await _context.SaveChangesAsync();
                         await transaction.CommitAsync();
 

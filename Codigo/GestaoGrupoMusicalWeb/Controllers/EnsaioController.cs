@@ -154,6 +154,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         mensagem = "Alerta ! A <b>data de início</b> deve ser maior que a data de hoje " + DateTime.Now;
                         Notificar(mensagem, Notifica.Alerta);
                         break;
+                    case HttpStatusCode.NotFound:
+                        mensagem = "<b>Erro</b> ! <b>Não</b> foi possível <b>Editar</b> esse <b>Ensaio</b>.";
+                        Notificar(mensagem, Notifica.Erro);
+                        break;
                     case HttpStatusCode.InternalServerError:
                         mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Editar</b> de ensaio.";
                         Notificar(mensagem, Notifica.Erro);
