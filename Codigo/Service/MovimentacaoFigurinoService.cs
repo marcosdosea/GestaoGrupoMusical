@@ -54,7 +54,7 @@ namespace Service
                             figurinoEstoque.QuantidadeDisponivel)
                         {
                             await transaction.RollbackAsync();
-                        return HttpStatusCode.NoContent; //não há peças disponiveis para emprestar
+                            return HttpStatusCode.NoContent; //não há peças disponiveis para emprestar
                         }
                         figurinoEstoque.QuantidadeDisponivel -= movimentacao.Quantidade;
                         figurinoEstoque.QuantidadeEntregue += movimentacao.Quantidade;
@@ -65,7 +65,7 @@ namespace Service
                         if (await AssociadoEmprestimo(movimentacao.IdAssociado, movimentacao.IdFigurino, movimentacao.IdManequim))
                         {
                             await transaction.RollbackAsync();
-                        return HttpStatusCode.PreconditionFailed; //associado nao possue nada emprestado para devolver
+                            return HttpStatusCode.PreconditionFailed; //associado nao possue nada emprestado para devolver
                         }
                         if (movimentacao.Status.Equals("DEVOLVIDO"))
                         {
@@ -74,12 +74,12 @@ namespace Service
                             if (confiQuantAssociado.Confirmar != 1)
                             {
                                 await transaction.RollbackAsync();
-                            return HttpStatusCode.FailedDependency; //não houve confirmação
+                                return HttpStatusCode.FailedDependency; //não houve confirmação
                             }
                             if (movimentacao.Quantidade <= 0 || movimentacao.Quantidade > confiQuantAssociado.Quantidade)
                             {
                                 await transaction.RollbackAsync();
-                            return HttpStatusCode.BadRequest; //tentativa de devolução de figurino a mais ou a menos da quantidade que o associado possui
+                                return HttpStatusCode.BadRequest; //tentativa de devolução de figurino a mais ou a menos da quantidade que o associado possui
                             }
                             else
                             {

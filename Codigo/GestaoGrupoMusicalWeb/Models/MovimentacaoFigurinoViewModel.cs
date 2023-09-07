@@ -9,7 +9,6 @@ namespace GestaoGrupoMusicalWeb.Models
 {
     public class MovimentacaoFigurinoViewModel
     {
-
         public int Id { get; set; }
 
         public string DataFigurinoString { get; set; }
@@ -29,6 +28,7 @@ namespace GestaoGrupoMusicalWeb.Models
         [Display(Name = "Associado")]
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public int IdAssociado { get; set; }
+
         [Display(Name ="Quantidade")]
         [Required(ErrorMessage ="O campo {0} é obrigatório")]
         [Range(1, int.MaxValue, ErrorMessage = "A quantidade deve ser maior que 0")]

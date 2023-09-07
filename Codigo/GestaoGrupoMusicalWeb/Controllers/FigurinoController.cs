@@ -69,7 +69,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                    figurinoViewModel.IdGrupoMusical = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
+                figurinoViewModel.IdGrupoMusical = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
 
                 var figurino = _mapper.Map<Figurino>(figurinoViewModel);
                 HttpStatusCode resul = await _figurinoService.Create(figurino);
