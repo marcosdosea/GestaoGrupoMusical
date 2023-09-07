@@ -25,6 +25,7 @@ namespace Core.Service
         /// OK - Sucesso <para />
         /// BadRequest - Data de inicio fora do escopo,ou seja, é menor que a data de hoje <para />
         /// PreconditionFailed - Data de inicio fora do escopo, ou seja, ou seja a data inicio passa da data fim do evento<para />
+        /// NotFound - Ensaio não encontrado <para/> 
         /// InternalServerError - Erro interno
         /// </returns>
         Task<HttpStatusCode> Edit(Ensaio ensaio, IEnumerable<int> idRegentes);
