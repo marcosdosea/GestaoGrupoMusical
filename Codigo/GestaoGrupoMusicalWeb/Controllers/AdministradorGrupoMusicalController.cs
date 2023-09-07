@@ -23,7 +23,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         private readonly UserManager<UsuarioIdentity> _userManager;
 
-        public AdministradorGrupoMusicalController(IPessoaService pessoaService,IGrupoMusicalService grupoMusicalService,
+        public AdministradorGrupoMusicalController(IPessoaService pessoaService, IGrupoMusicalService grupoMusicalService,
                                                    IMapper mapper, UserManager<UsuarioIdentity> userManager)
         {
             _pessoaService = pessoaService;
@@ -43,7 +43,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             administradorModel.ListaAdministrador = await _pessoaService.GetAllAdmGroup(id);
             var grupoMusical = await _grupoMusicalService.Get(id);
-            if(grupoMusical == null)
+            if (grupoMusical == null)
             {
                 return RedirectToAction(nameof(Index), "GrupoMusical");
             }
@@ -124,7 +124,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         Notificar(mensagem, Notifica.Erro);
                         break;
                 }
-               
+
             }
             return RedirectToAction(nameof(Index), new { id = admViewModel.IdGrupoMusical });
         }
@@ -156,8 +156,30 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Delete(int id, int idGrupoMusical)
         {
-            await _pessoaService.RemoveAdmGroup(id);
-            return RedirectToAction(nameof(Index), new { id= idGrupoMusical });
+            HttpStatusCode result = await _pessoaService.RemoveAdmGroup(id);
+            String mensagem = String.Empty;
+            switch (result)
+            {
+                case HttpStatusCode.OK:
+                    mensagem = "<b>Sucesso</b>! Administrador removido.";
+                    Notificar(mensagem, Notifica.Sucesso);
+                    break;
+
+                case HttpStatusCode.NotFound:
+                    mensagem = "<b>Erro</b>! Administrador não encontrado.";
+                    Notificar(mensagem, Notifica.Erro);
+                    break;
+                case HttpStatusCode.NotAcceptable:
+                    mensagem = "<b>Alerta</b>! Não é possível <b>remover</b> o único adminstrador do grupo.";
+                    Notificar(mensagem, Notifica.Alerta);
+                    break;
+                case HttpStatusCode.InternalServerError:
+                    mensagem = "<b>Erro</b>! Desculpe, ocorreu um erro durante a <b>Operação</b>.";
+                    Notificar(mensagem, Notifica.Erro);
+                    break;
+
+            }
+            return RedirectToAction(nameof(Index), new { id = idGrupoMusical });
         }
 
         public async Task<ActionResult> Notificar(int id)
