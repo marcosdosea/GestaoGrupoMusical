@@ -164,7 +164,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         break;
                 }
             }
-            ensaioViewModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
+            var lista = await _pessoa.GetRegentesForAutoCompleteAsync(Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
+
+            ensaioViewModel.ListaPessoa = new SelectList(lista, "Id", "Nome");
+
+            ViewData["exemploRegente"] = lista.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
+            ViewData["jsonIdRegentes"] = (await _ensaio.GetIdRegentesEnsaioAsync(ensaioViewModel.Id)).ToJson();
+            ensaioViewModel.JsonLista = lista.ToJson();
             return View(ensaioViewModel);
         }
 
