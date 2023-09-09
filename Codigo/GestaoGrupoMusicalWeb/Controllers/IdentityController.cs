@@ -230,11 +230,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [HttpGet]
         public async Task<ActionResult> Perfil(){
 
-            var papelGrupo = User.FindFirst("IdPapelGrupo")?.Value;
-            if(papelGrupo == null)
-            {
-                return RedirectToAction(nameof(Autenticar), "Identity");
-            }
+            var papelGrupo = User.FindFirst("IdPapelGrupo")?.Value ?? "4";
 
             ViewData["Layout"] = "_LayoutColaborador";
 
