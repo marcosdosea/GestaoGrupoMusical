@@ -226,5 +226,29 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
             return View();
         }
+
+        [HttpGet]
+        public async Task<ActionResult> Perfil(){
+
+            var papelGrupo = User.FindFirst("IdPapelGrupo")?.Value;
+            if(papelGrupo == null)
+            {
+                return RedirectToAction(nameof(Autenticar), "Identity");
+            }
+
+            ViewData["Layout"] = "_LayoutColaborador";
+
+            switch (papelGrupo)
+            {
+                case "1":
+                    ViewData["Layout"] = "_LayoutAssociado";
+                break;
+                case "4":
+                    ViewData["Layout"] = "_LayoutAdmSistema";
+                break; 
+            }
+
+            return View();
+        }
     }
 }
