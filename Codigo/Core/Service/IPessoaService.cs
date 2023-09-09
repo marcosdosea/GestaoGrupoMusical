@@ -54,7 +54,17 @@ namespace Core.Service
         /// </returns>
         Task<HttpStatusCode> AddAdmGroup(Pessoa pessoa);
         Task<IEnumerable<AdministradorGrupoMusicalDTO>> GetAllAdmGroup(int id);
-        Task<bool> RemoveAdmGroup(int id);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>
+        /// HttpStatusCode.OK - Administrador removido com sucesso
+        /// HttpStatusCode.NotFound - Administrador não encontrado
+        /// HttpStatusCode.InternalServerError - Erro no servidor ou em alguma operação 
+        ///  return HttpStatusCode.NotAcceptable - Não permitir remover o unico administrador do grupo
+        /// </returns>
+        Task<HttpStatusCode> RemoveAdmGroup(int id);
 
         Task<HttpStatusCode> ToCollaborator(int id, int idPapel);
         Task<HttpStatusCode> RemoveCollaborator(int id);

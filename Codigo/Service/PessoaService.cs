@@ -335,33 +335,44 @@ namespace Service
             return await AdmGroupList.ToListAsync();
         }
 
-        public async Task<bool> RemoveAdmGroup(int id)
+        public async Task<HttpStatusCode> RemoveAdmGroup(int id)
         {
-            try
-            {
-                var pessoa = await _context.Pessoas.FindAsync(id);
-                if (pessoa != null)
+            var pessoa = await _context.Pessoas.FindAsync(id);
+            var lista = await GetAllAdmGroup(pessoa.IdGrupoMusical);
+            int count = lista.Count();
+            if(count > 1) {
+                try
                 {
-                    var user = await _userManager.FindByNameAsync(pessoa.Cpf);
-                    if (user != null)
+
+                    if (pessoa != null)
                     {
-                        await _userManager.RemoveFromRoleAsync(user, "ADMINISTRADOR GRUPO");
-                        await _userManager.AddToRoleAsync(user, "ASSOCIADO");
+                        var user = await _userManager.FindByNameAsync(pessoa.Cpf);
+                        if (user != null)
+                        {
+                            await _userManager.RemoveFromRoleAsync(user, "ADMINISTRADOR GRUPO");
+                            await _userManager.AddToRoleAsync(user, "ASSOCIADO");
 
-                        pessoa.IdPapelGrupo = 1;
+                            pessoa.IdPapelGrupo = 1;
 
-                        _context.Pessoas.Update(pessoa);
+                            _context.Pessoas.Update(pessoa);
 
-                        await _context.SaveChangesAsync();
+                            await _context.SaveChangesAsync();
+                        }
+                        return HttpStatusCode.OK;
                     }
-                    return true;
+                    return HttpStatusCode.NotFound;
                 }
-                return false;
+                catch
+                {
+                    return HttpStatusCode.InternalServerError;
+                }
+
             }
-            catch
+            else
             {
-                return false;
+                return HttpStatusCode.NotAcceptable;
             }
+
         }
 
         public async Task<HttpStatusCode> AddAssociadoAsync(Pessoa pessoa)
