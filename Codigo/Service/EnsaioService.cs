@@ -145,7 +145,7 @@ namespace Service
                                             .Where(ep => ep.IdEnsaio == ensaioDb.Id && ep.IdPapelGrupoPapelGrupo == 5)
                                             .Select(ep => ep.IdPessoa).AsEnumerable();
 
-                        if(idEnsaioRegentes.Except(idRegentes).Any())
+                        if((idRegentes.Count() != idEnsaioRegentes.Count()) || (idRegentes.Except(idEnsaioRegentes).Any()))
                         {
                             var ensaioPessoaRegente = _context.Ensaiopessoas
                                                       .Where(ep => ep.IdEnsaio == ensaioDb.Id && ep.IdPapelGrupoPapelGrupo == 5);
