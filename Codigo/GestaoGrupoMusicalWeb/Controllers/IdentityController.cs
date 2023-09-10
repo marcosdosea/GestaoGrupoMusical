@@ -228,6 +228,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult> Perfil()
         {
             var papelGrupo = User.FindFirst("IdPapelGrupo")?.Value ?? "4";
