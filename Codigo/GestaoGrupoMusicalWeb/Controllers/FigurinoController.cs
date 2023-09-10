@@ -176,7 +176,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // POST: FigurinoController/DeleteEstoque/5
-        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteEstoque(int idFigurino, int idManequim)
@@ -201,6 +201,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return RedirectToAction(nameof(Estoque), new { id = idFigurino });
         }
 
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         public async Task<ActionResult> Estoque(int id)
         {
             EstoqueViewModel estoqueViewModel = new();
@@ -217,6 +218,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return View(estoqueViewModel);
         }
 
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         public async Task<ActionResult> CreateEstoque(int idFigurino)
         {
             var figurino = await _figurinoService.Get(idFigurino);
@@ -235,6 +237,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return View(estoqueViewModel);
         }
 
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> CreateEstoque(CreateEstoqueViewModel estoqueViewModel)
@@ -491,7 +494,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return RedirectToAction(nameof(Movimentacoes));
         }
 
-        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         public async Task<ActionResult> EditEstoque(int idFigurino, int idManequim)
         {
             var figurino = await _figurinoService.Get(idFigurino);
@@ -510,7 +513,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return View(estoqueviewmodel);
         }
 
-        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> EditEstoque(CreateEstoqueViewModel estoque, int idFigurino, int idManequim)
