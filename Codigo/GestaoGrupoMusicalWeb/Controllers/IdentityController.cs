@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Core;
+using Core.DTO;
 using Core.Service;
 using Email;
 using GestaoGrupoMusicalWeb.Models;
@@ -251,6 +252,36 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 ViewData["AdmSistema"] = true;
             }
             return View(user);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Perfil(UserDTO userInfos)
+        {
+            if(ModelState.IsValid)
+            {
+
+            }
+            Console.WriteLine("Aqui");
+
+            ViewData["Layout"] = "_LayoutColaborador";
+            var papelGrupo = User.FindFirst("IdPapelGrupo")?.Value ?? "4";
+            switch (papelGrupo)
+            {
+                case "1":
+                    ViewData["Layout"] = "_LayoutAssociado";
+                break;
+                case "4":
+                    ViewData["Layout"] = "_LayoutAdmSistema";
+                break; 
+            }
+            var user = await _pessoaService.GetByCpf(User.Identity?.Name);
+            if(user == null)
+            {
+                ViewData["AdmSistema"] = true;
+            }
+            
+            return View(userInfos);
         }
     }
 }
