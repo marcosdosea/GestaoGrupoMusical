@@ -255,14 +255,14 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Perfil(UserDTO userInfos)
         {
             if(ModelState.IsValid)
             {
-
+                await _pessoaService.UpdateUserInfos(userInfos, User.Identity?.Name);
             }
-            Console.WriteLine("Aqui");
 
             ViewData["Layout"] = "_LayoutColaborador";
             var papelGrupo = User.FindFirst("IdPapelGrupo")?.Value ?? "4";
@@ -280,7 +280,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 ViewData["AdmSistema"] = true;
             }
-            
+
             return View(userInfos);
         }
     }

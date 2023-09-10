@@ -850,5 +850,38 @@ namespace Service
 
             return HttpStatusCode.OK;
         }
+
+        public async Task<HttpStatusCode> UpdateUserInfos(UserDTO userInfos, string? cpf)
+        {
+            try
+            {
+                var pessoa = await _context.Pessoas.FindAsync(cpf);
+                if(pessoa == null)
+                {
+                    return HttpStatusCode.NotFound;
+                }
+
+                pessoa.Nome = userInfos.Nome;
+                pessoa.DataNascimento = userInfos.DataNascimento;
+                pessoa.Sexo = userInfos.Sexo;
+                pessoa.Email = userInfos.Email;
+                pessoa.Telefone1 = userInfos.Telefone1;
+                pessoa.Telefone2 = userInfos.Telefone2;
+                pessoa.Cep = userInfos.Cep;
+                pessoa.Rua = userInfos.Rua;
+                pessoa.Bairro = userInfos.Bairro;
+                pessoa.Estado = userInfos.Estado;
+                pessoa.Cidade = userInfos.Cidade;
+
+                _context.Pessoas.Update(pessoa);
+                await _context.SaveChangesAsync();
+
+                return HttpStatusCode.OK;
+            }
+            catch
+            {
+                return HttpStatusCode.InternalServerError;
+            }
+        }
     }
 }
