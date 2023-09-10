@@ -262,8 +262,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
             if(ModelState.IsValid)
             {
                 var pessoaModel = _mapper.Map<Pessoa>(userInfos);
-                
-                //await _pessoaService.UpdateUserInfos(userInfos, User.Identity?.Name);
+                pessoaModel.IdGrupoMusical = Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value);
+                pessoaModel.IdPapelGrupo = Convert.ToInt32(User.FindFirst("IdPapelGrupo")?.Value);
+                pessoaModel.Cpf = User.Identity?.Name ?? "";
+
+                await _pessoaService.UpdateUserInfos(pessoaModel);
             }
 
             ViewData["Layout"] = "_LayoutColaborador";

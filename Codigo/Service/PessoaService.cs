@@ -841,19 +841,11 @@ namespace Service
             return HttpStatusCode.OK;
         }
 
-        public async Task<HttpStatusCode> UpdateUserInfos(Pessoa userInfos, string? cpf)
+        public async Task<HttpStatusCode> UpdateUserInfos(Pessoa userInfos)
         {
             try
             {
-                var pessoa = await _context.Pessoas.FindAsync(cpf);
-                if(pessoa == null)
-                {
-                    return HttpStatusCode.NotFound;
-                }
-
-                pessoa.Nome = userInfos.Nome;
-
-                _context.Pessoas.Update(pessoa);
+                _context.Pessoas.Update(userInfos);
                 await _context.SaveChangesAsync();
 
                 return HttpStatusCode.OK;

@@ -159,6 +159,6 @@ namespace Core.Service
 
         Task<IEnumerable<AutoCompleteRegenteDTO>> GetRegentesForAutoCompleteAsync(int idGrupoMusical);
 
-        Task<HttpStatusCode> UpdateUserInfos(Pessoa userInfos, string? cpf);
+        Task<HttpStatusCode> UpdateUserInfos(Pessoa userInfos);
     }
 }
