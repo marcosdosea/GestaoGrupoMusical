@@ -841,7 +841,7 @@ namespace Service
             return HttpStatusCode.OK;
         }
 
-        public async Task<HttpStatusCode> UpdateUserInfos(UserDTO userInfos, string? cpf)
+        public async Task<HttpStatusCode> UpdateUserInfos(Pessoa userInfos, string? cpf)
         {
             try
             {

@@ -261,6 +261,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             if(ModelState.IsValid)
             {
+                var pessoaModel = _mapper.Map<Pessoa>(userInfos);
+                
                 //await _pessoaService.UpdateUserInfos(userInfos, User.Identity?.Name);
             }
 
