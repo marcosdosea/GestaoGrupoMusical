@@ -624,16 +624,6 @@ namespace Service
                            Id = pessoa.Id,
                            Nome = pessoa.Nome,
                            Papel = pessoa.IdPapelGrupoNavigation.Nome,
-                           Sexo = pessoa.Sexo,
-                           Cep = pessoa.Cep,
-                           Rua = pessoa.Rua,
-                           Bairro = pessoa.Bairro,
-                           Cidade = pessoa.Cidade,
-                           Estado = pessoa.Estado,
-                           DataNascimento = pessoa.DataNascimento,
-                           Telefone1 = pessoa.Telefone1,
-                           Telefone2 = pessoa.Telefone2,
-                           Email = pessoa.Email,
                            Ativo = Convert.ToBoolean(pessoa.Ativo),
                            IdGrupoMusical = pessoa.IdGrupoMusical,
                            IdPapelGrupo = pessoa.IdPapelGrupo
@@ -862,16 +852,6 @@ namespace Service
                 }
 
                 pessoa.Nome = userInfos.Nome;
-                pessoa.DataNascimento = userInfos.DataNascimento;
-                pessoa.Sexo = userInfos.Sexo;
-                pessoa.Email = userInfos.Email;
-                pessoa.Telefone1 = userInfos.Telefone1;
-                pessoa.Telefone2 = userInfos.Telefone2;
-                pessoa.Cep = userInfos.Cep;
-                pessoa.Rua = userInfos.Rua;
-                pessoa.Bairro = userInfos.Bairro;
-                pessoa.Estado = userInfos.Estado;
-                pessoa.Cidade = userInfos.Cidade;
 
                 _context.Pessoas.Update(pessoa);
                 await _context.SaveChangesAsync();

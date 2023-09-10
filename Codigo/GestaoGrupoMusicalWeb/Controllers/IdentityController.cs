@@ -257,11 +257,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Perfil(UserDTO userInfos)
+        public async Task<ActionResult> Perfil(PessoaViewModel userInfos)
         {
             if(ModelState.IsValid)
             {
-                await _pessoaService.UpdateUserInfos(userInfos, User.Identity?.Name);
+                //await _pessoaService.UpdateUserInfos(userInfos, User.Identity?.Name);
             }
 
             ViewData["Layout"] = "_LayoutColaborador";
