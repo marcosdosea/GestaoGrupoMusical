@@ -19,5 +19,11 @@ namespace Core.DTO
         public bool Ativo { get; set; }
         public int IdGrupoMusical { get; set; }
         public int IdPapelGrupo { get; set; }
+
+        public Dictionary<string, char> sexoPessoa { get; } = new()
+        {
+            { "Masculino", 'M' },
+            { "Feminino", 'F' }
+        };
     }
 }

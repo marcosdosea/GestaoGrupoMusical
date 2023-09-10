@@ -228,8 +228,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> Perfil(){
-
+        public async Task<ActionResult> Perfil()
+        {
             var papelGrupo = User.FindFirst("IdPapelGrupo")?.Value ?? "4";
 
             ViewData["Layout"] = "_LayoutColaborador";
@@ -244,7 +244,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 break; 
             }
 
-            return View();
+            var user = await _pessoaService.GetByCpf(User.Identity?.Name);
+            if(user == null)
+            {
+                ViewData["AdmSistema"] = true;
+            }
+            return View(user);
         }
     }
 }
