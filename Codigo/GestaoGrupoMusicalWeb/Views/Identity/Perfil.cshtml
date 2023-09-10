@@ -1,5 +1,91 @@
+@model Core.DTO.UserDTO
 @{
-    Layout = @ViewData["Layout"]!.ToString();
+    Layout = ViewData["Layout"]!.ToString();
+    ViewData["Title"] = "Meu Perfil";
 }
 
-@ViewData["Layout"]!.ToString()
+<div class="container">
+    <div class="row">
+        <h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">@ViewData["Title"]</h1>
+    </div>
+    @if(ViewData["AdmSistema"] != null)
+    {
+
+    }else
+    {
+        <h2 class="fs-5 my-4 border-bottom pb-2">Dados pessoais</h2>
+        <div class="row col-lg-8 col-xl-7">
+            <div>
+                <label class="control-label" asp-for="Nome"></label>
+                <input class="form-control" asp-for="Nome">
+            </div>
+        </div>
+        <div class="row col-lg-8 col-xl-7">
+            <div class="col-md-6">
+                <label class="control-label" asp-for="DataNascimento"></label>
+                <input class="form-control" asp-for="DataNascimento">
+            </div>
+            <div class="col-md-6">
+                <label asp-for="Sexo" class="control-label"></label>
+                <div class="d-flex justify-content-around">
+                    @{
+                        foreach (var item in Model.sexoPessoa)
+                        {
+                            <div>
+                                <label for="@item.Key">@item.Key</label>
+                                <input class="form-check-input" type="radio" value="@item.Value" asp-for="Sexo" id="@item.Key" />
+                            </div>
+                        }
+                    }
+                </div>
+                <span asp-validation-for="Sexo" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row col-lg-8 col-xl-7">
+            <div>
+                <label class="control-label" asp-for="Email"></label>
+                <input class="form-control" asp-for="Email">
+            </div>
+        </div>
+        <div class="row col-lg-8 col-xl-7">
+            <div class="col-md-6">
+                <label class="control-label" asp-for="Telefone1"></label>
+                <input class="form-control" asp-for="Telefone1">
+            </div>
+            <div class="col-md-6">
+                <label class="control-label" asp-for="Telefone2"></label>
+                <input class="form-control" asp-for="Telefone2">
+            </div>
+        </div>
+        <h2 class="fs-5 my-4 border-bottom pb-2">Endereço</h2>
+        <div class="row col-lg-8 col-xl-7">
+            <div class="col-md-4">
+                <label asp-for="Cep" class="control-label">CEP</label>
+                <input asp-for="Cep" id="campoCep" class="form-control" />
+                <span asp-validation-for="Cep" id="mensagemCep" class="text-danger"></span>
+            </div>
+            <div class="col-md-8">
+                <label asp-for="Rua" class="control-label"></label>
+                <input asp-for="Rua" id="campoRua" class="form-control" />
+                <span asp-validation-for="Rua" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row col-lg-8 col-xl-7">
+            <div class="form-group col-md-4">
+                <label asp-for="Bairro" class="control-label"></label>
+                <input asp-for="Bairro" id="campoBairro" class="form-control" />
+                <span asp-validation-for="Bairro" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <label asp-for="Cidade" class="control-label"></label>
+                <input asp-for="Cidade" id="campoCidade" class="form-control" />
+                <span asp-validation-for="Cidade" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-2">
+                <label asp-for="Estado" class="control-label"></label>
+                <input asp-for="Estado" id="campoEstado" class="form-control" />
+                <span asp-validation-for="Estado" class="text-danger"></span>
+            </div>
+        </div>
+    }
+</div>
