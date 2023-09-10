@@ -36,7 +36,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             _movimentacaoService = movimentacaoService;
         }
 
-        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         // GET: FigurinoController
         public async Task<ActionResult> Index()
         {
@@ -48,19 +48,21 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: FigurinoController/Details/5
+        [Authorize]
         public ActionResult Details(int id)
         {
             return View();
         }
 
         // GET: FigurinoController/Create
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         public ActionResult Create()
         {
             return View();
         }
 
         // POST: FigurinoController/Create
-        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(FigurinoViewModel figurinoViewModel)
@@ -96,7 +98,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: FigurinoController/Edit/5
-        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         public async Task<ActionResult> Edit(int id)
         {
             var figurino = await _figurinoService.Get(id);
@@ -104,8 +106,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             return View(figurinoViewModel);
         }
+
         // POST: FigurinoController/Edit/5
-        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(int id, FigurinoViewModel figurinoViewModel)
@@ -142,7 +145,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: FigurinoController/Delete/5
-        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         public async Task<ActionResult> Delete(int id)
         {
             var figurino = await _figurinoService.Get(id);
@@ -152,7 +155,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // POST: FigurinoController/Delete/5
-        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Delete(int id, FigurinoViewModel figurinoViewModel)
@@ -277,7 +280,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return RedirectToAction(nameof(Estoque), new { id = estoqueViewModel.IdFigurino });
         }
 
-        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         public async Task<ActionResult> Movimentar(int id, int? page, string sortOrder, string currentFilter)
         {
             var figurino = await _figurinoService.Get(id);
@@ -344,7 +347,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return View(movimentarFigurinoViewModel);
         }
 
-        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Movimentar(MovimentacaoFigurinoViewModel movimentacaoViewModel)
@@ -409,6 +412,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return RedirectToAction(nameof(Movimentar), new { id = movimentacaoViewModel.IdFigurino });
         }
 
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteMovimento(int Id, int idFigurino)
@@ -441,7 +445,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return RedirectToAction(nameof(Movimentar), new { id = idFigurino });
         }
 
-        [Authorize(Roles = "ASSOCIADO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR, ASSOCIADO")]
         public async Task<ActionResult> Movimentacoes()
         {
             var associado = await _pessoaService.GetByCpf(User.Identity?.Name);
@@ -455,7 +459,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return View(MovimentacoesFigurino);
         }
 
-        [Authorize(Roles = "ASSOCIADO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR, ASSOCIADO")]
         public async Task<ActionResult> ConfirmarMovimentacao(int idMovimentacao)
         {
             var associado = await _pessoaService.GetByCpf(User.Identity?.Name);
