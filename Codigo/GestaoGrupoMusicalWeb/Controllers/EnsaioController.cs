@@ -26,7 +26,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             _grupoMusical = grupoMusical;
         }
 
-        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO,COLABORADOR")]
         // GET: EnsaioController
         public async Task<ActionResult> Index()
         {
