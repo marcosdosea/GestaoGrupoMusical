@@ -119,10 +119,15 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 Notificar("<b>Ensaio não encontrado!</b>", Notifica.Alerta);
                 return RedirectToAction(nameof(Index));
             }
+            var lista = await _pessoa.GetRegentesForAutoCompleteAsync(Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
+
             EnsaioViewModel ensaioModel = _mapper.Map<EnsaioViewModel>(ensaio);
 
-            ensaioModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
+            ensaioModel.ListaPessoa = new SelectList(lista, "Id", "Nome");
 
+            ViewData["exemploRegente"] = lista.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
+            ViewData["jsonIdRegentes"] = (await _ensaio.GetIdRegentesEnsaioAsync(id)).ToJson();
+            ensaioModel.JsonLista = lista.ToJson();
             return View(ensaioModel);
         }
 
@@ -132,10 +137,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(EnsaioViewModel ensaioViewModel)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && ensaioViewModel.IdRegentes != null)
             {
                 String mensagem = String.Empty;
-                switch (await _ensaio.Edit(_mapper.Map<Ensaio>(ensaioViewModel)))
+                switch (await _ensaio.Edit(_mapper.Map<Ensaio>(ensaioViewModel), ensaioViewModel.IdRegentes))
                 {
                     case HttpStatusCode.OK:
                         mensagem = "Ensaio <b>Editado</b> com <b>Sucesso</b>";
@@ -149,13 +154,23 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         mensagem = "Alerta ! A <b>data de início</b> deve ser maior que a data de hoje " + DateTime.Now;
                         Notificar(mensagem, Notifica.Alerta);
                         break;
+                    case HttpStatusCode.NotFound:
+                        mensagem = "<b>Erro</b> ! <b>Não</b> foi possível <b>Editar</b> esse <b>Ensaio</b>.";
+                        Notificar(mensagem, Notifica.Erro);
+                        break;
                     case HttpStatusCode.InternalServerError:
                         mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Editar</b> de ensaio.";
                         Notificar(mensagem, Notifica.Erro);
                         break;
                 }
             }
-            ensaioViewModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
+            var lista = await _pessoa.GetRegentesForAutoCompleteAsync(Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
+
+            ensaioViewModel.ListaPessoa = new SelectList(lista, "Id", "Nome");
+
+            ViewData["exemploRegente"] = lista.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
+            ViewData["jsonIdRegentes"] = (await _ensaio.GetIdRegentesEnsaioAsync(ensaioViewModel.Id)).ToJson();
+            ensaioViewModel.JsonLista = lista.ToJson();
             return View(ensaioViewModel);
         }
 
