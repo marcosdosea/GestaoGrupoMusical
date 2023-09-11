@@ -51,13 +51,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
             else if(User.IsInRole("ADMINISTRADOR SISTEMA"))
             {
                 return RedirectToAction(nameof(Index), "GrupoMusical");
-            }
-            else if(User.IsInRole("ADMINISTRADOR GRUPO"))
-            {
-                return RedirectToAction(nameof(Index),"InstrumentoMusical");
-
-
-            }
+            }  
+            
             var listaEvento = _evento.GetAllDTO();
             var EventoViewDTO = _mapper.Map<List<EventoViewModelDTO>>(listaEvento);
             var listaEnsaio = await _ensaioService.GetAllDTO();
