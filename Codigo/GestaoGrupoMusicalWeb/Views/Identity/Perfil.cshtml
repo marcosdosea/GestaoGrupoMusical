@@ -1,4 +1,4 @@
-@model GestaoGrupoMusicalWeb.Models.PessoaViewModel
+@model GestaoGrupoMusicalWeb.Models.UserViewModel
 @{
     Layout = ViewData["Layout"]!.ToString();
     ViewData["Title"] = "Meu Perfil";
@@ -12,7 +12,8 @@
         @if(ViewData["AdmSistema"] != null)
         {
 
-        }else
+        }
+        else
         {
             <h2 class="fs-5 my-4 border-bottom pb-2">Dados pessoais</h2>
             <div class="row col-lg-8 col-xl-7">
@@ -54,11 +55,11 @@
             <div class="row col-lg-8 col-xl-7">
                 <div class="col-md-6">
                     <label class="control-label" asp-for="Telefone1"></label>
-                    <input class="form-control" asp-for="Telefone1">
+                    <input class="form-control" id="campoTelefone1" asp-for="Telefone1">
                 </div>
                 <div class="col-md-6">
                     <label class="control-label" asp-for="Telefone2"></label>
-                    <input class="form-control" asp-for="Telefone2">
+                    <input class="form-control" id="campoTelefone2" asp-for="Telefone2">
                 </div>
                 <span asp-validation-for="Telefone1" class="text-danger"></span>
             </div>

@@ -253,13 +253,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 return View(user);
             }
            
-            return View(_mapper.Map<PessoaViewModel>(user));
+            return View(_mapper.Map<UserViewModel>(user));
         }
 
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Perfil(PessoaViewModel userInfos)
+        public async Task<ActionResult> Perfil(UserViewModel userInfos)
         {
             if(ModelState.IsValid)
             {
