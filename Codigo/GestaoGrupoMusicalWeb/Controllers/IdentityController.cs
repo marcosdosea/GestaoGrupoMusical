@@ -230,7 +230,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult> Perfil()
+        public ActionResult Perfil()
         {
             var papelGrupo = User.FindFirst("IdPapelGrupo")?.Value ?? "4";
 
@@ -246,12 +246,14 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 break; 
             }
 
-            var user = await _pessoaService.GetByCpf(User.Identity?.Name);
+            var user = _pessoaService.Get(Convert.ToInt32(User.FindFirst("Id")?.Value));
             if(user == null)
             {
                 ViewData["AdmSistema"] = true;
+                return View(user);
             }
-            return View(user);
+           
+            return View(_mapper.Map<PessoaViewModel>(user));
         }
 
         [HttpPost]
