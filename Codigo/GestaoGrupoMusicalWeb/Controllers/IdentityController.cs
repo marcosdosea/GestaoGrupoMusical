@@ -271,10 +271,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 switch(await _pessoaService.UpdateUserInfos(pessoaModel))
                 {
                     case HttpStatusCode.OK:
+                        Notificar("Informações <b>Salvas</b> com <b>Sucesso</b>", Notifica.Sucesso);
                     break;
                     case HttpStatusCode.NotFound:
+                        Notificar("Ocorreu um <b>Erro</b> durante a atualização das <b>Informações</b>", Notifica.Erro);
                     break;
                     case HttpStatusCode.InternalServerError:
+                        Notificar("Ocorreu um <b>Erro</b> interno durante a atualização das <b>Informações</b>", Notifica.Erro);
                     break;
                 }
             }
