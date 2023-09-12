@@ -10,7 +10,7 @@ using System.Net;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
-    [Authorize(Roles = "ADMINISTRADOR GRUPO")]
+    [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
     public class PessoaController : BaseController
     {
         private readonly IPessoaService _pessoaService;
