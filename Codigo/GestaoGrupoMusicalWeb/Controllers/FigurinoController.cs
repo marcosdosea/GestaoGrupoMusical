@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Org.BouncyCastle.Utilities;
-using X.PagedList;
 using System.Net;
 
 namespace GestaoGrupoMusicalWeb.Controllers
@@ -284,11 +283,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> Movimentar(int id, int? page, string sortOrder, string currentFilter)
         {
             var figurino = await _figurinoService.Get(id);
-            ViewData["CurrentSort"] = sortOrder;
-            ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
-            ViewData["ConfirmarSort"] = sortOrder == "Confirmar" ? "Aguardando Confirmação" : "Confirmar";
-            ViewData["MovimentacaoSort"] = sortOrder == "ENTREGUE" ? "DEVOLVIDO" : "ENTREGUE";
-
             var manequins = await _movimentacaoService.GetEstoque(id);
             if (manequins == null)
             {
@@ -299,38 +293,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             int idGrupo = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
             var associados = _pessoaService.GetAllPessoasOrder(idGrupo);
 
-            var movimentacoes = await _movimentacaoService.GetAllByIdFigurino(id);
-            int pageNumber = 1;
-            int pageSize = 10; // Número de itens por página
-            pageNumber = page ?? 1;
-
-            switch (sortOrder)
-            {
-                case "Date":
-                    movimentacoes = movimentacoes.OrderBy(s => s.Data);
-                    break;
-                case "date_desc":
-                    movimentacoes = movimentacoes.OrderByDescending(s => s.Data);
-                    break;
-                case "Confirmar":
-                    movimentacoes = movimentacoes.Where(m => m.Status == "Confirmado");
-                    break;
-                case "Aguardando Confirmação":
-                    movimentacoes = movimentacoes.Where(m => m.Status == "Aguardando Confirmação");
-                    break;
-                case "ENTREGUE":
-                    movimentacoes = movimentacoes.Where(m => m.Movimentacao == "ENTREGUE");
-                    break;
-                case "DEVOLVIDO":
-                    movimentacoes = movimentacoes.Where(m => m.Movimentacao == "DEVOLVIDO");
-                    break;
-                default:
-                    break;
-
-            }
-
-            IPagedList<MovimentacaoFigurinoDTO> movimentacoesPage = movimentacoes.ToPagedList(pageNumber, pageSize);
-
+            var movimentacoes = await _movimentacaoService.GetAllByIdFigurino(id);        
             SelectList listAssociados = new SelectList(associados, "Id", "Nome");
             SelectList listEstoque = new SelectList(manequins, "IdManequim", "TamanhoEstoque");
 
@@ -341,7 +304,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 DataFigurinoString = figurino.Data.Value.ToString("dd/MM/yyyy"),
                 ListaAssociado = listAssociados,
                 ListaManequim = listEstoque,
-                Movimentacoes = movimentacoesPage
+                Movimentacoes = movimentacoes
             };
 
             return View(movimentarFigurinoViewModel);
