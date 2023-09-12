@@ -63,6 +63,18 @@
                 </div>
                 <span asp-validation-for="Telefone1" class="text-danger"></span>
             </div>
+            <div class="row col-lg-8 col-xl-7">
+                <div class="col-md-6">
+                    <label class="control-label" asp-for="Password"></label>
+                    <input class="form-control" asp-for="Password">
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label class="control-label" asp-for="ConfirmePassword"></label>
+                    <input class="form-control" asp-for="ConfirmePassword">
+                    <span asp-validation-for="ConfirmePassword" class="text-danger"></span>
+                </div>
+            </div>
             <h2 class="fs-5 my-4 border-bottom pb-2">Endereço</h2>
             <div class="row col-lg-8 col-xl-7">
                 <div class="col-md-4">
