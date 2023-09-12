@@ -862,15 +862,15 @@ namespace Service
                 userInfos.IdManequim = pessoaDb.IdManequim;
                 userInfos.Id = pessoaDb.Id;
 
+                _context.Pessoas.Update(userInfos);
+                await _context.SaveChangesAsync();
+
                 if(newPassword != null)
                 {
                     var user = await _userManager.FindByNameAsync(userInfos.Cpf);
                     
                     if((await _userManager.ChangePasswordAsync(user, currentPassword, newPassword)).Succeeded)
                     {
-                        _context.Pessoas.Update(userInfos);
-                        await _context.SaveChangesAsync();
-
                         await transaction.CommitAsync();
                         return HttpStatusCode.OK;
                     }
@@ -882,9 +882,6 @@ namespace Service
                 }
                 else
                 {
-                    _context.Pessoas.Update(userInfos);
-                    await _context.SaveChangesAsync();
-
                     await transaction.CommitAsync();
                     return HttpStatusCode.OK;
                 }
