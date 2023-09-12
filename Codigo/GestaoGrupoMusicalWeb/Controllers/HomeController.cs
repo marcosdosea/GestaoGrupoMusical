@@ -52,22 +52,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 return RedirectToAction(nameof(Index), "GrupoMusical");
             }  
-            
-            var listaEvento = _evento.GetAllDTO();
-            var EventoViewDTO = _mapper.Map<List<EventoViewModelDTO>>(listaEvento);
-            var listaEnsaio = await _ensaioService.GetAllDTO();
-            var EnsaioViewDTO = _mapper.Map<List<EnsaioViewModelDTO>>(listaEnsaio);
-            var listaIformativo = await _informativoService.GetAll();
-            var Informativo = _mapper.Map<List<InformativoViewModel>>(listaIformativo);
-
-            var viewModel = new TelaPrincipalViewModel
-            {
-                Ensaio = EnsaioViewDTO,
-                Evento = EventoViewDTO,
-                Informativo = Informativo
-            };
-
-            return View(viewModel);
+             
+            return RedirectToAction("Index", "Ensaio");
         }
 
         public IActionResult Privacy()
