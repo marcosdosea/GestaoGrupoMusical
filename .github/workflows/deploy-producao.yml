@@ -16,6 +16,7 @@ jobs:
     
     env:
       work-directory: Codigo/GestaoGrupoMusicalWeb
+      solution-directory: Codigo
 
     steps:
     - name: Execute checkout in repository
@@ -40,12 +41,12 @@ jobs:
 
     - name: Build Application
       run: |
-        cd ${{env.work-directory}}
+        cd ${{env.solution-directory}}
         dotnet build --no-restore
       
     - name: Publish Application
       run: |
-        cd ${{env.work-directory}}
+        cd ${{env.solution-directory}}
         dotnet publish -c --configuration Release --no-restore --output ./publishWEB
     
     - name: Upload via FTP
