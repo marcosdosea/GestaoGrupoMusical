@@ -241,16 +241,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 case "1":
                     ViewData["Layout"] = "_LayoutAssociado";
                 break;
-                case "4":
-                    ViewData["Layout"] = "_LayoutAdmSistema";
-                break; 
             }
 
             var user = _pessoaService.Get(Convert.ToInt32(User.FindFirst("Id")?.Value));
             if(user == null)
             {
-                ViewData["AdmSistema"] = true;
-                return View(user);
+                return RedirectToAction(nameof(Autenticar), "Identity");
             }
            
             return View(_mapper.Map<UserViewModel>(user));
@@ -292,17 +288,14 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 case "1":
                     ViewData["Layout"] = "_LayoutAssociado";
                 break;
-                case "4":
-                    ViewData["Layout"] = "_LayoutAdmSistema";
-                break; 
-            }
-            var user = await _pessoaService.GetByCpf(User.Identity?.Name);
-            if(user == null)
-            {
-                ViewData["AdmSistema"] = true;
             }
 
             return View(userInfos);
+        }
+
+        public ActionResult PerfilSistema()
+        {
+            return View();
         }
     }
 }
