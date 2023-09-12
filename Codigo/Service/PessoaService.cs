@@ -850,6 +850,7 @@ namespace Service
                 var pessoaDb = await _context.Pessoas.Where(p => p.Cpf == userInfos.Cpf)
                                     .AsNoTracking()
                                     .FirstOrDefaultAsync();
+                                    
                 if(pessoaDb == null)
                 {
                     return HttpStatusCode.NotFound;

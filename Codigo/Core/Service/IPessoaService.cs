@@ -158,7 +158,15 @@ namespace Core.Service
         Task<HttpStatusCode> AtivarAssociado(string cpf);
 
         Task<IEnumerable<AutoCompleteRegenteDTO>> GetRegentesForAutoCompleteAsync(int idGrupoMusical);
-
+        
+        /// <summary>
+        /// Atualiza as informações do usuário
+        /// </summary>
+        /// <returns>
+        /// HttpStatusCode.NotFound: Usuário não encontrado
+        /// HttpStatusCode.InternalServerError: Erro interno
+        /// HttpStatusCode.OK: Sucesso na operação
+        /// </returns>
         Task<HttpStatusCode> UpdateUserInfos(Pessoa userInfos);
     }
 }

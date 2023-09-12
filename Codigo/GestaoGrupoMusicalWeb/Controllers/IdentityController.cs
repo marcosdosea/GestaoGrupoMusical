@@ -268,7 +268,15 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 pessoaModel.IdPapelGrupo = Convert.ToInt32(User.FindFirst("IdPapelGrupo")?.Value);
                 pessoaModel.Cpf = User.Identity?.Name ?? "";
 
-                await _pessoaService.UpdateUserInfos(pessoaModel);
+                switch(await _pessoaService.UpdateUserInfos(pessoaModel))
+                {
+                    case HttpStatusCode.OK:
+                    break;
+                    case HttpStatusCode.NotFound:
+                    break;
+                    case HttpStatusCode.InternalServerError:
+                    break;
+                }
             }
 
             ViewData["Layout"] = "_LayoutColaborador";
