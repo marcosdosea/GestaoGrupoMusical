@@ -843,6 +843,8 @@ namespace Service
 
         public async Task<HttpStatusCode> UpdateUserInfos(Pessoa userInfos, string? currentPassword,string? newPassword)
         {
+            using var transaction = _context.Database.BeginTransaction();
+
             try
             {
                 userInfos.Cep = userInfos.Cep.Replace("-","");
@@ -853,6 +855,7 @@ namespace Service
                                     
                 if(pessoaDb == null)
                 {
+                    await transaction.RollbackAsync();
                     return HttpStatusCode.NotFound;
                 }
                 userInfos.Ativo = pessoaDb.Ativo;
@@ -862,16 +865,33 @@ namespace Service
                 if(newPassword != null)
                 {
                     var user = await _userManager.FindByNameAsync(userInfos.Cpf);
-                    await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+                    
+                    if((await _userManager.ChangePasswordAsync(user, currentPassword, newPassword)).Succeeded)
+                    {
+                        _context.Pessoas.Update(userInfos);
+                        await _context.SaveChangesAsync();
+
+                        await transaction.CommitAsync();
+                        return HttpStatusCode.OK;
+                    }
+                    else
+                    {
+                        await transaction.RollbackAsync();
+                        return HttpStatusCode.BadRequest;
+                    }
                 }
+                else
+                {
+                    _context.Pessoas.Update(userInfos);
+                    await _context.SaveChangesAsync();
 
-                _context.Pessoas.Update(userInfos);
-                await _context.SaveChangesAsync();
-
-                return HttpStatusCode.OK;
+                    await transaction.CommitAsync();
+                    return HttpStatusCode.OK;
+                }
             }
             catch
             {
+                await transaction.RollbackAsync();
                 return HttpStatusCode.InternalServerError;
             }
         }
