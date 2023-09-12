@@ -268,7 +268,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 pessoaModel.IdPapelGrupo = Convert.ToInt32(User.FindFirst("IdPapelGrupo")?.Value);
                 pessoaModel.Cpf = User.Identity?.Name ?? "";
 
-                switch(await _pessoaService.UpdateUserInfos(pessoaModel))
+                switch(await _pessoaService.UpdateUserInfos(pessoaModel, userInfos.Password))
                 {
                     case HttpStatusCode.OK:
                         Notificar("Informações <b>Salvas</b> com <b>Sucesso</b>", Notifica.Sucesso);
