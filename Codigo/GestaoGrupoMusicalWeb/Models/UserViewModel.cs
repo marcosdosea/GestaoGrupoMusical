@@ -67,6 +67,11 @@ namespace GestaoGrupoMusicalWeb.Models
             { "Feminino", 'F' }
         };
 
+        [Display(Name = "Senha Atual")]
+        [RegularExpression(@"^.{6,}$", ErrorMessage = "Mínimo de 6 caracteres")]
+        [DataType(DataType.Password)]
+        public string? CurrentPassword { get; set; }
+
         [Display(Name = "Nova Senha")]
         [RegularExpression(@"^.{6,}$", ErrorMessage = "Mínimo de 6 caracteres")]
         [DataType(DataType.Password)]

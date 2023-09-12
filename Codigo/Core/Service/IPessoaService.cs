@@ -167,6 +167,6 @@ namespace Core.Service
         /// HttpStatusCode.InternalServerError: Erro interno
         /// HttpStatusCode.OK: Sucesso na operação
         /// </returns>
-        Task<HttpStatusCode> UpdateUserInfos(Pessoa userInfos, string? password);
+        Task<HttpStatusCode> UpdateUserInfos(Pessoa userInfos, string? currentPassword ,string? newPassword);
     }
 }

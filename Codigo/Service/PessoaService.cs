@@ -841,7 +841,7 @@ namespace Service
             return HttpStatusCode.OK;
         }
 
-        public async Task<HttpStatusCode> UpdateUserInfos(Pessoa userInfos, string? password)
+        public async Task<HttpStatusCode> UpdateUserInfos(Pessoa userInfos, string? currentPassword,string? newPassword)
         {
             try
             {
@@ -858,6 +858,12 @@ namespace Service
                 userInfos.Ativo = pessoaDb.Ativo;
                 userInfos.IdManequim = pessoaDb.IdManequim;
                 userInfos.Id = pessoaDb.Id;
+
+                if(newPassword != null)
+                {
+                    var user = await _userManager.FindByNameAsync(userInfos.Cpf);
+                    await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+                }
 
                 _context.Pessoas.Update(userInfos);
                 await _context.SaveChangesAsync();
