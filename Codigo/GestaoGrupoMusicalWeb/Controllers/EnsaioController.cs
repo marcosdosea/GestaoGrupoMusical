@@ -26,7 +26,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             _grupoMusical = grupoMusical;
         }
 
-        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO,COLABORADOR,REGENTE")]
         // GET: EnsaioController
         public async Task<ActionResult> Index()
         {
@@ -35,7 +35,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return View(ensaios);
         }
 
-        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO,COLABORADOR,REGENTE")]
         // GET: EnsaioController/Details/5
         public async Task<ActionResult> Details(int id)
         {
@@ -48,7 +48,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return View(ensaio);
         }
 
-        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO,COLABORADOR,REGENTE")]
         // GET: EnsaioController/Create
         public async Task<ActionResult> Create()
         {
@@ -69,7 +69,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return View(ensaioModel);
         }
 
-        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO,COLABORADOR,REGENTE")]
         // POST: EnsaioController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -109,7 +109,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return View(ensaioViewModel);
         }
 
-        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO,COLABORADOR,REGENTE")]
         // GET: EnsaioController/Edit/5
         public async Task<ActionResult> Edit(int id)
         {
@@ -119,23 +119,28 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 Notificar("<b>Ensaio não encontrado!</b>", Notifica.Alerta);
                 return RedirectToAction(nameof(Index));
             }
+            var lista = await _pessoa.GetRegentesForAutoCompleteAsync(Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
+
             EnsaioViewModel ensaioModel = _mapper.Map<EnsaioViewModel>(ensaio);
 
-            ensaioModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
+            ensaioModel.ListaPessoa = new SelectList(lista, "Id", "Nome");
 
+            ViewData["exemploRegente"] = lista.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
+            ViewData["jsonIdRegentes"] = (await _ensaio.GetIdRegentesEnsaioAsync(id)).ToJson();
+            ensaioModel.JsonLista = lista.ToJson();
             return View(ensaioModel);
         }
 
-        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO,COLABORADOR,REGENTE")]
         // POST: EnsaioController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(EnsaioViewModel ensaioViewModel)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && ensaioViewModel.IdRegentes != null)
             {
                 String mensagem = String.Empty;
-                switch (await _ensaio.Edit(_mapper.Map<Ensaio>(ensaioViewModel)))
+                switch (await _ensaio.Edit(_mapper.Map<Ensaio>(ensaioViewModel), ensaioViewModel.IdRegentes))
                 {
                     case HttpStatusCode.OK:
                         mensagem = "Ensaio <b>Editado</b> com <b>Sucesso</b>";
@@ -149,17 +154,27 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         mensagem = "Alerta ! A <b>data de início</b> deve ser maior que a data de hoje " + DateTime.Now;
                         Notificar(mensagem, Notifica.Alerta);
                         break;
+                    case HttpStatusCode.NotFound:
+                        mensagem = "<b>Erro</b> ! <b>Não</b> foi possível <b>Editar</b> esse <b>Ensaio</b>.";
+                        Notificar(mensagem, Notifica.Erro);
+                        break;
                     case HttpStatusCode.InternalServerError:
                         mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Editar</b> de ensaio.";
                         Notificar(mensagem, Notifica.Erro);
                         break;
                 }
             }
-            ensaioViewModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
+            var lista = await _pessoa.GetRegentesForAutoCompleteAsync(Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
+
+            ensaioViewModel.ListaPessoa = new SelectList(lista, "Id", "Nome");
+
+            ViewData["exemploRegente"] = lista.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
+            ViewData["jsonIdRegentes"] = (await _ensaio.GetIdRegentesEnsaioAsync(ensaioViewModel.Id)).ToJson();
+            ensaioViewModel.JsonLista = lista.ToJson();
             return View(ensaioViewModel);
         }
 
-        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO,COLABORADOR,REGENTE")]
         // GET: EnsaioController/Delete/5
         public async Task<ActionResult> Delete(int id)
         {
@@ -167,7 +182,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return View(_mapper.Map<EnsaioViewModel>(ensaio));
         }
 
-        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO,COLABORADOR,REGENTE")]
         // POST: EnsaioController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -189,7 +204,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO,COLABORADOR,REGENTE")]
         public async Task<ActionResult> RegistrarFrequencia(int idEnsaio)
         {
             if (User.FindFirst("IdGrupoMusical")?.Value == null) {
@@ -203,7 +218,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return View(frequencias);
         }
 
-        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO,COLABORADOR,REGENTE")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> RegistrarFrequencia(List<EnsaioListaFrequenciaDTO> listaFrequencia)

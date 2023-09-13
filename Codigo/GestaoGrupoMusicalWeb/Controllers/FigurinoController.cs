@@ -8,15 +8,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Org.BouncyCastle.Utilities;
-using X.PagedList;
 using System.Net;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
-    
-    namespace GestaoGrupoMusicalWeb.Controllers
-    {
-
     public class FigurinoController : BaseController
     {
         private readonly IMapper _mapper;
@@ -38,7 +33,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
             _pessoaService = pessoa;
             _movimentacaoService = movimentacaoService;
         }
-        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
+
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         // GET: FigurinoController
         public async Task<ActionResult> Index()
         {
@@ -50,19 +46,21 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: FigurinoController/Details/5
+        [Authorize]
         public ActionResult Details(int id)
         {
             return View();
         }
 
         // GET: FigurinoController/Create
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         public ActionResult Create()
         {
             return View();
         }
 
-        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         // POST: FigurinoController/Create
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(FigurinoViewModel figurinoViewModel)
@@ -73,7 +71,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
                 var figurino = _mapper.Map<Figurino>(figurinoViewModel);
                 HttpStatusCode resul = await _figurinoService.Create(figurino);
-
 
                 switch (resul)
                 {
@@ -97,8 +94,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
         }
 
-        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         // GET: FigurinoController/Edit/5
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         public async Task<ActionResult> Edit(int id)
         {
             var figurino = await _figurinoService.Get(id);
@@ -107,8 +104,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return View(figurinoViewModel);
         }
 
-        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         // POST: FigurinoController/Edit/5
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(int id, FigurinoViewModel figurinoViewModel)
@@ -117,7 +114,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 var figurino = _mapper.Map<Figurino>(figurinoViewModel);
 
-                    figurino.IdGrupoMusical = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
+                figurino.IdGrupoMusical = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
 
                 HttpStatusCode resul = await _figurinoService.Edit(figurino);
 
@@ -126,9 +123,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     case HttpStatusCode.OK:
                         Notificar("<b>Sucesso</b>! Figurino alterado!", Notifica.Sucesso);
                         return RedirectToAction(nameof(Index));
+
                     case HttpStatusCode.InternalServerError:
                         Notificar("<b>Erro</b>! Há algo errado com os dados", Notifica.Erro);
                         return View(figurinoViewModel);
+
                     default:
                         Notificar("<b>Erro</b>! Algo deu errado", Notifica.Erro);
                         return View(figurinoViewModel);
@@ -141,8 +140,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
         }
 
-        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         // GET: FigurinoController/Delete/5
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         public async Task<ActionResult> Delete(int id)
         {
             var figurino = await _figurinoService.Get(id);
@@ -151,8 +150,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return View(figurinoViewModel);
         }
 
-        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         // POST: FigurinoController/Delete/5
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Delete(int id, FigurinoViewModel figurinoViewModel)
@@ -163,18 +162,20 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 case HttpStatusCode.OK:
                     Notificar("<b>Sucesso</b>! Figurino removido!", Notifica.Sucesso);
-                    return RedirectToAction(nameof(Index));
+                    break;
                 case HttpStatusCode.InternalServerError:
                     Notificar("<b>Erro</b>! Algo deu errado ao remover figurino. Verifique se há estoque emprestado.", Notifica.Erro);
-                    return RedirectToAction(nameof(Index));
+                    break;
                 default:
                     Notificar("<b>Erro</b>! Algo deu errado", Notifica.Erro);
                     return View(figurinoViewModel);
             }
+
+            return RedirectToAction(nameof(Index));
         }
 
-        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
         // POST: FigurinoController/DeleteEstoque/5
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteEstoque(int idFigurino, int idManequim)
@@ -198,7 +199,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             return RedirectToAction(nameof(Estoque), new { id = idFigurino });
         }
-    
+
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         public async Task<ActionResult> Estoque(int id)
         {
             EstoqueViewModel estoqueViewModel = new();
@@ -215,6 +217,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return View(estoqueViewModel);
         }
 
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         public async Task<ActionResult> CreateEstoque(int idFigurino)
         {
             var figurino = await _figurinoService.Get(idFigurino);
@@ -233,6 +236,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return View(estoqueViewModel);
         }
 
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> CreateEstoque(CreateEstoqueViewModel estoqueViewModel)
@@ -272,15 +276,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return RedirectToAction(nameof(Estoque), new { id = estoqueViewModel.IdFigurino });
         }
 
-        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
-            public async Task<ActionResult> Movimentar(int id, int? page, string sortOrder, string currentFilter)
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
+        public async Task<ActionResult> Movimentar(int id, int? page, string sortOrder, string currentFilter)
         {
             var figurino = await _figurinoService.Get(id);
-                ViewData["CurrentSort"] = sortOrder;
-                ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
-                ViewData["ConfirmarSort"] = sortOrder == "Confirmar" ? "Aguardando Confirmação" : "Confirmar";
-                ViewData["MovimentacaoSort"] = sortOrder == "ENTREGUE" ? "DEVOLVIDO" : "ENTREGUE";
-
             var manequins = await _movimentacaoService.GetEstoque(id);
             if (manequins == null)
             {
@@ -288,41 +287,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-                int idGrupo = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
+            int idGrupo = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
             var associados = _pessoaService.GetAllPessoasOrder(idGrupo);
 
-            var movimentacoes = await _movimentacaoService.GetAllByIdFigurino(id);
-                int pageNumber = 1;
-                int pageSize = 10; // Número de itens por página
-                pageNumber = page ?? 1;
-
-                switch (sortOrder)
-                {
-                    case "Date":
-                        movimentacoes = movimentacoes.OrderBy(s => s.Data);
-                        break;
-                    case "date_desc":
-                        movimentacoes = movimentacoes.OrderByDescending(s => s.Data);
-                        break;
-                    case "Confirmar":
-                        movimentacoes = movimentacoes.Where(m => m.Status == "Confirmado");
-                        break;
-                    case "Aguardando Confirmação":
-                        movimentacoes = movimentacoes.Where(m => m.Status == "Aguardando Confirmação");
-                        break;
-                    case "ENTREGUE":
-                        movimentacoes = movimentacoes.Where(m => m.Movimentacao == "ENTREGUE");
-                        break;
-                    case "DEVOLVIDO":
-                        movimentacoes = movimentacoes.Where(m => m.Movimentacao == "DEVOLVIDO");
-                        break;
-                    default:
-                        break;
-
-                }
-
-                IPagedList<MovimentacaoFigurinoDTO> movimentacoesPage = movimentacoes.ToPagedList(pageNumber, pageSize);
-
+            var movimentacoes = await _movimentacaoService.GetAllByIdFigurino(id);        
             SelectList listAssociados = new SelectList(associados, "Id", "Nome");
             SelectList listEstoque = new SelectList(manequins, "IdManequim", "TamanhoEstoque");
 
@@ -333,13 +301,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 DataFigurinoString = figurino.Data.Value.ToString("dd/MM/yyyy"),
                 ListaAssociado = listAssociados,
                 ListaManequim = listEstoque,
-                    Movimentacoes = movimentacoesPage
+                Movimentacoes = movimentacoes
             };
 
             return View(movimentarFigurinoViewModel);
         }
 
-        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Movimentar(MovimentacaoFigurinoViewModel movimentacaoViewModel)
@@ -360,44 +328,40 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     Quantidade = movimentacaoViewModel.Quantidade
                 };
 
-                HttpStatusCode resul = await _movimentacaoService.CreateAsync(movimentacao);
-            
+            HttpStatusCode resul = await _movimentacaoService.CreateAsync(movimentacao);
+
             string tipoMov = string.Empty;
 
             if (movimentacaoViewModel.Movimentacao.Equals("ENTREGUE"))
             {
                 tipoMov = "Entregue";
             }
-            else if (movimentacaoViewModel.Movimentacao.Equals("DEVOLVIDO"))
-            {
-                tipoMov = "Devolvido";
-            }
             else
             {
-                tipoMov = "Descartado";
+                tipoMov = "Devolvido";
             }
 
             switch (resul)
             {
-                    case HttpStatusCode.OK:
+                case HttpStatusCode.OK:
                     Notificar($"<b>Sucesso!</b> Figurino foi <b>{tipoMov}</b>", Notifica.Sucesso);
                     break;
-                    case HttpStatusCode.NotFound:
+                case HttpStatusCode.NotFound:
                     Notificar("<b>Alerta!</b> Não há estoque desse tamanho", Notifica.Alerta);
                     break;
-                    case HttpStatusCode.NoContent:
-                    Notificar("<b>Alerta!</b> Quantidade de peças disponíveis é insuficiente", Notifica.Alerta);
+                case HttpStatusCode.NoContent:
+                    Notificar("<b>Alerta!</b> Não há peças disponíveis para empréstimo", Notifica.Alerta);
                     break;
-                    case HttpStatusCode.PreconditionFailed:
+                case HttpStatusCode.PreconditionFailed:
                     Notificar("<b>Alerta!</b> Não há nada para devolver", Notifica.Alerta);
                     break;
-                    case HttpStatusCode.FailedDependency:
-                        Notificar("<b>Erro!</b> O <b>Associado</b> ainda não confirmou o recebimento do <b>Figurino</b>", Notifica.Alerta);
+                case HttpStatusCode.FailedDependency:
+                    Notificar("<b>Erro!</b> O <b>Associado</b> ainda não confirmou o recebimento do <b>Figurino</b>", Notifica.Alerta);
                     break;
-                    case HttpStatusCode.BadRequest:
-                        Notificar("<b>Erro!</b> Problema com a <b>Quantidade</b> movimentada.", Notifica.Erro);
-                        break;
-                    case HttpStatusCode.InternalServerError:
+                case HttpStatusCode.BadRequest:
+                    Notificar("<b>Erro!</b> Problema com a quantidade a devolver.", Notifica.Erro);
+                    break;
+                case HttpStatusCode.InternalServerError:
                     Notificar("<b>Erro!</b> Algo deu errado", Notifica.Erro);
                     break;
                 default:
@@ -408,30 +372,31 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return RedirectToAction(nameof(Movimentar), new { id = movimentacaoViewModel.IdFigurino });
         }
 
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteMovimento(int Id, int idFigurino)
         {
-            if(Id != null && Id > 0)
+            if (Id != null && Id > 0)
             {
-                    HttpStatusCode resul = await _movimentacaoService.DeleteAsync(Id);
+                HttpStatusCode resul = await _movimentacaoService.DeleteAsync(Id);
 
-                switch (resul)
-                {
-                        case HttpStatusCode.OK:
+            switch (resul)
+            {
+                    case HttpStatusCode.OK:
                         Notificar($"<b>Sucesso!</b> Movimentação foi <b>removida</b>", Notifica.Sucesso);
                         break;
-                        case HttpStatusCode.NotFound:
+                    case HttpStatusCode.NotFound:
                         Notificar("<b>Alerta!</b> Não há movimentação com essas informações", Notifica.Alerta);
                         break;
-                        case HttpStatusCode.InternalServerError:
+                    case HttpStatusCode.InternalServerError:
                         Notificar("<b>Erro!</b> Algo deu errado", Notifica.Erro);
                         break;
                     default:
                         Notificar("<b>Erro!</b> Algo deu errado na operação", Notifica.Erro);
                         break;
-    }
-}
+                }
+            }
             else
             {
                 Notificar("<b>Erro!</b> Código inválido!", Notifica.Erro);
@@ -440,7 +405,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return RedirectToAction(nameof(Movimentar), new { id = idFigurino });
         }
 
-        [Authorize(Roles = "ASSOCIADO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR, ASSOCIADO")]
         public async Task<ActionResult> Movimentacoes()
         {
             var associado = await _pessoaService.GetByCpf(User.Identity?.Name);
@@ -453,46 +418,47 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             return View(MovimentacoesFigurino);
         }
-        [Authorize(Roles = "ASSOCIADO")]
+
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR, ASSOCIADO")]
         public async Task<ActionResult> ConfirmarMovimentacao(int idMovimentacao)
         {
             var associado = await _pessoaService.GetByCpf(User.Identity?.Name);
-            if(associado == null)
+            if (associado == null)
             {
                 return RedirectToAction("Sair", "Identity");
             }
             string mensagem = string.Empty;
-                switch (await _movimentacaoService.ConfirmarMovimentacao(idMovimentacao, associado.Id))
-                {
-                    case HttpStatusCode.Created:
+            switch (await _movimentacaoService.ConfirmarMovimentacao(idMovimentacao, associado.Id))
+            {
+                case HttpStatusCode.Created:
                     mensagem = "Empréstimo <b>Confirmado</b> com <b>Sucesso</b>";
                     Notificar(mensagem, Notifica.Sucesso);
                     break;
-                    case HttpStatusCode.OK:
+                case HttpStatusCode.OK:
                     mensagem = "Devolução <b>Confirmada</b> com <b>Sucesso</b>";
                     Notificar(mensagem, Notifica.Sucesso);
                     break;
-                    case HttpStatusCode.PreconditionFailed:
+                case HttpStatusCode.PreconditionFailed:
                     mensagem = "<b>Erro</b>, O <b>Associado</b> não corresponde ao mesmo do <b>Empréstimo</b>";
                     Notificar(mensagem, Notifica.Erro);
                     break;
-                    case HttpStatusCode.FailedDependency:
+                case HttpStatusCode.FailedDependency:
                     mensagem = "<b>Erro</b>, O <b>Associado</b> não corresponde ao mesmo da <b>Devolução</b>";
                     Notificar(mensagem, Notifica.Erro);
                     break;
-                    case HttpStatusCode.NotFound:
+                case HttpStatusCode.NotFound:
                     mensagem = "<b>Erro</b>, A <b>Movimentação</b> não existe !";
                     Notificar(mensagem, Notifica.Erro);
                     break;
-                    case HttpStatusCode.InternalServerError:
-                        mensagem = "Erro ! Aconteceu um problema durante a confirmação.";
-                        Notificar(mensagem, Notifica.Erro);
-                        break;
-                }
-                return RedirectToAction(nameof(Movimentacoes));
+                case HttpStatusCode.InternalServerError:
+                    mensagem = "Erro ! Aconteceu um problema durante a confirmação.";
+                    Notificar(mensagem, Notifica.Erro);
+                    break;
+            }
+            return RedirectToAction(nameof(Movimentacoes));
         }
 
-        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         public async Task<ActionResult> EditEstoque(int idFigurino, int idManequim)
         {
             var figurino = await _figurinoService.Get(idFigurino);
@@ -511,7 +477,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return View(estoqueviewmodel);
         }
 
-        [Authorize(Roles = "ADMINISTRADOR GRUPO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> EditEstoque(CreateEstoqueViewModel estoque, int idFigurino, int idManequim)
@@ -546,4 +512,5 @@ namespace GestaoGrupoMusicalWeb.Controllers
     }
 }
 }
+
 

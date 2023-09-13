@@ -121,36 +121,69 @@ namespace Service
         /// </summary>
         /// <param name="ensaio"></param>
         /// <returns>retorna um inteiro.</returns>
-        public async Task<HttpStatusCode> Edit(Ensaio ensaio)
+        public async Task<HttpStatusCode> Edit(Ensaio ensaio, IEnumerable<int> idRegentes)
         {
+            using var transaction = _context.Database.BeginTransaction();
+
              try
              {
                 var ensaioDb = await _context.Ensaios.Where(e => e.Id == ensaio.Id).AsNoTracking().SingleOrDefaultAsync();
-                if(ensaioDb != null)
+                if(ensaioDb == null)
                 {
-                    ensaio.IdColaboradorResponsavel = ensaioDb.IdColaboradorResponsavel;
-                    ensaio.IdGrupoMusical = ensaioDb.IdGrupoMusical;
+                    await transaction.RollbackAsync();
+                    return HttpStatusCode.NotFound;
                 }
-                _context.Ensaios.Update(ensaio);
+                
+                ensaio.IdColaboradorResponsavel = ensaioDb.IdColaboradorResponsavel;
+                ensaio.IdGrupoMusical = ensaioDb.IdGrupoMusical;
+
                 if (ensaio.DataHoraFim > ensaio.DataHoraInicio)
                 {
                     if(ensaio.DataHoraInicio >= DateTime.Now)
                     {
+                        var idEnsaioRegentes = _context.Ensaiopessoas
+                                            .Where(ep => ep.IdEnsaio == ensaioDb.Id && ep.IdPapelGrupoPapelGrupo == 5)
+                                            .Select(ep => ep.IdPessoa).AsEnumerable();
+
+                        if((idRegentes.Count() != idEnsaioRegentes.Count()) || (idRegentes.Except(idEnsaioRegentes).Any()))
+                        {
+                            var ensaioPessoaRegente = _context.Ensaiopessoas
+                                                      .Where(ep => ep.IdEnsaio == ensaioDb.Id && ep.IdPapelGrupoPapelGrupo == 5);
+                            _context.Ensaiopessoas.RemoveRange(ensaioPessoaRegente);
+                            foreach(int idRegente in idRegentes)
+                            {
+                                Ensaiopessoa ensaioPessoa = new()
+                                {
+                                    IdEnsaio = ensaio.Id,
+                                    IdPessoa = idRegente,
+                                    Presente = 1,
+                                    IdPapelGrupoPapelGrupo = 5
+                                };
+                                await _context.Ensaiopessoas.AddAsync(ensaioPessoa);
+                            }
+                        }
+                        _context.Ensaios.Update(ensaio);
+
                         await _context.SaveChangesAsync();
+                        await transaction.CommitAsync();
+
                         return HttpStatusCode.OK;
                     }
                     else
                     {
+                        await transaction.RollbackAsync();
                         return HttpStatusCode.BadRequest;
                     }
                 }
                 else 
                 {
+                    await transaction.RollbackAsync();
                     return HttpStatusCode.PreconditionFailed;
                 }
              }
              catch
              {
+                await transaction.RollbackAsync();
                 return HttpStatusCode.InternalServerError;
              }
         }
@@ -355,6 +388,13 @@ namespace Service
             {
                 return HttpStatusCode.InternalServerError;
             }
+        }
+
+        public async Task<IEnumerable<int>> GetIdRegentesEnsaioAsync(int idEnsaio)
+        {
+            return await _context.Ensaiopessoas
+                                 .Where(ep => ep.IdEnsaio == idEnsaio && ep.IdPapelGrupoPapelGrupo == 5)
+                                 .Select(ep => ep.IdPessoa).ToListAsync();
         }
     }
 }

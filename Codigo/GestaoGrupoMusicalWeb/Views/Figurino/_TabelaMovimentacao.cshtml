@@ -1,10 +1,4 @@
-﻿@model X.PagedList.IPagedList<Core.DTO.MovimentacaoFigurinoDTO>
-@using X.PagedList.Mvc.Core;
-@using X.PagedList;
-
-@{
-    int idFigurino = 0; // Variável temporária
-}
+﻿@model IEnumerable<Core.DTO.MovimentacaoFigurinoDTO>
 
 <div class="table-responsive">
     <table class="table mt-3">
@@ -17,19 +11,19 @@
                     @Html.DisplayName("Nome Associado")
                 </th>
                 <th>
-                    <a asp-action="Movimentar" asp-route-sortOrder="@ViewData["DateSortParm"]">@Html.DisplayName("Data")</a>
+                    @Html.DisplayName("Data")
                 </th>
                 <th>
                     @Html.DisplayName("Tamanho")
                 </th>
                 <th>
-                    <a asp-action="Movimentar" asp-route-sortOrder="@ViewData["MovimentacaoSort"]">@Html.DisplayName("Movimentação")</a>
+                   @Html.DisplayName("Movimentação")
                 </th>
                 <th>
-                    <label>Quantidade</label>
+                   @Html.DisplayName("Quantidade")
                 </th>
                 <th>
-                    <a asp-action="Movimentar" asp-route-sortOrder="@ViewData["ConfirmarSort"]">@Html.DisplayName("Status")</a>
+                   @Html.DisplayName("Status")
                 </th>
                 <th>Ações</th>
             </tr>
@@ -37,7 +31,6 @@
         <tbody>
             @foreach (var item in Model)
             {
-                idFigurino = item.IdFigurino;
                 <tr class="border-bottom border-danger border-opacity-75 align-middle">
                     <td>
                         @item.Cpf
@@ -88,19 +81,7 @@
         </tbody>
     </table>
     <br />
-    <br />
-    @Html.PagedListPager((IPagedList)Model, page => Url.Action("Movimentar", new { id = idFigurino, page = page, sortOrder = ViewData["CurrentSort"], currentFilter = ViewData["CurrentFilter"]  }), new X.PagedList.Web.Common.PagedListRenderOptions
-    {
-    PageCountAndCurrentLocationFormat = "Página {0} de {1}",
-    ContainerDivClasses = new[] { "navigation","d-flex","justify-content-center"},
-    PageClasses = new[] { "page-link", },
-    ActiveLiElementClass = "active",
-    DisplayPageCountAndCurrentLocation = true,
-    LinkToPreviousPageFormat = "<<",
-    LinkToNextPageFormat = ">>",
-    LiElementClasses = new[] { "page-item","d-flex","align-items-center", "p" },
-    })
-    
+    <br /> 
     @if (!Model.Any())
     {
         <p class="text-center mt-4 mb-0">Desculpe, nenhuma movimentação encontrada :(</p>
