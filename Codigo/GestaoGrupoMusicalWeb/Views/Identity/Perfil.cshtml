@@ -124,6 +124,36 @@
         </div>
     </form>
 </div>
+<script>
+    const inputSenha = document.querySelector('#InputSenha');
+    const inputConfirmeSenha = document.querySelector('#InputConfirmarSenha');
+    const inputSenhaAtual = document.querySelector('#InputSenhaAtual');
+    const options = {
+        attributes: true
+    }
+
+    function callback(mutationList, observer) {
+        mutationList.forEach(function(mutation) {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                const icon = mutation.target.parentElement.querySelector("i");
+                if(mutation.target.className.includes("input-validation-error")){
+                    icon.classList.remove("border-dark");
+                    icon.classList.add("border-danger");
+                    icon.classList.add("border-2");
+                }else{
+                    icon.classList.remove("border-danger");
+                    icon.classList.remove("border-2");
+                    icon.classList.add("border-dark");
+                }
+            }
+        })
+    }
+
+    const observer = new MutationObserver(callback);
+    observer.observe(inputSenha, options);
+    observer.observe(inputConfirmeSenha, options);
+    observer.observe(inputSenhaAtual, options);
+</script>
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
