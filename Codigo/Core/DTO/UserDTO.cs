@@ -1,7 +1,4 @@
-﻿
-using System.ComponentModel.DataAnnotations;
-
-namespace Core.DTO
+﻿namespace Core.DTO
 {
     public class UserDTO
     {
