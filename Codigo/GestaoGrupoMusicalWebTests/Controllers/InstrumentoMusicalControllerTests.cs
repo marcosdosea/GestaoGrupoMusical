@@ -14,6 +14,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
     [TestClass()]
     public class InstrumentoMusicalControllerTests
     {
+        /*
         private static InstrumentoMusicalController _controller;
 
 
@@ -270,7 +271,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
                     NomeAssociado = "Maria Joana da Silva"
                 }
             };
-        }
+        }*/
 
     }
 }

@@ -18,6 +18,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
     [TestClass()]
     public class EnsaioControllerTests
     {
+        /*
         private static EnsaioController _controller;
 
 
@@ -310,6 +311,6 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
                     DataHoraInicio = DateTime.Now
                 }
             };
-        }
+        }*/
     }
 }

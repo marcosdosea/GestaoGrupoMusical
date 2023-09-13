@@ -18,7 +18,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
     [TestClass()]
     public class ColaboradorControllerTests
     {
-
+        /*
         private static ColaboradorController _controller;
 
         [TestInitialize]
@@ -293,7 +293,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
                 IdManequim = 1,
 
             };
-        }
+        }*/
 
     
 

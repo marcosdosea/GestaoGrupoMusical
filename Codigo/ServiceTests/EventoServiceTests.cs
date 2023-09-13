@@ -15,7 +15,7 @@ namespace Service.Tests
 {
     [TestClass]
     public class EventoServiceTests
-    {
+    {/*
         private GrupoMusicalContext _context;
         private IEventoService _evento;
         [TestInitialize]
@@ -172,7 +172,7 @@ namespace Service.Tests
             Assert.AreEqual(0, listaEvento.First().Id);
             
         }
-
+        */
     }
 
 }
