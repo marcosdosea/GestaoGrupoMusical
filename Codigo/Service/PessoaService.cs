@@ -892,5 +892,14 @@ namespace Service
                 return HttpStatusCode.InternalServerError;
             }
         }
+
+        public async Task<HttpStatusCode> UpdateUAdmSistema(string? login, string? currentPassword, string? newPassword)
+        {
+            var user = await _userManager.FindByNameAsync(User.Identity?.Name);
+                if((await _userManager.ChangePasswordAsync(user, userInfos.CurrentPassword, userInfos.Password)).Succeeded)
+                {
+                    Notificar("Informações <b>Salvas</b> com <b>Sucesso</b>", Notifica.Sucesso);
+                }
+        }
     }
 }

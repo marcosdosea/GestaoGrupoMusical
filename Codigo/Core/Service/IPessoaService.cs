@@ -166,7 +166,19 @@ namespace Core.Service
         /// HttpStatusCode.NotFound: Usuário não encontrado
         /// HttpStatusCode.InternalServerError: Erro interno
         /// HttpStatusCode.OK: Sucesso na operação
+        /// HttpStatusCode.BadRequest: Formulário inválido
         /// </returns>
         Task<HttpStatusCode> UpdateUserInfos(Pessoa userInfos, string? currentPassword ,string? newPassword);
+
+        /// <summary>
+        /// Atualiza as informações do adm sistema
+        /// </summary>
+        /// <returns>
+        /// HttpStatusCode.NotFound: Usuário não encontrado
+        /// HttpStatusCode.InternalServerError: Erro interno
+        /// HttpStatusCode.OK: Sucesso na operação
+        /// HttpStatusCode.BadRequest: Formulário inválido
+        /// </returns>
+        Task<HttpStatusCode> UpdateUAdmSistema(string? login, string? currentPassword ,string? newPassword);
     }
 }
