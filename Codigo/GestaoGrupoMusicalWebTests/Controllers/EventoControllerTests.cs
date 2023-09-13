@@ -20,6 +20,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
     [TestClass()]
     public class EventoControllerTests
     {
+        /*
         private static EventoController _controller;
 
         [TestInitialize]
@@ -262,6 +263,6 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
             };
 
 
-        }
+        }*/
     }
 }

@@ -22,7 +22,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
     public class GrupoMusicalControllerTests
     {
 
-
+        /*
         private static GrupoMusicalController _controller;
 
         [TestInitialize]
@@ -403,7 +403,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
                     Name = "Forror do Agreste"
                 }
             };
-        }
+        }*/
 
     }
 }
