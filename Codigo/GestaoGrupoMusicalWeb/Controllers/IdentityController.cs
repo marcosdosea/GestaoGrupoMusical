@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Net;
+using System.Security.Claims;
 using static GestaoGrupoMusicalWeb.Models.IdentityViewModel;
 
 namespace GestaoGrupoMusicalWeb.Controllers
@@ -273,7 +274,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 switch(await _pessoaService.UpdateUserInfos(pessoaModel, userInfos.CurrentPassword, userInfos.Password))
                 {
                     case HttpStatusCode.OK:
-                        Notificar("Informações <b>Salvas</b> com <b>Sucesso</b>", Notifica.Sucesso);
+                        Notificar("Informações <b>Salvas</b> com <b>Sucesso</b>.", Notifica.Sucesso);
+                        UpdateClaims("UserName", userInfos.Nome?.Split(" ")[0]);
                     break;
                     case HttpStatusCode.BadRequest:
                         Notificar("Ocorreu um <b>Erro</b> durante a <b>Atualização</b> das <b>Informações</b>", Notifica.Erro);
@@ -332,6 +334,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 }
             }
             return View(userInfos);
+        }
+
+        private void UpdateClaims(string claimName, string? claimValue)
+        {
+            var Identity = HttpContext.User.Identity as ClaimsIdentity;
+            Identity?.RemoveClaim(Identity.FindFirst(claimName));
+            Identity?.AddClaim(new Claim(claimName, claimValue ?? ""));
         }
     }
 }
