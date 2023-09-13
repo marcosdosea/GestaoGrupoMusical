@@ -903,11 +903,11 @@ namespace Service
                 {
                     return HttpStatusCode.NotFound;
                 }
-                if((await _userManager.ChangePasswordAsync(user, currentPassword, newPassword)).Succeeded)
+                if(newPassword != null && (await _userManager.ChangePasswordAsync(user, currentPassword, newPassword)).Succeeded)
                 {
                     return HttpStatusCode.OK;
                 }
-
+                
                 return HttpStatusCode.BadRequest;
             }
             catch
