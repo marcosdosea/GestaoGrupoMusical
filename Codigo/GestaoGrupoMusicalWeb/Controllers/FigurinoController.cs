@@ -511,6 +511,3 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
     }
 }
-}
-
-
