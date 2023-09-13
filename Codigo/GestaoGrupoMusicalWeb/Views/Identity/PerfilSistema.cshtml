@@ -1,29 +1,41 @@
 @model GestaoGrupoMusicalWeb.Models.UserSystemViewModel
 @{
     Layout = "_LayoutAdmSistema";
-    ViewData["Title"] = "Perfil";
+    ViewData["Title"] = "Meu Perfil";
 }
 <partial name="_Notificar">
 <div class="container">
+    <div class="row">
+        <h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">@ViewData["Title"]</h1>
+    </div>
     <form asp-controller="Identity" asp-action="PerfilSistema">
         <div class="row col-lg-8 col-xl-7">
             <div>
                 <label class="control-label" asp-for="CurrentPassword"></label>
-                <input class="form-control" asp-for="CurrentPassword">
+                <div class="input-group">
+                    <input class="form-control" id="InputSenhaAtual" asp-for="CurrentPassword">
+                    <i class="fas fa-eye pointer-cursor data-bs-toggle= col-1 d-flex justify-content-center align-items-center bg-light border-bottom border-dark" tooltip" title="Mostrar senha" id="toggleSenha3"></i>
+                </div>
                 <span asp-validation-for="CurrentPassword" class="text-danger"></span>
             </div>
         </div>
         <div class="row col-lg-8 col-xl-7">
             <div>
                 <label class="control-label" asp-for="Password"></label>
-                <input class="form-control" asp-for="Password">
+                <div class="input-group">
+                    <input class="form-control" id="InputSenha" asp-for="Password">
+                    <i class="fas fa-eye pointer-cursor data-bs-toggle= col-1 d-flex justify-content-center align-items-center bg-light border-bottom border-dark" tooltip" title="Mostrar senha" id="toggleSenha"></i>
+                </div>
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
         </div>
         <div class="row col-lg-8 col-xl-7">
             <div>
                 <label class="control-label" asp-for="ConfirmePassword"></label>
-                <input class="form-control" asp-for="ConfirmePassword">
+                <div class="input-group">
+                    <input class="form-control" id="InputConfirmarSenha" asp-for="ConfirmePassword">
+                    <i class="fas fa-eye pointer-cursor data-bs-toggle= col-1 d-flex justify-content-center align-items-center bg-light border-bottom border-dark" tooltip" title="Mostrar senha" id="toggleSenha2"></i>
+                </div>
                 <span asp-validation-for="ConfirmePassword" class="text-danger"></span>
             </div>
         </div>
@@ -34,3 +46,9 @@
         </div>
     </form>
 </div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+}
