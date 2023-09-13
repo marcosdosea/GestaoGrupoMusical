@@ -293,9 +293,27 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return View(userInfos);
         }
 
+        [HttpGet]
+        [Authorize(Roles = "ADMINISTRADOR SISTEMA")]
         public ActionResult PerfilSistema()
         {
             return View();
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "ADMINISTRADOR SISTEMA")]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> PerfilSistema(UserSystemViewModel userInfos)
+        {
+            if(ModelState.IsValid)
+            {
+                var user = await _userManager.FindByNameAsync(User.Identity?.Name);
+                if((await _userManager.ChangePasswordAsync(user, userInfos.CurrentPassword, userInfos.Password)).Succeeded)
+                {
+                    Notificar("Informações <b>Salvas</b> com <b>Sucesso</b>", Notifica.Sucesso);
+                }
+            }
+            return View(userInfos);
         }
     }
 }

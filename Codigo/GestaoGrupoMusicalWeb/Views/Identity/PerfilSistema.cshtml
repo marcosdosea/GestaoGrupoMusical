@@ -3,3 +3,34 @@
     Layout = "_LayoutAdmSistema";
     ViewData["Title"] = "Perfil";
 }
+<partial name="_Notificar">
+<div class="container">
+    <form asp-controller="Identity" asp-action="PerfilSistema">
+        <div class="row col-lg-8 col-xl-7">
+            <div>
+                <label class="control-label" asp-for="CurrentPassword"></label>
+                <input class="form-control" asp-for="CurrentPassword">
+                <span asp-validation-for="CurrentPassword" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row col-lg-8 col-xl-7">
+            <div>
+                <label class="control-label" asp-for="Password"></label>
+                <input class="form-control" asp-for="Password">
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row col-lg-8 col-xl-7">
+            <div>
+                <label class="control-label" asp-for="ConfirmePassword"></label>
+                <input class="form-control" asp-for="ConfirmePassword">
+                <span asp-validation-for="ConfirmePassword" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row col-lg-8 col-xl-7 mt-3">
+            <div class="d-flex justify-content-end">
+                <input class="btn btn-secondary col-md-4 col-6 mt-3 ml-3" type="submit" value="Salvar" />
+            </div>
+        </div>
+    </form>
+</div>
