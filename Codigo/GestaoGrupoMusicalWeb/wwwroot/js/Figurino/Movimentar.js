@@ -1,7 +1,8 @@
 ﻿function bloquearSelecaoAssociado() {
-    document.getElementById("listaDeAssociados").disabled = true;
+    document.getElementById("associado").hidden = true;
+    
 }
 
 function permitirSelecaoAssociado() {
-    document.getElementById("listaDeAssociados").disabled = false;
+    document.getElementById("associado").hidden = false;
 }
