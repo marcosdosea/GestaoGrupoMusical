@@ -859,7 +859,6 @@ namespace Service
                     return HttpStatusCode.NotFound;
                 }
                 userInfos.Ativo = pessoaDb.Ativo;
-                userInfos.IdManequim = pessoaDb.IdManequim;
                 userInfos.Id = pessoaDb.Id;
 
                 _context.Pessoas.Update(userInfos);

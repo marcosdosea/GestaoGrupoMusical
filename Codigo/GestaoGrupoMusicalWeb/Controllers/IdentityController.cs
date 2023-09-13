@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Net;
 using static GestaoGrupoMusicalWeb.Models.IdentityViewModel;
 
@@ -21,6 +22,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
 
         private readonly IPessoaService _pessoaService;
+        private readonly IManequimService _manequim;
         private readonly IMapper _mapper;
 
         public IdentityController(
@@ -29,6 +31,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             IUserStore<UsuarioIdentity> userStore,
             RoleManager<IdentityRole> roleManager,
             IPessoaService pessoaService,
+            IManequimService manequim,
             IMapper mapper
             )
         {
@@ -38,6 +41,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             _roleManager = roleManager;
 
             _pessoaService = pessoaService;
+            _manequim = manequim;
             _mapper = mapper;
         }
 
@@ -249,7 +253,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 return RedirectToAction(nameof(Autenticar), "Identity");
             }
            
-            return View(_mapper.Map<UserViewModel>(user));
+           var userModel = _mapper.Map<UserViewModel>(user);
+           userModel.ListaManequim = new SelectList(_manequim.GetAll(), "Id", "Tamanho", userModel.IdManequim);
+            return View(userModel);
         }
 
         [HttpPost]
@@ -289,6 +295,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     ViewData["Layout"] = "_LayoutAssociado";
                 break;
             }
+
+            userInfos.ListaManequim = new SelectList(_manequim.GetAll(), "Id", "Tamanho", userInfos.IdManequim);
 
             return View(userInfos);
         }

@@ -9,7 +9,7 @@
         <h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">@ViewData["Title"]</h1>
     </div>
     <form asp-controller="Identity" asp-action="Perfil">
-        <h2 class="fs-5 my-4 border-bottom pb-2">Dados pessoais</h2>
+        <h2 class="fs-5 my-4 border-bottom pb-2 col-lg-8 col-xl-7">Dados pessoais</h2>
         <div class="row col-lg-8 col-xl-7">
             <div>
                 <label class="control-label" asp-for="Nome"></label>
@@ -40,10 +40,15 @@
             <span asp-validation-for="DataNascimento" class="text-danger"></span>
         </div>
         <div class="row col-lg-8 col-xl-7">
-            <div>
+            <div class="col-md-6">
                 <label class="control-label" asp-for="Email"></label>
                 <input class="form-control" asp-for="Email">
                 <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label class="control-label" asp-for="IdManequim"></label>
+                <select asp-items="@Model.ListaManequim" asp-for="IdManequim" class="form-select"></select>
+                <span asp-validation-for="IdManequim" class="text-danger"></span>
             </div>
         </div>
         <div class="row col-lg-8 col-xl-7">
@@ -87,7 +92,7 @@
                 <span asp-validation-for="ConfirmePassword" class="text-danger"></span>
             </div>
         </div>
-        <h2 class="fs-5 my-4 border-bottom pb-2">Endereço</h2>
+        <h2 class="fs-5 my-4 border-bottom pb-2 col-lg-8 col-xl-7">Endereço</h2>
         <div class="row col-lg-8 col-xl-7">
             <div class="col-md-4">
                 <label asp-for="Cep" class="control-label">CEP</label>
