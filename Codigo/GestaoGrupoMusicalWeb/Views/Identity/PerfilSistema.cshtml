@@ -1,0 +1,84 @@
+@model GestaoGrupoMusicalWeb.Models.UserSystemViewModel
+@{
+    Layout = "_LayoutAdmSistema";
+    ViewData["Title"] = "Meu Perfil";
+}
+<partial name="_Notificar">
+<div class="container">
+    <div class="row">
+        <h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">@ViewData["Title"]</h1>
+    </div>
+    <form asp-controller="Identity" asp-action="PerfilSistema">
+        <div class="row col-lg-8 col-xl-7">
+            <div>
+                <label class="control-label" asp-for="CurrentPassword"></label>
+                <div class="input-group">
+                    <input class="form-control" id="InputSenhaAtual" asp-for="CurrentPassword">
+                    <i class="fas fa-eye pointer-cursor data-bs-toggle= col-1 d-flex justify-content-center align-items-center bg-light border-bottom border-dark" tooltip" title="Mostrar senha" id="toggleSenha3"></i>
+                </div>
+                <span asp-validation-for="CurrentPassword" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row col-lg-8 col-xl-7">
+            <div>
+                <label class="control-label" asp-for="Password"></label>
+                <div class="input-group">
+                    <input class="form-control" id="InputSenha" asp-for="Password">
+                    <i class="fas fa-eye pointer-cursor data-bs-toggle= col-1 d-flex justify-content-center align-items-center bg-light border-bottom border-dark" tooltip" title="Mostrar senha" id="toggleSenha"></i>
+                </div>
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row col-lg-8 col-xl-7">
+            <div>
+                <label class="control-label" asp-for="ConfirmePassword"></label>
+                <div class="input-group">
+                    <input class="form-control" id="InputConfirmarSenha" asp-for="ConfirmePassword">
+                    <i class="fas fa-eye pointer-cursor data-bs-toggle= col-1 d-flex justify-content-center align-items-center bg-light border-bottom border-dark" tooltip" title="Mostrar senha" id="toggleSenha2"></i>
+                </div>
+                <span asp-validation-for="ConfirmePassword" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row col-lg-8 col-xl-7 mt-3">
+            <div class="d-flex justify-content-end">
+                <input class="btn btn-secondary col-md-4 col-6 mt-3 ml-3" type="submit" value="Salvar" />
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    const inputSenha = document.querySelector('#InputSenha');
+    const inputConfirmeSenha = document.querySelector('#InputConfirmarSenha');
+    const inputSenhaAtual = document.querySelector('#InputSenhaAtual');
+    const options = {
+        attributes: true
+    }
+
+    function callback(mutationList, observer) {
+        mutationList.forEach(function(mutation) {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                const icon = mutation.target.parentElement.querySelector("i");
+                if(mutation.target.className.includes("input-validation-error")){
+                    icon.classList.remove("border-dark");
+                    icon.classList.add("border-danger");
+                    icon.classList.add("border-2");
+                }else{
+                    icon.classList.remove("border-danger");
+                    icon.classList.remove("border-2");
+                    icon.classList.add("border-dark");
+                }
+            }
+        })
+    }
+
+    const observer = new MutationObserver(callback);
+    observer.observe(inputSenha, options);
+    observer.observe(inputConfirmeSenha, options);
+    observer.observe(inputSenhaAtual, options);
+</script>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+}

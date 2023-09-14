@@ -1,0 +1,167 @@
+@model GestaoGrupoMusicalWeb.Models.UserViewModel
+@{
+    Layout = ViewData["Layout"]!.ToString();
+    ViewData["Title"] = "Meu Perfil";
+}
+<partial name="_Notificar">
+<div class="container">
+    <div class="row">
+        <h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">@ViewData["Title"]</h1>
+    </div>
+    <form asp-controller="Identity" asp-action="Perfil">
+        <h2 class="fs-5 my-4 border-bottom pb-2 col-lg-8 col-xl-7">Dados pessoais</h2>
+        <div class="row col-lg-8 col-xl-7">
+            <div>
+                <label class="control-label" asp-for="Nome"></label>
+                <input class="form-control" asp-for="Nome">
+                <span asp-validation-for="Nome" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row col-lg-8 col-xl-7">
+            <div class="col-md-6">
+                <label class="control-label" asp-for="DataNascimento"></label>
+                <input class="form-control" asp-for="DataNascimento">
+            </div>
+            <div class="col-md-6">
+                <label asp-for="Sexo" class="control-label"></label>
+                <div class="d-flex justify-content-around">
+                    @{
+                        foreach (var item in Model.sexoPessoa)
+                        {
+                            <div>
+                                <label for="@item.Key">@item.Key</label>
+                                <input class="form-check-input" type="radio" value="@item.Value" asp-for="Sexo" id="@item.Key" />
+                            </div>
+                        }
+                    }
+                </div>
+                <span asp-validation-for="Sexo" class="text-danger"></span>
+            </div>
+            <span asp-validation-for="DataNascimento" class="text-danger"></span>
+        </div>
+        <div class="row col-lg-8 col-xl-7">
+            <div class="col-md-6">
+                <label class="control-label" asp-for="Email"></label>
+                <input class="form-control" asp-for="Email">
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label class="control-label" asp-for="IdManequim"></label>
+                <select asp-items="@Model.ListaManequim" asp-for="IdManequim" class="form-select"></select>
+                <span asp-validation-for="IdManequim" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row col-lg-8 col-xl-7">
+            <div class="col-md-6">
+                <label class="control-label" asp-for="Telefone1"></label>
+                <input class="form-control" id="campoTelefone1" asp-for="Telefone1">
+            </div>
+            <div class="col-md-6">
+                <label class="control-label" asp-for="Telefone2"></label>
+                <input class="form-control" id="campoTelefone2" asp-for="Telefone2">
+            </div>
+            <span asp-validation-for="Telefone1" class="text-danger"></span>
+        </div>
+        <div class="row col-lg-8 col-xl-7">
+            <div>
+                <label class="control-label" asp-for="CurrentPassword"></label>
+                <div class="input-group">
+                    <input class="form-control" id="InputSenhaAtual" asp-for="CurrentPassword">
+                    <i class="fas fa-eye pointer-cursor data-bs-toggle= col-1 d-flex justify-content-center align-items-center bg-light border-bottom border-dark" tooltip" title="Mostrar senha" id="toggleSenha3"></i>
+                </div>
+                <span asp-validation-for="CurrentPassword" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row col-lg-8 col-xl-7">
+            <div>
+                <label class="control-label" asp-for="Password"></label>
+                <div class="input-group">
+                    <input class="form-control" id="InputSenha" asp-for="Password">
+                    <i class="fas fa-eye pointer-cursor data-bs-toggle= col-1 d-flex justify-content-center align-items-center bg-light border-bottom border-dark" tooltip" title="Mostrar senha" id="toggleSenha"></i>
+                </div>
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row col-lg-8 col-xl-7">
+            <div>
+                <label class="control-label" asp-for="ConfirmePassword"></label>
+                <div class="input-group">
+                    <input class="form-control" id="InputConfirmarSenha" asp-for="ConfirmePassword">
+                    <i class="fas fa-eye pointer-cursor data-bs-toggle= col-1 d-flex justify-content-center align-items-center bg-light border-bottom border-dark" tooltip" title="Mostrar senha" id="toggleSenha2"></i>
+                </div>
+                <span asp-validation-for="ConfirmePassword" class="text-danger"></span>
+            </div>
+        </div>
+        <h2 class="fs-5 my-4 border-bottom pb-2 col-lg-8 col-xl-7">Endereço</h2>
+        <div class="row col-lg-8 col-xl-7">
+            <div class="col-md-4">
+                <label asp-for="Cep" class="control-label">CEP</label>
+                <input asp-for="Cep" id="campoCep" class="form-control" />
+                <span asp-validation-for="Cep" id="mensagemCep" class="text-danger"></span>
+            </div>
+            <div class="col-md-8">
+                <label asp-for="Rua" class="control-label"></label>
+                <input asp-for="Rua" id="campoRua" class="form-control" />
+                <span asp-validation-for="Rua" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row col-lg-8 col-xl-7">
+            <div class="form-group col-md-4">
+                <label asp-for="Bairro" class="control-label"></label>
+                <input asp-for="Bairro" id="campoBairro" class="form-control" />
+                <span asp-validation-for="Bairro" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <label asp-for="Cidade" class="control-label"></label>
+                <input asp-for="Cidade" id="campoCidade" class="form-control" />
+                <span asp-validation-for="Cidade" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-2">
+                <label asp-for="Estado" class="control-label"></label>
+                <input asp-for="Estado" id="campoEstado" class="form-control" />
+                <span asp-validation-for="Estado" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row col-lg-8 col-xl-7 mt-3">
+            <div class="d-flex justify-content-end">
+                <input class="btn btn-secondary col-md-4 col-6 mt-3 ml-3" type="submit" value="Salvar" />
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    const inputSenha = document.querySelector('#InputSenha');
+    const inputConfirmeSenha = document.querySelector('#InputConfirmarSenha');
+    const inputSenhaAtual = document.querySelector('#InputSenhaAtual');
+    const options = {
+        attributes: true
+    }
+
+    function callback(mutationList, observer) {
+        mutationList.forEach(function(mutation) {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                const icon = mutation.target.parentElement.querySelector("i");
+                if(mutation.target.className.includes("input-validation-error")){
+                    icon.classList.remove("border-dark");
+                    icon.classList.add("border-danger");
+                    icon.classList.add("border-2");
+                }else{
+                    icon.classList.remove("border-danger");
+                    icon.classList.remove("border-2");
+                    icon.classList.add("border-dark");
+                }
+            }
+        })
+    }
+
+    const observer = new MutationObserver(callback);
+    observer.observe(inputSenha, options);
+    observer.observe(inputConfirmeSenha, options);
+    observer.observe(inputSenhaAtual, options);
+</script>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+}

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Core;
+using Core.DTO;
 using Core.Service;
 using Email;
 using GestaoGrupoMusicalWeb.Models;
@@ -7,7 +8,9 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Net;
+using System.Security.Claims;
 using static GestaoGrupoMusicalWeb.Models.IdentityViewModel;
 
 namespace GestaoGrupoMusicalWeb.Controllers
@@ -20,6 +23,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
 
         private readonly IPessoaService _pessoaService;
+        private readonly IManequimService _manequim;
         private readonly IMapper _mapper;
 
         public IdentityController(
@@ -28,6 +32,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             IUserStore<UsuarioIdentity> userStore,
             RoleManager<IdentityRole> roleManager,
             IPessoaService pessoaService,
+            IManequimService manequim,
             IMapper mapper
             )
         {
@@ -37,6 +42,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             _roleManager = roleManager;
 
             _pessoaService = pessoaService;
+            _manequim = manequim;
             _mapper = mapper;
         }
 
@@ -225,6 +231,118 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 Notificar("<b>Erro</b> ao tentar alterar senha!", Notifica.Erro);
             }
             return View();
+        }
+
+        [HttpGet]
+        [Authorize]
+        public ActionResult Perfil()
+        {
+            var papelGrupo = User.FindFirst("IdPapelGrupo")?.Value ?? "4";
+
+            ViewData["Layout"] = "_LayoutColaborador";
+
+            switch (papelGrupo)
+            {
+                case "1":
+                    ViewData["Layout"] = "_LayoutAssociado";
+                break;
+            }
+
+            var user = _pessoaService.Get(Convert.ToInt32(User.FindFirst("Id")?.Value));
+            if(user == null)
+            {
+                return RedirectToAction(nameof(Autenticar), "Identity");
+            }
+           
+           var userModel = _mapper.Map<UserViewModel>(user);
+           userModel.ListaManequim = new SelectList(_manequim.GetAll(), "Id", "Tamanho", userModel.IdManequim);
+            return View(userModel);
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Perfil(UserViewModel userInfos)
+        {
+            if(ModelState.IsValid)
+            {
+                var pessoaModel = _mapper.Map<Pessoa>(userInfos);
+                pessoaModel.IdGrupoMusical = Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value);
+                pessoaModel.IdPapelGrupo = Convert.ToInt32(User.FindFirst("IdPapelGrupo")?.Value);
+                pessoaModel.Cpf = User.Identity?.Name ?? "";
+
+                switch(await _pessoaService.UpdateUserInfos(pessoaModel, userInfos.CurrentPassword, userInfos.Password))
+                {
+                    case HttpStatusCode.OK:
+                        Notificar("Informações <b>Salvas</b> com <b>Sucesso</b>.", Notifica.Sucesso);
+                        await UpdateClaims("UserName", userInfos.Nome?.Split(" ")[0]);
+                    break;
+                    case HttpStatusCode.BadRequest:
+                        Notificar("Ocorreu um <b>Erro</b> durante a <b>Atualização</b> das <b>Informações</b>", Notifica.Erro);
+                    break;
+                    case HttpStatusCode.NotFound:
+                        Notificar("Ocorreu um <b>Erro</b> durante o <b>Acesso</b> as <b>Informações</b>", Notifica.Erro);
+                    break;
+                    case HttpStatusCode.InternalServerError:
+                        Notificar("Ocorreu um <b>Erro Interno</b> durante a atualização das <b>Informações</b>", Notifica.Erro);
+                    break;
+                }
+            }
+
+            ViewData["Layout"] = "_LayoutColaborador";
+            var papelGrupo = User.FindFirst("IdPapelGrupo")?.Value ?? "4";
+            switch (papelGrupo)
+            {
+                case "1":
+                    ViewData["Layout"] = "_LayoutAssociado";
+                break;
+            }
+
+            userInfos.ListaManequim = new SelectList(_manequim.GetAll(), "Id", "Tamanho", userInfos.IdManequim);
+
+            return View(userInfos);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "ADMINISTRADOR SISTEMA")]
+        public ActionResult PerfilSistema()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "ADMINISTRADOR SISTEMA")]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> PerfilSistema(UserSystemViewModel userInfos)
+        {
+            if(ModelState.IsValid)
+            {
+                switch(await _pessoaService.UpdateUAdmSistema(User.Identity?.Name, userInfos.CurrentPassword, userInfos.Password))
+                {
+                    case HttpStatusCode.OK:
+                        Notificar("Informações <b>Salvas</b> com <b>Sucesso</b>", Notifica.Sucesso);
+                        return View();
+                    case HttpStatusCode.BadRequest:
+                        Notificar("Ocorreu um <b>Erro</b> durante a <b>Atualização</b> das <b>Informações</b>", Notifica.Erro);
+                    break;
+                    case HttpStatusCode.NotFound:
+                        Notificar("Ocorreu um <b>Erro</b> durante o <b>Acesso</b> as <b>Informações</b>", Notifica.Erro);
+                    break;
+                    case HttpStatusCode.InternalServerError:
+                        Notificar("Ocorreu um <b>Erro Interno</b> durante a atualização das <b>Informações</b>", Notifica.Erro);
+                    break;
+                }
+            }
+            return View(userInfos);
+        }
+
+        private async Task UpdateClaims(string claimName, string? claimValue)
+        {
+            var Identity = HttpContext.User.Identity as ClaimsIdentity;
+            Identity?.RemoveClaim(Identity.FindFirst(claimName));
+            Identity?.AddClaim(new Claim(claimName, claimValue ?? ""));
+
+            await _signInManager.RefreshSignInAsync(await _userManager.FindByNameAsync(User.Identity?.Name));
         }
     }
 }

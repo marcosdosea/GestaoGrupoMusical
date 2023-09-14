@@ -158,5 +158,27 @@ namespace Core.Service
         Task<HttpStatusCode> AtivarAssociado(string cpf);
 
         Task<IEnumerable<AutoCompleteRegenteDTO>> GetRegentesForAutoCompleteAsync(int idGrupoMusical);
+        
+        /// <summary>
+        /// Atualiza as informações do usuário
+        /// </summary>
+        /// <returns>
+        /// HttpStatusCode.NotFound: Usuário não encontrado
+        /// HttpStatusCode.InternalServerError: Erro interno
+        /// HttpStatusCode.OK: Sucesso na operação
+        /// HttpStatusCode.BadRequest: Formulário inválido
+        /// </returns>
+        Task<HttpStatusCode> UpdateUserInfos(Pessoa userInfos, string? currentPassword ,string? newPassword);
+
+        /// <summary>
+        /// Atualiza as informações do adm sistema
+        /// </summary>
+        /// <returns>
+        /// HttpStatusCode.NotFound: Usuário não encontrado
+        /// HttpStatusCode.InternalServerError: Erro interno
+        /// HttpStatusCode.OK: Sucesso na operação
+        /// HttpStatusCode.BadRequest: Formulário inválido
+        /// </returns>
+        Task<HttpStatusCode> UpdateUAdmSistema(string? login, string? currentPassword ,string? newPassword);
     }
 }
