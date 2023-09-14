@@ -37,11 +37,11 @@
                 </tr>
             }
         </tbody>
-        @if (!Model.Any())
-        {
-            <p class="text-center mt-4 mb-0">Desculpe, nenhuma <b>Entregar</b> encontrada :(</p>
-        }
     </table>
+    @if (!Model.Any())
+    {
+        <p class="text-center mt-4 mb-0">Desculpe, nenhuma <b>Entrega</b> encontrada :(</p>
+    }
     <div class="modal fade" id="associadoEntregueModal" tabindex="-1" aria-labelledby="associadoDevolucaoLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
