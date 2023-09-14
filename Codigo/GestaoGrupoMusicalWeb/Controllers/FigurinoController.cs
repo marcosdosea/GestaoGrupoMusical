@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Org.BouncyCastle.Utilities;
 using System.Net;
+using System.Security.Principal;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {

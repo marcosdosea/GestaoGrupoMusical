@@ -42,7 +42,7 @@
                     }
                     else
                     {
-                        <select asp-for="IdAssociado" asp-items="@Model.ListaAssociado" class="form-select" id="listaDeAssociados">
+                        <select asp-for="IdAssociado" asp-items="new SelectList(@User.FindFirst("UserName")?.Value)" class="form-select" id="listaDeAssociados">
                         </select>
                     }
                 <span asp-validation-for="IdAssociado" class="text-danger"></span>
