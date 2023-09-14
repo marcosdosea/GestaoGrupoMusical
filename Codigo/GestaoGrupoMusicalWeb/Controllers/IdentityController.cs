@@ -275,7 +275,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 {
                     case HttpStatusCode.OK:
                         Notificar("Informações <b>Salvas</b> com <b>Sucesso</b>.", Notifica.Sucesso);
-                        UpdateClaims("UserName", userInfos.Nome?.Split(" ")[0]);
+                        await UpdateClaims("UserName", userInfos.Nome?.Split(" ")[0]);
                     break;
                     case HttpStatusCode.BadRequest:
                         Notificar("Ocorreu um <b>Erro</b> durante a <b>Atualização</b> das <b>Informações</b>", Notifica.Erro);
@@ -336,11 +336,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return View(userInfos);
         }
 
-        private void UpdateClaims(string claimName, string? claimValue)
+        private async Task UpdateClaims(string claimName, string? claimValue)
         {
             var Identity = HttpContext.User.Identity as ClaimsIdentity;
             Identity?.RemoveClaim(Identity.FindFirst(claimName));
             Identity?.AddClaim(new Claim(claimName, claimValue ?? ""));
+
+            await _signInManager.RefreshSignInAsync(await _userManager.FindByNameAsync(User.Identity?.Name));
         }
     }
 }
