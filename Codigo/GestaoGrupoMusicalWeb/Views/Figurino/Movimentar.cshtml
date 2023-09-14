@@ -42,10 +42,15 @@
                     }
                     else
                     {
-                        <select asp-for="IdAssociado" asp-items="new SelectList(@User.FindFirst("UserName")?.Value)" class="form-select" id="listaDeAssociados">
+                        <select asp-for="IdAssociado" asp-items="@Model.ListaAssociado" class="form-select" id="listaDeAssociados">
                         </select>
                     }
                 <span asp-validation-for="IdAssociado" class="text-danger"></span>
+            </div>
+
+            <div class="form-group col-lg-6" id="campoAssociado_Colaborador" hidden >
+                    <label class="control-label">Associado</label>
+                <input asp-for="@User.FindFirst("UserName").Value" class="form-control form-control-disabled" readonly />
             </div>
 
             <div class="form-group col-lg-6">
@@ -66,14 +71,14 @@
                             {
                                 <div class="col-lg-2">
                                     <label for="@item.Key">@item.Key</label>
-                                    <input class="form-check-input" onclick="permitirSelecaoAssociado()"  type="radio" value="@item.Value" asp-for="Movimentacao" id="@item.Key" />
+                                        <input class="form-check-input" onclick="bloquearSelecaoAssociado()" type="radio" value="@item.Value" asp-for="Movimentacao" id="@item.Key" />
                                 </div>
                             }
                             else
                             {
                                 <div class="col-lg-2">
                                     <label for="@item.Key">@item.Key</label>
-                                    <input class="form-check-input" onclick="bloquearSelecaoAssociado()" type="radio" value="@item.Value" asp-for="Movimentacao" id="@item.Key" />
+                                        <input class="form-check-input" onclick="permitirSelecaoAssociado()" type="radio" value="@item.Value" asp-for="Movimentacao" id="@item.Key" />
                                 </div>
                             }
 
