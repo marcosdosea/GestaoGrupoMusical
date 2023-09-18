@@ -40,7 +40,7 @@ namespace Core.Service
         /// <param name="idFigurino">id do figurino</param>
         /// <param name="idManequim">id do manequim(tamanho)</param>
         /// <returns>true: nao possue emprestimo `ativo`, false: possue emprestimo `ativo`</returns>
-        Task<bool> AssociadoEmprestimo(int idAssociado, int idFigurino,int idManequim);
+        Task<bool> AssociadoEmprestimo(int idAssociado, int idFigurino, int idManequim);
 
         /// <summary>
         /// remove uma movimentação de figurino

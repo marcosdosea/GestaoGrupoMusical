@@ -9,7 +9,6 @@ namespace GestaoGrupoMusicalWeb.Models
 {
     public class MovimentacaoFigurinoViewModel
     {
-
         public int Id { get; set; }
 
         public string DataFigurinoString { get; set; }
@@ -29,9 +28,11 @@ namespace GestaoGrupoMusicalWeb.Models
         [Display(Name = "Associado")]
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public int IdAssociado { get; set; }
+
         [Display(Name ="Quantidade")]
         [Required(ErrorMessage ="O campo {0} é obrigatório")]
-        public int QuantidadeEntregue { get;set; }
+        [Range(1, int.MaxValue, ErrorMessage = "A quantidade deve ser maior que 0")]
+        public int Quantidade { get;set; }
 
         public int IdColaborador { get; set; }
 
@@ -49,8 +50,8 @@ namespace GestaoGrupoMusicalWeb.Models
         public Dictionary<string, string> MovimentacaoEnum { get; } = new()
         {
             { "Entregar", "ENTREGUE" },
-            { "Devolver", "DEVOLVIDO" }
+            { "Devolver", "DEVOLVIDO" },
+            {"Descartar", "DANIFICADO"}
         };
-
     }
 }

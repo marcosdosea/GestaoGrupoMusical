@@ -48,7 +48,7 @@ namespace Service
                                     $"<dt style=\"font-weight: 700;\">Data e Horário de Início:</dt><dd>{ensaio.DataHoraInicio}</dd>" +
                                     $"<dt style=\"font-weight: 700;\">Data e Horário de Fim:</dt><dd>{ensaio.DataHoraFim}</dd>\n</div>"
                         };
-                        
+
                         await associadosRegentes.ForEachAsync(async associadoRegente => {
                             Ensaiopessoa ensaioPessoa = new()
                             {
@@ -59,7 +59,7 @@ namespace Service
                             if(associadoRegente.IdPapelGrupo == 5 && idRegentes.Contains(associadoRegente.Id))
                             {
                                 ensaioPessoa.IdPapelGrupoPapelGrupo = associadoRegente.IdPapelGrupo;
-                                await _context.Ensaiopessoas.AddAsync(ensaioPessoa);
+                            await _context.Ensaiopessoas.AddAsync(ensaioPessoa);
                                 email.To.Add(associadoRegente.Email);
                             }
                             else
