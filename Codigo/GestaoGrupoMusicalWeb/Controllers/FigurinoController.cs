@@ -9,10 +9,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Org.BouncyCastle.Utilities;
 using System.Net;
+using System.Security.Principal;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
-
     public class FigurinoController : BaseController
     {
         private readonly IMapper _mapper;
@@ -73,7 +73,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 var figurino = _mapper.Map<Figurino>(figurinoViewModel);
                 HttpStatusCode resul = await _figurinoService.Create(figurino);
 
-
                 switch (resul)
                 {
                     case HttpStatusCode.Created:
@@ -127,7 +126,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         return RedirectToAction(nameof(Index));
 
                     case HttpStatusCode.InternalServerError:
-
                         Notificar("<b>Erro</b>! Há algo errado com os dados", Notifica.Erro);
                         return View(figurinoViewModel);
 
@@ -319,17 +317,17 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             string status = movimentacaoViewModel.Movimentacao;
 
-            Movimentacaofigurino movimentacao = new Movimentacaofigurino
-            {
-                Data = movimentacaoViewModel.Data,
-                IdFigurino = movimentacaoViewModel.IdFigurino,
-                IdManequim = movimentacaoViewModel.IdManequim,
-                IdAssociado = movimentacaoViewModel.IdAssociado,
-                IdColaborador = colaborador.Id,
-                Status = status,
-                ConfirmacaoRecebimento = 0,
-                Quantidade = movimentacaoViewModel.QuantidadeEntregue
-            };
+                Movimentacaofigurino movimentacao = new Movimentacaofigurino
+                {
+                    Data = movimentacaoViewModel.Data,
+                    IdFigurino = movimentacaoViewModel.IdFigurino,
+                    IdManequim = movimentacaoViewModel.IdManequim,
+                    IdAssociado = (movimentacaoViewModel.Movimentacao.Equals("DANIFICADO")) ? colaborador.Id : movimentacaoViewModel.IdAssociado,
+                    IdColaborador = colaborador.Id,
+                    Status = status,
+                    ConfirmacaoRecebimento = (movimentacaoViewModel.Movimentacao.Equals("DANIFICADO")) ? (sbyte)1 : (sbyte)0,
+                    Quantidade = movimentacaoViewModel.Quantidade
+                };
 
             HttpStatusCode resul = await _movimentacaoService.CreateAsync(movimentacao);
 
@@ -353,7 +351,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     Notificar("<b>Alerta!</b> Não há estoque desse tamanho", Notifica.Alerta);
                     break;
                 case HttpStatusCode.NoContent:
-                    Notificar("<b>Alerta!</b> Não há peças disponíveis para empréstimo", Notifica.Alerta);
+                    Notificar("<b>Alerta!</b> Não há peças disponíveis para movimentação", Notifica.Alerta);
                     break;
                 case HttpStatusCode.PreconditionFailed:
                     Notificar("<b>Alerta!</b> Não há nada para devolver", Notifica.Alerta);
@@ -384,8 +382,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 HttpStatusCode resul = await _movimentacaoService.DeleteAsync(Id);
 
-                switch (resul)
-                {
+            switch (resul)
+            {
                     case HttpStatusCode.OK:
                         Notificar($"<b>Sucesso!</b> Movimentação foi <b>removida</b>", Notifica.Sucesso);
                         break;
@@ -514,5 +512,3 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
     }
 }
-
-
