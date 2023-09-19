@@ -1,4 +1,5 @@
-﻿using Core.DTO;
+﻿using Core.Datatables;
+using Core.DTO;
 using System.Net;
 
 namespace Core.Service
@@ -45,5 +46,7 @@ namespace Core.Service
         Task<string> GetNomeInstrumento(int id);
         Task<IEnumerable<Tipoinstrumento>> GetAllTipoInstrumento();
         Task<InstrumentoMusicalDeleteDTO> GetInstrumentoMusicalDeleteDTO(int id);
+
+        Task<DatatableResponse<InstrumentoMusicalDTO>> GetDataPage(DatatableRequest request);
     }
 }
