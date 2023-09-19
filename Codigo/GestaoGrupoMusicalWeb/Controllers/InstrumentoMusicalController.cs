@@ -47,7 +47,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [HttpPost]
         public async Task<IActionResult> GetDataPage(DatatableRequest request)
         {
-            var response = await _instrumentoMusical.GetDataPage(request);
+            var response = await _instrumentoMusical.GetDataPage(request, await _grupoMusical.GetIdGrupo(User.Identity.Name));
             return Json(response);
         }
 

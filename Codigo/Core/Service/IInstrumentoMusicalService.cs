@@ -47,6 +47,6 @@ namespace Core.Service
         Task<IEnumerable<Tipoinstrumento>> GetAllTipoInstrumento();
         Task<InstrumentoMusicalDeleteDTO> GetInstrumentoMusicalDeleteDTO(int id);
 
-        Task<DatatableResponse<InstrumentoMusicalDTO>> GetDataPage(DatatableRequest request);
+        Task<DatatableResponse<InstrumentoMusicalDTO>> GetDataPage(DatatableRequest request, int idGrupo);
     }
 }
