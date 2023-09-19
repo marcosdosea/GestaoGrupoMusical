@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Core;
+using Core.Datatables;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NuGet.Protocol;
 using System.Net;
+using System.Text.Json;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -41,6 +43,14 @@ namespace GestaoGrupoMusicalWeb.Controllers
             var listaInstrumentoMusical = await _instrumentoMusical.GetAllDTO(await _grupoMusical.GetIdGrupo(User.Identity.Name));
             return View(listaInstrumentoMusical);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> GetDataPage(DatatableRequest request)
+        {
+            var response = await _instrumentoMusical.GetDataPage(request);
+            return Json(response);
+        }
+
 
 
         // GET: InstrumentoMusicalController/Details/5

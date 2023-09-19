@@ -1,8 +1,10 @@
 ﻿using Core;
+using Core.Datatables;
 using Core.DTO;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.Storage.Internal;
 using System.Data.Common;
 using System.Net;
 
@@ -145,6 +147,67 @@ namespace Service
                                    NomeInstrumento = tipoInstrumento.Nome,
                                }).AsNoTracking().SingleOrDefaultAsync();
             return query!;
+        }
+
+        //public DatatableResponse<Movimentacaoinstrumento> GetDataPage(DatatableRequest request)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        public async Task<DatatableResponse<InstrumentoMusicalDTO>> GetDataPage(DatatableRequest request)
+        {
+            var instrumentoMusical = await GetAllDTO(1);
+
+            var totalRecords = instrumentoMusical.Count();
+
+            if (request.Search != null && request.Search.GetValueOrDefault("value") != null)
+            {
+                instrumentoMusical = instrumentoMusical.Where(g => g.Patrimonio.ToString().Contains(request.Search.GetValueOrDefault("value"))
+                                                           || g.Status.ToString().Contains(request.Search.GetValueOrDefault("value")));
+            }
+
+            if (request.Order != null && request.Order[0].GetValueOrDefault("column").Equals("0"))
+            {
+                if (request.Order[0].GetValueOrDefault("dir").Equals("asc"))
+                    instrumentoMusical = instrumentoMusical.OrderBy(g => g.Patrimonio);
+                else
+                    instrumentoMusical = instrumentoMusical.OrderByDescending(g => g.Patrimonio);
+            }
+            else if (request.Order != null && request.Order[0].GetValueOrDefault("column").Equals("1"))
+            {
+                if (request.Order[0].GetValueOrDefault("dir").Equals("asc"))
+                    instrumentoMusical = instrumentoMusical.OrderBy(g => g.NomeInstrumento);
+                else
+                    instrumentoMusical = instrumentoMusical.OrderByDescending(g => g.NomeInstrumento);
+            }
+            else if (request.Order != null && request.Order[0].GetValueOrDefault("column").Equals("2"))
+            {
+                if (request.Order[0].GetValueOrDefault("dir").Equals("asc"))
+                    instrumentoMusical = instrumentoMusical.OrderBy(g => g.Status);
+                else
+                    instrumentoMusical = instrumentoMusical.OrderByDescending(g => g.Status);
+            }
+            else if (request.Order != null && request.Order[0].GetValueOrDefault("column").Equals("3"))
+            {
+                if (request.Order[0].GetValueOrDefault("dir").Equals("asc"))
+                    instrumentoMusical = instrumentoMusical.OrderBy(g => g.NomeAssociado);
+                else
+                    instrumentoMusical = instrumentoMusical.OrderByDescending(g => g.NomeAssociado);
+            }
+
+            int countRecordsFiltered = instrumentoMusical.Count();
+
+            instrumentoMusical = instrumentoMusical.Skip(request.Start).Take(request.Length);
+
+            return new DatatableResponse<InstrumentoMusicalDTO>
+            {
+                Data = instrumentoMusical.ToList(),
+                Draw = request.Draw,
+                RecordsFiltered = countRecordsFiltered,
+                RecordsTotal = totalRecords
+            };
+
+
         }
     }
 }
