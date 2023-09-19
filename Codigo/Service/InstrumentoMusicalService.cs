@@ -154,16 +154,18 @@ namespace Service
         //    throw new NotImplementedException();
         //}
 
-        public async Task<DatatableResponse<InstrumentoMusicalDTO>> GetDataPage(DatatableRequest request)
+        public async Task<DatatableResponse<InstrumentoMusicalDTO>> GetDataPage(DatatableRequest request, int idGrupo)
         {
-            var instrumentoMusical = await GetAllDTO(1);
+            var instrumentoMusical = await GetAllDTO(idGrupo);
 
             var totalRecords = instrumentoMusical.Count();
 
             if (request.Search != null && request.Search.GetValueOrDefault("value") != null)
             {
                 instrumentoMusical = instrumentoMusical.Where(g => g.Patrimonio.ToString().Contains(request.Search.GetValueOrDefault("value"))
-                                                           || g.Status.ToString().Contains(request.Search.GetValueOrDefault("value")));
+                                                           || g.Status.ToString().Contains(request.Search.GetValueOrDefault("value"))
+                                                           || g.NomeAssociado.ToString().Contains(request.Search.GetValueOrDefault("value"))
+                                                           || g.NomeInstrumento.ToString().Contains(request.Search.GetValueOrDefault("value")));
             }
 
             if (request.Order != null && request.Order[0].GetValueOrDefault("column").Equals("0"))
