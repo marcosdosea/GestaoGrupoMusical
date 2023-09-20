@@ -11,8 +11,8 @@
         <h5>@ViewData["Title"]</h5>
         <a role="button" class="btn btn-secondary m-3" asp-controller="InstrumentoMusical" asp-action="Create">Novo Instrumento</a>
     </div>
-
-    <table id="tableInstrumento" class="table table-striped table-bordered dt-responsive nowrap">
+  @*  <div class="table-responsive">*@
+    <table id="tableInstrumento" class="table table-striped table-bordered dt-responsive nowrap ">
         <thead>
             <tr class="bg-danger bg-opacity-75 text-white">
                 <th class="px-3">
@@ -35,7 +35,7 @@
         <tbody>
 
     </table>
-
+@*    </div>*@
     @section Scripts {
         <script src="~/lib/datatable/js/datatables.min.js"></script>
         <script>
@@ -47,7 +47,7 @@
                     "orderMulti": false, // for disable multiple column at once
                     "pageLength": 5,
                     "lengthMenu": [
-                        [5, 10, 20, 11],
+                        [5, 10, 20, -1],
                         [5, 10, 20, "Todos"]
                     ],
                     "ajax": {
