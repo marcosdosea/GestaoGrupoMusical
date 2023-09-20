@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Core;
+using Core.Datatables;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -35,6 +36,15 @@ namespace GestaoGrupoMusicalWeb.Controllers
             var listaPessoasDTO = await _pessoaService.GetAllAssociadoDTOByGroup(User.Identity.Name);
 
             return View(listaPessoasDTO);
+        }
+
+
+        [HttpPost]
+
+        public async Task<ActionResult> GetDataPage(DatatableRequest request)
+        {
+            var response = await _pessoaService.GetDataPage(request, User.Identity.Name);
+            return Json(response);
         }
 
         // GET: PessoaController/Details/5
