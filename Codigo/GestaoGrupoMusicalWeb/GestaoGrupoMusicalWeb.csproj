@@ -14,7 +14,17 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.14" />
   </ItemGroup>
+	<ItemGroup>
+		<Compile Remove="Models\DatatableModel.cs" />
+	</ItemGroup>
 
+	<ItemGroup>
+		<Content Remove="~\wwwroot\js\jquery.dataTables.min.js" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="wwwroot\lib\datatable\js\dataTables.min.js" />
+	</ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\Service\Service.csproj" />
