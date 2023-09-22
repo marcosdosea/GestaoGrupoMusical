@@ -62,7 +62,15 @@
                     "columns": [
                         { "data": "id", "name": "Codigo", "autoWidth": true },
                         { "data": "nome", "name": "Associado", "autoWidth": true },
-                        { "data": "ativo", "name": "Ativo", "autoWidth": true },
+                        { "data": "ativo", "name": "Ativo", "autoWidth": true,
+                            "render": function (data, type, full, meta) {
+                                if(type == 'display'){
+                                    var texto = data === 1 : 'Sim' ? 'Não';
+                                    return texto;
+                                }
+                               
+                            }
+                        },
                         {
                             "render": function (data, type, full, meta) {
 
