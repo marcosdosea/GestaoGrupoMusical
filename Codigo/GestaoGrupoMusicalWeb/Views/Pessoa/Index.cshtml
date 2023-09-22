@@ -64,11 +64,7 @@
                         { "data": "nome", "name": "Associado", "autoWidth": true },
                         { "data": "ativo", "name": "Ativo", "autoWidth": true,
                             "render": function (data, type, full, meta) {
-                                if(type == 'display'){
-                                    var texto = data === 1 : 'Sim' ? 'Não';
-                                    return texto;
-                                }
-                               
+                                return data === 1 ? 'Sim' : 'Não'
                             }
                         },
                         {
