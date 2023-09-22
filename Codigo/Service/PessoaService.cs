@@ -952,7 +952,17 @@ namespace Service
             }
 
             int countRecordsFiltered = listaAssociado.Count();
-            listaAssociado = listaAssociado.Skip(request.Start).Take(request.Length);
+
+            if (request.Length == -1)
+            {
+                request.Start = 0;
+                request.Length = totalRecords;
+            }
+            else
+            {
+                listaAssociado = listaAssociado.Skip(request.Start).Take(request.Length);
+            }
+
             return new DatatableResponse<AssociadoDTO>
             {
                 Data = listaAssociado.ToList(),
