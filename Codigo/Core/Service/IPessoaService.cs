@@ -1,4 +1,5 @@
-﻿using Core.DTO;
+﻿using Core.Datatables;
+using Core.DTO;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -180,5 +181,7 @@ namespace Core.Service
         /// HttpStatusCode.BadRequest: Formulário inválido
         /// </returns>
         Task<HttpStatusCode> UpdateUAdmSistema(string? login, string? currentPassword ,string? newPassword);
+
+        Task<DatatableResponse<AssociadoDTO>> GetDataPage(DatatableRequest request, string cpf);
     }
 }

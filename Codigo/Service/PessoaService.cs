@@ -7,6 +7,7 @@ using Email;
 using System.Security.Cryptography;
 using System.Text;
 using System.Net;
+using Core.Datatables;
 
 namespace Service
 {
@@ -913,6 +914,63 @@ namespace Service
             {
                 return HttpStatusCode.InternalServerError;
             }
+        }
+
+        public async Task<DatatableResponse<AssociadoDTO>> GetDataPage(DatatableRequest request, string cpf)
+        {
+            var listaAssociado = await GetAllAssociadoDTOByGroup(cpf);
+            var totalRecords = listaAssociado.Count();
+
+            //verificando filtro
+            if(request.Search != null && request.Search.GetValueOrDefault("value")  != null)
+            {
+                listaAssociado = listaAssociado.Where( g => g.Id.ToString().Contains(request.Search.GetValueOrDefault("value"))
+                                                       || g.Ativo.ToString().Contains(request.Search.GetValueOrDefault("value"))
+                                                       || g.Nome.ToString().Contains(request.Search.GetValueOrDefault("value")));
+            }
+            //ordenar por:
+            if(request.Order != null && request.Order[0].GetValueOrDefault("column").Equals("0"))
+            {
+                if (request.Order[0].GetValueOrDefault("dir").Equals("asc"))
+                    listaAssociado = listaAssociado.OrderBy(g => g.Id);
+                else
+                    listaAssociado = listaAssociado.OrderByDescending(g => g.Id);
+            }
+            else if(request.Order != null && request.Order[0].GetValueOrDefault("column").Equals("1"))
+            {
+                if (request.Order[0].GetValueOrDefault("dir").Equals("asc"))
+                    listaAssociado = listaAssociado.OrderBy(g => g.Nome);
+                else
+                    listaAssociado = listaAssociado.OrderByDescending(g => g.Nome);
+            }
+            else if(request.Order != null && request.Order[0].GetValueOrDefault("column").Equals("2"))
+            {
+                if (request.Order[0].GetValueOrDefault("dir").Equals("asc"))
+                    listaAssociado = listaAssociado.OrderBy(g => g.Ativo);
+                else
+                    listaAssociado = listaAssociado.OrderByDescending(g => g.Ativo);
+            }
+
+            int countRecordsFiltered = listaAssociado.Count();
+
+            if (request.Length == -1)
+            {
+                request.Start = 0;
+                request.Length = totalRecords;
+            }
+            else
+            {
+                listaAssociado = listaAssociado.Skip(request.Start).Take(request.Length);
+            }
+
+            return new DatatableResponse<AssociadoDTO>
+            {
+                Data = listaAssociado.ToList(),
+                Draw = request.Draw,
+                RecordsFiltered = countRecordsFiltered,
+                RecordsTotal = totalRecords
+            };
+
         }
     }
 }

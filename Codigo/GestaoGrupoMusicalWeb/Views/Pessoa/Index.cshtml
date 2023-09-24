@@ -1,60 +1,85 @@
 ﻿@model IEnumerable<Core.DTO.AssociadoDTO>
+<link href="~/lib/datatable/css/datatables.min.css" rel="stylesheet" />
 <partial name="_Notificar">
-@{
-    ViewData["Title"] = "Index";
-}
-<div class="d-flex justify-content-between align-items-center">
-    <h1 class="fs-5">Associados</h1>
-    <a role="button" class="btn btn-secondary m-3" asp-action="Create">Novo Associado</a>
-</div>
+    @{
+        ViewData["Title"] = "Index";
+    }
+    <div class="d-flex justify-content-between align-items-center">
+        <h1 class="fs-5">Associados</h1>
+        <a role="button" class="btn btn-secondary m-3" asp-action="Create">Novo Associado</a>
+    </div>
 
-<table class="table">
-    <thead>
-        <tr class="bg-danger opacity-75">
-            <th class="px-3 border-0 w-25">
-                <span class="text-white">Código</span>
-            </th>
-            <th class="px-3 border-0 w-25">
-                <span class="text-white">Nome</span>
-            </th>
-            <th class="px-3 border-0 w-25">
-                <span class="text-white">Ativo</span>
-            </th>
-            <th class="px-3 border-0 w-25">
-                <span class="text-white">Ações</span>
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr class="border-bottom border-danger border-opacity-75 p-3 align-middle">
-                <td class="p-3">
-                    @Html.DisplayFor(modelItem => item.Id)
-                </td>
-                <td class="p-3">
-                    @Html.DisplayFor(modelItem => item.Nome)
-                </td>
-                <td class="p-3">
-                    @{
-                        var result = "";
-
-                        if (item.Ativo.CompareTo(1) == 0)
-                        {
-                            result = "Sim";
-                        }
-                        else
-                        {
-                            result = "Não";
-                        }
-                    }
-                    @result
-                </td>
-                <td class="p-3">
-                    <a role="button" class="btn btn-secondary btn-sm mb-2 mb-lg-0" asp-controller="Pessoa" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"></i> Editar</a>
-                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="Pessoa" asp-action="RemoveAssociado" asp-route-id="@item.Id"><i class="fa-solid fa-xmark"> </i> Excluir</a>
-                </td>
+    <table id="tableAssociado" class="table table-striped table-bordered dt-responsive nowrap ">
+        <thead>
+            <tr class="bg-danger opacity-75">
+                <th class="px-3 border-0 w-25">
+                    <span class="text-white">Código</span>
+                </th>
+                <th class="px-3 border-0 w-25">
+                    <span class="text-white">Nome</span>
+                </th>
+                <th class="px-3 border-0 w-25">
+                    <span class="text-white">Ativo</span>
+                </th>
+                <th class="px-3 border-0 w-25">
+                    <span class="text-white">Ações</span>
+                </th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+
+    </table>
+    @section Scripts {
+        <script src="~/lib/datatable/js/datatables.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                $('#tableAssociado').DataTable({
+                    "processing": true, // for show progress bar
+                    "serverSide": true, // for process server side
+                    "filter": true, // this is for disable filter (search box)
+                    "orderMulti": false, // for disable multiple column at once
+                    "pageLength": 5,
+                    "lengthMenu": [
+                        [5, 10, 20, -1],
+                        [5, 10, 20, "Todos"]
+                    ],
+                    "ajax": {
+                        "url": "/Pessoa/GetDataPage",
+                        "type": "POST",
+                        "datatype": "json"
+                    },
+                    "columnDefs": [{
+                        "targets": [0],
+                        "visible": true,
+                        "searchable": false
+                    },
+                    {
+                        "targets": [3],
+                        "visible": true,
+                        "searchable": false,
+                        "orderable": false
+
+                    }],
+                    "columns": [
+                        { "data": "id", "name": "Codigo", "autoWidth": true },
+                        { "data": "nome", "name": "Associado", "autoWidth": true },
+                        { "data": "ativo", "name": "Ativo", "autoWidth": true,
+                            "render": function (data, type, full, meta) {
+                                return data === 1 ? 'Sim' : 'Não'
+                            }
+                        },
+                        {
+                            "render": function (data, type, full, meta) {
+
+                                return '<a class="btn btn btn-secondary btn-sm  m-2" href="/Pessoa/Edit/' + full.id + '"><i class="fa-solid fa-pen-to-square"> </i> Editar</a> ' +
+                                    '<a class="btn btn btn-secondary btn-sm  m-2" href="/Pessoa/RemoveAssociado/' + full.id + '"><i class="fa-solid fa-pen-to-square"> </i> Excluir</a> '
+                                    ;
+                            }
+                        },
+                    ],
+                    language: {
+                        url: "lib/datatable/js/pt-br.json",
+                    }
+                });
+            });
+        </script>
+    }
