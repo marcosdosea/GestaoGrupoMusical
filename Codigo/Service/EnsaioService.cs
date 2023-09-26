@@ -113,31 +113,22 @@ namespace Service
                     await transaction.RollbackAsync();
                     return HttpStatusCode.NotFound;
                 }
-                else
+
+                var ensaiosPessoa = await _context.Ensaiopessoas.Where(e => e.IdEnsaio == id).ToListAsync();
+                foreach (var ensaio_pessoa in ensaiosPessoa)
                 {
-                    try
-                    {
-                        var ensaioPessoa = await _context.Ensaiopessoas.Where(e => e.IdEnsaio == id).ToListAsync();
-                        foreach (var ensaios in ensaioPessoa)
-                        {
-                            _context.Ensaiopessoas.Remove(ensaios);
-                        }
-        
-                    }
-                    catch
-                    {
-                        await transaction.RollbackAsync();
-                        return HttpStatusCode.InternalServerError;
-                    }
-
-                    var ensaio = await _context.Ensaios.FindAsync(id);
-                    _context.Remove(ensaio);
-                    await _context.SaveChangesAsync();
-                    await transaction.CommitAsync();
-
-                    return HttpStatusCode.OK;
-
+                    _context.Ensaiopessoas.Remove(ensaio_pessoa);
                 }
+
+
+
+                var ensaio = await _context.Ensaios.FindAsync(id);
+                _context.Remove(ensaio);
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                return HttpStatusCode.OK;
+
             }catch
             {
                 await transaction.RollbackAsync();
