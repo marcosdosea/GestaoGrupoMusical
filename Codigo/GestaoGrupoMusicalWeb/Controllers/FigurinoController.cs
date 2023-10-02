@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Core;
+using Core.Datatables;
 using Core.DTO;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
@@ -34,12 +35,17 @@ namespace GestaoGrupoMusicalWeb.Controllers
             _pessoaService = pessoa;
             _movimentacaoService = movimentacaoService;
         }
-
+        [HttpPost]
+        public async Task<IActionResult> GetDataPage(DatatableRequest request)
+        {
+            var response = await _figurinoService.GetDataPage(request, Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
+            return Json(response);
+        }
         [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         // GET: FigurinoController
         public async Task<ActionResult> Index()
         {
-            var listFigurinos = await _figurinoService.GetAll(User.Identity.Name);
+            var listFigurinos = await _figurinoService.GetAll(Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
 
             var listFigurinosViewModdel = _mapper.Map<IEnumerable<FigurinoViewModel>>(listFigurinos);
 

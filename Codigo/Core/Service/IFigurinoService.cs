@@ -1,4 +1,5 @@
-﻿using Core.DTO;
+﻿using Core.Datatables;
+using Core.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace Core.Service
         /// </summary>
         /// <param name="cpf">cpf da pessoa autenticada para poder filtrar os figurinos</param>
         /// <returns>lista contendo todos os figurinos</returns>
-        Task<IEnumerable<Figurino>> GetAll(string cpf);
+        Task<IEnumerable<Figurino>> GetAll(int idGrupo);
 
         Task<Figurino> GetByName(string name);
         Task<IEnumerable<EstoqueDTO>> GetAllEstoqueDTO(int id);
@@ -42,5 +43,7 @@ namespace Core.Service
         Task<HttpStatusCode> DeleteEstoque(int idFigurino, int idManequim);
         Task<HttpStatusCode> EditEstoque(Figurinomanequim estoque);
         Task<EstoqueDTO> GetEstoque(int idFigurino, int idManequim);
+
+        Task<DatatableResponse<Figurino>> GetDataPage(DatatableRequest request, int idGrupo);
     }
 }

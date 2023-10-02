@@ -4,10 +4,12 @@ using Core.Service;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Core.Datatables;
 
 namespace Service
 {
@@ -74,11 +76,8 @@ namespace Service
             return await _context.Figurinos.FindAsync(id); ;
         }
 
-        public async Task<IEnumerable<Figurino>> GetAll(string cpf)
+        public async Task<IEnumerable<Figurino>> GetAll(int idGrupo)
         {
-            var pessoa = await _context.Pessoas.Where(p => p.Cpf == cpf).SingleOrDefaultAsync();
-            int idGrupo = pessoa.IdGrupoMusical;
-
             var query = await _context.Figurinos.Where(p => p.IdGrupoMusical == idGrupo).AsNoTracking().ToListAsync();
 
             return query;
@@ -204,6 +203,43 @@ namespace Service
                             Entregues = figurinomanequim.QuantidadeEntregue
                         };
             return await query.FirstAsync();
+        }
+
+        public async Task<DatatableResponse<Figurino>> GetDataPage(DatatableRequest request, int idGrupo)
+        {
+            var figurinos = await GetAll(idGrupo);
+            var totalRecords = figurinos.Count();
+
+            // filtra pelo campos de busca
+            if (request.Search != null && request.Search.GetValueOrDefault("value") != null)
+            {
+                figurinos = figurinos.Where(figurinos => figurinos.Id.ToString().Contains(request.Search.GetValueOrDefault("value"))
+                                              || figurinos.Nome.ToLower().Contains(request.Search.GetValueOrDefault("value")));
+            }
+
+            if (request.Order != null && request.Order[0].GetValueOrDefault("column").Equals("1"))
+            {
+                if (request.Order[0].GetValueOrDefault("dir").Equals("asc"))
+                    figurinos = figurinos.OrderBy(figurinos => figurinos.Nome);
+                else
+                    figurinos = figurinos.OrderByDescending(figurinos => figurinos.Nome);
+            }
+            else if (request.Order != null && request.Order[0].GetValueOrDefault("column").Equals("2"))
+                if (request.Order[0].GetValueOrDefault("dir").Equals("asc"))
+                    figurinos = figurinos.OrderBy(figurinos => figurinos.Data);
+                else
+                    figurinos = figurinos.OrderByDescending(figurinos => figurinos.Data);
+
+            int countRecordsFiltered = figurinos.Count();
+
+            figurinos = figurinos.Skip(request.Start).Take(request.Length);
+            return new DatatableResponse<Figurino>
+            {
+                Data = figurinos.ToList(),
+                Draw = request.Draw,
+                RecordsFiltered = countRecordsFiltered,
+                RecordsTotal = totalRecords
+            };
         }
     }
 }
