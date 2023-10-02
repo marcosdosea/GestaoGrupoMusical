@@ -104,14 +104,34 @@ namespace Service
         /// <returns>Verdadeiro(<see langword="true" />) se deletou com sucesso ou Falso(<see langword="false" />) se houve algum erro.</returns>
         public async Task<HttpStatusCode> Delete(int id)
         {
+            using var transaction = _context.Database.BeginTransaction();
             try
             {
-                _context.Ensaios.Remove(await Get(id));
+                var ensaioDB = await _context.Ensaios.Where(e => e.Id == id).AsNoTracking().SingleOrDefaultAsync();
+                if(ensaioDB == null)
+                {
+                    await transaction.RollbackAsync();
+                    return HttpStatusCode.NotFound;
+                }
+
+                var ensaiosPessoa = await _context.Ensaiopessoas.Where(e => e.IdEnsaio == id).ToListAsync();
+                foreach (var ensaio_pessoa in ensaiosPessoa)
+                {
+                    _context.Ensaiopessoas.Remove(ensaio_pessoa);
+                }
+
+
+
+                var ensaio = await _context.Ensaios.FindAsync(id);
+                _context.Remove(ensaio);
                 await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
                 return HttpStatusCode.OK;
-            }
-            catch
+
+            }catch
             {
+                await transaction.RollbackAsync();
                 return HttpStatusCode.InternalServerError;
             }
         }
