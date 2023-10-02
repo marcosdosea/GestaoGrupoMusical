@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Core;
+using Core.Datatables;
 using Core.DTO;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
@@ -24,6 +25,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
             _mapper = mapper;
             _pessoa = pessoa;
             _grupoMusical = grupoMusical;
+        }
+        [HttpPost]
+        public async Task<IActionResult> GetDataPage(DatatableRequest request)
+        {
+            var ensaios = await _ensaio.GetDataPage(request, await _grupoMusical.GetIdGrupo(User.Identity.Name));
+            return Json(ensaios);
         }
 
         [Authorize(Roles = "ADMINISTRADOR GRUPO,COLABORADOR,REGENTE")]

@@ -17,6 +17,7 @@ namespace Core.DTO
         [DisplayName("Local")]
         public string? Local { get; set; }
         [DisplayName("Presença Obrigatória")]
-        public sbyte PresencaObrigatoria { get; set; }
+        public string? PresencaObrigatoria { get; set; }
+        public String? DataHora { get; set; }
     }
 }

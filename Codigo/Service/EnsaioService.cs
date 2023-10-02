@@ -1,4 +1,5 @@
 ﻿using Core;
+using Core.Datatables;
 using Core.DTO;
 using Core.Service;
 using Email;
@@ -28,7 +29,7 @@ namespace Service
             {
                 if (ensaio.DataHoraFim > ensaio.DataHoraInicio)
                 {
-                    if(ensaio.DataHoraInicio >= DateTime.Now)
+                    if (ensaio.DataHoraInicio >= DateTime.Now)
                     {
                         await _context.Ensaios.AddAsync(ensaio);
 
@@ -56,10 +57,10 @@ namespace Service
                                 IdPessoa = associadoRegente.Id,
                                 Presente = 1
                             };
-                            if(associadoRegente.IdPapelGrupo == 5 && idRegentes.Contains(associadoRegente.Id))
+                            if (associadoRegente.IdPapelGrupo == 5 && idRegentes.Contains(associadoRegente.Id))
                             {
                                 ensaioPessoa.IdPapelGrupoPapelGrupo = associadoRegente.IdPapelGrupo;
-                            await _context.Ensaiopessoas.AddAsync(ensaioPessoa);
+                                await _context.Ensaiopessoas.AddAsync(ensaioPessoa);
                                 email.To.Add(associadoRegente.Email);
                             }
                             else
@@ -82,14 +83,14 @@ namespace Service
                         await transaction.RollbackAsync();
                         return HttpStatusCode.BadRequest;
                     }
-                   
+
                 }
-                else 
+                else
                 {
                     await transaction.RollbackAsync();
                     return HttpStatusCode.PreconditionFailed;
                 }
-             
+
             }
             catch
             {
@@ -145,32 +146,32 @@ namespace Service
         {
             using var transaction = _context.Database.BeginTransaction();
 
-             try
-             {
+            try
+            {
                 var ensaioDb = await _context.Ensaios.Where(e => e.Id == ensaio.Id).AsNoTracking().SingleOrDefaultAsync();
-                if(ensaioDb == null)
+                if (ensaioDb == null)
                 {
                     await transaction.RollbackAsync();
                     return HttpStatusCode.NotFound;
                 }
-                
+
                 ensaio.IdColaboradorResponsavel = ensaioDb.IdColaboradorResponsavel;
                 ensaio.IdGrupoMusical = ensaioDb.IdGrupoMusical;
 
                 if (ensaio.DataHoraFim > ensaio.DataHoraInicio)
                 {
-                    if(ensaio.DataHoraInicio >= DateTime.Now)
+                    if (ensaio.DataHoraInicio >= DateTime.Now)
                     {
                         var idEnsaioRegentes = _context.Ensaiopessoas
                                             .Where(ep => ep.IdEnsaio == ensaioDb.Id && ep.IdPapelGrupoPapelGrupo == 5)
                                             .Select(ep => ep.IdPessoa).AsEnumerable();
 
-                        if((idRegentes.Count() != idEnsaioRegentes.Count()) || (idRegentes.Except(idEnsaioRegentes).Any()))
+                        if ((idRegentes.Count() != idEnsaioRegentes.Count()) || (idRegentes.Except(idEnsaioRegentes).Any()))
                         {
                             var ensaioPessoaRegente = _context.Ensaiopessoas
                                                       .Where(ep => ep.IdEnsaio == ensaioDb.Id && ep.IdPapelGrupoPapelGrupo == 5);
                             _context.Ensaiopessoas.RemoveRange(ensaioPessoaRegente);
-                            foreach(int idRegente in idRegentes)
+                            foreach (int idRegente in idRegentes)
                             {
                                 Ensaiopessoa ensaioPessoa = new()
                                 {
@@ -195,17 +196,17 @@ namespace Service
                         return HttpStatusCode.BadRequest;
                     }
                 }
-                else 
+                else
                 {
                     await transaction.RollbackAsync();
                     return HttpStatusCode.PreconditionFailed;
                 }
-             }
-             catch
-             {
+            }
+            catch
+            {
                 await transaction.RollbackAsync();
                 return HttpStatusCode.InternalServerError;
-             }
+            }
         }
         /// <summary>
         /// Consulta um Ensaio no banco de dados
@@ -243,14 +244,15 @@ namespace Service
         {
             var query = _context.Ensaios
                 .OrderBy(g => g.DataHoraInicio)
-                .Where(g => g.IdGrupoMusical ==  idGrupo)
+                .Where(g => g.IdGrupoMusical == idGrupo)
                 .Select(g => new EnsaioIndexDTO
                 {
                     Id = g.Id,
-                    DataHoraInicio = g.DataHoraInicio,
+                    DataHora = g.DataHoraInicio.ToString("dd/MM/yyyy HH:mm:ss"),
                     Tipo = g.Tipo,
                     Local = g.Local,
-                    PresencaObrigatoria = g.PresencaObrigatoria
+                    PresencaObrigatoria = g.PresencaObrigatoria == 1 ? "Sim" : "Não",
+                    DataHoraInicio = g.DataHoraInicio
 
                 }).AsNoTracking().ToListAsync();
             return await query;
@@ -338,7 +340,7 @@ namespace Service
                 int pos = 0;
                 await dbFrequencias.ForEachAsync(dbFrequencia =>
                 {
-                    if(dbFrequencia.IdEnsaio == frequencias[0].IdEnsaio && dbFrequencia.IdPessoa == frequencias[pos].IdPessoa)
+                    if (dbFrequencia.IdEnsaio == frequencias[0].IdEnsaio && dbFrequencia.IdPessoa == frequencias[pos].IdPessoa)
                     {
                         dbFrequencia.JustificativaAceita = Convert.ToSByte(frequencias[pos].JustificativaAceita);
                         dbFrequencia.Presente = Convert.ToSByte(frequencias[pos].Presente);
@@ -350,7 +352,7 @@ namespace Service
 
                 await _context.SaveChangesAsync();
 
-                return HttpStatusCode.OK ;
+                return HttpStatusCode.OK;
             }
             catch
             {
@@ -358,7 +360,7 @@ namespace Service
             }
         }
 
-        public async Task<IEnumerable<EnsaioAssociadoDTO>> GetEnsaiosByIdPesoaAsync(int idPessoa) 
+        public async Task<IEnumerable<EnsaioAssociadoDTO>> GetEnsaiosByIdPesoaAsync(int idPessoa)
         {
             var query = from ensaioPessoa in _context.Ensaiopessoas
                         where ensaioPessoa.IdPessoa == idPessoa
@@ -416,5 +418,44 @@ namespace Service
                                  .Where(ep => ep.IdEnsaio == idEnsaio && ep.IdPapelGrupoPapelGrupo == 5)
                                  .Select(ep => ep.IdPessoa).ToListAsync();
         }
+
+        public async Task<DatatableResponse<EnsaioIndexDTO>> GetDataPage(DatatableRequest request, int idGrupo)
+        {
+            var ensaios = await GetAllIndexDTO(idGrupo);
+            var totalRecords = ensaios.Count();
+
+            // filtra pelo campos de busca
+            if (request.Search != null && request.Search.GetValueOrDefault("value") != null)
+            {
+                ensaios = ensaios.Where(ensaios => ensaios.Id.ToString().Contains(request.Search.GetValueOrDefault("value"))
+                                              || ensaios.Local.ToLower().Contains(request.Search.GetValueOrDefault("value")));
+            }
+
+            if (request.Order != null && request.Order[0].GetValueOrDefault("column").Equals("0"))
+            {
+                if (request.Order[0].GetValueOrDefault("dir").Equals("asc"))
+                    ensaios = ensaios.OrderBy(ensaios => ensaios.DataHoraInicio);
+                else
+                    ensaios = ensaios.OrderByDescending(ensaios => ensaios.DataHoraInicio);
+            }
+            else if (request.Order != null && request.Order[0].GetValueOrDefault("column").Equals("2"))
+            {
+                if (request.Order[0].GetValueOrDefault("dir").Equals("asc"))
+                    ensaios = ensaios.OrderBy(ensaios => ensaios.Local);
+                else
+                    ensaios = ensaios.OrderByDescending(ensaios => ensaios.Local);
+            }
+            int countRecordsFiltered = ensaios.Count();
+
+            ensaios = ensaios.Skip(request.Start).Take(request.Length);
+            return new DatatableResponse<EnsaioIndexDTO>
+            {
+                Data = ensaios.ToList(),
+                Draw = request.Draw,
+                RecordsFiltered = countRecordsFiltered,
+                RecordsTotal = totalRecords
+            };
+        } 
     }
+
 }

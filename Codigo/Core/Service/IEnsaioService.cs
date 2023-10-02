@@ -1,5 +1,7 @@
 ﻿using Core.DTO;
+using System.Data;
 using System.Net;
+using Core.Datatables;
 
 namespace Core.Service
 {
@@ -73,5 +75,7 @@ namespace Core.Service
         /// HttpStatusCode.InternalServerError - Erro interno
         /// </returns>
         Task<HttpStatusCode> RegistrarJustificativaAsync(int idEnsaio, int idPessoa, string? justificativa);
+
+        Task<DatatableResponse<EnsaioIndexDTO>> GetDataPage(DatatableRequest request, int idGrupo);
     }
 }

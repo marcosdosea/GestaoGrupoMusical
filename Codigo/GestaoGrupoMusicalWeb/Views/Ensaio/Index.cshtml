@@ -1,5 +1,5 @@
 ﻿@model IEnumerable<Core.DTO.EnsaioIndexDTO>
-
+<link href="~/lib/datatable/css/datatables.min.css" rel="stylesheet" />
 @{
     ViewData["Title"] = "Ensaios";
 }
@@ -9,7 +9,7 @@
     <a role="button" class="btn btn-secondary m-3" asp-controller="Ensaio" asp-action="Create">Novo Ensaio</a>
 </div>
 <div class="table-responsive">
-    <table class="table">
+        <table id="tableEnsaio" class="table table-striped table-bordered dt-responsive nowrap ">
         <thead>
             <tr class="bg-danger bg-opacity-75 text-white">
                 <th>
@@ -27,47 +27,6 @@
                 <th>Ações</th>
             </tr>
         </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr class="border-bottom border-danger border-opacity-75 p-3 align-middle">
-                    <td>
-                        @Html.DisplayFor(modelItem => item.DataHoraInicio)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Tipo)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Local)
-                    </td>
-                    @{
-                        String presenca = String.Empty;
-                        if (item.PresencaObrigatoria == 1)
-                        {
-                            presenca = "Sim";
-                        }
-                        else
-                        {
-                            presenca = "Não";
-                        }
-                    }
-                    <td>
-                        @Html.DisplayFor(modelItem => presenca)
-                    </td>
-                    <td class="d-flex gap-1 border-0 flex-wrap py-3">                
-                        <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb-2" asp-controller="Ensaio" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"> </i> Editar </a>
-                        <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb-2" asp-controller="Ensaio" asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-file"> </i> Detalhes </a>
-                        <form id="@(item.Id + "_confirmar")" asp-action="Delete" asp-route-id="@item.Id" method="post">
-                            <a onclick="showModal('@(item.Id + "_confirmar")', 'ensaioModal')" class="btn btn-secondary btn-sm mb-xl-0 mb-2" role="button" data-bs-toggle="modal" data-bs-target="#ensaioModal">
-                                <i class="fa-solid fa-xmark"> </i>
-                                Excluir
-                            </a>
-                        </form>
-                        <a role="button" class="btn btn-secondary btn-sm mb-xl-0" asp-controller="Ensaio" asp-action="RegistrarFrequencia" asp-route-idEnsaio="@item.Id"><i class="fa-solid fa-list-check"> </i> Frequência</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
     </table>
 </div>
     <div class="modal fade" id="ensaioModal" tabindex="-1" aria-labelledby="ensaioLabel" aria-hidden="true">
@@ -87,3 +46,69 @@
             </div>
         </div>
     </div>
+    @section Scripts {
+        <script src="~/lib/datatable/js/datatables.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                $('#tableEnsaio').DataTable({
+                    "processing": true, // for show progress bar
+                    "serverSide": true, // for process server side
+                    "filter": true, // this is for disable filter (search box)
+                    "orderMulti": false, // for disable multiple column at once
+                    "pageLength": 5,
+                    "lengthMenu": [
+                        [5, 10, 20, -1],
+                        [5, 10, 20, "Todos"]
+                    ],
+                    "ajax": {
+                        "url": "/Ensaio/GetDataPage",
+                        "type": "POST",
+                        "datatype": "json"
+                    },
+                    "columnDefs": [{
+                        "targets": [0],
+                        "visible": true,
+                        "searchable": false
+                    },
+                    {
+                        "targets": [3],
+                        "visible": true,
+                        "searchable": false,
+                        "orderable": false
+                    }],
+                    "columns": [
+                        { "data": "dataHora", "name": "Data Hora Inicio", "autoWidth": true },
+                        { "data": "tipo", "name": "Tipo", "autoWidth": true },
+                        { "data": "local", "name": "Local", "autoWidth": true },
+                        { "data": "presencaObrigatoria", "name": "Presença Obrigatória", "autoWidth": true },
+                        {
+                            "render": function (data, type, full, meta) {
+                                return '<a class="btn btn btn-secondary btn-sm  m-2" href="/Ensaio/Edit/' + full.id + '"><i class="fa-solid fa-pen-to-square"> </i> Editar</a> ' +
+                                    '<a onclick="showConfirmationModal(' + full.id + ')" class="btn btn-sm btn-secondary" role="button"><i class="fa-solid fa-xmark"></i> Excluir</a>' +
+                                    '<a class="btn btn btn-secondary btn-sm  m-2" href="/Ensaio/Details/' + full.id + '"><i class="fa-solid fa-arrow-right-arrow-left"></i> Detalhes</a> '
+                                    ;
+                            }
+                        },
+                    ],
+                    language: {
+                        url: "lib/datatable/js/pt-br.json",
+                    }
+                });
+            });
+        </script>
+
+        <script>
+            function showConfirmationModal(formId) {
+                var modal = document.getElementById('ensaioModal');
+                var modalForm = modal.querySelector('form');
+                modalForm.action = '/Ensaio/Delete/' + formId; // Define a ação do formulário com a rota correta
+                var modalBody = modal.querySelector('.modal-body');
+                modalBody.innerHTML = 'Deseja <b>Excluir</b> o <b>Ensaio</b>?'; // Conteúdo do modal
+
+                // Exibe o modal
+                var modal = new bootstrap.Modal(modal);
+                modal.show();
+            }
+
+        </script>
+    }
