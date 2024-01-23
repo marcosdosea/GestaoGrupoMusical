@@ -41,12 +41,12 @@ jobs:
 
     - name: Build Application
       run: |
-        cd ${{env.solution-directory}}
+        cd ${{env.work-directory}}
         dotnet build --no-restore
       
     - name: Publish Application
       run: |
-        cd ${{env.solution-directory}}
+        cd ${{env.work-directory}}
         dotnet publish -c --configuration Release --no-restore --output ./publishWEB
     
     - name: Upload via FTP
