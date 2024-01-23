@@ -245,7 +245,7 @@ namespace Service.Tests
         public void GetAllTest()
         {
             // Act
-            var figurinos = _figurino.GetAll("007.587.624-02").Result;
+            var figurinos = _figurino.GetAll(1).Result;
 
             // Assert
             Assert.IsNotNull(figurinos);

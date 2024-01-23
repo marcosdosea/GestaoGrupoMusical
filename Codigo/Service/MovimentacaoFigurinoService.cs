@@ -232,7 +232,13 @@ namespace Service
             return query;
         }
 
+        public async Task<Movimentacaofigurino?> Get(int id)
+        {
+            var result = _context.Movimentacaofigurinos.ToList();
+            return await _context.Movimentacaofigurinos.FindAsync(id);
+        }
 
+        
         public Task<Movimentacaofigurino?> GetEmprestimoByIdFigurino(int idFigurino)
         {
             throw new NotImplementedException();

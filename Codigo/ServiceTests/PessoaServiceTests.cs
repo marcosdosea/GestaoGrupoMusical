@@ -144,10 +144,10 @@ namespace Service.Tests
             Assert.AreEqual(4, _pessoaService.GetAll().Count());
             var pessoa = _pessoaService.Get(4);
             Assert.AreEqual(4, pessoa.Id);
-            Assert.AreEqual("007.789.024-02", pessoa.Cpf);
+            Assert.AreEqual("00778902402", pessoa.Cpf);
             Assert.AreEqual("Jorge santos", pessoa.Nome);
             Assert.AreEqual("M", pessoa.Sexo);
-            Assert.AreEqual("49520-111", pessoa.Cep);
+            Assert.AreEqual("49520111", pessoa.Cep);
             Assert.AreEqual("Rua 10", pessoa.Rua);
             Assert.AreEqual("Centro", pessoa.Bairro);
             Assert.AreEqual("Itabaina", pessoa.Cidade);

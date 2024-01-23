@@ -53,6 +53,13 @@ namespace Core.Service
         /// </returns>
         Task<HttpStatusCode> DeleteAsync(int id);
 
+        /// <summary>
+        /// Busca uma movimentação de figurino
+        /// </summary>
+        /// <param name="id">código da movimentação</param>
+        /// <returns>movimentação do figurino</returns>
+        Task<Movimentacaofigurino?> Get(int id);
+
         Task<IEnumerable<EstoqueDTO>> GetEstoque(int idFigurino);
         
         /// <summary>

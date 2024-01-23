@@ -3,6 +3,7 @@ using Core.Service;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Net;
 
 namespace Service.Tests
 {
@@ -10,7 +11,7 @@ namespace Service.Tests
     public class MovimentacaoFigurinoServiceTests
     {
         private GrupoMusicalContext _context;
-        private IMovimentacaoFigurinoService _movimentacaoFigurino;
+        private IMovimentacaoFigurinoService _movimentacaoFigurinoService;
 
         [TestInitialize]
         public void Initialize()
@@ -260,14 +261,14 @@ namespace Service.Tests
             _context.Movimentacaofigurinos.AddRange(movimentacoesFigurinos);
             _context.SaveChanges();
 
-            _movimentacaoFigurino = new MovimentacaoFigurinoService(_context);
+            _movimentacaoFigurinoService = new MovimentacaoFigurinoService(_context);
         }
 
         [TestMethod]
         public void CreateAsyncTest()
         {
             // Act
-            var result = _movimentacaoFigurino.CreateAsync(new Movimentacaofigurino
+            var result = _movimentacaoFigurinoService.CreateAsync(new Movimentacaofigurino
             {
                 Id = 4,
                 Data = new DateTime(2023, 4, 1, 0, 0, 0, 0, DateTimeKind.Local),
@@ -275,14 +276,14 @@ namespace Service.Tests
                 IdManequim = 4,
                 IdAssociado = 4,
                 IdColaborador = 2,
-                Status = "DISPONIVEL",
-                ConfirmacaoRecebimento = 0
-
+                Status = "ENTREGUE",
+                ConfirmacaoRecebimento = 0,
+                Quantidade = 1
             }).Result;
 
             // Assert
-            Assert.AreEqual(200, result);
-            var movimentacaoFigurino = _context.Movimentacaofigurinos.FindAsync(4).Result;
+            Assert.AreEqual(HttpStatusCode.OK, result);
+            var movimentacaoFigurino = _movimentacaoFigurinoService.Get(4).Result;
             
             Assert.IsNotNull(movimentacaoFigurino);
             Assert.AreEqual(4, movimentacaoFigurino.Id);
@@ -291,15 +292,16 @@ namespace Service.Tests
             Assert.AreEqual(4, movimentacaoFigurino.IdManequim);
             Assert.AreEqual(4, movimentacaoFigurino.IdAssociado);
             Assert.AreEqual(2, movimentacaoFigurino.IdColaborador);
-            Assert.AreEqual("DISPONIVEL", movimentacaoFigurino.Status);
+            Assert.AreEqual("ENTREGUE", movimentacaoFigurino.Status);
             Assert.AreEqual(0, movimentacaoFigurino.ConfirmacaoRecebimento);
+            Assert.AreEqual(1, movimentacaoFigurino.Quantidade);
         }
 
         [TestMethod]
         public void DeleteAsyncTest()
         {
             // Act
-            _movimentacaoFigurino.DeleteAsync(1).Wait();
+            _movimentacaoFigurinoService.DeleteAsync(1).Wait();
 
             // Assert
             var movimentacaoFigurino = _context.Movimentacaofigurinos.FindAsync(1).Result;
@@ -310,7 +312,7 @@ namespace Service.Tests
         public void GetAllByIdFigurinoTest()
         {
             // Act
-            var movimentacoesFigurinos = _movimentacaoFigurino.GetAllByIdFigurino(2).Result;
+            var movimentacoesFigurinos = _movimentacaoFigurinoService.GetAllByIdFigurino(2).Result;
 
             // Assert
             Assert.AreEqual(1, movimentacoesFigurinos.Count());
@@ -320,7 +322,7 @@ namespace Service.Tests
         public void AssociadoEmprestimoTest()
         {
             // Act
-            var result = _movimentacaoFigurino.AssociadoEmprestimo(3, 3, 1).Result;
+            var result = _movimentacaoFigurinoService.AssociadoEmprestimo(3, 3, 1).Result;
 
             // Assert
             Assert.IsNotNull(result);
@@ -331,7 +333,7 @@ namespace Service.Tests
         public void GetEstoqueTest() 
         {
             // Act 
-            var estoqueFigurinoManequins = _movimentacaoFigurino.GetEstoque(3).Result;
+            var estoqueFigurinoManequins = _movimentacaoFigurinoService.GetEstoque(3).Result;
 
             // Assert
             Assert.AreEqual(1, estoqueFigurinoManequins.Count());
@@ -341,7 +343,7 @@ namespace Service.Tests
         public void MovimentacoesByIdAssociadoAsyncTest()
         {
             // Act
-            var movimentacoesAssociado = _movimentacaoFigurino.MovimentacoesByIdAssociadoAsync(3).Result;
+            var movimentacoesAssociado = _movimentacaoFigurinoService.MovimentacoesByIdAssociadoAsync(3).Result;
 
             // Assert
             Assert.IsNotNull(movimentacoesAssociado.Entregue);
@@ -354,7 +356,7 @@ namespace Service.Tests
         public void ConfirmarMovimentacaoTest()
         {
             // Act
-            _movimentacaoFigurino.ConfirmarMovimentacao(1, 1);
+            _movimentacaoFigurinoService.ConfirmarMovimentacao(1, 1);
 
             // Assert
             var movimentacao = _context.Movimentacaofigurinos.FindAsync(1).Result;

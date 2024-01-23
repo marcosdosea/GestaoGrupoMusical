@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Service;
-
+using System.Net;
 
 namespace Service.Tests
 {
@@ -12,7 +12,7 @@ namespace Service.Tests
     public class MovimentacaoInstrumentoServiceTest
     {
         private GrupoMusicalContext _context;
-        private IMovimentacaoInstrumentoService _movimentacaoInstrumento;
+        private IMovimentacaoInstrumentoService _movimentacaoInstrumentoService;
 
         [TestInitialize]
         public void Initialize()
@@ -231,14 +231,14 @@ namespace Service.Tests
             _context.AddRange(instrumentosMusicais);
             _context.SaveChanges();
 
-            _movimentacaoInstrumento = new MovimentacaoInstrumentoService(_context);
+            _movimentacaoInstrumentoService = new MovimentacaoInstrumentoService(_context);
         }
 
         [TestMethod]
         public void CreateAsyncTest()
         {
             // Act
-            _movimentacaoInstrumento.CreateAsync(new Movimentacaoinstrumento
+            _movimentacaoInstrumentoService.CreateAsync(new Movimentacaoinstrumento
             {
                 Id = 4,
                 Data = new DateTime(2023, 3, 10, 0, 0, 0, 0, DateTimeKind.Local),
@@ -264,7 +264,7 @@ namespace Service.Tests
         public void DeleteAsyncTest()
         {
             // Act
-            _movimentacaoInstrumento.DeleteAsync(2).Wait();
+            _movimentacaoInstrumentoService.DeleteAsync(2).Wait();
 
             // Assert
             var movimentacaoInstrumento = _context.Movimentacaoinstrumentos.FindAsync(2).Result;
@@ -275,7 +275,7 @@ namespace Service.Tests
         public void GetAllByIdInstrumentoTest()
         {
             // Act
-            var instrumentos = _movimentacaoInstrumento.GetAllByIdInstrumento(1).GetAwaiter().GetResult();
+            var instrumentos = _movimentacaoInstrumentoService.GetAllByIdInstrumento(1).GetAwaiter().GetResult();
 
             // Assert
             Assert.IsNotNull(instrumentos);
@@ -294,7 +294,7 @@ namespace Service.Tests
         public void GetEmprestimoByIdInstrumentoTest()
         {
             // Act
-            var movimentacaoInstrumento = _movimentacaoInstrumento.GetEmprestimoByIdInstrumento(3).GetAwaiter().GetResult();
+            var movimentacaoInstrumento = _movimentacaoInstrumentoService.GetEmprestimoByIdInstrumento(3).GetAwaiter().GetResult();
 
             // Assert
             Assert.IsNotNull(movimentacaoInstrumento);
@@ -312,7 +312,7 @@ namespace Service.Tests
         public void MovimentacoesByIdAssociadoAsyncTest()
         {
             // Act
-            var movimentacoesInstrumentos = _movimentacaoInstrumento.MovimentacoesByIdAssociadoAsync(2).GetAwaiter().GetResult();
+            var movimentacoesInstrumentos = _movimentacaoInstrumentoService.MovimentacoesByIdAssociadoAsync(2).GetAwaiter().GetResult();
 
             // Assert
             Assert.IsNotNull(movimentacoesInstrumentos);
@@ -326,7 +326,7 @@ namespace Service.Tests
         public void ConfirmarMovimentacaoAsyncTest()
         {
             // Act 
-            _movimentacaoInstrumento.ConfirmarMovimentacaoAsync(1, 1);
+            _movimentacaoInstrumentoService.ConfirmarMovimentacaoAsync(1, 1);
 
             // Assert
             var movimentacaoInstrumento = _context.Movimentacaoinstrumentos.Find(1);
@@ -340,10 +340,10 @@ namespace Service.Tests
         public void NotificarViaEmailAsyncTest()
         {
             // Act
-            var result = _movimentacaoInstrumento.NotificarViaEmailAsync(3).Result;
+            var result = _movimentacaoInstrumentoService.NotificarViaEmailAsync(3).Result;
 
             // Assert
-            Assert.AreEqual(200, result);
+            Assert.AreEqual(HttpStatusCode.OK, result);
         }
     }
 }
