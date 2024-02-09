@@ -46,7 +46,7 @@ jobs:
       
     - name: Publish Application
       run: |
-        cd ${{env.work-directory}}
+        cd ${{env.solution-directory}}
         dotnet publish -c Release -p:UseAppHost=false --output ./publishWEB
     
     - name: Test
