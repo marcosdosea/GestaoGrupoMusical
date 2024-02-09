@@ -20,7 +20,7 @@ jobs:
 
     steps:
     - name: Execute checkout in repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     
     - name: Configure .NET version
       uses: actions/setup-dotnet@v1
@@ -47,7 +47,7 @@ jobs:
     - name: Publish Application
       run: |
         cd ${{env.work-directory}}
-        dotnet publish -c --configuration Release --no-restore --output ./publishWEB
+        dotnet publish -c Release -p:UseAppHost=false --output ./publishWEB
     
     - name: Upload via FTP
       uses: SamKirkland/FTP-Deploy-Action@4.3.0
