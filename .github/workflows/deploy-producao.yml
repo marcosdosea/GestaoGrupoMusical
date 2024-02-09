@@ -20,10 +20,10 @@ jobs:
 
     steps:
     - name: Execute checkout in repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     
     - name: Configure .NET version
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 6.0.413
       
@@ -41,21 +41,21 @@ jobs:
 
     - name: Build Application
       run: |
-        cd ${{env.solution-directory}}
+        cd ${{env.work-directory}}
         dotnet build --no-restore
       
     - name: Publish Application
       run: |
         cd ${{env.solution-directory}}
-        dotnet publish -c --configuration Release --no-restore --output ./publishWEB
-    
+        dotnet publish -c Release -p:UseAppHost=false --output ./publishWEB
+      
     - name: Upload via FTP
       uses: SamKirkland/FTP-Deploy-Action@4.3.0
       with:
         server: ${{ secrets.FTP_SERVER }}
         username: ${{ secrets.FTP_USER }}
         password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: '${{env.work-directory}}/publishWEB/'
+        local-dir: '${{env.solution-directory}}/publishWEB/'
         remote-dir: ./
         exclude: |
           **/.git*
