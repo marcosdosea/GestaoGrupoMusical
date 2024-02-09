@@ -48,9 +48,6 @@ jobs:
       run: |
         cd ${{env.solution-directory}}
         dotnet publish -c Release -p:UseAppHost=false --output ./publishWEB
-    
-#    - name: Test
-#      run: dotnet test --no-build --verbosity normal
       
     - name: Upload via FTP
       uses: SamKirkland/FTP-Deploy-Action@4.3.0
