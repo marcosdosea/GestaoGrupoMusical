@@ -5,11 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.EntityFrameworkCore;
 using Service;
-using NuGet.Frameworks;
 using Core.DTO;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Service.Tests
 {

@@ -92,20 +92,20 @@ namespace GestaoGrupoMusicalWeb.Controllers
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
-
+                user.Email = model.Pessoa.Email;
                 await _userStore.SetUserNameAsync(user, model.Pessoa.Cpf, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, model.Senha);
 
                 if (result.Succeeded)
                 {
-                    bool roleExists = await _roleManager.RoleExistsAsync("ADMINISTRADOR GRUPO");
+                    bool roleExists = await _roleManager.RoleExistsAsync("ADMINISTRADOR SISTEMA");
                     if (!roleExists)
                     {
-                        await _roleManager.CreateAsync(new IdentityRole("ADMINISTRADOR GRUPO"));
+                        await _roleManager.CreateAsync(new IdentityRole("ADMINISTRADOR SISTEMA"));
                     }
 
                     var userDb = await _userManager.FindByNameAsync(model.Pessoa.Cpf);
-                    await _userManager.AddToRoleAsync(userDb, "ADMINISTRADOR GRUPO");
+                    await _userManager.AddToRoleAsync(userDb, "ADMINISTRADOR SISTEMA");
 
                     await _pessoaService.Create(_mapper.Map<Pessoa>(model.Pessoa));
 

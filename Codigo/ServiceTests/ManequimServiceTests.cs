@@ -1,13 +1,7 @@
-﻿using Core.Service;
-using Core;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Core;
+using Core.Service;
 using Microsoft.EntityFrameworkCore;
-using Service;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Service.Tests
 {
