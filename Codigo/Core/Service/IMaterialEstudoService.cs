@@ -15,6 +15,6 @@ namespace Core.Service
 
         Task<bool> Delete(int id);
         Task<Materialestudo?> Get(int id);
-        Task<IEnumerable<Materialestudo?>> GetAll();
+        Task<IEnumerable<Materialestudo>> GetAll();
     }
 }

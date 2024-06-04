@@ -5,6 +5,7 @@ using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualBasic;
+using NuGet.Protocol;
 using Service;
 using System.Collections;
 using System.Net;
@@ -23,12 +24,15 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
 
-
+        public static void Teste()
+        {
+            Console.WriteLine("\n######################");
+        }
         // GET: MaterialEstudoController
         public async Task<ActionResult> Index()
         {
             var listaMaterialEstudo = await _materialEstudo.GetAll();
-            var listaMaterialEstudoModel = _mapper.Map<List<Materialestudo>>(listaMaterialEstudo);
+            var listaMaterialEstudoModel = _mapper.Map<List<MaterialEstudoViewModel>>(listaMaterialEstudo);
             return View(listaMaterialEstudoModel);
         }
 

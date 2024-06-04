@@ -64,7 +64,7 @@ namespace Service
             return await _context.Materialestudos.FindAsync(id);
         }
 
-        public async Task<IEnumerable<Materialestudo?>> GetAll()
+        public async Task<IEnumerable<Materialestudo>> GetAll()
         {
             return await _context.Materialestudos.AsNoTracking().ToListAsync();
         }
