@@ -1,4 +1,6 @@
 ﻿using Core;
+using Core.Datatables;
+using Core.DTO;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -68,5 +70,26 @@ namespace Service
         {
             return await _context.Materialestudos.AsNoTracking().ToListAsync();
         }
+
+        public async Task<IEnumerable<Materialestudo>> GetAllPerGrupoMusical(int idGrupoMusical)
+        {
+            var query = await (from materialEstudo in _context.Materialestudos
+/*                               join
+                               pessoa in _context.Pessoas
+                               on materialEstudo.IdColaborador equals pessoa.Id*/
+                               join grupoMusical in _context.Grupomusicals
+                               on materialEstudo.IdGrupoMusical equals idGrupoMusical
+                               orderby materialEstudo.Nome ascending
+                               select new Materialestudo
+                               {
+                                   Id = materialEstudo.Id,
+                                   Nome = materialEstudo.Nome,
+                                   Link = materialEstudo.Link,
+                                   Data = materialEstudo.Data,
+                               }).AsNoTracking().ToListAsync();
+            return query.ToList();
+        }
+
+
     }
 }

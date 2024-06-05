@@ -36,13 +36,20 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return View(listaMaterialEstudoModel);
         }
 
+         [HttpPost]
+        /*public async Task<IActionResult> GetDataPage(DatatableRequest request)
+        {
+            var response = await _instrumentoMusical.GetDataPage(request, await _grupoMusical.GetIdGrupo(User.Identity.Name));
+            return Json(response);
+        }*/
+
         // GET: MaterialEstudoController/Details/5
         public async Task<ActionResult> Details(int id)
         {
             var listaMaterialEstudo = await _materialEstudo.Get(id);
             if (listaMaterialEstudo != null)
             {
-                var listaMaterialEstudoModel = _mapper.Map<List<Materialestudo>>(listaMaterialEstudo);
+                var listaMaterialEstudoModel = _mapper.Map<List<MaterialEstudoViewModel>>(listaMaterialEstudo);
                 return View(listaMaterialEstudoModel);
             }
             Notificar("<b>Material de estudo não encontrado!</b>", Notifica.Alerta);
@@ -74,7 +81,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> Edit(int id)
         {
             var materialEstudo = await _materialEstudo.Get(id);
-            var model = _mapper.Map<Materialestudo>(materialEstudo);
+            var model = _mapper.Map<MaterialEstudoViewModel>(materialEstudo);
             return View(model);
         }
 
