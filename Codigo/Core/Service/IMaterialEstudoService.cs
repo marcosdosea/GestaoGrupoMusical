@@ -10,7 +10,7 @@ namespace Core.Service
     public interface IMaterialEstudoService
     {
         Task<bool> Create(Materialestudo materialEstudo);
-
+         
         Task<bool> Edit(Materialestudo materialEstudo);
 
         Task<bool> Delete(int id);
