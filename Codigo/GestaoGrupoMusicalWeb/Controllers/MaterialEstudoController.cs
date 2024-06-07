@@ -5,6 +5,7 @@ using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Net;
 
 namespace GestaoGrupoMusicalWeb.Controllers

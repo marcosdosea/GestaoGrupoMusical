@@ -14,19 +14,20 @@ namespace Service
             _context = context;
         }
 
-        public async Task<bool> Create(Materialestudo materialEstudo)
+        public async Task<HttpStatusCode> Create(Materialestudo materialEstudo)
         {
-            using var transaction = _context.Database.BeginTransaction();
+            //using var transaction = _context.Database.BeginTransaction();
+            
             try
             {
 
                 await _context.AddAsync(materialEstudo);
                 await _context.SaveChangesAsync();
-                return true;
-            }catch
+                return HttpStatusCode.Created;
+            }catch (Exception)
             {
-                await transaction.RollbackAsync();
-                return false;
+                //await transaction.RollbackAsync();
+                return HttpStatusCode.InternalServerError;
             }
         }
 
