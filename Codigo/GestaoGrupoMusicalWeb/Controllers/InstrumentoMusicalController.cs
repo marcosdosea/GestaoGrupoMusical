@@ -182,6 +182,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         public async Task<ActionResult> Delete(int id)
         {
+            Console.WriteLine("\n############## PRIMEIRO ##############");
             var instrumentoMusicalDTO = _instrumentoMusical.GetInstrumentoMusicalDeleteDTO(id).GetAwaiter().GetResult();
 
             if (instrumentoMusicalDTO.Status != "EMPRESTADO")
@@ -210,7 +211,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         public async Task<ActionResult> Delete(int id, InstrumentoMusicalViewModel instrumentoMusicalViewModel)
         {
-            switch(await _instrumentoMusical.Delete(id))
+            Console.WriteLine("\n############## SEGUNDO ##############");
+            switch (await _instrumentoMusical.Delete(id))
             {
                 case HttpStatusCode.OK:
                     Notificar("Instrumento Musical <b>Excluído</b> com <b>Sucesso</b>.", Notifica.Sucesso);

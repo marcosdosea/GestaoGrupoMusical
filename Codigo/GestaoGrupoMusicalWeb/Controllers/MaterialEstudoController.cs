@@ -97,22 +97,24 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: MaterialEstudoController/Delete/5
         public async Task<ActionResult>Delete(int id)
         {
+            Console.WriteLine("\n############## PRIMEIRO ##############");
             var materialEstudo = await _materialEstudo.Get(id);
             var model = _mapper.Map<MaterialEstudoViewModel>(materialEstudo);
-
-            return View(model);
+            Notificar("Não é permitido <b>Deletar</b> os dados de um instrumento <b>Emprestado</b>.", Notifica.Alerta);
+            return RedirectToAction(nameof(Index));
         }
 
         // POST: MaterialEstudoController/Delete/5
 
         public async Task<ActionResult> Delete(int id, MaterialEstudoViewModel instrumentoMusicalViewModel)
         {
+            Console.WriteLine("\n############## SEGUNDO ##############");
             switch (await _materialEstudo.Delete(id))
             {
                 case HttpStatusCode.OK:
                     Notificar("Material de Estudo <b>Excluído</b> com <b>Sucesso</b>.", Notifica.Sucesso);
                     break;
-                case HttpStatusCode.NotFound:
+                default :
                     Notificar($"Nenhum <b>Material de Estudo</b> foi encontrado <b>{id}</b>.", Notifica.Erro);
                     break;
             }
