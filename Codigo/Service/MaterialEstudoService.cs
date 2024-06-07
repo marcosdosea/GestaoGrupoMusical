@@ -92,27 +92,27 @@ namespace Service
 
             if (request.Search != null && request.Search.GetValueOrDefault("value") != null)
             {
-                materiaisEstudo = materiaisEstudo.Where(g => g.Nome.ToString().Contains(request.Search.GetValueOrDefault("value"))
-                                                           || g.Link.ToString().Contains(request.Search.GetValueOrDefault("value")));
+                materiaisEstudo = materiaisEstudo.Where(g => g.Nome.ToString().Contains(request.Search.GetValueOrDefault("value")!)
+                                                           || g.Link.ToString().Contains(request.Search.GetValueOrDefault("value")!));
             }
 
-            if (request.Order != null && request.Order[0].GetValueOrDefault("column").Equals("0"))
+            if (request.Order != null && request.Order[0].GetValueOrDefault("column")!.Equals("0"))
             {
-                if (request.Order[0].GetValueOrDefault("dir").Equals("asc"))
+                if (request.Order[0].GetValueOrDefault("dir")!.Equals("asc"))
                     materiaisEstudo = materiaisEstudo.OrderBy(g => g.Data);
                 else
                     materiaisEstudo = materiaisEstudo.OrderByDescending(g => g.Data);
             }
-            else if (request.Order != null && request.Order[0].GetValueOrDefault("column").Equals("1"))
+            else if (request.Order != null && request.Order[0].GetValueOrDefault("column")!.Equals("1"))
             {
-                if (request.Order[0].GetValueOrDefault("dir").Equals("asc"))
+                if (request.Order[0].GetValueOrDefault("dir")!.Equals("asc"))
                     materiaisEstudo = materiaisEstudo.OrderBy(g => g.Nome);
                 else
                     materiaisEstudo = materiaisEstudo.OrderByDescending(g => g.Nome);
             }
-            else if (request.Order != null && request.Order[0].GetValueOrDefault("column").Equals("2"))
+            else if (request.Order != null && request.Order[0].GetValueOrDefault("column")!.Equals("2"))
             {
-                if (request.Order[0].GetValueOrDefault("dir").Equals("asc"))
+                if (request.Order[0].GetValueOrDefault("dir")!.Equals("asc"))
                     materiaisEstudo = materiaisEstudo.OrderBy(g => g.Link);
                 else
                     materiaisEstudo = materiaisEstudo.OrderByDescending(g => g.Link);
