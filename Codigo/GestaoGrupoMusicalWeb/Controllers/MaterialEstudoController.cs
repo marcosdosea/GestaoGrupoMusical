@@ -1,13 +1,10 @@
 ﻿using AutoMapper;
 using Core;
+using Core.Datatables;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualBasic;
-using NuGet.Protocol;
-using Service;
-using System.Collections;
 using System.Net;
 
 namespace GestaoGrupoMusicalWeb.Controllers
@@ -15,35 +12,32 @@ namespace GestaoGrupoMusicalWeb.Controllers
     public class MaterialEstudoController : BaseController
     {
         private readonly IMaterialEstudoService _materialEstudo;
+        private readonly IGrupoMusicalService _grupoMusical;
         private readonly IMapper _mapper;
 
-        public MaterialEstudoController(IMaterialEstudoService materialEstudo, IMapper mapper)
+        public MaterialEstudoController(IMaterialEstudoService materialEstudo,IGrupoMusicalService grupoMusical, IMapper mapper)
         {
             _materialEstudo = materialEstudo;
+            _grupoMusical = grupoMusical;
             _mapper = mapper;
         }
-
-
-        public static void Teste()
-        {
-            Console.WriteLine("\n######################");
-        }
         // GET: MaterialEstudoController
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         public async Task<ActionResult> Index()
         {
-            var listaMaterialEstudo = await _materialEstudo.GetAll();
+            int idGrupoMusical = await _grupoMusical.GetIdGrupo(User.Identity.Name);
+            var listaMaterialEstudo = await _materialEstudo.GetAllMaterialEstudoPerIdGrupo(idGrupoMusical);
             var listaMaterialEstudoModel = _mapper.Map<List<MaterialEstudoViewModel>>(listaMaterialEstudo);
             return View(listaMaterialEstudoModel);
         }
 
-         [HttpPost]
-        /*public async Task<IActionResult> GetDataPage(DatatableRequest request)
+        public async Task<IActionResult> GetDataPage(DatatableRequest request)
         {
-            var response = await _instrumentoMusical.GetDataPage(request, await _grupoMusical.GetIdGrupo(User.Identity.Name));
+            var response = await _materialEstudo.GetDataPage(request, await _grupoMusical.GetIdGrupo(User.Identity.Name));
             return Json(response);
-        }*/
+        }
 
-        // GET: MaterialEstudoController/Details/5
+        [HttpPost]
         public async Task<ActionResult> Details(int id)
         {
             var listaMaterialEstudo = await _materialEstudo.Get(id);
@@ -110,17 +104,19 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // POST: MaterialEstudoController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(int id, MaterialEstudoViewModel materialEstudo)
+
+        public async Task<ActionResult> Delete(int id, MaterialEstudoViewModel instrumentoMusicalViewModel)
         {
-            var material = _materialEstudo.Get(id);
-            if(material != null)
+            switch (await _materialEstudo.Delete(id))
             {
-                await _materialEstudo.Delete(id);
-                return RedirectToAction(nameof(Index));
+                case HttpStatusCode.OK:
+                    Notificar("Material de Estudo <b>Excluído</b> com <b>Sucesso</b>.", Notifica.Sucesso);
+                    break;
+                case HttpStatusCode.NotFound:
+                    Notificar($"Nenhum <b>Material de Estudo</b> foi encontrado <b>{id}</b>.", Notifica.Erro);
+                    break;
             }
-            return View(materialEstudo);
+            return RedirectToAction(nameof(Index));
         }
     }
 }

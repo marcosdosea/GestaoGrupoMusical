@@ -16,7 +16,9 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.16" />
   </ItemGroup>
 	<ItemGroup>
+		<Compile Remove="Mapper\MaterialEstudoProfileIndexDTO.cs" />
 		<Compile Remove="Models\DatatableModel.cs" />
+		<Compile Remove="Models\MaterialEstudoViewModelDTO.cs" />
 	</ItemGroup>
 
 	<ItemGroup>

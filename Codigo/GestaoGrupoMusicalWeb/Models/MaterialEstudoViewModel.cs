@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace GestaoGrupoMusicalWeb.Models
 {
@@ -19,9 +18,6 @@ namespace GestaoGrupoMusicalWeb.Models
         [StringLength(500, ErrorMessage = "O link do material deve ter até 500 caracteres")]
         public string Link { get; set; } = null!;
 
-        /// <summary>
-        /// A data é inserido manual pegando a data atual quando foi inserido no banco
-        /// </summary>
         public DateTime Data { get; set; }
 
         [Display(Name = "Grupo Musical")]
