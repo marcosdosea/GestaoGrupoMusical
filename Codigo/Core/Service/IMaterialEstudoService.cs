@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Core.Datatables;
+using Core.DTO;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Core.Service
 {
@@ -13,8 +10,10 @@ namespace Core.Service
 
         Task<bool> Edit(Materialestudo materialEstudo);
 
-        Task<bool> Delete(int id);
+        Task<HttpStatusCode> Delete(int id);
         Task<Materialestudo?> Get(int id);
         Task<IEnumerable<Materialestudo>> GetAll();
+        Task<IEnumerable<Materialestudo>> GetAllMaterialEstudoPerIdGrupo(int idGrupoMusical);
+        Task<DatatableResponse<Materialestudo>> GetDataPage(DatatableRequest request, int idGrupo);
     }
 }
