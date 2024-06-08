@@ -118,5 +118,33 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
+
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
+        public async Task<ActionResult> NotificarMaterialViaEmail(int idMaterial)
+        {
+            var pessoas = await _grupoMusical.GetAllPeopleFromGrupoMusical(await _grupoMusical.GetIdGrupo(User.Identity.Name));
+            Console.WriteLine("\n\n############## " + User.Identity.Name + " | " + User.Identity.IsAuthenticated + " | ");
+            switch (await _materialEstudo.NotificarMaterialViaEmail(pessoas, idMaterial))
+            {
+                case HttpStatusCode.OK:
+                    Notificar("Notificação de Material de Estudo foi <b>Enviada</b> com <b>Sucesso</b>.", Notifica.Sucesso);
+                    break;
+                case HttpStatusCode.PreconditionFailed:
+                    Notificar("O Material <b>Não</b> está <b>Cadastrado</b> no sistema.", Notifica.Erro);
+                    break;
+                case HttpStatusCode.NotFound:
+                    Notificar($"O material {idMaterial} <b>não foi encontrado</b>.", Notifica.Erro);
+                    break;
+                case HttpStatusCode.BadRequest:
+                    Notificar("Houve um erro. Tente novamente mais tarde.", Notifica.Alerta);
+                    break;
+                case HttpStatusCode.InternalServerError:
+                    Notificar("Desculpe, ocorreu um <b>Erro</b> durante o <b>Envio</b> da notificação.", Notifica.Erro);
+                    break;
+            }
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
