@@ -6,6 +6,7 @@ using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Service;
 using System.Net;
 
 namespace GestaoGrupoMusicalWeb.Controllers
@@ -16,8 +17,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IGrupoMusicalService _grupoMusical;
         private readonly IMapper _mapper;
 
-        public MaterialEstudoController(IMaterialEstudoService materialEstudo,IGrupoMusicalService grupoMusical, IMapper mapper)
+        private readonly IMaterialEstudoService _materialEstudoService;
+
+        // Injeção de dependência através do construtor
+        public MaterialEstudoController(IMaterialEstudoService materialEstudoService, IMaterialEstudoService materialEstudo,IGrupoMusicalService grupoMusical, IMapper mapper)
         {
+            _materialEstudoService = materialEstudoService;
             _materialEstudo = materialEstudo;
             _grupoMusical = grupoMusical;
             _mapper = mapper;
@@ -60,17 +65,30 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: MaterialEstudoController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(MaterialEstudoViewModel materialEstudoViewlModel)
+        public async Task<ActionResult> Create(MaterialEstudoViewModel materialEstudoViewModel)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                if(await _materialEstudo.Create(_mapper.Map<Materialestudo>(materialEstudoViewlModel)))
+                var materialEstudo = new Materialestudo
+                {
+                    Nome = materialEstudoViewModel.Nome,
+                    Link = materialEstudoViewModel.Link,
+                    Data = materialEstudoViewModel.Data,
+                    IdGrupoMusical = materialEstudoViewModel.IdGrupoMusical,
+                    IdColaborador = materialEstudoViewModel.IdColaborador
+                };
+
+                var statusCode = await _materialEstudoService.Create(materialEstudo);
+                if (statusCode == HttpStatusCode.Created)
                 {
                     return RedirectToAction(nameof(Index));
                 }
+                ModelState.AddModelError(string.Empty, "Ocorreu um erro ao criar o material de estudo.");
             }
-            return View(materialEstudoViewlModel);
+            return View(materialEstudoViewModel);
+
         }
+        
 
         // GET: MaterialEstudoController/Edit/5
         public async Task<ActionResult> Edit(int id)
