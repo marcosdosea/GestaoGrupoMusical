@@ -129,8 +129,6 @@ namespace Service
                 RecordsFiltered = countRecordsFiltered,
                 RecordsTotal = totalRecords
             };
-
-
         }
 
     }

@@ -95,16 +95,18 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: MaterialEstudoController/Delete/5
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         public async Task<ActionResult>Delete(int id)
         {
             var materialEstudo = await _materialEstudo.Get(id);
             var model = _mapper.Map<MaterialEstudoViewModel>(materialEstudo);
-
             return View(model);
         }
 
         // POST: MaterialEstudoController/Delete/5
-
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         public async Task<ActionResult> Delete(int id, MaterialEstudoViewModel instrumentoMusicalViewModel)
         {
             switch (await _materialEstudo.Delete(id))
