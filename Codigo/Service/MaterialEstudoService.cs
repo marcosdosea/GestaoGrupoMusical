@@ -1,4 +1,4 @@
-﻿using Core;
+using Core;
 using Core.DTO;
 using Core.Datatables;
 using Core.Service;
@@ -65,23 +65,14 @@ namespace Service
             return await _context.Materialestudos.AsNoTracking().ToListAsync();
         }
 
-        public async Task<IEnumerable<Materialestudo>> GetAllMaterialEstudoPerIdGrupo(int idGrupoMusical)
+       public async Task<IEnumerable<Materialestudo>> GetAllMaterialEstudoPerIdGrupo(int idGrupoMusical)
         {
             var query = await (from materialEstudo in _context.Materialestudos
-                               join grupoMusical in _context.Grupomusicals
-                               on materialEstudo.IdGrupoMusical equals idGrupoMusical
+                               where materialEstudo.IdGrupoMusical == idGrupoMusical
                                orderby materialEstudo.Nome ascending
-                               select new Materialestudo
-                               {
-                                   Id = materialEstudo.Id,
-                                   Nome = materialEstudo.Nome,
-                                   Link = materialEstudo.Link,
-                                   Data = materialEstudo.Data,
-                                   //Data = materialEstudo.Data.ToString("dd/MM/yyyy HH:mm:ss"),
-                                   //g.DataHoraInicio.ToString("dd/MM/yyyy HH:mm:ss"),
-                                   //IdGrupoMusical = idGrupoMusical,
-                               }).AsNoTracking().ToListAsync();
-            return query.ToList();
+                               select materialEstudo).ToListAsync();
+
+            return query;
         }
 
         public async Task<DatatableResponse<Materialestudo>> GetDataPage(DatatableRequest request, int idGrupo)
