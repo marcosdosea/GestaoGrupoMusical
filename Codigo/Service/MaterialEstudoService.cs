@@ -169,7 +169,6 @@ namespace Service
                     List<Task> emailTask = new List<Task>();
                     foreach (EmailModel ema in emailsBody)
                     {
-                        if (ema.AddresseeName != "Vere ADM GRUPO")
                             emailTask.Add(EmailService.Enviar(ema));
                     }
                     //await Task.WhenAll(emailTask);
