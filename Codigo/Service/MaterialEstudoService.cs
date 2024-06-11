@@ -72,8 +72,7 @@ namespace Service
         public async Task<IEnumerable<Materialestudo>> GetAllMaterialEstudoPerIdGrupo(int idGrupoMusical)
         {
             var query = await (from materialEstudo in _context.Materialestudos
-                               join grupoMusical in _context.Grupomusicals
-                               on materialEstudo.IdGrupoMusical equals idGrupoMusical
+                               where materialEstudo.IdGrupoMusical == idGrupoMusical
                                orderby materialEstudo.Nome ascending
                                select new Materialestudo
                                {
@@ -145,18 +144,16 @@ namespace Service
                 if (materialEstudo != null)
                 {
                     List<EmailModel> emailsBody = new List<EmailModel>();
-                        Console.WriteLine("\n######## ENVIANDO EMAIL ########");
                     foreach (PessoaEnviarEmailDTO p in pessoas)
                     {
                         emailsBody.Add(new EmailModel()
                         {
-                            Assunto = $"Batalá - Notificação de Material de Estudo <strong>{materialEstudo.Nome}<strong/>",
+                            Assunto = $"Batalá - Notificação de Material de Estudo: {materialEstudo.Nome}",
                             AddresseeName = p.Nome,
                             Body = "<div style=\"text-align: center;\">\r\n    " +
                                 $"<h3>Vem dar uma olhada nesse material de estudo! <a style=\"text-decoration: none;\" href=\"{materialEstudo.Link}\">Clique aqui!</a></h3>\r\n</div>",
-                            To = new List<string> { p.Email}
+                            To = new List<string> { p.Email }
                         });
-                        Console.WriteLine(p.Email);
                     }
 
                     /*
@@ -164,14 +161,18 @@ namespace Service
                      * e já que são assícronos, vai acabar demorando 10 segundos. A Task faz com que
                      * todos sejam enviados em paralelo e quando todos já estiverem prontos
                      * ele retorna o controle. Isso quer dizer que os 10 emails enviado podem demorar
-                     * 1 segundo.
+                     * 1 segundo. Porém, foi comentada a parte assíncrona porque em um sistema não é
+                     * necessário esperar o e-mail chegar até o usuário. Isso vai travar o sistema
+                     * até que o e-mail seja enviado. Com a linha comentada, é aquela coisa: "Se
+                     * enviar, enviou".
                      */
                     List<Task> emailTask = new List<Task>();
                     foreach (EmailModel ema in emailsBody)
                     {
-                        emailTask.Add(EmailService.Enviar(ema));
+                        if (ema.AddresseeName != "Vere ADM GRUPO")
+                            emailTask.Add(EmailService.Enviar(ema));
                     }
-                    await Task.WhenAll(emailTask);
+                    //await Task.WhenAll(emailTask);
 
                     return HttpStatusCode.OK;
                 }
