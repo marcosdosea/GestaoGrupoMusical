@@ -1,5 +1,6 @@
 ﻿using Core.Datatables;
 using Core.DTO;
+using System.Collections;
 using System.Net;
 
 namespace Core.Service
@@ -15,5 +16,6 @@ namespace Core.Service
         Task<IEnumerable<Materialestudo>> GetAll();
         Task<IEnumerable<Materialestudo>> GetAllMaterialEstudoPerIdGrupo(int idGrupoMusical);
         Task<DatatableResponse<Materialestudo>> GetDataPage(DatatableRequest request, int idGrupo);
+        Task<HttpStatusCode> NotificarMaterialViaEmail(IEnumerable<PessoaEnviarEmailDTO> pessoas, int idMaterialEstudo);
     }
 }
