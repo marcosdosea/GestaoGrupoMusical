@@ -88,6 +88,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 if (await _materialEstudo.Edit(_mapper.Map<Materialestudo>(materialEstudo)))
                 {
+                    Notificar("<b>Sucesso!</b> Material de Estudo Editado com Sucesso!", Notifica.Sucesso);
+                    return RedirectToAction(nameof(Index));
+                } 
+                else
+                {
+                    Notificar("<b>Erro!</b> Material de Estudo Editado nao foi Editado!", Notifica.Erro);
                     return RedirectToAction(nameof(Index));
                 }
             }
