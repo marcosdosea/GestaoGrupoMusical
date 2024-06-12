@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Core;
 using Core.Datatables;
+using Core.DTO;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -16,16 +17,18 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IMaterialEstudoService _materialEstudo;
         private readonly IGrupoMusicalService _grupoMusical;
         private readonly IMapper _mapper;
+        private readonly IPessoaService _pessoa;
 
         private readonly IMaterialEstudoService _materialEstudoService;
 
         // Injeção de dependência através do construtor
-        public MaterialEstudoController(IMaterialEstudoService materialEstudoService, IMaterialEstudoService materialEstudo,IGrupoMusicalService grupoMusical, IMapper mapper)
+        public MaterialEstudoController(IMaterialEstudoService materialEstudoService, IPessoaService pessoa, IMaterialEstudoService materialEstudo, IGrupoMusicalService grupoMusical, IMapper mapper)
         {
             _materialEstudoService = materialEstudoService;
             _materialEstudo = materialEstudo;
             _grupoMusical = grupoMusical;
             _mapper = mapper;
+            _pessoa = pessoa;
         }
         // GET: MaterialEstudoController
         [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
@@ -69,26 +72,34 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             if (ModelState.IsValid)
             {
+                UserDTO user = await _pessoa.GetByCpf(User.Identity.Name);
+
                 var materialEstudo = new Materialestudo
                 {
                     Nome = materialEstudoViewModel.Nome,
                     Link = materialEstudoViewModel.Link,
                     Data = materialEstudoViewModel.Data,
-                    IdGrupoMusical = materialEstudoViewModel.IdGrupoMusical,
-                    IdColaborador = materialEstudoViewModel.IdColaborador
+                    IdGrupoMusical = user!.IdGrupoMusical,
+                    IdColaborador = user.Id,
                 };
 
                 var statusCode = await _materialEstudoService.Create(materialEstudo);
                 if (statusCode == HttpStatusCode.Created)
                 {
+                    Notificar("Material de Estudo <b>Cadastrado</b> com <b>Sucesso</b>.", Notifica.Sucesso);
                     return RedirectToAction(nameof(Index));
                 }
-                ModelState.AddModelError(string.Empty, "Ocorreu um erro ao criar o material de estudo.");
+                Notificar("<b>Erro</b>! Há algo errado ao cadastrar Material de Estudo", Notifica.Erro);
+                return RedirectToAction("Index");
             }
-            return View(materialEstudoViewModel);
+            else
+            {
+                Notificar("<b>Erro</b>! Algo deu errado", Notifica.Erro);
+                return View();
+            }
 
         }
-        
+
 
         // GET: MaterialEstudoController/Edit/5
         public async Task<ActionResult> Edit(int id)
@@ -114,7 +125,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: MaterialEstudoController/Delete/5
-        public async Task<ActionResult>Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             var materialEstudo = await _materialEstudo.Get(id);
             var model = _mapper.Map<MaterialEstudoViewModel>(materialEstudo);
