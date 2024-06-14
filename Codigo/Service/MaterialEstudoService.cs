@@ -1,9 +1,11 @@
-﻿using Core;
+using Core;
 using Core.DTO;
 using Core.Datatables;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
+using Email;
+
 namespace Service
 {
     public class MaterialEstudoService : IMaterialEstudoService
@@ -24,7 +26,6 @@ namespace Service
                 await _context.AddAsync(materialEstudo);
                 await _context.SaveChangesAsync();
                 return HttpStatusCode.Created;
-            }catch (Exception)
             {
                 //await transaction.RollbackAsync();
                 return HttpStatusCode.InternalServerError;
@@ -50,7 +51,8 @@ namespace Service
                 _context.Update(materialEstudo);
                 await _context.SaveChangesAsync();
                 return true;
-            }catch
+            }
+            catch
             {
                 return false;
             }
@@ -66,23 +68,14 @@ namespace Service
             return await _context.Materialestudos.AsNoTracking().ToListAsync();
         }
 
-        public async Task<IEnumerable<Materialestudo>> GetAllMaterialEstudoPerIdGrupo(int idGrupoMusical)
+       public async Task<IEnumerable<Materialestudo>> GetAllMaterialEstudoPerIdGrupo(int idGrupoMusical)
         {
             var query = await (from materialEstudo in _context.Materialestudos
-                               join grupoMusical in _context.Grupomusicals
-                               on materialEstudo.IdGrupoMusical equals idGrupoMusical
+                               where materialEstudo.IdGrupoMusical == idGrupoMusical
                                orderby materialEstudo.Nome ascending
-                               select new Materialestudo
-                               {
-                                   Id = materialEstudo.Id,
-                                   Nome = materialEstudo.Nome,
-                                   Link = materialEstudo.Link,
-                                   Data = materialEstudo.Data,
-                                   //Data = materialEstudo.Data.ToString("dd/MM/yyyy HH:mm:ss"),
-                                   //g.DataHoraInicio.ToString("dd/MM/yyyy HH:mm:ss"),
-                                   //IdGrupoMusical = idGrupoMusical,
-                               }).AsNoTracking().ToListAsync();
-            return query.ToList();
+                               select materialEstudo).ToListAsync();
+
+            return query;
         }
 
         public async Task<DatatableResponse<Materialestudo>> GetDataPage(DatatableRequest request, int idGrupo)
@@ -130,9 +123,54 @@ namespace Service
                 RecordsFiltered = countRecordsFiltered,
                 RecordsTotal = totalRecords
             };
-
-
         }
 
+        public async Task<HttpStatusCode> NotificarMaterialViaEmail(IEnumerable<PessoaEnviarEmailDTO> pessoas, int idMaterialEstudo)
+        {
+            try
+            {
+                var materialEstudo = await Get(idMaterialEstudo);
+                if (materialEstudo != null)
+                {
+                    List<EmailModel> emailsBody = new List<EmailModel>();
+                    foreach (PessoaEnviarEmailDTO p in pessoas)
+                    {
+                        emailsBody.Add(new EmailModel()
+                        {
+                            Assunto = $"Batalá - Notificação de Material de Estudo: {materialEstudo.Nome}",
+                            AddresseeName = p.Nome,
+                            Body = "<div style=\"text-align: center;\">\r\n    " +
+                                $"<h3>Vem dar uma olhada nesse material de estudo! <a style=\"text-decoration: none;\" href=\"{materialEstudo.Link}\">Clique aqui!</a></h3>\r\n</div>",
+                            To = new List<string> { p.Email }
+                        });
+                    }
+
+                    /*
+                     * Se cada envio dura 1 segundo (exemplo) e tem 10 emails, se enviar de 1 em 1 
+                     * e já que são assícronos, vai acabar demorando 10 segundos. A Task faz com que
+                     * todos sejam enviados em paralelo e quando todos já estiverem prontos
+                     * ele retorna o controle. Isso quer dizer que os 10 emails enviado podem demorar
+                     * 1 segundo. Porém, foi comentada a parte assíncrona porque em um sistema não é
+                     * necessário esperar o e-mail chegar até o usuário. Isso vai travar o sistema
+                     * até que o e-mail seja enviado. Com a linha comentada, é aquela coisa: "Se
+                     * enviar, enviou".
+                     */
+                    List<Task> emailTask = new List<Task>();
+                    foreach (EmailModel ema in emailsBody)
+                    {
+                            emailTask.Add(EmailService.Enviar(ema));
+                    }
+                    //await Task.WhenAll(emailTask);
+
+                    return HttpStatusCode.OK;
+                }
+
+                return HttpStatusCode.NotFound;
+            }
+            catch
+            {
+                return HttpStatusCode.InternalServerError;
+            }
+        }
     }
 }

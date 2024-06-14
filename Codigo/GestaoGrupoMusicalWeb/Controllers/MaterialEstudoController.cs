@@ -102,6 +102,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
 
         // GET: MaterialEstudoController/Edit/5
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         public async Task<ActionResult> Edit(int id)
         {
             var materialEstudo = await _materialEstudo.Get(id);
@@ -112,29 +113,39 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: MaterialEstudoController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         public async Task<ActionResult> Edit(int id, MaterialEstudoViewModel materialEstudo)
         {
+            
             if (ModelState.IsValid)
             {
                 if (await _materialEstudo.Edit(_mapper.Map<Materialestudo>(materialEstudo)))
                 {
+                    Notificar("<b>Sucesso!</b> Material de Estudo Editado com Sucesso!", Notifica.Sucesso);
+                    return RedirectToAction(nameof(Index));
+                } 
+                else
+                {
+                    Notificar("<b>Erro!</b> Material de Estudo Editado nao foi Editado!", Notifica.Erro);
                     return RedirectToAction(nameof(Index));
                 }
             }
-            return View(materialEstudo);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: MaterialEstudoController/Delete/5
-        public async Task<ActionResult> Delete(int id)
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
+        public async Task<ActionResult>Delete(int id)
         {
             var materialEstudo = await _materialEstudo.Get(id);
             var model = _mapper.Map<MaterialEstudoViewModel>(materialEstudo);
-
             return View(model);
         }
 
         // POST: MaterialEstudoController/Delete/5
-
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         public async Task<ActionResult> Delete(int id, MaterialEstudoViewModel instrumentoMusicalViewModel)
         {
             switch (await _materialEstudo.Delete(id))
@@ -144,6 +155,33 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     break;
                 case HttpStatusCode.NotFound:
                     Notificar($"Nenhum <b>Material de Estudo</b> foi encontrado <b>{id}</b>.", Notifica.Erro);
+                    break;
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
+        public async Task<ActionResult> NotificarMaterialViaEmail(int id)
+        {
+            var pessoas = await _grupoMusical.GetAllPeopleFromGrupoMusical(await _grupoMusical.GetIdGrupo(User.Identity.Name));
+            switch (await _materialEstudo.NotificarMaterialViaEmail(pessoas, id))
+            {
+                case HttpStatusCode.OK:
+                    Notificar("Notificação de Material de Estudo foi <b>Enviada</b> com <b>Sucesso</b>.", Notifica.Sucesso);
+                    break;
+                case HttpStatusCode.PreconditionFailed:
+                    Notificar("O Material <b>Não</b> está <b>Cadastrado</b> no sistema.", Notifica.Erro);
+                    break;
+                case HttpStatusCode.NotFound:
+                    Notificar($"O material {id} <b>não foi encontrado</b>.", Notifica.Erro);
+                    break;
+                case HttpStatusCode.BadRequest:
+                    Notificar("Houve um erro. Tente novamente mais tarde.", Notifica.Alerta);
+                    break;
+                case HttpStatusCode.InternalServerError:
+                    Notificar("Desculpe, ocorreu um <b>Erro</b> durante o <b>Envio</b> da notificação.", Notifica.Erro);
                     break;
             }
             return RedirectToAction(nameof(Index));
