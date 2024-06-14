@@ -76,5 +76,13 @@ namespace Core.Service
         /// </summary>
         /// <returns></returns>
         Task<IEnumerable<Papelgrupo>> GetPapeis();
+
+        /// <summary>
+        /// Retorna todas as pessoas do grupo musical com ID, nome e Email. Geralmente
+        /// utilizado para enviar e-mail notificando algo.
+        /// </summary>
+        /// <param name="idGrupoMusical"></param>
+        /// <returns></returns>
+        Task<IEnumerable<PessoaEnviarEmailDTO>> GetAllPeopleFromGrupoMusical(int idGrupoMusical);
     }
 }

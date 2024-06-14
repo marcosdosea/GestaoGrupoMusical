@@ -76,7 +76,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             IEnumerable<Tipoinstrumento> listaInstrumentos = await _instrumentoMusical.GetAllTipoInstrumento();
 
             instrumentoMusicalViewModel.ListaInstrumentos = new SelectList(listaInstrumentos, "Id", "Nome", null);
-
+        
             return View(instrumentoMusicalViewModel);
         }
 

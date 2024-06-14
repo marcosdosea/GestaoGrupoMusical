@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 using Core;
 using Core.Datatables;
+using Core.DTO;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Service;
 using System.Net;
 
 namespace GestaoGrupoMusicalWeb.Controllers
@@ -14,12 +17,18 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IMaterialEstudoService _materialEstudo;
         private readonly IGrupoMusicalService _grupoMusical;
         private readonly IMapper _mapper;
+        private readonly IPessoaService _pessoa;
 
-        public MaterialEstudoController(IMaterialEstudoService materialEstudo,IGrupoMusicalService grupoMusical, IMapper mapper)
+        private readonly IMaterialEstudoService _materialEstudoService;
+
+        // Injeção de dependência através do construtor
+        public MaterialEstudoController(IMaterialEstudoService materialEstudoService, IPessoaService pessoa, IMaterialEstudoService materialEstudo, IGrupoMusicalService grupoMusical, IMapper mapper)
         {
+            _materialEstudoService = materialEstudoService;
             _materialEstudo = materialEstudo;
             _grupoMusical = grupoMusical;
             _mapper = mapper;
+            _pessoa = pessoa;
         }
         // GET: MaterialEstudoController
         [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
@@ -59,19 +68,41 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: MaterialEstudoController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(MaterialEstudoViewModel materialEstudoViewlModel)
+        public async Task<ActionResult> Create(MaterialEstudoViewModel materialEstudoViewModel)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                if(await _materialEstudo.Create(_mapper.Map<Materialestudo>(materialEstudoViewlModel)))
+                UserDTO user = await _pessoa.GetByCpf(User.Identity.Name);
+
+                var materialEstudo = new Materialestudo
                 {
+                    Nome = materialEstudoViewModel.Nome,
+                    Link = materialEstudoViewModel.Link,
+                    Data = materialEstudoViewModel.Data,
+                    IdGrupoMusical = user!.IdGrupoMusical,
+                    IdColaborador = user.Id,
+                };
+
+                var statusCode = await _materialEstudoService.Create(materialEstudo);
+                if (statusCode == HttpStatusCode.Created)
+                {
+                    Notificar("Material de Estudo <b>Cadastrado</b> com <b>Sucesso</b>.", Notifica.Sucesso);
                     return RedirectToAction(nameof(Index));
                 }
+                Notificar("<b>Erro</b>! Há algo errado ao cadastrar Material de Estudo", Notifica.Erro);
+                return RedirectToAction("Index");
             }
-            return View(materialEstudoViewlModel);
+            else
+            {
+                Notificar("<b>Erro</b>! Algo deu errado", Notifica.Erro);
+                return View();
+            }
+
         }
 
+
         // GET: MaterialEstudoController/Edit/5
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         public async Task<ActionResult> Edit(int id)
         {
             var materialEstudo = await _materialEstudo.Get(id);
@@ -82,8 +113,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: MaterialEstudoController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         public async Task<ActionResult> Edit(int id, MaterialEstudoViewModel materialEstudo)
         {
+            
             if (ModelState.IsValid)
             {
                 if (await _materialEstudo.Edit(_mapper.Map<Materialestudo>(materialEstudo)))
@@ -97,7 +130,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     return RedirectToAction(nameof(Index));
                 }
             }
-            return View(materialEstudo);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: MaterialEstudoController/Delete/5
@@ -122,6 +155,33 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     break;
                 case HttpStatusCode.NotFound:
                     Notificar($"Nenhum <b>Material de Estudo</b> foi encontrado <b>{id}</b>.", Notifica.Erro);
+                    break;
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
+        public async Task<ActionResult> NotificarMaterialViaEmail(int id)
+        {
+            var pessoas = await _grupoMusical.GetAllPeopleFromGrupoMusical(await _grupoMusical.GetIdGrupo(User.Identity.Name));
+            switch (await _materialEstudo.NotificarMaterialViaEmail(pessoas, id))
+            {
+                case HttpStatusCode.OK:
+                    Notificar("Notificação de Material de Estudo foi <b>Enviada</b> com <b>Sucesso</b>.", Notifica.Sucesso);
+                    break;
+                case HttpStatusCode.PreconditionFailed:
+                    Notificar("O Material <b>Não</b> está <b>Cadastrado</b> no sistema.", Notifica.Erro);
+                    break;
+                case HttpStatusCode.NotFound:
+                    Notificar($"O material {id} <b>não foi encontrado</b>.", Notifica.Erro);
+                    break;
+                case HttpStatusCode.BadRequest:
+                    Notificar("Houve um erro. Tente novamente mais tarde.", Notifica.Alerta);
+                    break;
+                case HttpStatusCode.InternalServerError:
+                    Notificar("Desculpe, ocorreu um <b>Erro</b> durante o <b>Envio</b> da notificação.", Notifica.Erro);
                     break;
             }
             return RedirectToAction(nameof(Index));
