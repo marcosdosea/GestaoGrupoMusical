@@ -7,7 +7,7 @@ namespace Core.Service
 {
     public interface IMaterialEstudoService
     {
-        Task<bool> Create(Materialestudo materialEstudo);
+        Task<HttpStatusCode> Create(Materialestudo materialEstudo);
 
         Task<bool> Edit(Materialestudo materialEstudo);
 
