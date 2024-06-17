@@ -169,5 +169,19 @@ namespace Service
 
             return query;
         }
+
+        public async Task <IEnumerable<PessoaEnviarEmailDTO>>GetAllPeopleFromGrupoMusical(int idGrupoMusical)
+        {
+            var query = await (from pessoa in _context.Pessoas
+                               where pessoa.IdGrupoMusical == idGrupoMusical
+                               select new PessoaEnviarEmailDTO
+                               {
+                                   Id = pessoa.Id,
+                                   Email = pessoa.Email,
+                                   Nome = pessoa.Nome,
+                               }
+                         ).AsNoTracking().ToListAsync();
+            return query;
+        }
     }
 }
