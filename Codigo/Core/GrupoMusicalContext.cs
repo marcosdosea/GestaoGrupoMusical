@@ -741,7 +741,8 @@ namespace Core
 
                 entity.Property(e => e.Data)
                     .HasColumnType("datetime")
-                    .HasColumnName("data");
+                    .HasColumnName("data")
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                 entity.Property(e => e.IdColaborador).HasColumnName("idColaborador");
 

@@ -5,6 +5,7 @@ using Core.Service;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 using Email;
+using System.Data;
 
 namespace Service
 {
@@ -18,18 +19,14 @@ namespace Service
 
         public async Task<HttpStatusCode> Create(Materialestudo materialEstudo)
         {
-            //using var transaction = _context.Database.BeginTransaction();
-
             try
             {
-
                 await _context.AddAsync(materialEstudo);
                 await _context.SaveChangesAsync();
                 return HttpStatusCode.Created;
             }
             catch
             {
-                //await transaction.RollbackAsync();
                 return HttpStatusCode.InternalServerError;
             }
         }
@@ -50,6 +47,7 @@ namespace Service
         {
             try
             {
+                materialEstudo.Data = DateTime.Now;
                 _context.Update(materialEstudo);
                 await _context.SaveChangesAsync();
                 return true;

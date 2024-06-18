@@ -7,7 +7,6 @@
 }
 
 <partial name="_Notificar">
-
     <div class="row">
         <div class="col-md-10 col-lg-6">
             <h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">Novo Material Estudo</h1>
@@ -21,7 +20,6 @@
             </nav>
             <hr />
             <br />
-
             <form asp-action="Create">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="container">
@@ -31,26 +29,16 @@
                             <input asp-for="Nome" class="form-control" />
                             <span asp-validation-for="Nome" class="text-danger"></span>
                         </div>
-
                     </div>
-                    <div class="row d-flex justify-content-between ">
-                        <div class="form-group  col-md-12">
+                    <div class="row d-flex justify-content-between">
+                        <div class="form-group col-md-12">
                             <label asp-for="Link" class="control-label"></label>
-                            <input asp-for="Link" class="form-control" />
+                            <textarea asp-for="Link" class="form-control" maxlength="500" id="linkTextArea" oninput="updateCharacterCount()"></textarea>
                             <span asp-validation-for="Link" class="text-danger"></span>
-
+                            <small id="characterCount">0/500</small>
                         </div>
                     </div>
-                    <div class="row d-flex justify-content-between ">
-                        <div class="form-group  col-md-6">
-                            <label asp-for="Data" class="control-label"></label>
-                            <input asp-for="Data" class="form-control" />
-                            <span asp-validation-for="Data" class="text-danger"></span>
-                        </div>
-                    </div>
-
                 </div>
-
                 <br />
                 <div class="container">
                     <div class="row">
@@ -62,9 +50,20 @@
             </form>
         </div>
     </div>
-
     @section Scripts {
         @{
             await Html.RenderPartialAsync("_ValidationScriptsPartial");
         }
     }
+    <script>
+        function updateCharacterCount() {
+            var textArea = document.getElementById('linkTextArea');
+            var charCount = textArea.value.length;
+            var charLimitFromGrupoMusical = textArea.maxLength;
+            document.getElementById('characterCount').innerText = charCount + '/' + charLimitFromGrupoMusical;
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            updateCharacterCount();
+        });
+    </script>
