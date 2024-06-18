@@ -38,7 +38,7 @@
             </div>
             <div class="form-group col-xl-4">
                 <label asp-for="Data" class="control-label"></label>
-                <input asp-for="Data" class="form-control" readonly />
+                <input class="form-control" readonly value="@Model.Data.ToString("dd/MM/yyyy")" />
                 <span asp-validation-for="Data" class="text-danger"></span>
             </div>
             <div class="form-group">
