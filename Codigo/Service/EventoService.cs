@@ -1,7 +1,9 @@
 ﻿using Core;
 using Core.DTO;
 using Core.Service;
+using Email;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace Service
 {
@@ -86,5 +88,45 @@ namespace Service
                 ).AsNoTracking();
             return query;
         }
+
+        public async Task<HttpStatusCode> NotificarEventoViaEmail(IEnumerable<PessoaEnviarEmailDTO> pessoas, int idEvento)
+        {
+            try
+            {
+                var evento = Get(idEvento);
+                if (evento != null)
+                {
+                    List<EmailModel> emailsBody = new List<EmailModel>();
+                    foreach (PessoaEnviarEmailDTO p in pessoas)
+                    {
+                        emailsBody.Add(new EmailModel()
+                        {
+                            Assunto = $"Batalá - Notificação de Evento: {evento.Repertorio}",
+                            AddresseeName = p.Nome,
+                            Body = "<div style=\"text-align: center;\">\r\n    " +
+                                $"<h3>O evento foi aprovado!</h3>\r\n</div>",
+                            To = new List<string> { p.Email }
+
+                        });
+                    }
+
+                    List<Task> emailTask = new List<Task>();
+                    foreach (EmailModel email in emailsBody)
+                    {
+                        emailTask.Add(EmailService.Enviar(email));
+                    }
+
+                    return HttpStatusCode.OK;
+                }
+
+                return HttpStatusCode.NotFound;
+            }
+
+            catch
+            {
+                return HttpStatusCode.InternalServerError;
+            }
+        }
+
     }
 }

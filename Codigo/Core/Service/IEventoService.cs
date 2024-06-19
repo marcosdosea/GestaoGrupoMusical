@@ -1,4 +1,5 @@
 ﻿using Core.DTO;
+using System.Net;
 
 namespace Core.Service
 {
@@ -11,5 +12,6 @@ namespace Core.Service
         IEnumerable<Evento> GetAll();
         IEnumerable<EventoDTO> GetAllDTO();
         IEnumerable<EventoIndexDTO> GetAllIndexDTO();
+        Task<HttpStatusCode> NotificarEventoViaEmail(IEnumerable<PessoaEnviarEmailDTO> pessoas, int idEvento);
     }
 }
