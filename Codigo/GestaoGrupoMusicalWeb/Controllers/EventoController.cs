@@ -5,11 +5,13 @@ using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using static GestaoGrupoMusicalWeb.Controllers.BaseController;
+using System.Net;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
 
-    public class EventoController : Controller
+    public class EventoController : BaseController
     {
         private readonly IEventoService _evento;
         private readonly IMapper _mapper;
@@ -111,6 +113,30 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public ActionResult Delete(int id, EventoViewModel eventoViewModel)
         {
             _evento.Delete(id);
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<ActionResult> NotificarEventoViaEmail(int id)
+        {
+            var pessoas = await _grupoMusical.GetAllPeopleFromGrupoMusical(await _grupoMusical.GetIdGrupo(User.Identity.Name));
+            switch (await _evento.NotificarEventoViaEmail(pessoas, id))
+            {
+                case HttpStatusCode.OK:
+                    Notificar("Notificação de Evento foi <b>Enviada</b> com <b>Sucesso</b>.", Notifica.Sucesso);
+                    break;
+                case HttpStatusCode.PreconditionFailed:
+                    Notificar("O Evento <b>Não</b> está <b>Cadastrado</b> no sistema.", Notifica.Erro);
+                    break;
+                case HttpStatusCode.NotFound:
+                    Notificar($"O evento {id} <b>não foi encontrado</b>.", Notifica.Erro);
+                    break;
+                case HttpStatusCode.BadRequest:
+                    Notificar("Houve um erro. Tente novamente mais tarde.", Notifica.Alerta);
+                    break;
+                case HttpStatusCode.InternalServerError:
+                    Notificar("Desculpe, ocorreu um <b>Erro</b> durante o <b>Envio</b> da notificação.", Notifica.Erro);
+                    break;
+            }
             return RedirectToAction(nameof(Index));
         }
     }
