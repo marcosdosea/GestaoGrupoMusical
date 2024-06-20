@@ -1,4 +1,5 @@
 ﻿using Core;
+using Core.Datatables;
 using Core.DTO;
 using Core.Service;
 using Email;
@@ -89,7 +90,70 @@ namespace Service
             return query;
         }
 
-        public async Task<HttpStatusCode> NotificarEventoViaEmail(IEnumerable<PessoaEnviarEmailDTO> pessoas, int idEvento)
+        public IEnumerable<EventoIndexDTO> GetAllEventoIndexDTOPerIdGrupoMusical(int idGrupoMusical)
+        {
+            var query = _context.Eventos.Where(g => g.IdGrupoMusical == idGrupoMusical)
+                .OrderBy(g => g.DataHoraInicio).
+                Select(g => new EventoIndexDTO
+                {
+                    Id = g.Id,
+                    DataHoraInicio = g.DataHoraInicio,
+                    Local = g.Local,
+                    Repertorio = g.Repertorio
+                }
+                ).AsNoTracking();
+            return query;
+        }
+
+        public DatatableResponse<EventoIndexDTO> GetDataPage(DatatableRequest request, int idGrupo)
+        {
+            var eventos = GetAllEventoIndexDTOPerIdGrupoMusical(idGrupo);
+
+            var totalRecords = eventos.Count();
+
+            if (request.Search != null && request.Search.GetValueOrDefault("value") != null)
+            {
+                eventos = eventos.Where(g => g.DataHoraInicio.ToString().Contains(request.Search.GetValueOrDefault("value")!)
+                                                           || g.Local.ToString().Contains(request.Search.GetValueOrDefault("value")!)
+                                                           || g.Repertorio.ToString().Contains(request.Search.GetValueOrDefault("value")!));
+            }
+
+            if (request.Order != null && request.Order[0].GetValueOrDefault("column")!.Equals("0"))
+            {
+                if (request.Order[0].GetValueOrDefault("dir")!.Equals("asc"))
+                    eventos = eventos.OrderBy(g => g.DataHoraInicio);
+                else
+                    eventos = eventos.OrderByDescending(g => g.DataHoraInicio);
+            }
+            else if (request.Order != null && request.Order[0].GetValueOrDefault("column")!.Equals("1"))
+            {
+                if (request.Order[0].GetValueOrDefault("dir")!.Equals("asc"))
+                    eventos = eventos.OrderBy(g => g.DataHoraInicio);
+                else
+                    eventos = eventos.OrderByDescending(g => g.DataHoraInicio);
+            }
+            else if (request.Order != null && request.Order[0].GetValueOrDefault("column")!.Equals("2"))
+            {
+                if (request.Order[0].GetValueOrDefault("dir")!.Equals("asc"))
+                    eventos = eventos.OrderBy(g => g.DataHoraInicio);
+                else
+                    eventos = eventos.OrderByDescending(g => g.DataHoraInicio);
+            }
+
+            int countRecordsFiltered = eventos.Count();
+
+            eventos = eventos.Skip(request.Start).Take(request.Length);
+
+            return new DatatableResponse<EventoIndexDTO>
+            {
+                Data = eventos.ToList(),
+                Draw = request.Draw,
+                RecordsFiltered = countRecordsFiltered,
+                RecordsTotal = totalRecords
+            };
+        }
+
+        public HttpStatusCode NotificarEventoViaEmail(IEnumerable<PessoaEnviarEmailDTO> pessoas, int idEvento)
         {
             try
             {

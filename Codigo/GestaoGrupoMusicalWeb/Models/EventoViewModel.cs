@@ -10,7 +10,7 @@ namespace GestaoGrupoMusicalWeb.Models
         [Display(Name = "Grupo Musical")]
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public int IdGrupoMusical { get; set; }
-        [Display(Name = "Data Hora Início")]
+        [Display(Name = "Data hora início")]
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public DateTime DataHoraInicio { get; set; }
         [Display(Name = "Data Hora Fim")]

@@ -6,7 +6,6 @@
 }
 
 <partial name="_Notificar">
-
     <div class="d-flex justify-content-between align-items-center">
         <h5>@ViewData["Title"]</h5>
         <a role="button" class="btn btn-secondary m-3" asp-controller="MaterialEstudo" asp-action="Create">Novo Material de Estudo</a>
@@ -100,7 +99,6 @@
             });
         </script>
     }
-
     <div class="modal fade" id="materialEstudoModal" tabindex="-1" aria-labelledby="materialEstudoLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -118,7 +116,6 @@
             </div>
         </div>
     </div>
-
     <script>
         function showConfirmationModal(formId) {
             var modal = document.getElementById('materialEstudoModal');
@@ -131,6 +128,4 @@
             var modal = new bootstrap.Modal(modal);
             modal.show();
         }
-
     </script>
-
