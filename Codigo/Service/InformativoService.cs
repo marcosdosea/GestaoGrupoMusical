@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace Service
 {
@@ -18,32 +19,30 @@ namespace Service
             _context = context;
         }
 
-        public async Task<bool> Create(Informativo informativo)
+        public async Task<HttpStatusCode> Create(Informativo informativo)
         {
             try
             {
                 await _context.Informativos.AddAsync(informativo);
                 await _context.SaveChangesAsync();
-                return true;
+                return HttpStatusCode.Created;
             }
             catch
             {
-                return false;
+                return HttpStatusCode.InternalServerError;
             }
         }
 
-        public async Task<bool> Delete(int idGrupoMusical, int idPessoa)
+        public async Task<HttpStatusCode> Delete(int idGrupoMusical, int idPessoa)
         {
-            try
+            var informativo = await Get(idGrupoMusical, idPessoa);
+            if (informativo == null)
             {
-                _context.Informativos.Remove(await Get(idGrupoMusical, idPessoa));
-                await _context.SaveChangesAsync();
-                return true;
+                return HttpStatusCode.NotFound;
             }
-            catch
-            {
-                return false;
-            }
+            _context.Remove(informativo);
+            await _context.SaveChangesAsync();
+            return HttpStatusCode.OK;
         }
 
         public async Task<bool> Edit(Informativo informativo)
@@ -60,14 +59,22 @@ namespace Service
             }
         }
 
-        public async Task<Informativo> Get(int idGrupoMusical, int idPessoa)
+        public async Task<Informativo?> Get(int idGrupoMusical, int idPessoa)
         {
-            return await _context.Informativos.FindAsync(idGrupoMusical, idPessoa) ?? new Informativo();
+            return await _context.Informativos.FindAsync(idGrupoMusical, idPessoa);
         }
 
         public async Task<IEnumerable<Informativo>> GetAll()
         {
             return await _context.Informativos.AsNoTracking().ToListAsync();
+        }
+        public async Task<IEnumerable<Informativo>> GetAllInformativoServiceIdGrupo(int idGrupoMusical, int idPessoa)
+        {
+            var query = await (from informativoService in _context.Informativos
+                               where informativoService.IdGrupoMusical == idGrupoMusical && informativoService.IdPessoa == idPessoa                               
+                               select informativoService).ToListAsync();
+
+            return query;
         }
 
 
