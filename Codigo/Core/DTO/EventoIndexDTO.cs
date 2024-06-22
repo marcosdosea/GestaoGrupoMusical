@@ -11,7 +11,7 @@ namespace Core.DTO
     public class EventoIndexDTO
     {
         public int Id { get; set; }
-        [DisplayName("Data Hora Início")]
+        [DisplayName("Data hora início")]
         public DateTime DataHoraInicio { get; set; }
         [DisplayName("Local")]
         public string? Local { get; set; }

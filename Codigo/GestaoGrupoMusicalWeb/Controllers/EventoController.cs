@@ -2,11 +2,10 @@
 using Core;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using static GestaoGrupoMusicalWeb.Controllers.BaseController;
 using System.Net;
+using Core.Datatables;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -32,6 +31,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             var listaEvento =  _evento.GetAllIndexDTO();
             return View(listaEvento);
+        }
+
+        public async Task<IActionResult> GetDataPage(DatatableRequest request)
+        {
+            var response = _evento.GetDataPage(request, await _grupoMusical.GetIdGrupo(User.Identity.Name));
+            return Json(response);
         }
 
         // GET: EventoController/Details/5
@@ -119,7 +124,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> NotificarEventoViaEmail(int id)
         {
             var pessoas = await _grupoMusical.GetAllPeopleFromGrupoMusical(await _grupoMusical.GetIdGrupo(User.Identity.Name));
-            switch (await _evento.NotificarEventoViaEmail(pessoas, id))
+            switch (_evento.NotificarEventoViaEmail(pessoas, id))
             {
                 case HttpStatusCode.OK:
                     Notificar("Notificação de Evento foi <b>Enviada</b> com <b>Sucesso</b>.", Notifica.Sucesso);
