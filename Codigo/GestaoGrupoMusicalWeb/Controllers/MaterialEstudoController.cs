@@ -6,8 +6,6 @@ using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Service;
 using System.Net;
 
 namespace GestaoGrupoMusicalWeb.Controllers
@@ -36,13 +34,17 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             int idGrupoMusical = await _grupoMusical.GetIdGrupo(User.Identity.Name);
             var listaMaterialEstudo = await _materialEstudo.GetAllMaterialEstudoPerIdGrupo(idGrupoMusical);
-            var listaMaterialEstudoModel = _mapper.Map<List<MaterialEstudoViewModel>>(listaMaterialEstudo);
-            return View(listaMaterialEstudoModel);
+            var materialEstudoIndexDTO = _mapper.Map<List<MaterialEstudoIndexDTO>>(listaMaterialEstudo);
+            return View(materialEstudoIndexDTO);
         }
 
         public async Task<IActionResult> GetDataPage(DatatableRequest request)
         {
-            var response = await _materialEstudo.GetDataPage(request, await _grupoMusical.GetIdGrupo(User.Identity.Name));
+            int idGrupoMusical = await _grupoMusical.GetIdGrupo(User.Identity.Name);
+            var listaMaterialEstudo = await _materialEstudo.GetAllMaterialEstudoPerIdGrupo(idGrupoMusical);
+            var materialEstudoIndexDTO = _mapper.Map<List<MaterialEstudoIndexDTO>>(listaMaterialEstudo);
+
+            var response = _materialEstudo.GetDataPage(request, await _grupoMusical.GetIdGrupo(User.Identity.Name), materialEstudoIndexDTO);
             return Json(response);
         }
 
