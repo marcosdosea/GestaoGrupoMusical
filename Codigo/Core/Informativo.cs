@@ -5,6 +5,7 @@ namespace Core
 {
     public partial class Informativo
     {
+        public uint Id { get; set; }
         public int IdGrupoMusical { get; set; }
         public int IdPessoa { get; set; }
         public string Mensagem { get; set; } = null!;

@@ -44,11 +44,11 @@ namespace Core
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-//            if (!optionsBuilder.IsConfigured)
-//            {
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-//                optionsBuilder.UseMySQL("server=localhost;port=3306;user=root;password=123456;database=GrupoMusical");
-//            }
+            if (!optionsBuilder.IsConfigured)
+            {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseMySQL("server=localhost;port=3306;user=root;password=123456;database=grupomusical");
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -636,18 +636,13 @@ namespace Core
 
             modelBuilder.Entity<Informativo>(entity =>
             {
-                entity.HasKey(e => new { e.IdGrupoMusical, e.IdPessoa })
-                    .HasName("PRIMARY");
-
                 entity.ToTable("informativo");
 
                 entity.HasIndex(e => e.IdGrupoMusical, "fk_GrupoMusicalPessoa_GrupoMusical1_idx");
 
                 entity.HasIndex(e => e.IdPessoa, "fk_GrupoMusicalPessoa_Pessoa1_idx");
 
-                entity.Property(e => e.IdGrupoMusical).HasColumnName("idGrupoMusical");
-
-                entity.Property(e => e.IdPessoa).HasColumnName("idPessoa");
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.Data)
                     .HasColumnType("date")
@@ -656,6 +651,10 @@ namespace Core
                 entity.Property(e => e.EntregarAssociadosAtivos)
                     .HasColumnName("entregarAssociadosAtivos")
                     .HasDefaultValueSql("'1'");
+
+                entity.Property(e => e.IdGrupoMusical).HasColumnName("idGrupoMusical");
+
+                entity.Property(e => e.IdPessoa).HasColumnName("idPessoa");
 
                 entity.Property(e => e.Mensagem)
                     .HasMaxLength(2000)

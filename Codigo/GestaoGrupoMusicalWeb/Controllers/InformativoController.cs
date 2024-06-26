@@ -51,10 +51,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (await _informativoService.Create(_mapper.Map<Informativo>(informativoViewModel)))
-                {
+                var result = await _informativoService.Create(_mapper.Map<Informativo>(informativoViewModel));
+                if (result == System.Net.HttpStatusCode.OK)
                     return RedirectToAction(nameof(Index));
-                }
+                
             }
             return View(informativoViewModel);
 
