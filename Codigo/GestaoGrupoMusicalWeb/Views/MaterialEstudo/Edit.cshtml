@@ -36,11 +36,6 @@
                 <span asp-validation-for="Link" class="text-danger"></span>
                 <small id="characterCount">0/500</small>
             </div>
-            <div class="form-group col-xl-4">
-                <label asp-for="Data" class="control-label"></label>
-                <input class="form-control" readonly value="@Model.Data.ToString("dd/MM/yyyy")" />
-                <span asp-validation-for="Data" class="text-danger"></span>
-            </div>
             <div class="form-group">
                 <input asp-for="IdGrupoMusical" class="form-control" type="hidden" />
             </div>

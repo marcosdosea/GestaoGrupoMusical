@@ -15,7 +15,7 @@ namespace Core.Service
         Task<Materialestudo?> Get(int id);
         Task<IEnumerable<Materialestudo>> GetAll();
         Task<IEnumerable<Materialestudo>> GetAllMaterialEstudoPerIdGrupo(int idGrupoMusical);
-        Task<DatatableResponse<Materialestudo>> GetDataPage(DatatableRequest request, int idGrupo);
+        DatatableResponse<MaterialEstudoIndexDTO> GetDataPage(DatatableRequest request, int idGrupo, IEnumerable<MaterialEstudoIndexDTO> materialEstudoIndexDTO);
         Task<HttpStatusCode> NotificarMaterialViaEmail(IEnumerable<PessoaEnviarEmailDTO> pessoas, int idMaterialEstudo);
     }
 }
