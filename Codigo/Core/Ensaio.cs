@@ -1,30 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Core
+namespace Core;
+
+public partial class Ensaio
 {
-    public partial class Ensaio
-    {
-        public Ensaio()
-        {
-            Ensaiopessoas = new HashSet<Ensaiopessoa>();
-            IdFigurinos = new HashSet<Figurino>();
-        }
+    public int Id { get; set; }
 
-        public int Id { get; set; }
-        public int IdGrupoMusical { get; set; }
-        public string Tipo { get; set; } = null!;
-        public DateTime DataHoraInicio { get; set; }
-        public DateTime DataHoraFim { get; set; }
-        public sbyte PresencaObrigatoria { get; set; }
-        public string? Local { get; set; }
-        public string? Repertorio { get; set; }
-        public int IdColaboradorResponsavel { get; set; }
+    public int IdGrupoMusical { get; set; }
 
-        public virtual Pessoa IdColaboradorResponsavelNavigation { get; set; } = null!;
-        public virtual Grupomusical IdGrupoMusicalNavigation { get; set; } = null!;
-        public virtual ICollection<Ensaiopessoa> Ensaiopessoas { get; set; }
+    public string Tipo { get; set; } = null!;
 
-        public virtual ICollection<Figurino> IdFigurinos { get; set; }
-    }
+    public DateTime DataHoraInicio { get; set; }
+
+    public DateTime DataHoraFim { get; set; }
+
+    public sbyte PresencaObrigatoria { get; set; }
+
+    public string? Local { get; set; }
+
+    public string? Repertorio { get; set; }
+
+    public int IdColaboradorResponsavel { get; set; }
+
+    public virtual ICollection<Ensaiopessoa> Ensaiopessoas { get; set; } = new List<Ensaiopessoa>();
+
+    public virtual Pessoa IdColaboradorResponsavelNavigation { get; set; } = null!;
+
+    public virtual Grupomusical IdGrupoMusicalNavigation { get; set; } = null!;
+
+    public virtual ICollection<Figurino> IdFigurinos { get; set; } = new List<Figurino>();
 }

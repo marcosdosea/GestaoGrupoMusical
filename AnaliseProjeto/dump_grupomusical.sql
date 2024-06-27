@@ -567,7 +567,7 @@ CREATE TABLE IF NOT EXISTS `GrupoMusical`.`Informativo` (
   `idPessoa` INT NOT NULL,
   `mensagem` VARCHAR(2000) NOT NULL,
   `data` DATE NOT NULL,
-  `entregarAssociadosAtivos` TINYINT NOT NULL DEFAULT 1,
+  `entregarAssociadosAtivos` TINYINT NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   INDEX `fk_GrupoMusicalPessoa_Pessoa1_idx` (`idPessoa` ASC),
   INDEX `fk_GrupoMusicalPessoa_GrupoMusical1_idx` (`idGrupoMusical` ASC),
@@ -718,3 +718,44 @@ DEFAULT CHARACTER SET = latin1;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+-- -----------------------------------------------------
+-- Data for table `GrupoMusical`.`PapelGrupo`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `GrupoMusical`;
+INSERT INTO `GrupoMusical`.`PapelGrupo` (`idPapelGrupo`, `nome`) VALUES (1, 'ASSOCIADO');
+INSERT INTO `GrupoMusical`.`PapelGrupo` (`idPapelGrupo`, `nome`) VALUES (2, 'COLABORADOR');
+INSERT INTO `GrupoMusical`.`PapelGrupo` (`idPapelGrupo`, `nome`) VALUES (3, 'ADMINISTRADOR GRUPO');
+INSERT INTO `GrupoMusical`.`PapelGrupo` (`idPapelGrupo`, `nome`) VALUES (4, 'ADMINISTRADOR SISTEMA');
+INSERT INTO `GrupoMusical`.`PapelGrupo` (`idPapelGrupo`, `nome`) VALUES (5, 'REGENTE');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `GrupoMusical`.`Manequim`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `GrupoMusical`;
+INSERT INTO `GrupoMusical`.`Manequim` (`id`, `tamanho`, `descricao`) VALUES (1, 'P', 'PEQUENO');
+INSERT INTO `GrupoMusical`.`Manequim` (`id`, `tamanho`, `descricao`) VALUES (2, 'M', 'MÉDIO');
+INSERT INTO `GrupoMusical`.`Manequim` (`id`, `tamanho`, `descricao`) VALUES (3, 'G', 'GRANDE');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `GrupoMusical`.`TipoInstrumento`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `GrupoMusical`;
+INSERT INTO `GrupoMusical`.`TipoInstrumento` (`id`, `nome`) VALUES (1, 'SURDO 1');
+INSERT INTO `GrupoMusical`.`TipoInstrumento` (`id`, `nome`) VALUES (2, 'SURDO 2');
+INSERT INTO `GrupoMusical`.`TipoInstrumento` (`id`, `nome`) VALUES (3, 'DOBRA 18');
+INSERT INTO `GrupoMusical`.`TipoInstrumento` (`id`, `nome`) VALUES (4, 'DOBRA 20');
+INSERT INTO `GrupoMusical`.`TipoInstrumento` (`id`, `nome`) VALUES (5, 'REPIQUE');
+INSERT INTO `GrupoMusical`.`TipoInstrumento` (`id`, `nome`) VALUES (6, 'CAIXA');
+
+COMMIT;
+
