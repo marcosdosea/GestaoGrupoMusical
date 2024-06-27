@@ -1,14 +1,17 @@
 ﻿using AutoMapper;
 using Core;
+using Core.DTO;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Service;
+using System.Net;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
-    public class InformativoController : Controller
+    public class InformativoController : BaseController
     {
         // GET: InformativoController
         private readonly IInformativoService _informativoService;
@@ -51,12 +54,32 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (await _informativoService.Create(_mapper.Map<Informativo>(informativoViewModel)))
+                UserDTO user = await _pessoaService.GetByCpf(User.Identity.Name);
+
+                var informativo = new Informativo
                 {
+                    EntregarAssociadosAtivos = informativoViewModel.EntregarAssociadosAtivos,
+                    Data = informativoViewModel.Data,
+                    Mensagem = informativoViewModel.Mensagem,
+                    IdGrupoMusical = user!.IdGrupoMusical,
+                    IdPessoa = user.Id,
+                }; 
+
+                var statusCode = await _informativoService.Create(informativo);
+
+                if (statusCode == HttpStatusCode.Created)
+                {
+                    Notificar("Informativo <b>Cadastrado</b> com <b>Sucesso</b>.", Notifica.Sucesso);
                     return RedirectToAction(nameof(Index));
                 }
+                Notificar("<b>Erro</b>! Há algo errado ao cadastrar Informativo", Notifica.Erro);
+                return RedirectToAction("Index");
             }
-            return View(informativoViewModel);
+            else
+            {
+                Notificar("<b>Erro</b>! Algo deu errado", Notifica.Erro);
+                return View();
+            }
 
         }
 
@@ -76,7 +99,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                if(await _informativoService.Edit(_mapper.Map<Informativo>(informativo)))
+                if (await _informativoService.Edit(_mapper.Map<Informativo>(informativo)))
                 {
                     return RedirectToAction(nameof(Index));
                 }
@@ -90,17 +113,49 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             var informativo = await _informativoService.Get(idGrupoMusical, idPessoa);
             var model = _mapper.Map<InformativoViewModel>(informativo);
-            
+
             return View(model);
         }
 
         // POST: InformativoController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(int idGrupoMusical,int idPessoa, InformativoViewModel informativo)
+        public async Task<ActionResult> Delete(int idGrupoMusical, int idPessoa, InformativoViewModel informativo)
         {
             await _informativoService.Delete(idGrupoMusical, idPessoa);
             return RedirectToAction(nameof(Index));
         }
     }
 }
+
+/*
+if (ModelState.IsValid)
+            {
+                UserDTO user = await _pessoaService.GetByCpf(User.Identity.Name);
+
+                var informativo = new Informativo
+                {
+                    EntregarAssociadosAtivos = informativoViewModel.EntregarAssociadosAtivos,
+                    Data = informativoViewModel.Data,
+                    Mensagem = informativoViewModel.Mensagem,
+                    IdGrupoMusical = user!.IdGrupoMusical,
+                    IdPessoa = user.Id,
+                };
+
+                var statusCode = await _informativoService.Create(informativo);
+
+                if (statusCode == HttpStatusCode.Created)
+                {
+                    Notificar("Informativo <b>Cadastrado</b> com <b>Sucesso</b>.", Notifica.Sucesso);
+                    return RedirectToAction(nameof(Index));
+                }
+                Notificar("<b>Erro</b>! Há algo errado ao cadastrar Informativo", Notifica.Erro);
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                Notificar("<b>Erro</b>! Algo deu errado", Notifica.Erro);
+                return View();
+            }
+
+*/
