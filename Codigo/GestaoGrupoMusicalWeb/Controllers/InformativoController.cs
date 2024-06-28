@@ -1,8 +1,11 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Core;
+using Core.DTO;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Service;
 using System.Net;
 
 namespace GestaoGrupoMusicalWeb.Controllers
@@ -50,12 +53,32 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _informativoService.Create(_mapper.Map<Informativo>(informativoViewModel));
-                if (result == System.Net.HttpStatusCode.OK)
+                UserDTO user = await _pessoaService.GetByCpf(User.Identity.Name);
+
+                var informativo = new Informativo
+                {
+                    EntregarAssociadosAtivos = informativoViewModel.EntregarAssociadosAtivos,
+                    Data = informativoViewModel.Data,
+                    Mensagem = informativoViewModel.Mensagem,
+                    IdGrupoMusical = user!.IdGrupoMusical,
+                    IdPessoa = user.Id,
+                }; 
+
+                var statusCode = await _informativoService.Create(informativo);
+
+                if (statusCode == HttpStatusCode.Created)
+                {
+                    Notificar("Informativo <b>Cadastrado</b> com <b>Sucesso</b>.", Notifica.Sucesso);
                     return RedirectToAction(nameof(Index));
-                
+                }
+                Notificar("<b>Erro</b>! Há algo errado ao cadastrar Informativo", Notifica.Erro);
+                return RedirectToAction("Index");
+            } else{
+
+                Notificar("<b>Erro</b>! Algo deu errado", Notifica.Erro);
+                return View();
             }
-            return View(informativoViewModel);
+
 
         }
 
@@ -83,6 +106,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 Informativo informativo = _mapper.Map<Informativo>(informativoModel);
                 if (_informativoService.Edit(informativo) == HttpStatusCode.OK)
+                if (await _informativoService.Edit(_mapper.Map<Informativo>(informativo)))
                 {
                     Notificar("O <b>informativo</b> foi editado com <b>Sucesso</b>!", Notifica.Sucesso);
                 }
@@ -99,7 +123,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             var informativo =  _informativoService.Get(id);
             var model = _mapper.Map<InformativoViewModel>(informativo);
-            
+
             return View(model);
         }
 
@@ -107,6 +131,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Delete(InformativoViewModel model)
+        public async Task<ActionResult> Delete(int idGrupoMusical, int idPessoa, InformativoViewModel informativo)
         {
             _informativoService.Delete(model.Id);
             return RedirectToAction(nameof(Index));
