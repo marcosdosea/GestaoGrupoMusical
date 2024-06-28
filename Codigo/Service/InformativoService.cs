@@ -27,35 +27,36 @@ namespace Service
             }
         }
 
-        public async Task<HttpStatusCode> Delete(int idGrupoMusical, int idPessoa)
+        public HttpStatusCode Delete(uint id)
         {
-            var informativo = await Get(idGrupoMusical, idPessoa);
+            var informativo = Get(id);
             if (informativo == null)
             {
                 return HttpStatusCode.NotFound;
             }
             _context.Remove(informativo);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
             return HttpStatusCode.OK;
         }
 
-        public async Task<bool> Edit(Informativo informativo)
+        public HttpStatusCode Edit(Informativo informativo)
         {
             try
             {
+                informativo.Data = DateTime.Now;
                 _context.Informativos.Update(informativo);
-                await _context.SaveChangesAsync();
-                return true;
+                _context.SaveChanges();
+                return HttpStatusCode.OK;
             }
             catch
             {
-                return false;
+                return HttpStatusCode.MethodNotAllowed;
             }
         }
 
-        public async Task<Informativo?> Get(int idGrupoMusical, int idPessoa)
+        public Informativo? Get(uint id)
         {
-            return await _context.Informativos.FindAsync(idGrupoMusical, idPessoa);
+            return _context.Informativos.Find(id);
         }
 
         public async Task<IEnumerable<Informativo>> GetAll()
@@ -65,7 +66,7 @@ namespace Service
         public async Task<IEnumerable<Informativo>> GetAllInformativoServiceIdGrupo(int idGrupoMusical, int idPessoa)
         {
             var query = await (from informativoService in _context.Informativos
-                               where informativoService.IdGrupoMusical == idGrupoMusical && informativoService.IdPessoa == idPessoa                               
+                               where informativoService.IdGrupoMusical == idGrupoMusical && informativoService.IdPessoa == idPessoa
                                select informativoService).ToListAsync();
 
             return query;
