@@ -105,8 +105,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             if (ModelState.IsValid)
             {
                 Informativo informativo = _mapper.Map<Informativo>(informativoModel);
-                if (_informativoService.Edit(informativo) == HttpStatusCode.OK)
-                if (await _informativoService.Edit(_mapper.Map<Informativo>(informativo)))
+                if (_informativoService.Edit(_mapper.Map<Informativo>(informativo)) == HttpStatusCode.OK)
                 {
                     Notificar("O <b>informativo</b> foi editado com <b>Sucesso</b>!", Notifica.Sucesso);
                 }
@@ -131,7 +130,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Delete(InformativoViewModel model)
-        public async Task<ActionResult> Delete(int idGrupoMusical, int idPessoa, InformativoViewModel informativo)
         {
             _informativoService.Delete(model.Id);
             return RedirectToAction(nameof(Index));
