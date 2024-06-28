@@ -3,7 +3,6 @@ using Core;
 using Core.DTO;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Service;
@@ -34,9 +33,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: InformativoController/Details/5
-        public async Task<ActionResult> Details(int idPessoa, int idGrupoMusical)
+        public async Task<ActionResult> Details(uint id)
         {
-            var informativo = await _informativoService.Get(idGrupoMusical, idPessoa);
+            var informativo = _informativoService.Get(id);
             var model = _mapper.Map<InformativoViewModel>(informativo);
             return View(model);
         }
@@ -84,34 +83,45 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: InformativoController/Edit/5
-        public async Task<ActionResult> Edit(int idGrupoMusical, int idPessoa)
+        public ActionResult Edit(uint id)
         {
-            var informativo = await _informativoService.Get(idGrupoMusical, idPessoa);
-            var model = _mapper.Map<InformativoViewModel>(informativo);
+            var informativo = _informativoService.Get(id);
 
+            if(informativo == null)
+            {
+                Notificar("Erro! O <strong>informativo<strong/> não foi encontrado.", Notifica.Erro);
+                return RedirectToAction(nameof(Index));
+            }
+            var model = _mapper.Map<InformativoViewModel>(informativo);
+            Console.WriteLine(model.Data.ToString());
             return View(model);
         }
 
         // POST: InformativoController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(int id, InformativoViewModel informativo)
+        public ActionResult Edit(InformativoViewModel informativoModel)
         {
             if (ModelState.IsValid)
             {
+                Informativo informativo = _mapper.Map<Informativo>(informativoModel);
+                if (_informativoService.Edit(informativo) == HttpStatusCode.OK)
                 if (await _informativoService.Edit(_mapper.Map<Informativo>(informativo)))
                 {
-                    return RedirectToAction(nameof(Index));
+                    Notificar("O <b>informativo</b> foi editado com <b>Sucesso</b>!", Notifica.Sucesso);
+                }
+                else
+                {
+                    Notificar("Erro! Não foi <strong>permitido<strong/> a edição do<strong>Informativo<strong/>!", Notifica.Sucesso);
                 }
             }
-            return View(informativo);
-
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: InformativoController/Delete/5
-        public async Task<ActionResult> Delete(int idGrupoMusical, int idPessoa)
+        public async Task<ActionResult> Delete(uint id)
         {
-            var informativo = await _informativoService.Get(idGrupoMusical, idPessoa);
+            var informativo =  _informativoService.Get(id);
             var model = _mapper.Map<InformativoViewModel>(informativo);
 
             return View(model);
@@ -120,9 +130,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: InformativoController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Delete(InformativoViewModel model)
         public async Task<ActionResult> Delete(int idGrupoMusical, int idPessoa, InformativoViewModel informativo)
         {
-            await _informativoService.Delete(idGrupoMusical, idPessoa);
+            _informativoService.Delete(model.Id);
             return RedirectToAction(nameof(Index));
         }
     }

@@ -6,14 +6,18 @@ namespace GestaoGrupoMusicalWeb.Models
 {
     public class InformativoViewModel
     {
+        public uint Id { get; set; }
         public int IdGrupoMusical { get; set; }
         public int IdPessoa { get; set; }
-        [Display(Name ="Informativo")]
-        [MaxLength(2000, ErrorMessage = "Ultrapassou o limíte de 2000 caracteres")]
+
+        [Display(Name ="Mensagem")]
+        [Required(ErrorMessage = "A mensagem não pode estar vazia.")]
+        [MaxLength(2000, ErrorMessage = "Ultrapassou o limite de 2000 caracteres.")] 
         public string Mensagem { get; set; } = null!;
+
         [Display(Name = "Data")]
-        [Required(ErrorMessage = "campo {0} é obrigatório")]
         public DateTime Data { get; set; }
+        [Display(Name = "Somente Associados Ativos")]
         public sbyte EntregarAssociadosAtivos { get; set; }
     }
 }

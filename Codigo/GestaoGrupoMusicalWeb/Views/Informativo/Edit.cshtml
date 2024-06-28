@@ -1,52 +1,84 @@
 ﻿@model GestaoGrupoMusicalWeb.Models.InformativoViewModel
 
 @{
-    ViewData["Title"] = "Editar";
+    ViewData["Title"] = "Editar Informativo";
+    ViewData["Informativo"] = "Informativo";
+    ViewData["Edit"] = "Editar";
 }
-
-<h1>@ViewData["Title"]</h1>
 
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-8">
+        <h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">Editar Informativo</h1>
+        <nav>
+            <ol class="breadcrumb px-3">
+                <strong>
+                    <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Informativo"]</a>
+                    <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Edit"]</spn>
+                </strong>
+            </ol>
+        </nav>
+        <hr />
+        <br />
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="IdGrupoMusical" class="control-label"></label>
-                <input asp-for="IdGrupoMusical" class="form-control" />
-                <span asp-validation-for="IdGrupoMusical" class="text-danger"></span>
+                <input asp-for="Id" class="form-control" type="hidden" />
             </div>
-            <div class="form-group">
-                <label asp-for="IdPessoa" class="control-label"></label>
-                <input asp-for="IdPessoa" class="form-control" />
-                <span asp-validation-for="IdPessoa" class="text-danger"></span>
-            </div>
-            <div class="form-group">
+            <div class="form-group col-md-12">
                 <label asp-for="Mensagem" class="control-label"></label>
-                <input asp-for="Mensagem" class="form-control" />
+                <textarea asp-for="Mensagem" class="form-control" maxlength="2000" id="linkTextArea" oninput="updateCharacterCount()" style="height: 150px;" ></textarea>
                 <span asp-validation-for="Mensagem" class="text-danger"></span>
+                <small id="characterCount">0/2000</small>
+            </div>
+            <br /> <br />
+            <div class="row d-flex justify-content-between">
+                <div class="form-group col-md-6">
+                    <label asp-for="EntregarAssociadosAtivos" class="control-label"></label>
+                    <br>
+                    <input type="radio" id="Sim" name="EntregarAssociadosAtivos" value="1" @(Model.EntregarAssociadosAtivos == 1 ? "checked" : "")>
+                    <label for="Sim">Sim</label>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <input type="radio" id="Nao" name="EntregarAssociadosAtivos" value="0" @(Model.EntregarAssociadosAtivos == 0 ? "checked" : "")>
+                    <label for="Nao">Não</label><br>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="Data" class="control-label"></label>
+                    <input asp-for="Data" class="form-control" type="date" readonly/>
+                </div>
             </div>
             <div class="form-group">
-                <label asp-for="Data" class="control-label"></label>
-                <input asp-for="Data" class="form-control" />
-                <span asp-validation-for="Data" class="text-danger"></span>
+                <input asp-for="IdGrupoMusical" class="form-control" type="hidden" />
             </div>
             <div class="form-group">
-                <label asp-for="EntregarAssociadosAtivos" class="control-label"></label>
-                <input asp-for="EntregarAssociadosAtivos" class="form-control" />
-                <span asp-validation-for="EntregarAssociadosAtivos" class="text-danger"></span>
+                <input asp-for="IdPessoa" class="form-control" type="hidden" />
             </div>
-            <div class="form-group">
-                <input type="submit" value="Salvar" class="btn btn-primary" />
+            <br />
+            <br />
+            <div class="container">
+                <div class="row d-flex flex-column-reverse d-grig gap-2 mx-auto d-flex flex-sm-column-reverse flex-xl-row">
+                    <div class="col-5 d-none d-sm-block"></div>
+                    <a class="btn btn-light text-secondary border border-secondary d-grid gap-2 col-sm" asp-action="Index"> Voltar </a>
+                    <input type="submit" value="Salvar" class="btn btn-secondary d-grid gap-2 col-sm " />
+                </div>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Voltar</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
+<script>
+    function updateCharacterCount() {
+        var textArea = document.getElementById('linkTextArea');
+        var charCount = textArea.value.length;
+        var charLimitFromGrupoMusical = textArea.maxLength;
+        document.getElementById('characterCount').innerText = charCount + '/' + charLimitFromGrupoMusical;
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+        updateCharacterCount();
+    });
+</script>
