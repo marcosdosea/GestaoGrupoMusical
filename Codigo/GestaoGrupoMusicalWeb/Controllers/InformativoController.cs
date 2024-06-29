@@ -43,7 +43,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: InformativoController/Create
         public ActionResult Create()
         {
-            return View();
+            var model = new InformativoViewModel();
+            model.Data = DateTime.Now;
+            model.EntregarAssociadosAtivos = 1;
+            return View(model);
         }
 
         // POST: InformativoController/Create
@@ -69,6 +72,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 if (statusCode == HttpStatusCode.Created)
                 {
                     Notificar("Informativo <b>Cadastrado</b> com <b>Sucesso</b>.", Notifica.Sucesso);
+                    var pessoas = await _grupoMusicalService.GetAllPeopleFromGrupoMusical(await _grupoMusicalService.GetIdGrupo(User.Identity.Name));
+                    var temp = await _informativoService.NotificarInformativoViaEmail(pessoas, informativo.Id, informativo.Mensagem);
                     return RedirectToAction(nameof(Index));
                 }
                 Notificar("<b>Erro</b>! Há algo errado ao cadastrar Informativo", Notifica.Erro);
@@ -134,5 +139,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
             _informativoService.Delete(model.Id);
             return RedirectToAction(nameof(Index));
         }
+
     }
 }
