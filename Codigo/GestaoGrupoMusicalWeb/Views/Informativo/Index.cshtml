@@ -5,7 +5,7 @@
 }
 
 
-
+<partial name="_Notificar">
 <div class="d-flex justify-content-between align-items-center">
     <h5>@ViewData["Title"]</h5>
     <a role="button" class="btn btn-secondary m-3" asp-controller="Informativo" asp-action="Create">Novo Informativo</a>
@@ -19,7 +19,7 @@
                     <span class="text-white">IdGrupoMusical</span>
                 </th>
                 <th>
-                    <span class="text-white">IdGrupoMusical</span>
+                    <span class="text-white">IdPessoa</span>
                 </th>
                 <th>
                     <span class="text-white">Mensagem</span>
@@ -53,7 +53,7 @@
                         @Html.DisplayFor(modelItem => item.EntregarAssociadosAtivos)
                     </td>
                     <td class="d-flex justify-content-between border-0 flex-wrap py-3">
-                        <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb-2" asp-controller="Informativo" asp-action="Edit" asp-route-idGrupoMusical="@item.IdGrupoMusical" asp-route-idPessoa="@item.IdPessoa"><i class="fa-solid fa-pen-to-square"> </i> Editar </a>
+                        <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb-2" asp-controller="Informativo" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"> </i> Editar </a>
                         <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb-2" asp-controller="Informativo" asp-action="Details" asp-route-idGrupoMusical="@item.IdGrupoMusical" asp-route-idPessoa="@item.IdPessoa"><i class="fa-solid fa-file"> </i> Detalhes </a>
                         <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb-2" asp-controller="Informativo" asp-action="Delete" asp-route-idGrupoMusical="@item.IdGrupoMusical" asp-route-idPessoa="@item.IdPessoa"><i class="fa-solid fa-xmark"> </i> Excluir </a>
                     </td>
