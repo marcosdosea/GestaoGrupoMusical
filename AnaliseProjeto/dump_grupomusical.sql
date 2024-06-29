@@ -7,6 +7,7 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema GrupoMusical
 -- -----------------------------------------------------
+DROP SCHEMA IF EXISTS `GrupoMusical` ;
 
 -- -----------------------------------------------------
 -- Schema GrupoMusical
@@ -48,7 +49,7 @@ ENGINE = InnoDB;
 -- Table `GrupoMusical`.`PapelGrupo`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `GrupoMusical`.`PapelGrupo` (
-  `idPapelGrupo` INT NOT NULL AUTO_INCREMENT,
+  `idPapelGrupo` INT NOT NULL,
   `nome` VARCHAR(100) NOT NULL,
   PRIMARY KEY (`idPapelGrupo`))
 ENGINE = InnoDB;
@@ -398,11 +399,11 @@ CREATE TABLE IF NOT EXISTS `GrupoMusical`.`EnsaioPessoa` (
   `presente` TINYINT NOT NULL DEFAULT 0,
   `justificativaFalta` VARCHAR(200) NULL,
   `justificativaAceita` TINYINT NOT NULL DEFAULT 0,
-  `idPapelGrupoPapelGrupo` INT NOT NULL,
+  `idPapelGrupo` INT NOT NULL,
   PRIMARY KEY (`idPessoa`, `idEnsaio`),
   INDEX `fk_PessoaEnsaio_Ensaio1_idx` (`idEnsaio` ASC),
   INDEX `fk_PessoaEnsaio_Pessoa1_idx` (`idPessoa` ASC),
-  INDEX `fk_EnsaioPessoa_PapelGrupo1_idx` (`idPapelGrupoPapelGrupo` ASC),
+  INDEX `fk_EnsaioPessoa_PapelGrupo1_idx` (`idPapelGrupo` ASC),
   CONSTRAINT `fk_PessoaEnsaio_Pessoa1`
     FOREIGN KEY (`idPessoa`)
     REFERENCES `GrupoMusical`.`Pessoa` (`id`)
@@ -414,7 +415,7 @@ CREATE TABLE IF NOT EXISTS `GrupoMusical`.`EnsaioPessoa` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_EnsaioPessoa_PapelGrupo1`
-    FOREIGN KEY (`idPapelGrupoPapelGrupo`)
+    FOREIGN KEY (`idPapelGrupo`)
     REFERENCES `GrupoMusical`.`PapelGrupo` (`idPapelGrupo`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
@@ -469,6 +470,7 @@ CREATE TABLE IF NOT EXISTS `GrupoMusical`.`ApresentacaoTipoInstrumento` (
   `idTipoInstrumento` INT NOT NULL,
   `quantidadePlanejada` INT NOT NULL DEFAULT 0,
   `quantidadeConfirmada` INT NOT NULL DEFAULT 0,
+  `quantidadeInscritos` INT NOT NULL DEFAULT 0,
   PRIMARY KEY (`idApresentacao`, `idTipoInstrumento`),
   INDEX `fk_ApresentacaoTipoInstrumento_TipoInstrumento1_idx` (`idTipoInstrumento` ASC),
   INDEX `fk_ApresentacaoTipoInstrumento_Apresentacao1_idx` (`idApresentacao` ASC),
@@ -566,7 +568,7 @@ CREATE TABLE IF NOT EXISTS `GrupoMusical`.`Informativo` (
   `idGrupoMusical` INT NOT NULL,
   `idPessoa` INT NOT NULL,
   `mensagem` VARCHAR(2000) NOT NULL,
-  `data` DATE NOT NULL,
+  `data` DATETIME NOT NULL,
   `entregarAssociadosAtivos` TINYINT NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   INDEX `fk_GrupoMusicalPessoa_Pessoa1_idx` (`idPessoa` ASC),

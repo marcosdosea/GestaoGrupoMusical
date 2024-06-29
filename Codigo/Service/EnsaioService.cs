@@ -59,13 +59,13 @@ namespace Service
                             };
                             if (associadoRegente.IdPapelGrupo == 5 && idRegentes.Contains(associadoRegente.Id))
                             {
-                                ensaioPessoa.IdPapelGrupoPapelGrupo = associadoRegente.IdPapelGrupo;
+                                ensaioPessoa.IdPapelGrupo = associadoRegente.IdPapelGrupo;
                                 await _context.Ensaiopessoas.AddAsync(ensaioPessoa);
                                 email.To.Add(associadoRegente.Email);
                             }
                             else
                             {
-                                ensaioPessoa.IdPapelGrupoPapelGrupo = associadoRegente.IdPapelGrupo;
+                                ensaioPessoa.IdPapelGrupo = associadoRegente.IdPapelGrupo;
                                 await _context.Ensaiopessoas.AddAsync(ensaioPessoa);
                                 email.To.Add(associadoRegente.Email);
                             }
@@ -163,13 +163,13 @@ namespace Service
                     if (ensaio.DataHoraInicio >= DateTime.Now)
                     {
                         var idEnsaioRegentes = _context.Ensaiopessoas
-                                            .Where(ep => ep.IdEnsaio == ensaioDb.Id && ep.IdPapelGrupoPapelGrupo == 5)
+                                            .Where(ep => ep.IdEnsaio == ensaioDb.Id && ep.IdPapelGrupo == 5)
                                             .Select(ep => ep.IdPessoa).AsEnumerable();
 
                         if ((idRegentes.Count() != idEnsaioRegentes.Count()) || (idRegentes.Except(idEnsaioRegentes).Any()))
                         {
                             var ensaioPessoaRegente = _context.Ensaiopessoas
-                                                      .Where(ep => ep.IdEnsaio == ensaioDb.Id && ep.IdPapelGrupoPapelGrupo == 5);
+                                                      .Where(ep => ep.IdEnsaio == ensaioDb.Id && ep.IdPapelGrupo == 5);
                             _context.Ensaiopessoas.RemoveRange(ensaioPessoaRegente);
                             foreach (int idRegente in idRegentes)
                             {
@@ -178,7 +178,7 @@ namespace Service
                                     IdEnsaio = ensaio.Id,
                                     IdPessoa = idRegente,
                                     Presente = 1,
-                                    IdPapelGrupoPapelGrupo = 5
+                                    IdPapelGrupo = 5
                                 };
                                 await _context.Ensaiopessoas.AddAsync(ensaioPessoa);
                             }
@@ -271,7 +271,7 @@ namespace Service
                     PresencaObrigatoria = g.PresencaObrigatoria == 1 ? "Sim" : "Não",
                     Repertorio = g.Repertorio,
                     Regentes = _context.Ensaiopessoas
-                                       .Where(ep => ep.IdPapelGrupoPapelGrupo == 5 && ep.IdEnsaio == idEnsaio)
+                                       .Where(ep => ep.IdPapelGrupo == 5 && ep.IdEnsaio == idEnsaio)
                                        .OrderBy(ep => ep.IdPessoaNavigation.Nome)
                                        .Select(ep => ep.IdPessoaNavigation.Nome).AsEnumerable(),
                     IdGrupoMusical = g.IdGrupoMusical
@@ -290,13 +290,13 @@ namespace Service
                             Inicio = ensaio.DataHoraInicio,
                             Fim = ensaio.DataHoraFim,
                             Regentes = _context.Ensaiopessoas
-                                       .Where(ep => ep.IdPapelGrupoPapelGrupo == 5 && ep.IdEnsaio == idEnsaio)
+                                       .Where(ep => ep.IdPapelGrupo == 5 && ep.IdEnsaio == idEnsaio)
                                        .OrderBy(ep => ep.IdPessoaNavigation.Nome)
                                        .Select(ep => ep.IdPessoaNavigation.Nome).AsEnumerable(),
                             Tipo = ensaio.Tipo,
                             Local = ensaio.Local,
                             Frequencias = _context.Ensaiopessoas
-                            .Where(ensaioPessoa => ensaioPessoa.IdEnsaio == idEnsaio && ensaioPessoa.IdPapelGrupoPapelGrupo != 5)
+                            .Where(ensaioPessoa => ensaioPessoa.IdEnsaio == idEnsaio && ensaioPessoa.IdPapelGrupo != 5)
                             .OrderBy(ensaioPessoa => ensaioPessoa.IdPessoaNavigation.Nome)
                             .Select(ensaioPessoa => new EnsaioListaFrequenciaDTO
                             {
@@ -324,7 +324,7 @@ namespace Service
                 int idEnsaio = frequencias.First().IdEnsaio;
 
                 var dbFrequencias = _context.Ensaiopessoas
-                                    .Where(ep => ep.IdEnsaio == frequencias.First().IdEnsaio && ep.IdPapelGrupoPapelGrupo != 5)
+                                    .Where(ep => ep.IdEnsaio == frequencias.First().IdEnsaio && ep.IdPapelGrupo != 5)
                                     .OrderBy(ep => ep.IdPessoaNavigation.Nome);
 
                 if (dbFrequencias == null)
@@ -394,7 +394,7 @@ namespace Service
                     return HttpStatusCode.NotFound;
                 }
 
-                if (ensaioPessoa.IdPapelGrupoPapelGrupo != 1)
+                if (ensaioPessoa.IdPapelGrupo != 1)
                 {
                     return HttpStatusCode.Unauthorized;
                 }
@@ -415,7 +415,7 @@ namespace Service
         public async Task<IEnumerable<int>> GetIdRegentesEnsaioAsync(int idEnsaio)
         {
             return await _context.Ensaiopessoas
-                                 .Where(ep => ep.IdEnsaio == idEnsaio && ep.IdPapelGrupoPapelGrupo == 5)
+                                 .Where(ep => ep.IdEnsaio == idEnsaio && ep.IdPapelGrupo == 5)
                                  .Select(ep => ep.IdPessoa).ToListAsync();
         }
 
