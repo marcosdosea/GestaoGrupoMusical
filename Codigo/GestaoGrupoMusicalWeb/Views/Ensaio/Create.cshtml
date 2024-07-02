@@ -22,42 +22,38 @@
         <form id="formCreate" asp-action="Create">
             <div class="container">
                 <div class="row">
-                    <div class="form-group col-xl">
-                        <label asp-for="Tipo" class="control-label"></label>
-                        <select asp-for="Tipo" class="form-select" asp-items="Html.GetEnumSelectList<Tipo>()">
-                        </select>
-                        <span asp-validation-for="Tipo" class="text-danger"></span>
-                    </div>
+                        <div class="form-group col-xl-4">
+                            <label asp-for="DataHoraInicio" class="control-label"></label>
+                            <input asp-for="DataHoraInicio" class="form-control" />
+                            <span asp-validation-for="DataHoraInicio" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-xl-4">
+                            <label asp-for="DataHoraFim" class="control-label"></label>
+                            <input asp-for="DataHoraFim" class="form-control" />
+                            <span asp-validation-for="DataHoraFim" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-xl">
+                            <label asp-for="Tipo" class="control-label"></label>
+                            <select asp-for="Tipo" class="form-select" asp-items="Html.GetEnumSelectList<Tipo>()">
+                            </select>
+                            <span asp-validation-for="Tipo" class="text-danger"></span>
+                        </div>
                 </div>
             </div>
             <div class="container">
                 <div class="row">
-                    <div class="form-group col-xxl-4">
-                        <label asp-for="DataHoraInicio" class="control-label"></label>
-                        <input asp-for="DataHoraInicio" class="form-control" />
-                        <span asp-validation-for="DataHoraInicio" class="text-danger"></span>
-                    </div>
-                    <div class="form-group col-xxl-4">
-                        <label asp-for="DataHoraFim" class="control-label"></label>
-                        <input asp-for="DataHoraFim" class="form-control" />
-                        <span asp-validation-for="DataHoraFim" class="text-danger"></span>
-                    </div>
-
-                    <div class="form-group col-xl">
-                        <label asp-for="PresencaObrigatoria" class="control-label"></label>
-                        <div class="d-flex justify-content-around">
-                            @{
-                                foreach (var item in Model.Obrigatorio)
-                                {
-                                    <div>
-                                        <label for="@item.Key">@item.Key</label>
-                                        <input class="form-check-input" type="radio" value="@item.Value" asp-for="PresencaObrigatoria" id="@item.Key" />
-                                    </div>
-                                }
-                            }
+                        <div class="form-group col-xl">
+                            <label asp-for="IdRegentes" class="control-label"></label>
+                            <span class="d-inline-block my-2" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Escreva o nome do Regente. Ex: @ViewData["exemploRegente"]">
+                                <button class="btn btn-outline-secondary btn-sm fw-bold" type="button">?</button>
+                            </span>
+                            <select multiple asp-for="IdRegentes" class="d-none" asp-items="Model.ListaPessoa">
+                            </select>
+                            <input class="form-control" id="regentes" placeholder="Informe o Regente." />
+                            <div id="blockNames" class="d-flex flex-column gap-2">
+                            </div>
+                            <span for="regentes" class="text-danger"></span>
                         </div>
-                        <span asp-validation-for="PresencaObrigatoria" class="text-danger"></span>
-                    </div>
                 </div>
             </div>
             <div class="container">
@@ -71,28 +67,33 @@
             </div>
             <div class="container">
                 <div class="row">
-                    <div class="form-group col-xl">
-                        <label asp-for="IdRegentes" class="control-label"></label>
-                        <span class="d-inline-block my-2" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Escreva o nome do Regente. Ex: @ViewData["exemploRegente"]">
-                            <button class="btn btn-outline-secondary btn-sm fw-bold" type="button">?</button>
-                        </span>
-                        <select multiple asp-for="IdRegentes" class="d-none" asp-items="Model.ListaPessoa">
-                        </select>
-                        <input class="form-control" id="regentes" placeholder="Informe o Regente."/>
-                        <div id="blockNames" class="d-flex flex-column gap-2">
+                        <div class="row">
+                            <div class="form-group">
+                                <label asp-for="Repertorio" class="control-label"></label>
+                                <textarea asp-for="Repertorio" class="form-control"></textarea>
+                                <span asp-validation-for="Repertorio" class="text-danger"></span>
+                            </div>
                         </div>
-                        <span for="regentes" class="text-danger"></span>
-                    </div>
                 </div>
             </div>
             <div class="container">
                 <div class="row">
-                    <div class="form-group">
-                        <label asp-for="Repertorio" class="control-label"></label>
-                        <textarea asp-for="Repertorio" class="form-control"></textarea>
-                        <span asp-validation-for="Repertorio" class="text-danger"></span>
+                        <div class="form-group col-xl-4">
+                            <label asp-for="PresencaObrigatoria" class="control-label"></label>
+                            <div class="d-flex justify-content-around">
+                                @{
+                                    foreach (var item in Model.Obrigatorio)
+                                    {
+                                        <div>
+                                            <label for="@item.Key">@item.Key</label>
+                                            <input class="form-check-input" type="radio" value="@item.Value" asp-for="PresencaObrigatoria" id="@item.Key" />
+                                        </div>
+                                    }
+                                }
+                            </div>
+                            <span asp-validation-for="PresencaObrigatoria" class="text-danger"></span>
+                        </div>
                     </div>
-                </div>
             </div>
             <br />
             <br />
@@ -124,3 +125,6 @@
         await Html.RenderPartialAsync("_AutoCompletePartial");
     }
 }
+    
+
+    

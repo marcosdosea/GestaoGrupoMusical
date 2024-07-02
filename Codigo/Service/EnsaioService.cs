@@ -31,13 +31,21 @@ namespace Service
                 {
                     if (ensaio.DataHoraInicio >= DateTime.Now)
                     {
+                        Console.WriteLine("Ate que entrou");
                         await _context.Ensaios.AddAsync(ensaio);
 
                         var associadosRegentes = _context.Pessoas
                                          .Where(p => (p.IdPapelGrupo == 1 || p.IdPapelGrupo == 5) && p.Ativo == 1 && p.IdGrupoMusical == ensaio.IdGrupoMusical)
                                          .Select(pessoa => new { pessoa.Id, pessoa.Email, pessoa.IdPapelGrupo }).AsNoTracking();
 
+                        Console.WriteLine("-------------------------------------------------");
+                        Console.WriteLine("ANTES");
+                        Console.WriteLine("-------------------------------------------------");
                         await _context.SaveChangesAsync();
+
+                        Console.WriteLine("-------------------------------------------------");
+                        Console.WriteLine("DEPOIS");
+                        Console.WriteLine("-------------------------------------------------");
 
                         EmailModel email = new()
                         {
@@ -49,6 +57,10 @@ namespace Service
                                     $"<dt style=\"font-weight: 700;\">Data e Horário de Início:</dt><dd>{ensaio.DataHoraInicio}</dd>" +
                                     $"<dt style=\"font-weight: 700;\">Data e Horário de Fim:</dt><dd>{ensaio.DataHoraFim}</dd>\n</div>"
                         };
+
+                        Console.WriteLine("-------------------------------------------------");
+                        Console.WriteLine("E-MAIL CRIADO");
+                        Console.WriteLine("-------------------------------------------------");
 
                         await associadosRegentes.ForEachAsync(async associadoRegente => {
                             Ensaiopessoa ensaioPessoa = new()
@@ -71,10 +83,24 @@ namespace Service
                             }
                         });
 
+                        Console.WriteLine("-------------------------------------------------");
+                        Console.WriteLine("ANTES DE ENVIAR O EMAIL");
+                        Console.WriteLine("-------------------------------------------------");
+
                         await EmailService.Enviar(email);
 
+                        Console.WriteLine("-------------------------------------------------");
+                        Console.WriteLine("EMAIL ENVIADO");
+                        Console.WriteLine("-------------------------------------------------");
+
                         await _context.SaveChangesAsync();
+                        Console.WriteLine("-------------------------------------------------");
+                        Console.WriteLine("CONTEXTO SALVO");
+                        Console.WriteLine("-------------------------------------------------");
                         await transaction.CommitAsync();
+                        Console.WriteLine("-------------------------------------------------");
+                        Console.WriteLine("TRANSACAO SALVA");
+                        Console.WriteLine("-------------------------------------------------");
 
                         return HttpStatusCode.OK;
                     }
@@ -94,6 +120,7 @@ namespace Service
             }
             catch
             {
+                Console.WriteLine("Caiu no catch");
                 await transaction.RollbackAsync();
                 return HttpStatusCode.InternalServerError;
             }
@@ -120,8 +147,6 @@ namespace Service
                 {
                     _context.Ensaiopessoas.Remove(ensaio_pessoa);
                 }
-
-
 
                 var ensaio = await _context.Ensaios.FindAsync(id);
                 _context.Remove(ensaio);
@@ -455,7 +480,55 @@ namespace Service
                 RecordsFiltered = countRecordsFiltered,
                 RecordsTotal = totalRecords
             };
-        } 
+        }
+
+        public async Task<HttpStatusCode> NotificarEnsaioViaEmail(IEnumerable<PessoaEnviarEmailDTO> pessoas, int idEnsaio)
+        {
+            try
+            {
+                var ensaio = await Get(idEnsaio);
+                if (ensaio != null)
+                {
+                    List<EmailModel> emailsBody = new List<EmailModel>();
+                    foreach (PessoaEnviarEmailDTO p in pessoas)
+                    {
+                        emailsBody.Add(new EmailModel()
+                        {
+                            Assunto = $"Batalá - Notificação de Ensaio",
+                            AddresseeName = p.Nome,
+                            Body = "<div style=\"text-align: center;\">\r\n    " +
+                                $"<h3>Você acabou de receber uma notificação de um ensaio. Vá checar no sistema!</h3>\r\n</div>",
+                            To = new List<string> { p.Email }
+                        });
+                    }
+
+                    /*
+                     * Se cada envio dura 1 segundo (exemplo) e tem 10 emails, se enviar de 1 em 1 
+                     * e já que são assícronos, vai acabar demorando 10 segundos. A Task faz com que
+                     * todos sejam enviados em paralelo e quando todos já estiverem prontos
+                     * ele retorna o controle. Isso quer dizer que os 10 emails enviado podem demorar
+                     * 1 segundo. Porém, foi comentada a parte assíncrona porque em um sistema não é
+                     * necessário esperar o e-mail chegar até o usuário. Isso vai travar o sistema
+                     * até que o e-mail seja enviado. Com a linha comentada, é aquela coisa: "Se
+                     * enviar, enviou".
+                     */
+                    List<Task> emailTask = new List<Task>();
+                    foreach (EmailModel ema in emailsBody)
+                    {
+                        emailTask.Add(EmailService.Enviar(ema));
+                    }
+                    //await Task.WhenAll(emailTask);
+
+                    return HttpStatusCode.OK;
+                }
+
+                return HttpStatusCode.NotFound;
+            }
+            catch
+            {
+                return HttpStatusCode.InternalServerError;
+            }
+        }
     }
 
 }

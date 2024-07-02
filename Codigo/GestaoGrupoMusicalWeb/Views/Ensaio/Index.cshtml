@@ -83,10 +83,10 @@
                         { "data": "presencaObrigatoria", "name": "Presença Obrigatória", "autoWidth": true },
                         {
                             "render": function (data, type, full, meta) {
-                                return '<a class="btn btn btn-secondary btn-sm  m-2" href="/Ensaio/Edit/' + full.id + '"><i class="fa-solid fa-pen-to-square"> </i> Editar</a> ' +
-                                    '<a onclick="showConfirmationModal(' + full.id + ')" class="btn btn-sm btn-secondary" role="button"><i class="fa-solid fa-xmark"></i> Excluir</a>' +
-                                    '<a class="btn btn btn-secondary btn-sm  m-2" href="/Ensaio/Details/' + full.id + '"><i class="fa-solid fa-arrow-right-arrow-left"></i> Detalhes</a> '
-                                    ;
+                                return '<a class="btn btn btn-secondary btn-sm  m-2" href="/Ensaio/Edit/' + full.id + '"><i class="fa-solid fa-pen-to-square"> </i> Editar</a>' +
+                                    '<a onclick="showConfirmationModal(' + full.id + ')" class="btn btn-sm btn-secondary" role="button"><i class="fa-solid fa-xmark"> </i> Excluir</a>' +
+                                    '<a class="btn btn btn-secondary btn-sm  m-2" href="/Ensaio/RegistrarFrequencia/' + full.id + '"><i class="fa-solid fa-arrow-right-arrow-left"> </i> Frequência</a>' +
+                                    '<a onclick="showConfirmationModalNotificar(' + full.id + ')" class="btn btn btn-secondary btn-sm  m-2" "><i class="fa-solid fa-envelope"> </i> Notificar</a>';
                             }
                         },
                     ],
@@ -97,6 +97,24 @@
             });
         </script>
 
+        <div class="modal fade" id="ensaioModalNotificar" tabindex="-1" aria-labelledby="ensaioLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="admLabel">Confirmar Notificação do Ensaio</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Deseja <b>Notificar</b> o <b>Ensaio</b>?
+                    </div>
+                    <form method="post" class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary col-3 me-4" data-bs-dismiss="modal">Não</button>
+                        <button type="submit" class="btn btn-secondary col-3">Sim</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
         <script>
             function showConfirmationModal(formId) {
                 var modal = document.getElementById('ensaioModal');
@@ -106,6 +124,16 @@
                 modalBody.innerHTML = 'Deseja <b>Excluir</b> o <b>Ensaio</b>?'; // Conteúdo do modal
 
                 // Exibe o modal
+                var modal = new bootstrap.Modal(modal);
+                modal.show();
+            }
+
+            function showConfirmationModalNotificar(formId) {
+                var modal = document.getElementById('ensaioModalNotificar');
+                var modalForm = modal.querySelector('form');
+                modalForm.action = '/Ensaio/NotificarEnsaioViaEmail/' + formId;
+                var modalBody = modal.querySelector('.modal-body');
+                modalBody.innerHTML = 'Deseja <b>Notificar</b> o <b>Ensaio</b>?';
                 var modal = new bootstrap.Modal(modal);
                 modal.show();
             }

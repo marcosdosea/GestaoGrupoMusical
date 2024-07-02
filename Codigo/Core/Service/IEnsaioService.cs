@@ -75,6 +75,7 @@ namespace Core.Service
         /// HttpStatusCode.InternalServerError - Erro interno
         /// </returns>
         Task<HttpStatusCode> RegistrarJustificativaAsync(int idEnsaio, int idPessoa, string? justificativa);
+        Task<HttpStatusCode> NotificarEnsaioViaEmail(IEnumerable<PessoaEnviarEmailDTO> pessoas, int idEnsaio);
 
         Task<DatatableResponse<EnsaioIndexDTO>> GetDataPage(DatatableRequest request, int idGrupo);
     }
