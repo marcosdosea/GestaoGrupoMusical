@@ -20,7 +20,10 @@
                     @Html.DisplayNameFor(model => model.Local)
                 </th>
                 <th class="px-3">
-                    @Html.DisplayNameFor(model => model.Repertorio)
+                    @Html.DisplayNameFor(model => model.Planejados)
+                </th>
+                <th class="px-3">
+                    @Html.DisplayNameFor(model => model.Confirmados)
                 </th>
                 <th class="px-3">
                     <span>Ações</span>
@@ -76,14 +79,18 @@
                             }
                         },
                         { "data": "local", "name": "Local", "autoWidth": true },
-                        { "data": "repertorio", "name": "Repertorio", "autoWidth": true },
+                        { "data": "planejados", "name": "Planejados", "autoWidth": true },
+                        { "data": "confirmados", "name": "Repertorio", "autoWidth": true },
                         {
                             "render": function (data, type, full, meta) {
 
-                                return '<a class="btn btn btn-secondary btn-sm  m-2" href="/Evento/Details/' + full.id + '"><i class="fa-solid fa-file"> </i> Detalhes</a> ' +
-                                    '<a class="btn btn btn-secondary btn-sm  m-2" href="/Evento/Edit/' + full.id + '"><i class="fa-solid fa-pen-to-square"> </i> Editar</a> ' +
-                                    '<a onclick="showConfirmationModal(' + full.id + ')" class="btn btn-sm btn-secondary" role="button"><i class="fa-solid fa-xmark"></i> Excluir</a>' +
-                                    '<a class="btn btn btn-secondary btn-sm  m-2" href="/Evento/NotificarEventoViaEmail/' + full.id + '"><i class="fa-solid fa-envelope"> </i> Notificar</a> ';
+                                return '<a class="btn btn btn-secondary btn-sm  m-2" href="/Evento/Edit/' + full.id + '"><i class="fa-solid fa-pen-to-square"> </i> Editar</a> ' +
+                                    '<a onclick="showConfirmationModal(' + full.id + ')" class="btn btn-sm btn-secondary" role="button"><i class="fa-solid fa-xmark"></i> Excluir</a> ' +
+                                    '<a class="btn btn btn-secondary btn-sm  m-2"><i class="fa-solid fa-pen-to-square"> </i> Instrumentos</a> <br>' +
+                                    '<a class="btn btn btn-secondary btn-sm  m-2"><i class="fa-solid fa-pen-to-square"> </i> Solicitações</a> ' +
+                                    '<a class="btn btn btn-secondary btn-sm  m-2"><i class="fa-solid fa-pen-to-square"> </i> Frequência</a> ' +
+                                    '<a onclick="showConfirmationModalNotificar(' + full.id + ')" class="btn btn btn-secondary btn-sm  m-2" "><i class="fa-solid fa-envelope"> </i> Notificar</a> ';
+
                             }
                         },
                     ],
@@ -111,6 +118,24 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="eventoIndexModalNotificar" tabindex="-1" aria-labelledby="eventoIndexLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="admLabel">Confirmar Notificação do Evento</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Deseja <b>Notificar</b> o <b>Evento</b>?
+                </div>
+                <form method="post" class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary col-3 me-4" data-bs-dismiss="modal">Não</button>
+                    <button type="submit" class="btn btn-secondary col-3">Sim</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
         function showConfirmationModal(formId) {
             var modal = document.getElementById('eventoModal');
@@ -120,6 +145,16 @@
             modalBody.innerHTML = 'Deseja <b>Excluir</b> o <b>Evento</b>?'; // Conteúdo do modal
 
             // Exibe o modal
+            var modal = new bootstrap.Modal(modal);
+            modal.show();
+        }
+
+        function showConfirmationModalNotificar(formId) {
+            var modal = document.getElementById('eventoIndexModalNotificar');
+            var modalForm = modal.querySelector('form');
+            modalForm.action = '/Evento/NotificarEventoViaEmail/' + formId;
+            var modalBody = modal.querySelector('.modal-body');
+            modalBody.innerHTML = 'Deseja <b>Notificar</b> o <b>Evento</b>?';
             var modal = new bootstrap.Modal(modal);
             modal.show();
         }
