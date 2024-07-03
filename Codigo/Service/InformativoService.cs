@@ -1,5 +1,7 @@
 ﻿using Core;
+using Core.DTO;
 using Core.Service;
+using Email;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 
@@ -54,9 +56,9 @@ namespace Service
             }
         }
 
-        public Informativo? Get(uint id)
+        public async Task<Informativo?> Get(uint id)
         {
-            return _context.Informativos.Find(id);
+            return await _context.Informativos.FindAsync(id);
         }
 
         public async Task<IEnumerable<Informativo>> GetAll()
@@ -72,6 +74,42 @@ namespace Service
             return query;
         }
 
+        public async Task<HttpStatusCode> NotificarInformativoViaEmail(IEnumerable<PessoaEnviarEmailDTO> pessoas, uint idInformativo, string mensagem)
+        {
+            try
+            {
+                var informativo = await Get(idInformativo);
+                if (informativo != null) 
+                {
+                    List<EmailModel> emailsBody = new List<EmailModel>();
+                    foreach (PessoaEnviarEmailDTO p in pessoas)
+                    {
+                        emailsBody.Add(new EmailModel()
+                        {
+                            Assunto = $"Batalá - Notificação de Novo Informativo",
+                            AddresseeName = p.Nome,
+                            Body = "<div style=\"text-align: center;\">\r\n    " +
+                                $"<h3>" + mensagem + "</h3>\r\n</div>",
+                            To = new List<string> { p.Email }
+                        });
+                    }
+
+                    List<Task> emailTask = new List<Task>();
+                    foreach(EmailModel email in emailsBody)
+                    {
+                        emailTask.Add(EmailService.Enviar(email));
+                    }
+
+                    return HttpStatusCode.OK;
+                }
+
+                return HttpStatusCode.NotFound;
+            } 
+            catch
+            {
+                return HttpStatusCode.InternalServerError;
+            }
+        }
 
     }
 }
