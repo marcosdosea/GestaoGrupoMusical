@@ -44,7 +44,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public ActionResult Create()
         {
             var model = new InformativoViewModel();
-            model.Data = DateTime.Now;
+            model.Data = DateTime.Now.Date;
             model.EntregarAssociadosAtivos = 1;
             return View(model);
         }

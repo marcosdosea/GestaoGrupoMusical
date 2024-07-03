@@ -25,7 +25,7 @@
             <div class="container">
                 <div class="form-group col-md-12">
                     <label asp-for="Mensagem" class="control-label"></label>
-                    <textarea asp-for="Mensagem" class="form-control" maxlength="2000" id="mensagemTextArea" oninput="updateCharacterCount()"></textarea>
+                    <textarea asp-for="Mensagem" class="form-control" maxlength="2000" id="mensagemTextArea" oninput="updateCharacterCount()" style="height: 150px"></textarea>
                     <span asp-validation-for="Mensagem" class="text-danger"></span>
                     <small id="characterCount">0/2000</small>
                 </div>
