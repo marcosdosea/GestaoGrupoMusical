@@ -50,7 +50,7 @@
 
                     <div class="form-group col-md-6">
                         <label asp-for="Data" class="control-label"></label>
-                        <input asp-for="Data" class="form-control" />
+                        <input asp-for="Data" type="datetime"    class="form-control" readonly="readonly" value="@Model.Data.ToString("dd/MM/yyyy HH:mm:ss")" />
                         <span asp-validation-for="Data" class="text-danger"></span>
                     </div>
                 </div>

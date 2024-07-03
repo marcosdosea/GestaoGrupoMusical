@@ -15,8 +15,6 @@ namespace GestaoGrupoMusicalWeb.Models
         [MaxLength(2000, ErrorMessage = "Ultrapassou o limite de 2000 caracteres.")] 
         public string Mensagem { get; set; } = null!;
 
-        //[DataType(DataType.Date)]
-        //[DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime Data { get; set; }
         [Display(Name = "Somente Associados Ativos")]
         public sbyte EntregarAssociadosAtivos { get; set; }
