@@ -8,15 +8,5 @@ using System.Threading.Tasks;
 
 namespace Core.DTO
 {
-    public class EventoIndexDTO
-    {
-        public int Id { get; set; }
-        [DisplayName("Data hora início")]
-        public DateTime DataHoraInicio { get; set; }
-        [DisplayName("Local")]
-        public string? Local { get; set; }
-        [DisplayName("Repertório")]
-        public string? Repertorio { get; set; }
-
-    }
+    a
 }
