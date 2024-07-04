@@ -1,14 +1,16 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Core;
+using Core.DTO;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Service;
+using System.Net;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
-    public class InformativoController : Controller
+    public class InformativoController : BaseController
     {
         // GET: InformativoController
         private readonly IInformativoService _informativoService;
@@ -31,9 +33,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: InformativoController/Details/5
-        public async Task<ActionResult> Details(int idPessoa, int idGrupoMusical)
+        public async Task<ActionResult> Details(uint id)
         {
-            var informativo = await _informativoService.Get(idGrupoMusical, idPessoa);
+            var informativo = _informativoService.Get(id);
             var model = _mapper.Map<InformativoViewModel>(informativo);
             return View(model);
         }
@@ -41,39 +43,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: InformativoController/Create
         public ActionResult Create()
         {
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> GetDataPage()
-        {
-            var draw = HttpContext.Request.Form["draw"].FirstOrDefault();
-            var start = HttpContext.Request.Form["start"].FirstOrDefault();
-            var length = HttpContext.Request.Form["length"].FirstOrDefault();
-            var sortColumn = HttpContext.Request.Form["order[0][column]"].FirstOrDefault();
-            var sortColumnDir = HttpContext.Request.Form["order[0][dir]"].FirstOrDefault();
-            var searchValue = HttpContext.Request.Form["search[value]"].FirstOrDefault();
-
-            int pageSize = length != null ? Convert.ToInt32(length) : 0;
-            int skip = start != null ? Convert.ToInt32(start) : 0;
-
-            var informativos = await _informativoService.GetAll();
-            var informativoData = informativos.AsQueryable();
-
-
-            var recordsTotal = informativoData.Count();
-
-            var data = informativoData.Skip(skip).Take(pageSize).ToList();
-
-            var result = new
-            {
-                draw = draw,
-                recordsFiltered = recordsTotal,
-                recordsTotal = recordsTotal,
-                data = _mapper.Map<IEnumerable<InformativoViewModel>>(data)
-            };
-
-            return Ok(result);
+            var model = new InformativoViewModel();
+            model.Data = DateTime.Now;
+            model.EntregarAssociadosAtivos = 1;
+            return View(model);
         }
 
         // POST: InformativoController/Create
@@ -83,55 +56,87 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _informativoService.Create(_mapper.Map<Informativo>(informativoViewModel));
-                if (result == System.Net.HttpStatusCode.OK)
+                UserDTO user = await _pessoaService.GetByCpf(User.Identity.Name);
+
+                var informativo = new Informativo
+                {
+                    EntregarAssociadosAtivos = informativoViewModel.EntregarAssociadosAtivos,
+                    Data = informativoViewModel.Data,
+                    Mensagem = informativoViewModel.Mensagem,
+                    IdGrupoMusical = user!.IdGrupoMusical,
+                    IdPessoa = user.Id,
+                }; 
+
+                var statusCode = await _informativoService.Create(informativo);
+
+                if (statusCode == HttpStatusCode.Created)
+                {
+                    Notificar("Informativo <b>Cadastrado</b> com <b>Sucesso</b>.", Notifica.Sucesso);
+                    var pessoas = await _grupoMusicalService.GetAllPeopleFromGrupoMusical(await _grupoMusicalService.GetIdGrupo(User.Identity.Name));
+                    var temp = await _informativoService.NotificarInformativoViaEmail(pessoas, informativo.Id, informativo.Mensagem);
                     return RedirectToAction(nameof(Index));
-                
+                }
+                Notificar("<b>Erro</b>! Há algo errado ao cadastrar Informativo", Notifica.Erro);
+                return RedirectToAction("Index");
+            } else{
+
+                Notificar("<b>Erro</b>! Algo deu errado", Notifica.Erro);
+                return View();
             }
-            return View(informativoViewModel);
+
 
         }
 
         // GET: InformativoController/Edit/5
-        public async Task<ActionResult> Edit(int idGrupoMusical, int idPessoa)
+        public ActionResult Edit(uint id)
         {
-            var informativo = await _informativoService.Get(idGrupoMusical, idPessoa);
-            var model = _mapper.Map<InformativoViewModel>(informativo);
+            var informativo = _informativoService.Get(id);
 
+            if(informativo == null)
+            {
+                Notificar("Erro! O <strong>informativo<strong/> não foi encontrado.", Notifica.Erro);
+                return RedirectToAction(nameof(Index));
+            }
+            var model = _mapper.Map<InformativoViewModel>(informativo);
+            Console.WriteLine(model.Data.ToString());
             return View(model);
         }
 
         // POST: InformativoController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(int id, InformativoViewModel informativo)
+        public ActionResult Edit(InformativoViewModel informativoModel)
         {
             if (ModelState.IsValid)
             {
-                if(await _informativoService.Edit(_mapper.Map<Informativo>(informativo)))
+                Informativo informativo = _mapper.Map<Informativo>(informativoModel);
+                if (_informativoService.Edit(_mapper.Map<Informativo>(informativo)) == HttpStatusCode.OK)
                 {
-                    return RedirectToAction(nameof(Index));
+                    Notificar("O <b>informativo</b> foi editado com <b>Sucesso</b>!", Notifica.Sucesso);
+                }
+                else
+                {
+                    Notificar("Erro! Não foi <strong>permitido<strong/> a edição do<strong>Informativo<strong/>!", Notifica.Sucesso);
                 }
             }
-            return View(informativo);
-
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: InformativoController/Delete/5
-        public async Task<ActionResult> Delete(int idGrupoMusical, int idPessoa)
+        public async Task<ActionResult> Delete(uint id)
         {
-            var informativo = await _informativoService.Get(idGrupoMusical, idPessoa);
+            var informativo =  _informativoService.Get(id);
             var model = _mapper.Map<InformativoViewModel>(informativo);
-            
+
             return View(model);
         }
 
         // POST: InformativoController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(int idGrupoMusical,int idPessoa, InformativoViewModel informativo)
+        public async Task<ActionResult> Delete(InformativoViewModel model)
         {
-            await _informativoService.Delete(idGrupoMusical, idPessoa);
+            _informativoService.Delete(model.Id);
             return RedirectToAction(nameof(Index));
         }
 
