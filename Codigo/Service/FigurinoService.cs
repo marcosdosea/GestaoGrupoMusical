@@ -2,13 +2,8 @@
 using Core.DTO;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using Core.Datatables;
 
 namespace Service
@@ -83,6 +78,18 @@ namespace Service
             return query;
         }
 
+        public async Task<IEnumerable<FigurinoDropdownDTO>> GetAllFigurinoDropdown(int idGrupo)
+        {
+            var query = await _context.Figurinos.Where(p => p.IdGrupoMusical == idGrupo)
+                .Select(g => new FigurinoDropdownDTO
+                {
+                    Id = g.Id,
+                    Nome = g.Nome
+                }).AsNoTracking().ToListAsync();
+
+            return query;
+        }
+
         public async Task<Figurino> GetByName(string name)
         {
             var figurino = await _context.Figurinos.Where(p => p.Nome == name).AsNoTracking().SingleOrDefaultAsync();
@@ -106,11 +113,11 @@ namespace Service
 
         public async Task<HttpStatusCode> CreateEstoque(Figurinomanequim estoque)
         {
-            if(estoque.IdManequim == null || estoque.IdFigurino == null)
+            if (estoque.IdManequim == null || estoque.IdFigurino == null)
             {
                 return HttpStatusCode.PreconditionFailed;//falta algum dos id's
             }
-            else if(estoque.QuantidadeDisponivel <= 0)
+            else if (estoque.QuantidadeDisponivel <= 0)
             {
                 return HttpStatusCode.BadRequest;//nao existe quantidade para disponibilizar
             }
@@ -119,7 +126,7 @@ namespace Service
             {
                 var estoqueFound = await _context.Figurinomanequims.FindAsync(estoque.IdFigurino, estoque.IdManequim);
 
-                if(estoqueFound != null)
+                if (estoqueFound != null)
                 {
                     estoqueFound.QuantidadeDisponivel += estoque.QuantidadeDisponivel;
 

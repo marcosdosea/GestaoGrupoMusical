@@ -24,6 +24,7 @@ namespace Core.Service
         /// <param name="cpf">cpf da pessoa autenticada para poder filtrar os figurinos</param>
         /// <returns>lista contendo todos os figurinos</returns>
         Task<IEnumerable<Figurino>> GetAll(int idGrupo);
+        Task<IEnumerable<FigurinoDropdownDTO>> GetAllFigurinoDropdown(int idGrupo);
 
         Task<Figurino> GetByName(string name);
         Task<IEnumerable<EstoqueDTO>> GetAllEstoqueDTO(int id);

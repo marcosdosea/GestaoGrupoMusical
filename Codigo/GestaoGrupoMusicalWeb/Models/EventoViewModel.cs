@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Core.DTO;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
 namespace GestaoGrupoMusicalWeb.Models
@@ -29,7 +30,33 @@ namespace GestaoGrupoMusicalWeb.Models
 
         public SelectList? ListaPessoa { get; set; }
         public SelectList? ListaGrupoMusical { get; set; }
+    }
 
-      
+    public class EventoCreateViewlModel
+    {
+        public int Id { get; set; }
+
+
+        [Display(Name = "Início")]
+        public DateTime DataHoraInicio { get; set; }
+        [Display(Name = "Final")]
+        public DateTime DataHoraFim { get; set; }
+
+        public IEnumerable<AutoCompleteRegenteDTO> PessoaList { get; set; } = null!;
+
+        [Display(Name = "Figurino")]
+        public IEnumerable<FigurinoDropdownDTO> FigurinoList { get; set; } = null!;
+
+
+
+        [Display(Name = "Local")]
+        public string? Local { get; set; }
+
+
+        [Display(Name = "Repertório")]
+        public string? Repertorio { get; set; }
+
+        public IEnumerable<int>? IdRegentes { get; set; }
+        public SelectList? ListaPessoa { get; set; }
     }
 }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Net;
 using Core.Datatables;
+using Core.DTO;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -16,14 +17,16 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IMapper _mapper;
         private readonly IGrupoMusicalService _grupoMusical;
         private readonly IPessoaService _pessoa;
+        private readonly IFigurinoService _figurino;
 
 
-        public EventoController(IEventoService evento, IMapper mapper, IGrupoMusicalService grupoMusical, IPessoaService pessoa)
+        public EventoController(IEventoService evento, IMapper mapper, IGrupoMusicalService grupoMusical, IPessoaService pessoa, IFigurinoService figurino)
         {
             _evento = evento;
             _mapper = mapper;
             _grupoMusical = grupoMusical;
             _pessoa = pessoa;
+            _figurino = figurino;
     }
 
         // GET: EventoController
@@ -48,14 +51,31 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: EventoController/Create
-        public ActionResult Create()
+        public async Task<ActionResult>Create()
         {
-            EventoViewModel eventoModel = new EventoViewModel
+           
+            int idGrupoMusical = await _grupoMusical.GetIdGrupo(User.Identity.Name);
+
+            var listaPessoasAutoComplete = await _pessoa.GetRegentesForAutoCompleteAsync(idGrupoMusical);
+            if (listaPessoasAutoComplete == null || !listaPessoasAutoComplete.Any())
             {
-                ListaGrupoMusical = new SelectList(_grupoMusical.GetAll(), "Id", "Nome"),
-                ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome")
+                Notificar("É necessário cadastrar um Regente para então cadastrar um Evento Musical.", Notifica.Informativo);
+                return RedirectToAction(nameof(Index));
+            }
+            var figurinosDropdown = await _figurino.GetAllFigurinoDropdown(idGrupoMusical);
+            if(figurinosDropdown == null || !figurinosDropdown.Any())
+            {
+                Notificar("É necessário cadastrar um Figurino para então cadastrar um Evento Musical.", Notifica.Informativo);
+                return RedirectToAction(nameof(Index));
+            }
+
+            EventoCreateViewlModel eventoModelCreate = new()
+            {
+                PessoaList = listaPessoasAutoComplete,
+                FigurinoList = figurinosDropdown
             };
-            return View(eventoModel);
+
+            return View(eventoModelCreate);
         }
 
         // POST: EventoController/Create

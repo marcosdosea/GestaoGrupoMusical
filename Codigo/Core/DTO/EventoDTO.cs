@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+﻿using System.ComponentModel.DataAnnotations;
 namespace Core.DTO
 {
     public class EventoDTO
@@ -11,13 +11,13 @@ namespace Core.DTO
     public class EventoIndexDTO
     {
         public int Id { get; set; }
-        [DisplayName("Data hora início")]
+        [Display(Name = "Data hora início")]
         public DateTime DataHoraInicio { get; set; }
-        [DisplayName("Local")]
+        [Display(Name = "Local")]
         public string? Local { get; set; }
-        [DisplayName("Planejados")]
+        [Display(Name = "Planejados")]
         public int Planejados { get; set; }
-        [DisplayName("Confirmados")]
+        [Display(Name = "Confirmados")]
         public int Confirmados { get; set; }
     }
 }
