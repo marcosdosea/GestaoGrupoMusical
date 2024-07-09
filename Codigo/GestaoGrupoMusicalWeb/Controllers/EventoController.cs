@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Net;
 using Core.Datatables;
 using Core.DTO;
+using NuGet.Protocol;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -51,52 +52,68 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: EventoController/Create
-        public async Task<ActionResult>Create()
+        public async Task<ActionResult> Create()
         {
-           
+
             int idGrupoMusical = await _grupoMusical.GetIdGrupo(User.Identity.Name);
 
             var listaPessoasAutoComplete = await _pessoa.GetRegentesForAutoCompleteAsync(idGrupoMusical);
             if (listaPessoasAutoComplete == null || !listaPessoasAutoComplete.Any())
             {
-                Notificar("É necessário cadastrar um Regente para então cadastrar um Evento Musical.", Notifica.Informativo);
+                Notificar("É necessário cadastrar pelo menos um Regente para então cadastrar um Evento Musical.", Notifica.Informativo);
                 return RedirectToAction(nameof(Index));
             }
             var figurinosDropdown = await _figurino.GetAllFigurinoDropdown(idGrupoMusical);
-            if(figurinosDropdown == null || !figurinosDropdown.Any())
+            Console.WriteLine("###############################################");
+
+            if (figurinosDropdown == null || !figurinosDropdown.Any())
             {
                 Notificar("É necessário cadastrar um Figurino para então cadastrar um Evento Musical.", Notifica.Informativo);
                 return RedirectToAction(nameof(Index));
             }
 
+            foreach (var f in listaPessoasAutoComplete)
+            {
+                Console.WriteLine(f.Id + " | " + f.Nome);
+            }
+            Console.WriteLine("#####");
+            foreach (var f in figurinosDropdown)
+            {
+                Console.WriteLine(f.Id + " | " + f.Nome);
+            }
             EventoCreateViewlModel eventoModelCreate = new()
             {
-                PessoaList = listaPessoasAutoComplete,
-                FigurinoList = figurinosDropdown
+                IdGrupoMusical = idGrupoMusical,
+                ListaPessoa = new SelectList(listaPessoasAutoComplete, "Id", "Nome"),
+                FigurinoList = new SelectList(figurinosDropdown, "Id", "Nome")
             };
-
+          
+            ViewData["exemploRegente"] = listaPessoasAutoComplete.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
+            eventoModelCreate.JsonLista = listaPessoasAutoComplete.ToJson();
             return View(eventoModelCreate);
         }
 
         // POST: EventoController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(EventoViewModel eventoModel)
+        public async Task<ActionResult> Create(EventoCreateViewlModel eventoModel)
         {
 
             int idGrupo = await _grupoMusical.GetIdGrupo(User.Identity.Name);
             eventoModel.IdGrupoMusical = idGrupo;
 
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && eventoModel.IdRegentes != null)
             {
                 var evento = _mapper.Map<Evento>(eventoModel);
-                _evento.Create(evento);
-
+                //_evento.Create(evento);
+                Notificar("Evento criado com sucesso!", Notifica.Sucesso);
             }
-            eventoModel.ListaGrupoMusical = new SelectList(_grupoMusical.GetAll(), "Id", "Nome");
-            eventoModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
-
+            else
+            {
+                Notificar("Model não está SSS.", Notifica.Sucesso);
+            }
             return RedirectToAction(nameof(Index));
+            //return View(eventoModel);
         }
 
         // GET: EventoController/Edit/5

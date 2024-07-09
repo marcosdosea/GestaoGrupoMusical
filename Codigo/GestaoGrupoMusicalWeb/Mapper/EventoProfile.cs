@@ -9,6 +9,7 @@ namespace GestaoGrupoMusicalWeb.Mapper
         public EventoProfile()
         {
             CreateMap<EventoViewModel, Evento>().ReverseMap();
+            CreateMap<EventoCreateViewlModel, Evento>().ReverseMap();
         }
     }
 }

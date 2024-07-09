@@ -52,25 +52,26 @@
                 </div>
                 <div class="container">
                     <div class="form-group">
-                        <label asp-for="FigurinoList" class="control-label"></label>
-                        <input asp-for="FigurinoList" class="form-control" />
-                        <span asp-validation-for="FigurinoList" class="text-danger"></span>
+                        <label asp-for="IdFigurinoSelecionado" class="control-label"></label>
+                        <select asp-items="@Model.FigurinoList" asp-for="IdFigurinoSelecionado" class="form-select"></select>
+                        <span asp-validation-for="IdFigurinoSelecionado" class="text-danger"></span>
                     </div>
                 </div>
-                <div class="row d-flex justify-content-between">
+
+                <div class="container">
                     <div class="form-group col-md-12">
                         <label asp-for="Local" class="control-label"></label>
-                        <textarea asp-for="Local" class="form-control" maxlength="100" id="linkTextAreaRepertorio" oninput="updateCharacterCountLocal()"></textarea>
+                        <textarea asp-for="Local" class="form-control" maxlength="100" id="linkTextAreaLocal" oninput="updateCharacterCountLocal()"></textarea>
                         <span asp-validation-for="Local" class="text-danger"></span>
-                        <small id="characterCountRepertorio">0/100</small>
+                        <small id="characterCountLocal">0/100</small>
                     </div>
                 </div>
-                <div class="row d-flex justify-content-between">
+                <div class="container">
                     <div class="form-group col-md-12">
                         <label asp-for="Repertorio" class="control-label"></label>
-                        <textarea asp-for="Repertorio" class="form-control" maxlength="1000" id="linkTextAreaLocal" oninput="updateCharacterCountRepertorio()"></textarea>
+                        <textarea asp-for="Repertorio" class="form-control" maxlength="100" id="linkTextAreaRepertorio" oninput="updateCharacterCountRepertorio()"></textarea>
                         <span asp-validation-for="Repertorio" class="text-danger"></span>
-                        <small id="characterCountLocal">0/1000</small>
+                        <small id="characterCountRepertorio">0/100</small>
                     </div>
                 </div>
                 <br />
@@ -87,16 +88,7 @@
     </div>
 
     <script>
-        function updateCharacterCountRepertorio() {
-            var textArea = document.getElementById('linkTextAreaRepertorio');
-            var charCount = textArea.value.length;
-            var charLimitFromGrupoMusical = textArea.maxLength;
-            document.getElementById('characterCountRepertorio').innerText = charCount + '/' + charLimitFromGrupoMusical;
-        }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            updateCharacterCount();
-        });
 
         function updateCharacterCountLocal() {
             var textArea = document.getElementById('linkTextAreaLocal');
@@ -105,14 +97,35 @@
             document.getElementById('characterCountLocal').innerText = charCount + '/' + charLimitFromGrupoMusical;
         }
 
+        function updateCharacterCountRepertorio() {
+            var textArea = document.getElementById('linkTextAreaRepertorio');
+            var charCount = textArea.value.length;
+            var charLimitFromGrupoMusical = textArea.maxLength;
+            document.getElementById('characterCountRepertorio').innerText = charCount + '/' + charLimitFromGrupoMusical;
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
-            updateCharacterCount();
+            updateCharacterCountLocal();
+            updateCharacterCountRepertorio();
         });
     </script>
 
+    <script>
+        window.addEventListener("load", () => {
+            fillAutocomplete('@(Html.Raw(Model.JsonLista))', "regentes", "IdRegentes", "formCreate", "O campo Regentes é obrigatório");
+        });
+    </script>
+
+    @section Header {
+        @{
+            await Html.RenderPartialAsync("_AutoCompleteCssPartial");
+        }
+    }
     @section Scripts {
         @{
             await Html.RenderPartialAsync("_ValidationScriptsPartial");
+            await Html.RenderPartialAsync("_EnablePopoversPartial");
+            await Html.RenderPartialAsync("_AutoCompletePartial");
         }
     }
 

@@ -28,6 +28,12 @@ namespace GestaoGrupoMusicalWeb.Models
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public int IdRegente { get; set; }
 
+        [Display(Name = "Regentes")]
+        [Required(ErrorMessage = "O campo {0} é obrigatório")]
+        public IEnumerable<int>? IdRegentes { get; set; }
+        public string? JsonLista { get; set; }
+        public IEnumerable<FigurinoDropdownDTO> FigurinoList { get; set; } = null!;
+
         public SelectList? ListaPessoa { get; set; }
         public SelectList? ListaGrupoMusical { get; set; }
     }
@@ -35,17 +41,23 @@ namespace GestaoGrupoMusicalWeb.Models
     public class EventoCreateViewlModel
     {
         public int Id { get; set; }
+        public int IdGrupoMusical { get; set; }
 
 
         [Display(Name = "Início")]
-        public DateTime DataHoraInicio { get; set; }
-        [Display(Name = "Final")]
-        public DateTime DataHoraFim { get; set; }
+        [Required(ErrorMessage = "A data inicial é obrigatório")]
+        public DateTime? DataHoraInicio { get; set; }
 
-        public IEnumerable<AutoCompleteRegenteDTO> PessoaList { get; set; } = null!;
+
+        [Display(Name = "Final")]
+        [Required(ErrorMessage = "A data final é obrigatório")]
+        public DateTime? DataHoraFim { get; set; }
+
+        public SelectList? FigurinoList { get; set; }
 
         [Display(Name = "Figurino")]
-        public IEnumerable<FigurinoDropdownDTO> FigurinoList { get; set; } = null!;
+        [Required(ErrorMessage = "O campo {0} é obrigatório")]
+        public int? IdFigurinoSelecionado { get; set; }
 
 
 
@@ -56,7 +68,12 @@ namespace GestaoGrupoMusicalWeb.Models
         [Display(Name = "Repertório")]
         public string? Repertorio { get; set; }
 
+        [Display(Name = "Regentes")]
+        [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public IEnumerable<int>? IdRegentes { get; set; }
+        public string? JsonLista { get; set; }
+
         public SelectList? ListaPessoa { get; set; }
+
     }
 }
