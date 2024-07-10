@@ -32,47 +32,6 @@ namespace Service
                     if (ensaio.DataHoraInicio >= DateTime.Now)
                     {
                         await _context.Ensaios.AddAsync(ensaio);
-
-                        var associadosRegentes = _context.Pessoas
-                                         .Where(p => (p.IdPapelGrupo == 1 || p.IdPapelGrupo == 5) && p.Ativo == 1 && p.IdGrupoMusical == ensaio.IdGrupoMusical)
-                                         .Select(pessoa => new { pessoa.Id, pessoa.Email, pessoa.IdPapelGrupo }).AsNoTracking();
-
-                        await _context.SaveChangesAsync();
-
-                        EmailModel email = new()
-                        {
-                            Assunto = "Batalá - Novo Ensaio Cadastrado",
-                            AddresseeName = "Associados e Regentes",
-                            Body = "<div style=\"text-align: center;\">\r\n    " +
-                                    $"<h3>Um novo ensaio foi cadastrado.</h3>\r\n" +
-                                    "<div style=\"font-size: large;\">\r\n        " +
-                                    $"<dt style=\"font-weight: 700;\">Data e Horário de Início:</dt><dd>{ensaio.DataHoraInicio}</dd>" +
-                                    $"<dt style=\"font-weight: 700;\">Data e Horário de Fim:</dt><dd>{ensaio.DataHoraFim}</dd>\n</div>"
-                        };
-
-                        await associadosRegentes.ForEachAsync(async associadoRegente => {
-                            Ensaiopessoa ensaioPessoa = new()
-                            {
-                                IdEnsaio = ensaio.Id,
-                                IdPessoa = associadoRegente.Id,
-                                Presente = 1
-                            };
-                            if (associadoRegente.IdPapelGrupo == 5 && idRegentes.Contains(associadoRegente.Id))
-                            {
-                                ensaioPessoa.IdPapelGrupo = associadoRegente.IdPapelGrupo;
-                                await _context.Ensaiopessoas.AddAsync(ensaioPessoa);
-                                email.To.Add(associadoRegente.Email);
-                            }
-                            else
-                            {
-                                ensaioPessoa.IdPapelGrupo = associadoRegente.IdPapelGrupo;
-                                await _context.Ensaiopessoas.AddAsync(ensaioPessoa);
-                                email.To.Add(associadoRegente.Email);
-                            }
-                        });
-
-                        await EmailService.Enviar(email);
-
                         await _context.SaveChangesAsync();
                         await transaction.CommitAsync();
 
@@ -94,6 +53,7 @@ namespace Service
             }
             catch
             {
+                Console.WriteLine("Caiu no catch");
                 await transaction.RollbackAsync();
                 return HttpStatusCode.InternalServerError;
             }
@@ -120,8 +80,6 @@ namespace Service
                 {
                     _context.Ensaiopessoas.Remove(ensaio_pessoa);
                 }
-
-
 
                 var ensaio = await _context.Ensaios.FindAsync(id);
                 _context.Remove(ensaio);
@@ -163,13 +121,13 @@ namespace Service
                     if (ensaio.DataHoraInicio >= DateTime.Now)
                     {
                         var idEnsaioRegentes = _context.Ensaiopessoas
-                                            .Where(ep => ep.IdEnsaio == ensaioDb.Id && ep.IdPapelGrupo == 5)
+                                            .Where(ep => ep.IdEnsaio == ensaioDb.Id)
                                             .Select(ep => ep.IdPessoa).AsEnumerable();
 
                         if ((idRegentes.Count() != idEnsaioRegentes.Count()) || (idRegentes.Except(idEnsaioRegentes).Any()))
                         {
                             var ensaioPessoaRegente = _context.Ensaiopessoas
-                                                      .Where(ep => ep.IdEnsaio == ensaioDb.Id && ep.IdPapelGrupo == 5);
+                                                      .Where(ep => ep.IdEnsaio == ensaioDb.Id);
                             _context.Ensaiopessoas.RemoveRange(ensaioPessoaRegente);
                             foreach (int idRegente in idRegentes)
                             {
@@ -178,7 +136,6 @@ namespace Service
                                     IdEnsaio = ensaio.Id,
                                     IdPessoa = idRegente,
                                     Presente = 1,
-                                    IdPapelGrupo = 5
                                 };
                                 await _context.Ensaiopessoas.AddAsync(ensaioPessoa);
                             }
@@ -271,7 +228,7 @@ namespace Service
                     PresencaObrigatoria = g.PresencaObrigatoria == 1 ? "Sim" : "Não",
                     Repertorio = g.Repertorio,
                     Regentes = _context.Ensaiopessoas
-                                       .Where(ep => ep.IdPapelGrupo == 5 && ep.IdEnsaio == idEnsaio)
+                                       .Where(ep => ep.IdEnsaio == idEnsaio)
                                        .OrderBy(ep => ep.IdPessoaNavigation.Nome)
                                        .Select(ep => ep.IdPessoaNavigation.Nome).AsEnumerable(),
                     IdGrupoMusical = g.IdGrupoMusical
@@ -290,13 +247,13 @@ namespace Service
                             Inicio = ensaio.DataHoraInicio,
                             Fim = ensaio.DataHoraFim,
                             Regentes = _context.Ensaiopessoas
-                                       .Where(ep => ep.IdPapelGrupo == 5 && ep.IdEnsaio == idEnsaio)
+                                       .Where(ep => ep.IdEnsaio == idEnsaio)
                                        .OrderBy(ep => ep.IdPessoaNavigation.Nome)
                                        .Select(ep => ep.IdPessoaNavigation.Nome).AsEnumerable(),
                             Tipo = ensaio.Tipo,
                             Local = ensaio.Local,
                             Frequencias = _context.Ensaiopessoas
-                            .Where(ensaioPessoa => ensaioPessoa.IdEnsaio == idEnsaio && ensaioPessoa.IdPapelGrupo != 5)
+                            .Where(ensaioPessoa => ensaioPessoa.IdEnsaio == idEnsaio)
                             .OrderBy(ensaioPessoa => ensaioPessoa.IdPessoaNavigation.Nome)
                             .Select(ensaioPessoa => new EnsaioListaFrequenciaDTO
                             {
@@ -324,7 +281,7 @@ namespace Service
                 int idEnsaio = frequencias.First().IdEnsaio;
 
                 var dbFrequencias = _context.Ensaiopessoas
-                                    .Where(ep => ep.IdEnsaio == frequencias.First().IdEnsaio && ep.IdPapelGrupo != 5)
+                                    .Where(ep => ep.IdEnsaio == frequencias.First().IdEnsaio)
                                     .OrderBy(ep => ep.IdPessoaNavigation.Nome);
 
                 if (dbFrequencias == null)
@@ -394,11 +351,6 @@ namespace Service
                     return HttpStatusCode.NotFound;
                 }
 
-                if (ensaioPessoa.IdPapelGrupo != 1)
-                {
-                    return HttpStatusCode.Unauthorized;
-                }
-
                 ensaioPessoa.JustificativaFalta = justificativa;
                 ensaioPessoa.Presente = 0;
 
@@ -415,7 +367,7 @@ namespace Service
         public async Task<IEnumerable<int>> GetIdRegentesEnsaioAsync(int idEnsaio)
         {
             return await _context.Ensaiopessoas
-                                 .Where(ep => ep.IdEnsaio == idEnsaio && ep.IdPapelGrupo == 5)
+                                 .Where(ep => ep.IdEnsaio == idEnsaio)
                                  .Select(ep => ep.IdPessoa).ToListAsync();
         }
 
@@ -455,7 +407,47 @@ namespace Service
                 RecordsFiltered = countRecordsFiltered,
                 RecordsTotal = totalRecords
             };
-        } 
+        }
+
+        public async Task<HttpStatusCode> NotificarEnsaioViaEmail(IEnumerable<PessoaEnviarEmailDTO> pessoas, int idEnsaio)
+        {
+            try
+            {
+                var ensaio = await Get(idEnsaio);
+                if (ensaio != null)
+                {
+                    List<EmailModel> emailsBody = new List<EmailModel>();
+                    foreach (PessoaEnviarEmailDTO p in pessoas)
+                    {
+                        emailsBody.Add(new EmailModel()
+                        {
+                            Assunto = "Batalá - Notificação de Ensaio",
+                            AddresseeName = "Associados e Regentes",
+                            Body = "<div style=\"text-align: center;\">\r\n    " +
+                                    $"<h3>Notificação de um ensaio.</h3>\r\n" +
+                                    "<div style=\"font-size: large;\">\r\n        " +
+                                    $"<dt style=\"font-weight: 700;\">Data e Horário de Início:</dt><dd>{ensaio.DataHoraInicio}</dd>" +
+                                    $"<dt style=\"font-weight: 700;\">Data e Horário de Fim:</dt><dd>{ensaio.DataHoraFim}</dd>\n</div>",
+                            To = new List<string> { p.Email }
+                        });
+                    }
+
+                    List<Task> emailTask = new List<Task>();
+                    foreach (EmailModel ema in emailsBody)
+                    {
+                        emailTask.Add(EmailService.Enviar(ema));
+                    }
+
+                    return HttpStatusCode.OK;
+                }
+
+                return HttpStatusCode.NotFound;
+            }
+            catch
+            {
+                return HttpStatusCode.InternalServerError;
+            }
+        }
     }
 
 }
