@@ -42,6 +42,7 @@ namespace GestaoGrupoMusicalWeb.Models
     {
         public int Id { get; set; }
         public int IdGrupoMusical { get; set; }
+        public int IdPessoa { get; set; }
 
 
         [Display(Name = "Início")]

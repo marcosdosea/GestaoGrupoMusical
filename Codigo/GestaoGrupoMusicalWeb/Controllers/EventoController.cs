@@ -99,10 +99,24 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> Create(EventoCreateViewlModel eventoModel)
         {
 
-            int idGrupo = await _grupoMusical.GetIdGrupo(User.Identity.Name);
-            eventoModel.IdGrupoMusical = idGrupo;
+            int idGrupoMusical = await _grupoMusical.GetIdGrupo(User.Identity.Name);
+            eventoModel.IdGrupoMusical = idGrupoMusical;
+            eventoModel.idPessoa = (await _pessoa.GetByCpf(User.Identity.Name))?.Id;
+            Console.WriteLine("########################################");
+            Console.WriteLine("SEGUNDO");
+            if (eventoModel.IdRegentes != null)
+            {
+                foreach (int i in eventoModel.IdRegentes)
+                {
+                    Console.WriteLine("Regentes: " + i);
+                }
 
-            if (ModelState.IsValid && eventoModel.IdRegentes != null)
+                Console.WriteLine("Figurino: " + eventoModel.IdFigurinoSelecionado);
+                Console.WriteLine("Local: " + eventoModel.Local);
+                Console.WriteLine("Repositorio: " + eventoModel.Repertorio);
+
+            }
+            if (ModelState.IsValid && eventoModel.IdRegentes != null && eventoModel.idPessoa != null)
             {
                 var evento = _mapper.Map<Evento>(eventoModel);
                 //_evento.Create(evento);
@@ -110,7 +124,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
             else
             {
-                Notificar("Model não está SSS.", Notifica.Sucesso);
+                Notificar("<b>Erro</b>! Há algo errado ao cadastrar um novo Evento", Notifica.Erro);
+                return RedirectToAction("Index");
             }
             return RedirectToAction(nameof(Index));
             //return View(eventoModel);
