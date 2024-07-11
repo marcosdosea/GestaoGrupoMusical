@@ -3,62 +3,143 @@
 @{
     ViewData["Title"] = "Informativos";
 }
-
-
-<partial name="_Notificar">
-<div class="d-flex justify-content-between align-items-center">
-    <h5>@ViewData["Title"]</h5>
-    <a role="button" class="btn btn-secondary m-3" asp-controller="Informativo" asp-action="Create">Novo Informativo</a>
-</div>
-
-<div class="table-responsive">
-    <table class="table">
-        <thead>
-            <tr class="bg-danger bg-opacity-75 text-white">
-                <th>
-                    <span class="text-white">IdGrupoMusical</span>
-                </th>
-                <th>
-                    <span class="text-white">IdPessoa</span>
-                </th>
-                <th>
-                    <span class="text-white">Mensagem</span>
-                </th>
-                <th>
-                    <span class="text-white">Data</span>
-                </th>
-                <th>
-                    <span class="text-white">EntragarAssociado</span>
-                </th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr class="border-bottom border-danger border-opacity-75 p-3 align-middle">
-                    <td>
-                        @Html.DisplayFor(modelItem => item.IdGrupoMusical)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.IdPessoa)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Mensagem)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Data)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.EntregarAssociadosAtivos)
-                    </td>
-                    <td class="d-flex justify-content-between border-0 flex-wrap py-3">
-                        <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb-2" asp-controller="Informativo" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"> </i> Editar </a>
-                        <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb-2" asp-controller="Informativo" asp-action="Details" asp-route-idGrupoMusical="@item.IdGrupoMusical" asp-route-idPessoa="@item.IdPessoa"><i class="fa-solid fa-file"> </i> Detalhes </a>
-                        <a role="button" class="btn btn-secondary btn-sm mb-xl-0 mb-2" asp-controller="Informativo" asp-action="Delete" asp-route-idGrupoMusical="@item.IdGrupoMusical" asp-route-idPessoa="@item.IdPessoa"><i class="fa-solid fa-xmark"> </i> Excluir </a>
-                    </td>
+    <partial name="_Notificar">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5>@ViewData["Title"]</h5>
+            <a role="button" class="btn btn-secondary m-3" asp-controller="Informativo" asp-action="Create">Novo Informativo</a>
+        </div>
+        <table id="tableInformativo" class="table table-striped table-bordered dt-responsive nowrap ">
+            <thead>
+                <tr class="bg-danger bg-opacity-75 text-white">
+                    <th class="px-3">
+                        @Html.DisplayNameFor(model => model.Data)
+                    </th>
+                    <th class="px-3">
+                        @Html.DisplayNameFor(model => model.Mensagem)
+                    </th>
+                    <th class="px-3">
+                        <span>Ações</span>
+                    </th>
                 </tr>
+            </thead>
+        </table>
+        @*    </div>*@
+        @section Scripts {
+            <script src="~/lib/datatable/js/datatables.min.js"></script>
+            <script>
+                $(document).ready(function () {
+                    $('#tableInformativo').DataTable({
+                        "processing": true, // for show progress bar
+                        "serverSide": true, // for process server side
+                        "filter": true, // this is for disable filter (search box)
+                        "orderMulti": false, // for disable multiple column at once
+                        "pageLength": 5,
+                        "lengthMenu": [
+                            [5, 10, 20, -1],
+                            [5, 10, 20, "Todos"]
+                        ],
+                        "ajax": {
+                            "url": "/Informativo/GetDataPage",
+                            "type": "POST",
+                            "datatype": "json"
+                        },
+                        "columnDefs": [{
+                            "targets": [0],
+                            "visible": true,
+                            "searchable": false
+                        },
+                        {
+                            "targets": [2],
+                            "visible": true,
+                            "searchable": false,
+                            "orderable": false
+
+                        }],
+                        "columns": [
+                            {
+                                "data": "data",
+                                "name": "Data",
+                                "autoWidth": true,
+                                "render": function (data, type, full, meta) {
+                                    var date = new Date(data);
+                                    var day = String(date.getDate()).padStart(2, '0');
+                                    var month = String(date.getMonth() + 1).padStart(2, '0');
+                                    var year = date.getFullYear();
+                                    var hours = date.getHours();
+                                    var minutes = date.getMinutes();
+                                    var seconds = date.getSeconds();
+                                    return day + '/' + month + '/' + year + "<br>" + hours + ":" + minutes + ":" + seconds;
+                                }
+                            },
+                            { "data": "mensagem", "name": "Mensagem", "autoWidth": true },
+                            {
+                                "render": function (data, type, full, meta) {
+
+                                    return '<a class="btn btn btn-secondary btn-sm  m-2" href="/Informativo/Edit/' + full.id + '"><i class="fa-solid fa-pen-to-square"> </i> Editar</a> ' +
+                                        '<a onclick="showConfirmationModalDelete(' + full.id + ')" class="btn btn-sm btn-secondary" role="button"><i class="fa-solid fa-xmark"></i> Excluir</a>' +
+                                        '<a onclick="showConfirmationModalNotificar(' + full.id + ')" class="btn btn btn-secondary btn-sm  m-2" "><i class="fa-solid fa-envelope"> </i> Notificar</a> ';
+                                }
+                            },
+                        ],
+                        language: {
+                            url: "lib/datatable/js/pt-br.json",
+                        }
+                    });
+                });
+            </script>
+        }
+        <div class="modal fade" id="InformativoModalDelete" tabindex="-1" aria-labelledby="InformativoLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="admLabel">Confirmar Exclusão do Informativo</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Deseja <b>Excluir</b> o <b>Informativo</b>?
+                    </div>
+                    <form method="post" class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary col-3 me-4" data-bs-dismiss="modal">Não</button>
+                        <button type="submit" class="btn btn-secondary col-3">Sim</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="InformativoModalNotificar" tabindex="-1" aria-labelledby="InformativoLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="admLabel">Confirmar Notificação do Informativo</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Deseja <b>Notificar</b> o <b>Informativo</b>?
+                    </div>
+                    <form method="post" class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary col-3 me-4" data-bs-dismiss="modal">Não</button>
+                        <button type="submit" class="btn btn-secondary col-3">Sim</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <script>
+            function showConfirmationModalDelete(formId) {
+                var modal = document.getElementById('InformativoModalDelete');
+                var modalForm = modal.querySelector('form');
+                modalForm.action = '/Informativo/Delete/' + formId;
+                var modalBody = modal.querySelector('.modal-body');
+                modalBody.innerHTML = 'Deseja <b>Excluir</b> o <b>Informativo</b>?';
+                var modal = new bootstrap.Modal(modal);
+                modal.show();
             }
-        </tbody>
-    </table>
-</div>
+
+            function showConfirmationModalNotificar(formId) {
+                var modal = document.getElementById('InformativoModalNotificar');
+                var modalForm = modal.querySelector('form');
+                modalForm.action = '/Informativo/NotificarInformativoViaEmail/' + formId;
+                var modalBody = modal.querySelector('.modal-body');
+                modalBody.innerHTML = 'Deseja <b>Notificar</b> o <b>Informativo</b>?';
+                var modal = new bootstrap.Modal(modal);
+                modal.show();
+            }
+        </script>
