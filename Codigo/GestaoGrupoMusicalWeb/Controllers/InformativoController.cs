@@ -43,7 +43,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: InformativoController/Create
         public ActionResult Create()
         {
-            return View();
+            var model = new InformativoViewModel();
+            model.Data = DateTime.Now;
+            model.EntregarAssociadosAtivos = 1;
+            return View(model);
         }
 
         // POST: InformativoController/Create
@@ -62,18 +65,22 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     Mensagem = informativoViewModel.Mensagem,
                     IdGrupoMusical = user!.IdGrupoMusical,
                     IdPessoa = user.Id,
-                }; 
+                };
 
                 var statusCode = await _informativoService.Create(informativo);
 
                 if (statusCode == HttpStatusCode.Created)
                 {
                     Notificar("Informativo <b>Cadastrado</b> com <b>Sucesso</b>.", Notifica.Sucesso);
+                    var pessoas = await _grupoMusicalService.GetAllPeopleFromGrupoMusical(await _grupoMusicalService.GetIdGrupo(User.Identity.Name));
+                    var temp = await _informativoService.NotificarInformativoViaEmail(pessoas, informativo.Id, informativo.Mensagem);
                     return RedirectToAction(nameof(Index));
                 }
                 Notificar("<b>Erro</b>! Há algo errado ao cadastrar Informativo", Notifica.Erro);
                 return RedirectToAction("Index");
-            } else{
+            }
+            else
+            {
 
                 Notificar("<b>Erro</b>! Algo deu errado", Notifica.Erro);
                 return View();
@@ -87,14 +94,14 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             var informativo = _informativoService.Get(id);
 
-            if(informativo == null)
+            if (informativo == null)
             {
                 Notificar("Erro! O <strong>informativo<strong/> não foi encontrado.", Notifica.Erro);
                 return RedirectToAction(nameof(Index));
             }
-            var model = _mapper.Map<InformativoViewModel>(informativo);
-            Console.WriteLine(model.Data.ToString());
-            return View(model);
+           // var model = new InformativoViewModel {Id = informativo.Id};
+           // Console.WriteLine(model.Data.ToString());
+            return View(new InformativoViewModel());
         }
 
         // POST: InformativoController/Edit/5
@@ -120,7 +127,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: InformativoController/Delete/5
         public async Task<ActionResult> Delete(uint id)
         {
-            var informativo =  _informativoService.Get(id);
+            var informativo = _informativoService.Get(id);
             var model = _mapper.Map<InformativoViewModel>(informativo);
 
             return View(model);
@@ -133,6 +140,29 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             _informativoService.Delete(model.Id);
             return RedirectToAction(nameof(Index));
+        }
+        // POST: InformativoController/GetDataPage
+        [HttpPost]
+        public async Task<IActionResult> GetDataPage()
+        {
+            try
+            {
+                var informativos = await _informativoService.GetAll();
+
+                var result = new
+                {
+                    draw = HttpContext.Request.Form["draw"].FirstOrDefault(),
+                    recordsTotal = informativos.Count(),
+                    recordsFiltered = informativos.Count(),
+                    data = _mapper.Map<IEnumerable<InformativoViewModel>>(informativos)
+                };
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = ex.Message });
+            }
         }
     }
 }
