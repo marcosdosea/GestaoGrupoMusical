@@ -101,7 +101,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             int idGrupoMusical = await _grupoMusical.GetIdGrupo(User.Identity.Name);
             eventoModel.IdGrupoMusical = idGrupoMusical;
-            eventoModel.idPessoa = (await _pessoa.GetByCpf(User.Identity.Name))?.Id;
+            eventoModel.IdPessoa = (await _pessoa.GetByCpf(User.Identity.Name))?.Id;
             Console.WriteLine("########################################");
             Console.WriteLine("SEGUNDO");
             if (eventoModel.IdRegentes != null)
@@ -116,7 +116,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 Console.WriteLine("Repositorio: " + eventoModel.Repertorio);
 
             }
-            if (ModelState.IsValid && eventoModel.IdRegentes != null && eventoModel.idPessoa != null)
+            if (ModelState.IsValid && eventoModel.IdRegentes != null && eventoModel.IdPessoa != null)
             {
                 var evento = _mapper.Map<Evento>(eventoModel);
                 //_evento.Create(evento);
