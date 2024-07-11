@@ -16,5 +16,6 @@ namespace Core.Service
         Task<Informativo?>Get(uint id);
         Task<IEnumerable<Informativo>> GetAll();              
         Task<IEnumerable<Informativo>> GetAllInformativoServiceIdGrupo(int idGrupoMusical, int IdPessoa);
+        Task<HttpStatusCode> NotificarInformativoViaEmail(IEnumerable<PessoaEnviarEmailDTO> pessoas, uint idInformativo, string mensagem);
     }
 }
