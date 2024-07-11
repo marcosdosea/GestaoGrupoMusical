@@ -60,6 +60,7 @@ namespace Service
             return _context.Eventos.AsNoTracking();
         }
 
+
         public IEnumerable<EventoDTO> GetAllDTO()
         {
             var query = _context.Eventos
@@ -185,6 +186,14 @@ namespace Service
                 return HttpStatusCode.InternalServerError;
             }
         }
+        public IEnumerable<GerenciarInstrumentoEventoDTO> GetGerenciarInstrumentoEventoDTO(int id, IEnumerable<Tipoinstrumento>? instrumento)
+        {
+            var envento = Get(id);
 
+
+
+
+            return null;
+        }
     }
 }
