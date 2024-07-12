@@ -1,4 +1,4 @@
-﻿using Core;
+using Core;
 using Core.Datatables;
 using Core.DTO;
 using Core.Service;
@@ -30,15 +30,15 @@ namespace Service
             }
         }
 
-        public HttpStatusCode Delete(uint id)
+        public async Task<HttpStatusCode> Delete(uint id)
         {
-            var informativo = Get(id);
+            var informativo = await Get(id);
             if (informativo == null)
             {
                 return HttpStatusCode.NotFound;
             }
             _context.Remove(informativo);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return HttpStatusCode.OK;
         }
 
