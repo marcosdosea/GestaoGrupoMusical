@@ -1,4 +1,4 @@
-﻿using Core.DTO;
+using Core.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +12,7 @@ namespace Core.Service
     {
         Task<HttpStatusCode> Create(Informativo informativo);
         HttpStatusCode Edit(Informativo informativo);
-        HttpStatusCode Delete(uint id);
+        Task <HttpStatusCode> Delete(uint id);
         Task<Informativo?> Get(uint id);
         Task<IEnumerable<Informativo>> GetAll();              
         Task<IEnumerable<Informativo>> GetAllInformativoServiceIdGrupo(int idGrupoMusical, int IdPessoa);
