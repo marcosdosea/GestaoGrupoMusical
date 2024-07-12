@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Net;
 using Core.Datatables;
+using Core.DTO;
+using NuGet.Protocol;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -16,14 +18,16 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IMapper _mapper;
         private readonly IGrupoMusicalService _grupoMusical;
         private readonly IPessoaService _pessoa;
+        private readonly IFigurinoService _figurino;
 
 
-        public EventoController(IEventoService evento, IMapper mapper, IGrupoMusicalService grupoMusical, IPessoaService pessoa)
+        public EventoController(IEventoService evento, IMapper mapper, IGrupoMusicalService grupoMusical, IPessoaService pessoa, IFigurinoService figurino)
         {
             _evento = evento;
             _mapper = mapper;
             _grupoMusical = grupoMusical;
             _pessoa = pessoa;
+            _figurino = figurino;
     }
 
         // GET: EventoController
@@ -48,35 +52,83 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: EventoController/Create
-        public ActionResult Create()
+        public async Task<ActionResult> Create()
         {
-            EventoViewModel eventoModel = new EventoViewModel
+
+            int idGrupoMusical = await _grupoMusical.GetIdGrupo(User.Identity.Name);
+
+            var listaPessoasAutoComplete = await _pessoa.GetRegentesForAutoCompleteAsync(idGrupoMusical);
+            if (listaPessoasAutoComplete == null || !listaPessoasAutoComplete.Any())
             {
-                ListaGrupoMusical = new SelectList(_grupoMusical.GetAll(), "Id", "Nome"),
-                ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome")
+                Notificar("É necessário cadastrar pelo menos um Regente para então cadastrar um Evento Musical.", Notifica.Informativo);
+                return RedirectToAction(nameof(Index));
+            }
+            var figurinosDropdown = await _figurino.GetAllFigurinoDropdown(idGrupoMusical);
+            Console.WriteLine("###############################################");
+
+            if (figurinosDropdown == null || !figurinosDropdown.Any())
+            {
+                Notificar("É necessário cadastrar um Figurino para então cadastrar um Evento Musical.", Notifica.Informativo);
+                return RedirectToAction(nameof(Index));
+            }
+
+            foreach (var f in listaPessoasAutoComplete)
+            {
+                Console.WriteLine(f.Id + " | " + f.Nome);
+            }
+            Console.WriteLine("#####");
+            foreach (var f in figurinosDropdown)
+            {
+                Console.WriteLine(f.Id + " | " + f.Nome);
+            }
+            EventoCreateViewlModel eventoModelCreate = new()
+            {
+                IdGrupoMusical = idGrupoMusical,
+                ListaPessoa = new SelectList(listaPessoasAutoComplete, "Id", "Nome"),
+                FigurinoList = new SelectList(figurinosDropdown, "Id", "Nome")
             };
-            return View(eventoModel);
+          
+            ViewData["exemploRegente"] = listaPessoasAutoComplete.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
+            eventoModelCreate.JsonLista = listaPessoasAutoComplete.ToJson();
+            return View(eventoModelCreate);
         }
 
         // POST: EventoController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(EventoViewModel eventoModel)
+        public async Task<ActionResult> Create(EventoCreateViewlModel eventoModel)
         {
 
-            int idGrupo = await _grupoMusical.GetIdGrupo(User.Identity.Name);
-            eventoModel.IdGrupoMusical = idGrupo;
-
-            if (ModelState.IsValid)
+            int idGrupoMusical = await _grupoMusical.GetIdGrupo(User.Identity.Name);
+            eventoModel.IdGrupoMusical = idGrupoMusical;
+            eventoModel.IdPessoa = (await _pessoa.GetByCpf(User.Identity.Name))?.Id;
+            Console.WriteLine("#########################################");
+            Console.WriteLine("SEGUNDO");
+            if (eventoModel.IdRegentes != null)
             {
-                var evento = _mapper.Map<Evento>(eventoModel);
-                _evento.Create(evento);
+                foreach (int i in eventoModel.IdRegentes)
+                {
+                    Console.WriteLine("Regentes: " + i);
+                }
+
+                Console.WriteLine("Figurino: " + eventoModel.IdFigurinoSelecionado);
+                Console.WriteLine("Local: " + eventoModel.Local);
+                Console.WriteLine("Repositorio: " + eventoModel.Repertorio);
 
             }
-            eventoModel.ListaGrupoMusical = new SelectList(_grupoMusical.GetAll(), "Id", "Nome");
-            eventoModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
-
+            if (ModelState.IsValid && eventoModel.IdRegentes != null && eventoModel.IdPessoa != null)
+            {
+                var evento = _mapper.Map<Evento>(eventoModel);
+                //_evento.Create(evento);
+                Notificar("Evento criado com sucesso!", Notifica.Sucesso);
+            }
+            else
+            {
+                Notificar("<b>Erro</b>! Há algo errado ao cadastrar um novo Evento", Notifica.Erro);
+                return RedirectToAction("Index");
+            }
             return RedirectToAction(nameof(Index));
+            //return View(eventoModel);
         }
 
         // GET: EventoController/Edit/5
