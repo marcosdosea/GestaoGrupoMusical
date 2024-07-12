@@ -35,10 +35,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: InformativoController/Details/5
         public async Task<ActionResult> Details(uint id)
         {
-            var informativo = _informativoService.Get(id);
-            var model = _mapper.Map<InformativoViewModel>(informativo);
+            var informativo = await _informativoService.Get(id); 
+            var model = _mapper.Map<InformativoViewModel>(informativo); 
             return View(model);
         }
+
 
         // GET: InformativoController/Create
         public ActionResult Create()
@@ -90,19 +91,21 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: InformativoController/Edit/5
-        public ActionResult Edit(uint id)
+        public async Task<ActionResult> Edit(uint id)
         {
-            var informativo = _informativoService.Get(id);
+            var informativo = await _informativoService.Get(id); 
 
             if (informativo == null)
             {
                 Notificar("Erro! O <strong>informativo<strong/> não foi encontrado.", Notifica.Erro);
                 return RedirectToAction(nameof(Index));
             }
-           // var model = new InformativoViewModel {Id = informativo.Id};
-           // Console.WriteLine(model.Data.ToString());
-            return View(new InformativoViewModel());
+
+            var model = _mapper.Map<InformativoViewModel>(informativo); 
+            Console.WriteLine(model.Data.ToString());
+            return View(model);
         }
+
 
         // POST: InformativoController/Edit/5
         [HttpPost]
@@ -127,20 +130,18 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: InformativoController/Delete/5
         public async Task<ActionResult> Delete(uint id)
         {
-            var informativo = _informativoService.Get(id);
-            var model = _mapper.Map<InformativoViewModel>(informativo);
-
-            return View(model);
-        }
-
-        // POST: InformativoController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(InformativoViewModel model)
-        {
-            _informativoService.Delete(model.Id);
+            if (await _informativoService.Delete(id) == HttpStatusCode.OK)
+            {
+                Notificar("Informativo <b>Excluído</b> com <b>Sucesso</b>.", Notifica.Sucesso);
+            }
+            else
+            {
+                Notificar($"Nenhum <b>Informativo</b> foi encontrado <b>{id}</b>.", Notifica.Erro);
+            }
             return RedirectToAction(nameof(Index));
         }
+
+
         // POST: InformativoController/GetDataPage
         [HttpPost]
         public async Task<IActionResult> GetDataPage()
@@ -163,6 +164,20 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { error = ex.Message });
             }
+        }
+        public async Task<IActionResult> NotificarInformativoViaEmail(uint id)
+        {
+            var pessoas = await _grupoMusicalService.GetAllPeopleFromGrupoMusical(await _grupoMusicalService.GetIdGrupo(User.Identity.Name));
+            switch (await _informativoService.NotificarInformativoViaEmail(pessoas, id, "enviar mensagem"))
+            {
+                case HttpStatusCode.OK:
+                    Notificar("Notificação de informativo foi <b>Enviada</b> com <b>Sucesso</b>.", Notifica.Sucesso);
+                    break;
+                default:
+                    Notificar("Não foi permitido enviar Informativo!", Notifica.Sucesso);
+                    break;
+            }
+            return RedirectToAction(nameof(Index));
         }
     }
 }
