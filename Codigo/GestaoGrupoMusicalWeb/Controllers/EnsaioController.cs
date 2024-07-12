@@ -211,7 +211,32 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public async Task<ActionResult> NotificarEnsaioViaEmail(int id)
+        {
+            var pessoas = await _grupoMusical.GetAllPeopleFromGrupoMusical(await _grupoMusical.GetIdGrupo(User.Identity.Name));
+            switch (await _ensaio.NotificarEnsaioViaEmail(pessoas, id))
+            {
+                case HttpStatusCode.OK:
+                    Notificar("Notificação de Ensaio foi <b>Enviada</b> com <b>Sucesso</b>.", Notifica.Sucesso);
+                    break;
+                case HttpStatusCode.PreconditionFailed:
+                    Notificar("O Ensaio <b>Não</b> está <b>Cadastrado</b> no sistema.", Notifica.Erro);
+                    break;
+                case HttpStatusCode.NotFound:
+                    Notificar($"O Ensaio {id} <b>não foi encontrado</b>.", Notifica.Erro);
+                    break;
+                case HttpStatusCode.BadRequest:
+                    Notificar("Houve um erro. Tente novamente mais tarde.", Notifica.Alerta);
+                    break;
+                case HttpStatusCode.InternalServerError:
+                    Notificar("Desculpe, ocorreu um <b>Erro</b> durante o <b>Envio</b> da notificação.", Notifica.Erro);
+                    break;
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
         [Authorize(Roles = "ADMINISTRADOR GRUPO,COLABORADOR,REGENTE")]
+        // GET: EnsaioController/RegistrarFrequencia
         public async Task<ActionResult> RegistrarFrequencia(int idEnsaio)
         {
             if (User.FindFirst("IdGrupoMusical")?.Value == null) {

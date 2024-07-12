@@ -60,6 +60,7 @@ namespace Service
             return _context.Eventos.AsNoTracking();
         }
 
+
         public IEnumerable<EventoDTO> GetAllDTO()
         {
             var query = _context.Eventos
@@ -84,7 +85,8 @@ namespace Service
                     Id = g.Id,
                     DataHoraInicio = g.DataHoraInicio,
                     Local = g.Local,
-                    Repertorio = g.Repertorio
+                    Planejados = 0,
+                    Confirmados = 0
                 }
                 ).AsNoTracking();
             return query;
@@ -99,7 +101,8 @@ namespace Service
                     Id = g.Id,
                     DataHoraInicio = g.DataHoraInicio,
                     Local = g.Local,
-                    Repertorio = g.Repertorio
+                    Planejados = 0,
+                    Confirmados = 0,
                 }
                 ).AsNoTracking();
             return query;
@@ -114,8 +117,7 @@ namespace Service
             if (request.Search != null && request.Search.GetValueOrDefault("value") != null)
             {
                 eventos = eventos.Where(g => g.DataHoraInicio.ToString().Contains(request.Search.GetValueOrDefault("value")!)
-                                                           || g.Local.ToString().Contains(request.Search.GetValueOrDefault("value")!)
-                                                           || g.Repertorio.ToString().Contains(request.Search.GetValueOrDefault("value")!));
+                                                           || g.Local.ToString().Contains(request.Search.GetValueOrDefault("value")!));
             }
 
             if (request.Order != null && request.Order[0].GetValueOrDefault("column")!.Equals("0"))
@@ -128,16 +130,9 @@ namespace Service
             else if (request.Order != null && request.Order[0].GetValueOrDefault("column")!.Equals("1"))
             {
                 if (request.Order[0].GetValueOrDefault("dir")!.Equals("asc"))
-                    eventos = eventos.OrderBy(g => g.DataHoraInicio);
+                    eventos = eventos.OrderBy(g => g.Local);
                 else
-                    eventos = eventos.OrderByDescending(g => g.DataHoraInicio);
-            }
-            else if (request.Order != null && request.Order[0].GetValueOrDefault("column")!.Equals("2"))
-            {
-                if (request.Order[0].GetValueOrDefault("dir")!.Equals("asc"))
-                    eventos = eventos.OrderBy(g => g.DataHoraInicio);
-                else
-                    eventos = eventos.OrderByDescending(g => g.DataHoraInicio);
+                    eventos = eventos.OrderByDescending(g => g.Local);
             }
 
             int countRecordsFiltered = eventos.Count();
@@ -191,6 +186,14 @@ namespace Service
                 return HttpStatusCode.InternalServerError;
             }
         }
+        public IEnumerable<GerenciarInstrumentoEventoDTO> GetGerenciarInstrumentoEventoDTO(int id, IEnumerable<Tipoinstrumento>? instrumento)
+        {
+            var envento = Get(id);
 
+
+
+
+            return null;
+        }
     }
 }

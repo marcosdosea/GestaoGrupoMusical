@@ -84,6 +84,7 @@ public partial class GrupoMusicalContext : DbContext
             entity.Property(e => e.IdApresentacao).HasColumnName("idApresentacao");
             entity.Property(e => e.IdTipoInstrumento).HasColumnName("idTipoInstrumento");
             entity.Property(e => e.QuantidadeConfirmada).HasColumnName("quantidadeConfirmada");
+            entity.Property(e => e.QuantidadeInscritos).HasColumnName("quantidadeInscritos");
             entity.Property(e => e.QuantidadePlanejada).HasColumnName("quantidadePlanejada");
 
             entity.HasOne(d => d.IdApresentacaoNavigation).WithMany(p => p.Apresentacaotipoinstrumentos)
@@ -271,7 +272,7 @@ public partial class GrupoMusicalContext : DbContext
 
             entity.ToTable("ensaiopessoa");
 
-            entity.HasIndex(e => e.IdPapelGrupoPapelGrupo, "fk_EnsaioPessoa_PapelGrupo1_idx");
+            entity.HasIndex(e => e.IdPapelGrupo, "fk_EnsaioPessoa_PapelGrupo1_idx");
 
             entity.HasIndex(e => e.IdEnsaio, "fk_PessoaEnsaio_Ensaio1_idx");
 
@@ -279,7 +280,7 @@ public partial class GrupoMusicalContext : DbContext
 
             entity.Property(e => e.IdPessoa).HasColumnName("idPessoa");
             entity.Property(e => e.IdEnsaio).HasColumnName("idEnsaio");
-            entity.Property(e => e.IdPapelGrupoPapelGrupo).HasColumnName("idPapelGrupoPapelGrupo");
+            entity.Property(e => e.IdPapelGrupo).HasColumnName("idPapelGrupo");
             entity.Property(e => e.JustificativaAceita).HasColumnName("justificativaAceita");
             entity.Property(e => e.JustificativaFalta)
                 .HasMaxLength(200)
@@ -291,8 +292,8 @@ public partial class GrupoMusicalContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_PessoaEnsaio_Ensaio1");
 
-            entity.HasOne(d => d.IdPapelGrupoPapelGrupoNavigation).WithMany(p => p.Ensaiopessoas)
-                .HasForeignKey(d => d.IdPapelGrupoPapelGrupo)
+            entity.HasOne(d => d.IdPapelGrupoNavigation).WithMany(p => p.Ensaiopessoas)
+                .HasForeignKey(d => d.IdPapelGrupo)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_EnsaioPessoa_PapelGrupo1");
 
@@ -567,7 +568,7 @@ public partial class GrupoMusicalContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Data)
-                .HasColumnType("date")
+                .HasColumnType("datetime")
                 .HasColumnName("data");
             entity.Property(e => e.EntregarAssociadosAtivos).HasColumnName("entregarAssociadosAtivos");
             entity.Property(e => e.IdGrupoMusical).HasColumnName("idGrupoMusical");
