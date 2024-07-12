@@ -102,7 +102,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             int idGrupoMusical = await _grupoMusical.GetIdGrupo(User.Identity.Name);
             eventoModel.IdGrupoMusical = idGrupoMusical;
             eventoModel.IdPessoa = (await _pessoa.GetByCpf(User.Identity.Name))?.Id;
-            Console.WriteLine("########################################");
+            Console.WriteLine("#########################################");
             Console.WriteLine("SEGUNDO");
             if (eventoModel.IdRegentes != null)
             {
