@@ -24,22 +24,22 @@ namespace Core.DTO
     {
         public int Id { get; set; }
 
-        [DisplayName("Data hora início")]
+        [Display(Name = "Data hora início")]
         public DateTime DataHoraInicio { get; set; }
 
-        [DisplayName("Data hora fim")]
+        [Display(Name = "Data hora fim")]
         public DateTime DataHoraFim { get; set; }
 
-        [DisplayName("Regente")]
+        [Display(Name = "Regente")]
         public IEnumerable<string>? Regente { get; set; }
 
-        [DisplayName("Figurino")]
+        [Display(Name = "Figurino")]
         public IEnumerable<string>? Figurino { get; set; }
 
-        [DisplayName("Local")]
+        [Display(Name = "Local")]
         public string? Local { get; set; }
 
-        [DisplayName("Instrumento")]
+        [Display(Name = "Instrumento")]
         public IEnumerable<Tipoinstrumento>? Instrumento { get; set; }
 
     }
