@@ -240,31 +240,36 @@ namespace Service
 
         public async Task<EnsaioFrequenciaDTO?> GetFrequenciaAsync(int idEnsaio, int idGrupoMusical)
         {
+            var regentes = await _context.Ensaiopessoas
+                .Where(ep => ep.IdEnsaio == idEnsaio)
+                .OrderBy(ep => ep.IdPessoaNavigation.Nome)
+                .Select(ep => ep.IdPessoaNavigation.Nome)
+                .ToListAsync();
+
+            var frequencias = await _context.Ensaiopessoas
+                .Where(ensaioPessoa => ensaioPessoa.IdEnsaio == idEnsaio)
+                .OrderBy(ensaioPessoa => ensaioPessoa.IdPessoaNavigation.Nome)
+                .Select(ensaioPessoa => new EnsaioListaFrequenciaDTO
+                {
+                    IdEnsaio = ensaioPessoa.IdEnsaio,
+                    IdPessoa = ensaioPessoa.IdPessoa,
+                    Cpf = ensaioPessoa.IdPessoaNavigation.Cpf,
+                    NomeAssociado = ensaioPessoa.IdPessoaNavigation.Nome,
+                    Justificativa = ensaioPessoa.JustificativaFalta,
+                    Presente = Convert.ToBoolean(ensaioPessoa.Presente),
+                    JustificativaAceita = Convert.ToBoolean(ensaioPessoa.JustificativaAceita),
+                }).ToListAsync();
+
             var query = from ensaio in _context.Ensaios
                         where ensaio.Id == idEnsaio && ensaio.IdGrupoMusical == idGrupoMusical
                         select new EnsaioFrequenciaDTO
                         {
                             Inicio = ensaio.DataHoraInicio,
                             Fim = ensaio.DataHoraFim,
-                            Regentes = _context.Ensaiopessoas
-                                       .Where(ep => ep.IdEnsaio == idEnsaio)
-                                       .OrderBy(ep => ep.IdPessoaNavigation.Nome)
-                                       .Select(ep => ep.IdPessoaNavigation.Nome).AsEnumerable(),
+                            Regentes = regentes,
                             Tipo = ensaio.Tipo,
                             Local = ensaio.Local,
-                            Frequencias = _context.Ensaiopessoas
-                            .Where(ensaioPessoa => ensaioPessoa.IdEnsaio == idEnsaio)
-                            .OrderBy(ensaioPessoa => ensaioPessoa.IdPessoaNavigation.Nome)
-                            .Select(ensaioPessoa => new EnsaioListaFrequenciaDTO
-                            {
-                                IdEnsaio = ensaioPessoa.IdEnsaio,
-                                IdPessoa = ensaioPessoa.IdPessoa,
-                                Cpf = ensaioPessoa.IdPessoaNavigation.Cpf,
-                                NomeAssociado = ensaioPessoa.IdPessoaNavigation.Nome,
-                                Justificativa = ensaioPessoa.JustificativaFalta,
-                                Presente = Convert.ToBoolean(ensaioPessoa.Presente),
-                                JustificativaAceita = Convert.ToBoolean(ensaioPessoa.JustificativaAceita),
-                            }).AsEnumerable()
+                            Frequencias = frequencias
                         };
 
             return await query.AsNoTracking().SingleOrDefaultAsync();

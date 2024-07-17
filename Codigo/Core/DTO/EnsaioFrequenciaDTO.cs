@@ -15,6 +15,7 @@ namespace Core.DTO
 
         public string? Local { get; set; }
         public IEnumerable<EnsaioListaFrequenciaDTO>? Frequencias { get; set; }
+        public string? JsonLista { get; set; }
     }
 
     public class EnsaioListaFrequenciaDTO
