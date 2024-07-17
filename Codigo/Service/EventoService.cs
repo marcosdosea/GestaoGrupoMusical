@@ -22,11 +22,53 @@ namespace Service
         /// </summary>
         /// <param name="evento"></param>
         /// <returns>Id do Grupo Musical</returns>
-        public int Create(Evento evento)
+        /// 
+        public DateTime? DataHoraInicioT { get; set; }
+        public async Task<HttpStatusCode> Create(Evento evento, IEnumerable<int> idRegentes, int idFigurino)
         {
-            _context.Add(evento);
-            _context.SaveChanges();
-            return evento.Id;
+            Console.WriteLine("### SERVICE ###");
+            foreach(int ids in idRegentes)
+            {
+                Console.WriteLine("idRegente: " + ids);
+            }
+            Console.WriteLine("idPessoa: "  + evento.IdColaboradorResponsavel);
+            Console.WriteLine("idFigurino: " + idFigurino);
+            Console.WriteLine("horaInicio: " + evento.DataHoraInicio.ToString());
+            Console.WriteLine("horaFim: " + evento.DataHoraFim.ToString());
+            using var transaction = _context.Database.BeginTransaction();
+
+            try
+            {
+                if (evento.DataHoraFim > evento.DataHoraInicio)
+                {
+                    if (evento.DataHoraInicio.Date >= DateTime.Today)
+                    {
+                        //await _context.Eventos.AddAsync(evento);
+                        //await _context.SaveChangesAsync();
+                        //await transaction.CommitAsync();
+                        //falta fazer o resto das inserções, do figurino e dos regentes da tabela EventoPessoa
+                        await transaction.RollbackAsync();
+                        return HttpStatusCode.OK;
+                    }
+                    else
+                    {
+                        await transaction.RollbackAsync();
+                        return HttpStatusCode.BadRequest;
+                    }
+
+                }
+                else
+                {
+                    await transaction.RollbackAsync();
+                    return HttpStatusCode.PreconditionFailed;
+                }
+
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                return HttpStatusCode.InternalServerError;
+            }
         }
         /// <summary>
         /// Método que deleta uma apresentação 
