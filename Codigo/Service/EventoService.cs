@@ -4,6 +4,7 @@ using Core.DTO;
 using Core.Service;
 using Email;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Net;
 
 namespace Service
@@ -186,14 +187,43 @@ namespace Service
                 return HttpStatusCode.InternalServerError;
             }
         }
+        public async Task<string> GetNomeInstrumento(int id)
+        {
+            var query = await (from instrumento in _context.Instrumentomusicals
+                               where instrumento.Id == id
+                               select new { instrumento.IdTipoInstrumentoNavigation.Nome }).AsNoTracking().SingleOrDefaultAsync();
+
+            return query?.Nome ?? "";
+        }
+        public async Task<IEnumerable<FigurinoDropdownDTO>> GetAllFigurinoDropdown(int idGrupo)
+        {
+            var query = await _context.Figurinos.Where(p => p.IdGrupoMusical == idGrupo)
+                .Select(g => new FigurinoDropdownDTO
+                {
+                    Id = g.Id,
+                    Nome = g.Nome
+                }).AsNoTracking().ToListAsync();
+
+            return query;
+        }
+
+        public async Task<IEnumerable<Eventopessoa>> GetPessoas(int idGrupo)
+        {
+            var query = await _context.Eventopessoas.Where(p => p.IdEvento == idGrupo)
+               .Select(g => new Eventopessoa
+               {
+                   IdEvento = g.IdEvento,
+                   IdPessoa = g.IdPessoa
+               }).AsNoTracking().ToListAsync();
+
+            return query;
+        }
+
         public IEnumerable<GerenciarInstrumentoEventoDTO> GetGerenciarInstrumentoEventoDTO(int id, IEnumerable<Tipoinstrumento>? instrumento)
         {
-            var envento = Get(id);
-
-
-
 
             return null;
-        }
+        } 
+
     }
 }

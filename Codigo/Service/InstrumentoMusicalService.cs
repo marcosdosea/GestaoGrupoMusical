@@ -148,11 +148,7 @@ namespace Service
                                }).AsNoTracking().SingleOrDefaultAsync();
             return query!;
         }
-
-        //public DatatableResponse<Movimentacaoinstrumento> GetDataPage(DatatableRequest request)
-        //{
-        //    throw new NotImplementedException();
-        //}
+        
 
         public async Task<DatatableResponse<InstrumentoMusicalDTO>> GetDataPage(DatatableRequest request, int idGrupo)
         {
