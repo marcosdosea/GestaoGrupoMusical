@@ -8,6 +8,8 @@ using System.Net;
 using Core.Datatables;
 using Core.DTO;
 using NuGet.Protocol;
+using Microsoft.AspNetCore.Authorization;
+using Service;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -19,15 +21,19 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IGrupoMusicalService _grupoMusical;
         private readonly IPessoaService _pessoa;
         private readonly IFigurinoService _figurino;
+        private readonly IInstrumentoMusicalService _tipoIntrumentoMusical;
 
 
-        public EventoController(IEventoService evento, IMapper mapper, IGrupoMusicalService grupoMusical, IPessoaService pessoa, IFigurinoService figurino)
+
+        public EventoController(IEventoService evento, IMapper mapper, IGrupoMusicalService grupoMusical, IPessoaService pessoa, IFigurinoService figurino, IInstrumentoMusicalService tipoInstrumentoMusical)
         {
             _evento = evento;
             _mapper = mapper;
             _grupoMusical = grupoMusical;
             _pessoa = pessoa;
             _figurino = figurino;
+            _tipoIntrumentoMusical = tipoInstrumentoMusical;
+            
     }
 
         // GET: EventoController
@@ -196,5 +202,47 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
+        // GET: EventoController/Edit/5
+        public async Task<ActionResult> GerenciarInstrumentoEvento()
+        {
+
+            int idGrupoMusical = await _grupoMusical.GetIdGrupo(User.Identity.Name);
+
+            var listaPessoasAutoComplete = await _pessoa.GetRegentesForAutoCompleteAsync(idGrupoMusical);
+            if (listaPessoasAutoComplete == null || !listaPessoasAutoComplete.Any())
+            {
+                Notificar("É necessário cadastrar pelo menos um Regente para então cadastrar um Evento Musical.", Notifica.Informativo);
+                return RedirectToAction(nameof(Index));
+            }
+            var figurinosDropdown = await _figurino.GetAllFigurinoDropdown(idGrupoMusical);
+            Console.WriteLine("###############################################");
+
+            if (figurinosDropdown == null || !figurinosDropdown.Any())
+            {
+                Notificar("É necessário cadastrar um Figurino para então cadastrar um Evento Musical.", Notifica.Informativo);
+                return RedirectToAction(nameof(Index));
+            }
+
+            foreach (var f in listaPessoasAutoComplete)
+            {
+                Console.WriteLine(f.Id + " | " + f.Nome);
+            }
+            Console.WriteLine("#####");
+            foreach (var f in figurinosDropdown)
+            {
+                Console.WriteLine(f.Id + " | " + f.Nome);
+            }
+            GerenciarInstrumentoEventoViewModel gerenciarInstrumentoEvento = new()
+            {
+                IdGrupoMusical = idGrupoMusical,
+                ListaPessoa = new SelectList(listaPessoasAutoComplete, "Id", "Nome"),
+                FigurinoList = new SelectList(figurinosDropdown, "Id", "Nome")
+            };
+
+            ViewData["exemploRegente"] = listaPessoasAutoComplete.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
+            gerenciarInstrumentoEvento.JsonLista = listaPessoasAutoComplete.ToJson();
+            return View(gerenciarInstrumentoEvento);
+        }
+
     }
 }

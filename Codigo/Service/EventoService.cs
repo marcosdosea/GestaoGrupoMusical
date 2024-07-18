@@ -217,13 +217,7 @@ namespace Service
                }).AsNoTracking().ToListAsync();
 
             return query;
-        }
-
-        public IEnumerable<GerenciarInstrumentoEventoDTO> GetGerenciarInstrumentoEventoDTO(int id, IEnumerable<Tipoinstrumento>? instrumento)
-        {
-
-            return null;
-        } 
+        }  
 
     }
 }

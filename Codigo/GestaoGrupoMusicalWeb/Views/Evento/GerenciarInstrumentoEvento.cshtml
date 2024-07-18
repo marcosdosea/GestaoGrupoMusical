@@ -1,0 +1,123 @@
+﻿@model GestaoGrupoMusicalWeb.Models.GerenciarInstrumentoEventoViewModel
+@{
+    ViewData["Title"] = "Gerenciar Instrumento Evento";
+    ViewData["Evento"] = "Eventos";
+    ViewData["GerenciarInstrumento"] = "Gerenciar Instrumento";
+}
+
+<partial name="_Notificar">
+    <div class="row">
+        <div class="col-md-8">
+            <h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">Gerenciar Instrumento Evento Musical</h1>
+            <nav>
+                <ol class="breadcrumb px-3">
+                    <strong>
+                        <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Evento"]</a>
+                        <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["GerenciarInstrumento"]</spn>
+                    </strong>
+                </ol>
+            </nav>
+            <hr />
+            <br />
+            <form id="formCreate" asp-action="Create">
+                <div class="container">
+                    <div class="row">
+                        <div class="form-group col-xxl-4">
+                            <label asp-for="DataHoraInicio" class="control-label"></label>
+                            <input asp-for="DataHoraInicio" class="form-control" />
+                            <span asp-validation-for="DataHoraInicio" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-xxl-4">
+                            <label asp-for="DataHoraFim" class="control-label"></label>
+                            <input asp-for="DataHoraFim" class="form-control" />
+                            <span asp-validation-for="DataHoraFim" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="row">
+                        <div class="form-group col-xl">
+                            <label asp-for="IdRegentes" class="control-label"></label>
+                            <span class="d-inline-block my-2" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Escreva o nome do Regente. Ex: @ViewData["exemploRegente"]">
+                                <button class="btn btn-outline-secondary btn-sm fw-bold" type="button">?</button>
+                            </span>
+                            <select multiple asp-for="IdRegentes" class="d-none" asp-items="Model.ListaPessoa">
+                            </select>
+                            <input class="form-control" id="regentes" placeholder="Informe o Regente." />
+                            <div id="blockNames" class="d-flex flex-column gap-2">
+                            </div>
+                            <span for="regentes" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="form-group">
+                        <label asp-for="IdFigurinoSelecionado" class="control-label"></label>
+                        <select asp-items="@Model.FigurinoList" asp-for="IdFigurinoSelecionado" class="form-select"></select>
+                        <span asp-validation-for="IdFigurinoSelecionado" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="container">
+                    <div class="form-group col-md-12">
+                        <label asp-for="Local" class="control-label"></label>
+                        <textarea asp-for="Local" class="form-control" maxlength="100" id="linkTextAreaLocal" oninput="updateCharacterCountLocal()"></textarea>
+                        <span asp-validation-for="Local" class="text-danger"></span>
+                        <small id="characterCountLocal">0/100</small>
+                    </div>
+                </div>
+                <br />
+                <br />
+                <div class="container">
+                    <div class="row d-flex flex-column-reverse d-grig gap-2 mx-auto d-flex flex-sm-column-reverse flex-xl-row">
+                        <div class="col-5 d-none d-sm-block"></div>
+                        <a class="btn btn-light text-secondary border border-secondary d-grid gap-2 col-sm" asp-controller="Ensaio" asp-action="Index"> Voltar </a>
+                        <input type="submit" value="Adicionar" class="btn btn-secondary d-grid gap-2 col-sm " />
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+
+
+        function updateCharacterCountLocal() {
+            var textArea = document.getElementById('linkTextAreaLocal');
+            var charCount = textArea.value.length;
+            var charLimitFromGrupoMusical = textArea.maxLength;
+            document.getElementById('characterCountLocal').innerText = charCount + '/' + charLimitFromGrupoMusical;
+        }
+
+        function updateCharacterCountRepertorio() {
+            var textArea = document.getElementById('linkTextAreaRepertorio');
+            var charCount = textArea.value.length;
+            var charLimitFromGrupoMusical = textArea.maxLength;
+            document.getElementById('characterCountRepertorio').innerText = charCount + '/' + charLimitFromGrupoMusical;
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            updateCharacterCountLocal();
+            updateCharacterCountRepertorio();
+        });
+    </script>
+
+    <script>
+        window.addEventListener("load", () => {
+            fillAutocomplete('@(Html.Raw(Model.JsonLista))', "regentes", "IdRegentes", "formCreate", "O campo Regentes é obrigatório");
+        });
+    </script>
+
+    @section Header {
+        @{
+            await Html.RenderPartialAsync("_AutoCompleteCssPartial");
+        }
+    }
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+            await Html.RenderPartialAsync("_EnablePopoversPartial");
+            await Html.RenderPartialAsync("_AutoCompletePartial");
+        }
+    }
+
