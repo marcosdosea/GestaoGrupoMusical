@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Core;
+using Core.DTO;
 using GestaoGrupoMusicalWeb.Models;
 
 namespace GestaoGrupoMusicalWeb.Mapper

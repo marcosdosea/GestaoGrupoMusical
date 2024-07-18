@@ -6,7 +6,7 @@ namespace Core.Service
 {
     public interface IEventoService
     {
-        int Create(Evento evento);
+        Task<HttpStatusCode> Create(Evento evento, IEnumerable<int> idRegentes, int idFigurino);
         void Edit(Evento evento);
         void Delete(int id);
         Evento Get(int id);

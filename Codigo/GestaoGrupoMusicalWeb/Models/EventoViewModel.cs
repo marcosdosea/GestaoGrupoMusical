@@ -42,8 +42,6 @@ namespace GestaoGrupoMusicalWeb.Models
     {
         public int Id { get; set; }
         public int IdGrupoMusical { get; set; }
-        public int? IdPessoa { get; set; }
-
 
         [Display(Name = "Início")]
         [Required(ErrorMessage = "A data inicial é obrigatório")]
@@ -58,7 +56,7 @@ namespace GestaoGrupoMusicalWeb.Models
 
         [Display(Name = "Figurino")]
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
-        public int? IdFigurinoSelecionado { get; set; }
+        public int IdFigurinoSelecionado { get; set; }
 
 
 

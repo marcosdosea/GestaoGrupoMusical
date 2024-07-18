@@ -20,6 +20,7 @@ namespace Core.DTO
         [Display(Name = "Confirmados")]
         public int Confirmados { get; set; }
     }
+
     public class GerenciarInstrumentoEventoDTO
     {
         public int Id { get; set; }
