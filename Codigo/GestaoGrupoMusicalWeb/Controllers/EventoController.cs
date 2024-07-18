@@ -210,18 +210,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return RedirectToAction("Edit", eventoModel);
         }
 
-        // GET: EventoController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            var evento = _evento.Get(id);
-            var eventoModel = _mapper.Map<EventoViewModel>(evento);
-            return View(eventoModel);
-        }
-
         // POST: EventoController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, EventoViewModel eventoViewModel)
+        public ActionResult Delete(int id)
         {
             _evento.Delete(id);
             return RedirectToAction(nameof(Index));
