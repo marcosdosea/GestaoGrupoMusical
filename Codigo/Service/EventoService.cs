@@ -4,6 +4,7 @@ using Core.DTO;
 using Core.Service;
 using Email;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Logging;
 using System.Net;
 
@@ -24,31 +25,37 @@ namespace Service
         /// <param name="evento"></param>
         /// <returns>Id do Grupo Musical</returns>
         /// 
-        public DateTime? DataHoraInicioT { get; set; }
         public async Task<HttpStatusCode> Create(Evento evento, IEnumerable<int> idRegentes, int idFigurino)
         {
-            Console.WriteLine("### SERVICE ###");
-            foreach(int ids in idRegentes)
-            {
-                Console.WriteLine("idRegente: " + ids);
-            }
-            Console.WriteLine("idPessoa: "  + evento.IdColaboradorResponsavel);
-            Console.WriteLine("idFigurino: " + idFigurino);
-            Console.WriteLine("horaInicio: " + evento.DataHoraInicio.ToString());
-            Console.WriteLine("horaFim: " + evento.DataHoraFim.ToString());
             using var transaction = _context.Database.BeginTransaction();
-
             try
             {
                 if (evento.DataHoraFim > evento.DataHoraInicio)
                 {
                     if (evento.DataHoraInicio.Date >= DateTime.Today)
                     {
-                        //await _context.Eventos.AddAsync(evento);
-                        //await _context.SaveChangesAsync();
-                        //await transaction.CommitAsync();
-                        //falta fazer o resto das inserções, do figurino e dos regentes da tabela EventoPessoa
-                        await transaction.RollbackAsync();
+                        _context.Eventos.Add(evento);
+                        _context.SaveChanges();
+                        List<Eventopessoa> p = new();
+                        foreach (int id in idRegentes)
+                        {
+                            p.Add(new Eventopessoa
+                            {
+                                IdEvento = evento.Id,
+                                IdPessoa = id,
+                                IdTipoInstrumento = 0,//por Default, o primeiro instrumento tem que ser o "nenhum". Foi gambiarra de dosea
+                                IdPapelGrupoPapelGrupo = 5 //5 = Regente
+                            });
+                        }
+                        _context.Eventopessoas.AddRange(p);
+                        _context.SaveChanges();
+                        _context.Set<Dictionary<string, object>>("Figurinoapresentacao").Add(new Dictionary<string, object>
+                        {
+                            { "IdFigurino", idFigurino },
+                            { "IdApresentacao", evento.Id }
+                        });
+                        _context.SaveChanges();
+                        transaction.Commit();
                         return HttpStatusCode.OK;
                     }
                     else
@@ -56,7 +63,6 @@ namespace Service
                         await transaction.RollbackAsync();
                         return HttpStatusCode.BadRequest;
                     }
-
                 }
                 else
                 {
@@ -117,22 +123,6 @@ namespace Service
                 });
 
             return query.AsNoTracking();
-        }
-        
-        public IEnumerable<EventoIndexDTO> GetAllIndexDTO()
-        {
-            var query = _context.Eventos
-                .OrderBy(g => g.DataHoraInicio).
-                Select(g => new EventoIndexDTO
-                {
-                    Id = g.Id,
-                    DataHoraInicio = g.DataHoraInicio,
-                    Local = g.Local,
-                    Planejados = 0,
-                    Confirmados = 0
-                }
-                ).AsNoTracking();
-            return query;
         }
 
         public IEnumerable<EventoIndexDTO> GetAllEventoIndexDTOPerIdGrupoMusical(int idGrupoMusical)
@@ -265,7 +255,7 @@ namespace Service
         {
 
             return null;
-        } 
+        }
 
     }
 }
