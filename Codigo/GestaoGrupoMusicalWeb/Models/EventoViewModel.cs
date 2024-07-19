@@ -82,11 +82,9 @@ namespace GestaoGrupoMusicalWeb.Models
         public int IdGrupoMusical { get; set; }
         public int? IdPessoa { get; set; }
 
-
         [Display(Name = "Início")]
         [Required(ErrorMessage = "A data inicial é obrigatório")]
         public DateTime? DataHoraInicio { get; set; }
-
 
         [Display(Name = "Final")]
         [Required(ErrorMessage = "A data final é obrigatório")]
@@ -98,12 +96,9 @@ namespace GestaoGrupoMusicalWeb.Models
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public int? IdFigurinoSelecionado { get; set; }
 
-
-
         [Display(Name = "Local")]
         public string? Local { get; set; }
         
-
         [Display(Name = "Regentes")]
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public IEnumerable<int>? IdRegentes { get; set; }
