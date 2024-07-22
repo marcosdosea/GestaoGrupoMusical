@@ -75,11 +75,24 @@ namespace Service
         /// Método que deleta uma apresentação 
         /// </summary>
         /// <param name="id"></param>
-        public void Delete(int id)
+        public HttpStatusCode Delete(int id)
         {
-            var evento = _context.Eventos.Find(id);
+            Evento? evento = _context.Eventos.Find(id);
+            if (evento == null)
+                return HttpStatusCode.NotFound;
+
+            try
+            {
+                var eventoPessoas = 
+            }
+            catch
+            {
+                return HttpStatusCode.InternalServerError;
+            }
+
             _context.Remove(evento);
             _context.SaveChanges();
+            return HttpStatusCode.OK;
         }
 
         /// <summary>
@@ -96,6 +109,12 @@ namespace Service
         public Evento Get(int id)
         {
             return _context.Eventos.Find(id);
+        }
+
+        public IEnumerable<Eventopessoa>? GetEventoPessoasPorIdEvento(int idEvento)
+        {
+            //var query = eventoPessoa in _context.Eventopessoas
+            return null;
         }
 
         public IEnumerable<Evento> GetAll()

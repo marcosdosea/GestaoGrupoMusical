@@ -8,7 +8,7 @@ namespace Core.Service
     {
         Task<HttpStatusCode> Create(Evento evento, IEnumerable<int> idRegentes, int idFigurino);
         void Edit(Evento evento);
-        void Delete(int id);
+        HttpStatusCode Delete(int id);
         Evento Get(int id);
         IEnumerable<Evento> GetAll();
         IEnumerable<EventoDTO> GetAllDTO();
