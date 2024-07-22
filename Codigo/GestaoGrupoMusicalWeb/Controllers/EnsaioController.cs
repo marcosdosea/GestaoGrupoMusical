@@ -17,13 +17,15 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IEnsaioService _ensaio;
         private readonly IMapper _mapper;
         private readonly IPessoaService _pessoa;
+        private readonly IFigurinoService _figurino;
         private readonly IGrupoMusicalService _grupoMusical;
 
-        public EnsaioController(IMapper mapper, IEnsaioService ensaio, IPessoaService pessoa, IGrupoMusicalService grupoMusical)
+        public EnsaioController(IMapper mapper, IEnsaioService ensaio, IPessoaService pessoa, IFigurinoService figurino, IGrupoMusicalService grupoMusical)
         {
             _ensaio = ensaio;
             _mapper = mapper;
             _pessoa = pessoa;
+            _figurino = figurino;
             _grupoMusical = grupoMusical;
         }
         [HttpPost]
@@ -67,9 +69,19 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            EnsaioViewModel ensaioModel = new();
-            
-            ensaioModel.ListaPessoa = new SelectList(lista, "Id", "Nome");
+            var figurino = await _figurino.GetAllFigurinoDropdown(Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
+
+            if (figurino == null || !figurino.Any())
+            {
+                Notificar("É necessário cadastrar um Figurino para então cadastrar um Ensaio.", Notifica.Informativo);
+                return RedirectToAction(nameof(Index));
+            }
+
+            EnsaioViewModel ensaioModel = new()
+            {
+                ListaPessoa = new SelectList(lista, "Id", "Nome"),
+                ListaFigurino = new SelectList(figurino, "Id", "Nome")
+            };
 
             ViewData["exemploRegente"] = lista.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
             ensaioModel.JsonLista = lista.ToJson();
@@ -89,7 +101,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
               
                 ensaio.IdGrupoMusical = Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value);
                 ensaio.IdColaboradorResponsavel = Convert.ToInt32(User.FindFirst("Id")?.Value);
-                switch (await _ensaio.Create(ensaio, ensaioViewModel.IdRegentes))
+                switch (await _ensaio.Create(ensaio, ensaioViewModel.IdRegentes, ensaioViewModel.IdFigurinoSelecionado))
                 {
                     case HttpStatusCode.OK:
                         mensagem = "Ensaio <b>Cadastrado</b> com <b>Sucesso</b>";

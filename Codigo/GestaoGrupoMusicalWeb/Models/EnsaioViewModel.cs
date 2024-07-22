@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Core.DTO;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
 namespace GestaoGrupoMusicalWeb.Models
@@ -21,6 +22,11 @@ namespace GestaoGrupoMusicalWeb.Models
         [Display(Name = "Presença Obrigatória")]
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public bool PresencaObrigatoria { get; set; } = true;
+
+        [Display(Name = "Figurino")]
+        [Required(ErrorMessage = "O campo {0} é obrigatório")]
+        public int IdFigurinoSelecionado { get; set; }
+
         [Display(Prompt = "Informe o local do ensaio.")]
         [MaxLength(100, ErrorMessage = "O campo {0} deve ter no máximo 100 caracteres")]
         public string? Local { get; set; }
@@ -42,6 +48,7 @@ namespace GestaoGrupoMusicalWeb.Models
         };
 
         public SelectList? ListaPessoa { get; set; }
+        public SelectList? ListaFigurino { get; set; }
     }
 
     public enum Tipo 
