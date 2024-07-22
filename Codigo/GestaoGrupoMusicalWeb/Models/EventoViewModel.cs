@@ -35,7 +35,8 @@ namespace GestaoGrupoMusicalWeb.Models
         public IEnumerable<FigurinoDropdownDTO> FigurinoList { get; set; } = null!;
 
         public SelectList? ListaPessoa { get; set; }
-        public SelectList? ListaGrupoMusical { get; set; }
+        public SelectList? ListaGrupoMusical { get; set; }       
+
     }
 
     public class EventoCreateViewlModel
@@ -44,11 +45,9 @@ namespace GestaoGrupoMusicalWeb.Models
         public int IdGrupoMusical { get; set; }
         public int? IdPessoa { get; set; }
 
-
         [Display(Name = "Início")]
         [Required(ErrorMessage = "A data inicial é obrigatório")]
         public DateTime? DataHoraInicio { get; set; }
-
 
         [Display(Name = "Final")]
         [Required(ErrorMessage = "A data final é obrigatório")]
@@ -59,8 +58,6 @@ namespace GestaoGrupoMusicalWeb.Models
         [Display(Name = "Figurino")]
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public int? IdFigurinoSelecionado { get; set; }
-
-
 
         [Display(Name = "Local")]
         public string? Local { get; set; }
@@ -101,10 +98,14 @@ namespace GestaoGrupoMusicalWeb.Models
         
         [Display(Name = "Regentes")]
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
-        public IEnumerable<int>? IdRegentes { get; set; }
+        public IEnumerable<int>? IdRegentes { get; set; }              
+
         public string? JsonLista { get; set; }
 
         public SelectList? ListaPessoa { get; set; }
+        
+        [Display(Name = "Instrumento")]
+        public SelectList? ListaInstrumentos { get; set; }         
 
     }
 }

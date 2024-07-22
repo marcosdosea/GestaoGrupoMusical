@@ -51,17 +51,24 @@
             <div class="container">
                 <div class="form-group">
                     <label asp-for="IdFigurinoSelecionado" class="control-label"></label>
-                    <select asp-items="@Model.FigurinoList" asp-for="IdFigurinoSelecionado" class="form-select"></select>
+                    <select asp-items="@Model.FigurinoList" asp-for="IdFigurinoSelecionado" class="form-select" disabled></select>
                     <span asp-validation-for="IdFigurinoSelecionado" class="text-danger"></span>
                 </div>
             </div>
 
             <div class="container">
-                <div class="form-group col-md-12">
+                <div class="form-group">
                     <label asp-for="Local" class="control-label"></label>
-                    <textarea asp-for="Local" class="form-control" maxlength="100" id="linkTextAreaLocal" oninput="updateCharacterCountLocal()"></textarea>
+                    
+                    <input asp-for="Local" class="form-control" readonly />
                     <span asp-validation-for="Local" class="text-danger"></span>
-                    <small id="characterCountLocal">0/100</small>
+                </div>           
+            </div>
+            <div class="container">
+                <div class="form-group  col-md-4">
+                    <label asp-for="ListaInstrumentos" class="control-label"></label>
+                    <select asp-items="@Model.ListaInstrumentos" asp-for="ListaInstrumentos" class="form-select"></select>
+                    <span asp-validation-for="ListaInstrumentos" class="text-danger"></span>
                 </div>
             </div>
             <br />
@@ -72,17 +79,11 @@
                     <a class="btn btn-light text-secondary border border-secondary d-grid gap-2 col-sm" asp-controller="Ensaio" asp-action="Index"> Voltar </a>
                     <input type="submit" value="Adicionar" class="btn btn-secondary d-grid gap-2 col-sm " />
                 </div>
-            </div>
+            </div>                           
 
         </div>
                         
-    </div>
-    
-    <script>
-        window.addEventListener("load", () => {
-            fillAutocomplete('@(Html.Raw(Model.JsonLista))', "regentes", "IdRegentes", "formCreate", "O campo Regentes é obrigatório");
-        });
-    </script>
+    </div>  
 
     @section Header {
         @{
