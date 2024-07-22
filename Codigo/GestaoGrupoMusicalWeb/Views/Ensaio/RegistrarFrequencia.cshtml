@@ -21,20 +21,22 @@
             <input class="form-control" asp-for="Tipo" disabled />
         </div>
     </div>
-    <div class="row">
+   <!-- <div class="row">
         <div class="col-12">
-            <label class="control-label" asp-for="Regentes"></label>
-                @{
-                    if (Model.Regentes != null)
-                    {
-                        foreach (var regente in Model.Regentes)
-                        {
-                            <input class="form-control" value="@regente" disabled />
-                        }
-                    }
-                }
-        </div>
-    </div>
+                <div class="form-group col-xl">
+                    <label asp-for="Regentes" class="control-label"></label>
+                    <span class="d-inline-block my-2" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Escreva o nome do Regente. Ex: @ViewData["exemploRegente"]">
+                        <button class="btn btn-outline-secondary btn-sm fw-bold" type="button">?</button>
+                    </span>
+                    <select multiple asp-for="Regentes" class="d-none" asp-items="Model.Regentes">
+                    </select>
+                    <input class="form-control" id="regentes" placeholder="Informe o Regente." />
+                    <div id="blockNames" class="d-flex flex-column gap-2">
+                    </div>
+                    <span for="regentes" class="text-danger"></span>
+                </div>
+             </div>
+         </div>-->
     <div class="row">
         <div class="col-12">
             <label class="control-label" asp-for="Local"></label>
@@ -43,3 +45,10 @@
     </div>
     <partial name="_TabelaFrequencia" model="Model.Frequencias" />
 </div>
+
+
+    <script>
+        window.addEventListener("load", () => {
+            fillAutocomplete('@(Html.Raw(Model.JsonLista))', "regentes", "IdRegentes", "formCreate", "O campo Regentes é obrigatório");
+        });
+    </script>

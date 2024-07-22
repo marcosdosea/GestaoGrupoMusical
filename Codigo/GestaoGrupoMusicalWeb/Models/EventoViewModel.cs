@@ -57,7 +57,7 @@ namespace GestaoGrupoMusicalWeb.Models
 
         [Display(Name = "Figurino")]
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
-        public int? IdFigurinoSelecionado { get; set; }
+        public int IdFigurinoSelecionado { get; set; }
 
         [Display(Name = "Local")]
         public string? Local { get; set; }

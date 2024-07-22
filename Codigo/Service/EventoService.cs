@@ -4,6 +4,7 @@ using Core.DTO;
 using Core.Service;
 using Email;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Logging;
 using System.Net;
 
@@ -23,11 +24,58 @@ namespace Service
         /// </summary>
         /// <param name="evento"></param>
         /// <returns>Id do Grupo Musical</returns>
-        public int Create(Evento evento)
+        /// 
+        public async Task<HttpStatusCode> Create(Evento evento, IEnumerable<int> idRegentes, int idFigurino)
         {
-            _context.Add(evento);
-            _context.SaveChanges();
-            return evento.Id;
+            using var transaction = _context.Database.BeginTransaction();
+            try
+            {
+                if (evento.DataHoraFim > evento.DataHoraInicio)
+                {
+                    if (evento.DataHoraInicio.Date >= DateTime.Today)
+                    {
+                        _context.Eventos.Add(evento);
+                        _context.SaveChanges();
+                        List<Eventopessoa> p = new();
+                        foreach (int id in idRegentes)
+                        {
+                            p.Add(new Eventopessoa
+                            {
+                                IdEvento = evento.Id,
+                                IdPessoa = id,
+                                IdTipoInstrumento = 0,//por Default, o primeiro instrumento tem que ser o "nenhum". Foi gambiarra de dosea
+                                IdPapelGrupoPapelGrupo = 5 //5 = Regente
+                            });
+                        }
+                        _context.Eventopessoas.AddRange(p);
+                        _context.SaveChanges();
+                        _context.Set<Dictionary<string, object>>("Figurinoapresentacao").Add(new Dictionary<string, object>
+                        {
+                            { "IdFigurino", idFigurino },
+                            { "IdApresentacao", evento.Id }
+                        });
+                        _context.SaveChanges();
+                        transaction.Commit();
+                        return HttpStatusCode.OK;
+                    }
+                    else
+                    {
+                        await transaction.RollbackAsync();
+                        return HttpStatusCode.BadRequest;
+                    }
+                }
+                else
+                {
+                    await transaction.RollbackAsync();
+                    return HttpStatusCode.PreconditionFailed;
+                }
+
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                return HttpStatusCode.InternalServerError;
+            }
         }
         /// <summary>
         /// Método que deleta uma apresentação 
@@ -75,22 +123,6 @@ namespace Service
                 });
 
             return query.AsNoTracking();
-        }
-        
-        public IEnumerable<EventoIndexDTO> GetAllIndexDTO()
-        {
-            var query = _context.Eventos
-                .OrderBy(g => g.DataHoraInicio).
-                Select(g => new EventoIndexDTO
-                {
-                    Id = g.Id,
-                    DataHoraInicio = g.DataHoraInicio,
-                    Local = g.Local,
-                    Planejados = 0,
-                    Confirmados = 0
-                }
-                ).AsNoTracking();
-            return query;
         }
 
         public IEnumerable<EventoIndexDTO> GetAllEventoIndexDTOPerIdGrupoMusical(int idGrupoMusical)
@@ -217,7 +249,12 @@ namespace Service
                }).AsNoTracking().ToListAsync();
 
             return query;
-        }  
-       
+        }
+
+        public IEnumerable<GerenciarInstrumentoEventoDTO> GetGerenciarInstrumentoEventoDTO(int id, IEnumerable<Tipoinstrumento>? instrumento)
+        {
+
+            return null;
+        }
     }
 }
