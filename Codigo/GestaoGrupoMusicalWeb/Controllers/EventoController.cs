@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Core;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Net;
 using Core.Datatables;
 using NuGet.Protocol;
+using Microsoft.AspNetCore.Authorization;
+using Service;
 using Core.DTO;
 
 namespace GestaoGrupoMusicalWeb.Controllers
@@ -19,15 +21,18 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IGrupoMusicalService _grupoMusical;
         private readonly IPessoaService _pessoa;
         private readonly IFigurinoService _figurino;
+        private readonly IInstrumentoMusicalService _tipoIntrumentoMusical;
 
 
-        public EventoController(IEventoService evento, IMapper mapper, IGrupoMusicalService grupoMusical, IPessoaService pessoa, IFigurinoService figurino)
+
+        public EventoController(IEventoService evento, IMapper mapper, IGrupoMusicalService grupoMusical, IPessoaService pessoa, IFigurinoService figurino, IInstrumentoMusicalService tipoInstrumentoMusical)
         {
             _evento = evento;
             _mapper = mapper;
             _grupoMusical = grupoMusical;
             _pessoa = pessoa;
             _figurino = figurino;
+            _tipoIntrumentoMusical = tipoInstrumentoMusical;
         }
 
         // GET: EventoController
@@ -128,10 +133,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: EventoController/Edit/5
         public ActionResult Edit(int id)
         {
+            Console.WriteLine("ID" + id);
+
             var evento = _evento.Get(id);
             var eventoModel = _mapper.Map<EventoViewModel>(evento);
             eventoModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
-
             return View(eventoModel);
         }
 
@@ -190,5 +196,50 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
+        // GET: EventoController/Edit/5
+        
+        public async Task<ActionResult> GerenciarInstrumentoEvento(int id)
+        {                    
+
+            int idGrupoMusical = await _grupoMusical.GetIdGrupo(User.Identity.Name);
+
+            var listaPessoasAutoComplete = await _pessoa.GetRegentesForAutoCompleteAsync(idGrupoMusical);
+            if (listaPessoasAutoComplete == null || !listaPessoasAutoComplete.Any())
+            {
+                Notificar("É necessário cadastrar pelo menos um Regente para então cadastrar um Evento Musical.", Notifica.Informativo);
+                return RedirectToAction(nameof(Index));
+            }       
+
+            var figurinosDropdown = await _figurino.GetAllFigurinoDropdown(idGrupoMusical);            
+
+            if (figurinosDropdown == null || !figurinosDropdown.Any())
+            {
+                Notificar("É necessário cadastrar um Figurino para então cadastrar um Evento Musical.", Notifica.Informativo);
+                return RedirectToAction(nameof(Index));
+            }
+            var evento = _evento.Get(idGrupoMusical);
+            EventoViewModel eventoView = _mapper.Map<EventoViewModel>(evento);
+
+            InstrumentoMusicalViewModel instrumentoMusicalViewModel = new InstrumentoMusicalViewModel();
+            IEnumerable<Tipoinstrumento> listaInstrumentos = await _tipoIntrumentoMusical.GetAllTipoInstrumento();
+            instrumentoMusicalViewModel.ListaInstrumentos = new SelectList(listaInstrumentos, "Id", "Nome", null);
+
+            GerenciarInstrumentoEventoViewModel gerenciarInstrumentoEvento = new GerenciarInstrumentoEventoViewModel
+            {
+                IdGrupoMusical = idGrupoMusical,        
+                DataHoraInicio = eventoView.DataHoraInicio,
+                DataHoraFim = eventoView.DataHoraFim,
+                ListaPessoa = new SelectList(listaPessoasAutoComplete, "Id", "Nome"),
+                FigurinoList = new SelectList(figurinosDropdown, "Id", "Nome"),
+                Local = eventoView.Local,
+                ListaInstrumentos = instrumentoMusicalViewModel.ListaInstrumentos,                
+            };            
+
+            ViewData["exemploRegente"] = listaPessoasAutoComplete.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
+            gerenciarInstrumentoEvento.JsonLista = listaPessoasAutoComplete.ToJson();
+            return View(gerenciarInstrumentoEvento);
+        } 
+
+     
     }
 }
