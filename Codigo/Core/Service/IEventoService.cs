@@ -10,6 +10,7 @@ namespace Core.Service
         void Edit(Evento evento);
         HttpStatusCode Delete(int id);
         Evento Get(int id);
+        ICollection<Eventopessoa> GetEventoPessoasPorIdEvento(int idEvento);
         IEnumerable<Evento> GetAll();
         IEnumerable<EventoDTO> GetAllDTO();
         IEnumerable<EventoIndexDTO> GetAllIndexDTO();

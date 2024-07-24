@@ -5,6 +5,7 @@ using Core.Service;
 using Email;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 using System.Net;
 
 namespace Service
@@ -28,11 +29,11 @@ namespace Service
         public async Task<HttpStatusCode> Create(Evento evento, IEnumerable<int> idRegentes, int idFigurino)
         {
             Console.WriteLine("### SERVICE ###");
-            foreach(int ids in idRegentes)
+            foreach (int ids in idRegentes)
             {
                 Console.WriteLine("idRegente: " + ids);
             }
-            Console.WriteLine("idPessoa: "  + evento.IdColaboradorResponsavel);
+            Console.WriteLine("idPessoa: " + evento.IdColaboradorResponsavel);
             Console.WriteLine("idFigurino: " + idFigurino);
             Console.WriteLine("horaInicio: " + evento.DataHoraInicio.ToString());
             Console.WriteLine("horaFim: " + evento.DataHoraFim.ToString());
@@ -77,21 +78,40 @@ namespace Service
         /// <param name="id"></param>
         public HttpStatusCode Delete(int id)
         {
-            Evento? evento = _context.Eventos.Find(id);
-            if (evento == null)
-                return HttpStatusCode.NotFound;
+            Console.WriteLine("DELETE ########################## " + id);
 
             try
             {
-                var eventoPessoas = 
+                //Não funciona incluir a Apresentacaotipoinstrumento
+                /*Evento? evento = _context.Eventos.Where(ev => ev.Id == id).
+                    Include(evento => evento.IdFigurinos)
+                    .Include(evento => evento.Apresentacaotipoinstrumentos)
+                    .FirstOrDefault();*/
+
+                Evento? evento = _context.Eventos.Where(ev => ev.Id == id).
+                    Include(evento => evento.IdFigurinos).FirstOrDefault();
+                if (evento == null)
+                {
+                    return HttpStatusCode.NotFound;
+                }
+                evento.Apresentacaotipoinstrumentos = _context.Apresentacaotipoinstrumentos
+                    .Where(ev => ev.IdApresentacao == evento.Id).AsNoTracking().ToList();
+                //não está funcionando com Apresentacaotipoinstrumento
+                if (evento.Apresentacaotipoinstrumentos.Any())
+                {
+                    Console.WriteLine("PEGOU ");
+                    Console.WriteLine(evento.Apresentacaotipoinstrumentos.First().QuantidadePlanejada);
+                }
+
+                Console.WriteLine("Eventos: " + evento?.Eventopessoas.Count);
+                Console.WriteLine("Figurinos: " + evento?.IdFigurinos.Count);
+                Console.WriteLine("ApresentacaoTipoInstrumento: " + evento?.Apresentacaotipoinstrumentos.Count);
             }
             catch
             {
+                Console.WriteLine("CATCH");
                 return HttpStatusCode.InternalServerError;
             }
-
-            _context.Remove(evento);
-            _context.SaveChanges();
             return HttpStatusCode.OK;
         }
 
@@ -111,10 +131,13 @@ namespace Service
             return _context.Eventos.Find(id);
         }
 
-        public IEnumerable<Eventopessoa>? GetEventoPessoasPorIdEvento(int idEvento)
+        public ICollection<Eventopessoa> GetEventoPessoasPorIdEvento(int idEvento)
         {
-            //var query = eventoPessoa in _context.Eventopessoas
-            return null;
+            var query = (from eventoPessoa in _context.Eventopessoas
+                         where eventoPessoa.IdEvento == idEvento
+                         select eventoPessoa
+                                              ).AsNoTracking().ToList();
+            return query;
         }
 
         public IEnumerable<Evento> GetAll()
@@ -137,7 +160,7 @@ namespace Service
 
             return query.AsNoTracking();
         }
-        
+
         public IEnumerable<EventoIndexDTO> GetAllIndexDTO()
         {
             var query = _context.Eventos
@@ -284,7 +307,7 @@ namespace Service
         {
 
             return null;
-        } 
+        }
 
     }
 }
