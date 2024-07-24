@@ -78,41 +78,46 @@ namespace Service
         /// <param name="id"></param>
         public HttpStatusCode Delete(int id)
         {
-            Console.WriteLine("DELETE ########################## " + id);
-
+            using var transaction = _context.Database.BeginTransaction();
             try
             {
-                //Não funciona incluir a Apresentacaotipoinstrumento
-                /*Evento? evento = _context.Eventos.Where(ev => ev.Id == id).
-                    Include(evento => evento.IdFigurinos)
-                    .Include(evento => evento.Apresentacaotipoinstrumentos)
-                    .FirstOrDefault();*/
-
-                Evento? evento = _context.Eventos.Where(ev => ev.Id == id).
-                    Include(evento => evento.IdFigurinos).FirstOrDefault();
+                Evento? evento = _context.Eventos.Where(ev => ev.Id == id).FirstOrDefault();
                 if (evento == null)
                 {
+                    transaction.Rollback();
                     return HttpStatusCode.NotFound;
                 }
-                evento.Apresentacaotipoinstrumentos = _context.Apresentacaotipoinstrumentos
-                    .Where(ev => ev.IdApresentacao == evento.Id).AsNoTracking().ToList();
-                //não está funcionando com Apresentacaotipoinstrumento
-                if (evento.Apresentacaotipoinstrumentos.Any())
-                {
-                    Console.WriteLine("PEGOU ");
-                    Console.WriteLine(evento.Apresentacaotipoinstrumentos.First().QuantidadePlanejada);
-                }
+                Console.WriteLine("ID: " + evento.Id);
+                Console.WriteLine("FI: " + evento.IdFigurinos.Count);
+                Console.WriteLine("EV: " + evento.Eventopessoas.Count);
+                Console.WriteLine("AP: " + evento.Apresentacaotipoinstrumentos.Count);
 
-                Console.WriteLine("Eventos: " + evento?.Eventopessoas.Count);
-                Console.WriteLine("Figurinos: " + evento?.IdFigurinos.Count);
-                Console.WriteLine("ApresentacaoTipoInstrumento: " + evento?.Apresentacaotipoinstrumentos.Count);
+                if (evento.IdFigurinos.Count > 0)
+                {
+                    _context.RemoveRange(evento.IdFigurinos);
+                    _context.SaveChanges();
+                }
+                if (evento.Eventopessoas.Count > 0)
+                {
+                    _context.RemoveRange(evento.Eventopessoas);
+                    _context.SaveChanges();
+
+                }
+                if (evento.Apresentacaotipoinstrumentos.Count > 0)
+                {
+                    _context.RemoveRange(evento.Apresentacaotipoinstrumentos);
+                    _context.SaveChanges();
+                }
+                _context.Remove(evento);
+                _context.SaveChanges();
+                transaction.Commit();
+                return HttpStatusCode.OK;
             }
             catch
             {
-                Console.WriteLine("CATCH");
+                transaction.Rollback();
                 return HttpStatusCode.InternalServerError;
             }
-            return HttpStatusCode.OK;
         }
 
         /// <summary>

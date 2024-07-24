@@ -215,7 +215,18 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id)
         {
-            _evento.Delete(id);
+            switch(_evento.Delete(id))
+            {
+                case HttpStatusCode.OK:
+                    Notificar("Evento <b>Deletado</b> com <b>Sucesso</b>", Notifica.Sucesso);
+                    break;
+                case HttpStatusCode.NotFound:
+                    Notificar("Evento <b>não</b> encontrado.", Notifica.Alerta);
+                    break;
+                default:
+                    Notificar($"O <b>Evento</b> não pôde ser <b>deletado</b>. Consulte o suporte para detalhes.", Notifica.Erro);
+                    break;
+            }
             return RedirectToAction(nameof(Index));
         }
 
