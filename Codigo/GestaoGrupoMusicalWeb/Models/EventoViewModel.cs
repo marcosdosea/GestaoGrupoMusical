@@ -105,7 +105,8 @@ namespace GestaoGrupoMusicalWeb.Models
         public SelectList? ListaPessoa { get; set; }
         
         [Display(Name = "Instrumento")]
-        public SelectList? ListaInstrumentos { get; set; }         
+        public SelectList? ListaInstrumentos { get; set; }
+        public int Quantidade { get; set; }
 
     }
 }
