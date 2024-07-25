@@ -132,7 +132,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: EnsaioController/Edit/5
         public async Task<ActionResult> Edit(int id)
         {
-            var ensaio = await _ensaio.Get(id);
+            var ensaio = _ensaio.Get(id);
             if (Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value) != ensaio.IdGrupoMusical)
             {
                 Notificar("<b>Ensaio não encontrado!</b>", Notifica.Alerta);
@@ -197,7 +197,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: EnsaioController/Delete/5
         public async Task<ActionResult> Delete(int id)
         {
-            var ensaio = await _ensaio.Get(id);
+            var ensaio = _ensaio.Get(id);
             return View(_mapper.Map<EnsaioViewModel>(ensaio));
         }
 
@@ -248,18 +248,45 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         [Authorize(Roles = "ADMINISTRADOR GRUPO,COLABORADOR,REGENTE")]
-        // GET: EnsaioController/RegistrarFrequencia
+        // GET: EnsaioController/RegistrarFrequencia/5
         public async Task<ActionResult> RegistrarFrequencia(int idEnsaio)
         {
-            if (User.FindFirst("IdGrupoMusical")?.Value == null) {
-                return RedirectToAction("Sair", "Identity");
-            }
-            var frequencias = await _ensaio.GetFrequenciaAsync(idEnsaio, Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
-            if(frequencias == null)
+            int idGrupoMusical = await _grupoMusical.GetIdGrupo(User.Identity.Name);
+
+            var listaPessoasAutoComplete = await _pessoa.GetRegentesForAutoCompleteAsync(idGrupoMusical);
+            if (listaPessoasAutoComplete == null || !listaPessoasAutoComplete.Any())
             {
+                Notificar("É necessário cadastrar pelo menos um Regente para então registrar uma frequência.", Notifica.Informativo);
                 return RedirectToAction(nameof(Index));
             }
-            return View(frequencias);
+
+            var listaFigurinos = await _figurino.GetAllFigurinoDropdown(idGrupoMusical);
+
+            if (listaFigurinos == null || !listaFigurinos.Any())
+            {
+                Notificar("É necessário cadastrar pelo menos um Figurino para então registrar uma frequência.", Notifica.Informativo);
+                return RedirectToAction(nameof(Index));
+            }
+
+            var ensaio = _ensaio.Get(idEnsaio);
+
+            EnsaioViewModel ensaioView = _mapper.Map<EnsaioViewModel>(ensaio);
+
+            FrequenciaEnsaioViewModel frequenciaEnsaio = new()
+            {
+                IdGrupoMusical = idGrupoMusical,
+                DataHoraInicio = ensaioView.DataHoraInicio,
+                DataHoraFim    = ensaioView.DataHoraFim,
+                Tipo           = ensaioView.Tipo,
+                ListaPessoa    = new SelectList(listaPessoasAutoComplete, "Id", "Nome"),
+                ListaFigurino  = new SelectList(listaFigurinos, "Id", "Nome"),
+                Local          = ensaioView.Local
+            };
+
+            ViewData["exemploRegente"] = listaPessoasAutoComplete.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
+            frequenciaEnsaio.JsonLista = listaPessoasAutoComplete.ToJson();
+
+            return View(frequenciaEnsaio);
         }
 
         [Authorize(Roles = "ADMINISTRADOR GRUPO,COLABORADOR,REGENTE")]

@@ -41,7 +41,7 @@ namespace Core.Service
         /// InternalServerError - Erro interno
         /// </returns>
         Task<HttpStatusCode> Delete(int id);
-        Task<Ensaio> Get(int id);
+        Ensaio Get(int id);
         Task<IEnumerable<Ensaio>> GetAll();
         Task<IEnumerable<EnsaioDTO>> GetAllDTO();
         Task<EnsaioFrequenciaDTO?> GetFrequenciaAsync(int idEnsaio, int idGrupoMusical);

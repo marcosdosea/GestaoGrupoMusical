@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Core.DTO;
+using Core;
 using GestaoGrupoMusicalWeb.Models;
 
 namespace GestaoGrupoMusicalWeb.Mapper
@@ -8,7 +8,7 @@ namespace GestaoGrupoMusicalWeb.Mapper
     {
         public EnsaioProfileDTO()
         {
-            CreateMap<EnsaioViewModelDTO, EnsaioDTO>().ReverseMap();
+            CreateMap<EnsaioViewModel, Ensaio>().ReverseMap();
         }
     }
 }
