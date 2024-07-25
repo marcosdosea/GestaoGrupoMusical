@@ -76,9 +76,9 @@ namespace Service
         /// Método que deleta uma apresentação 
         /// </summary>
         /// <param name="id"></param>
-        public async Task <HttpStatusCode> Delete(int id)
+        public async Task<HttpStatusCode> Delete(int id)
         {
-            using var transaction = _context.Database.BeginTransactionAsync();
+            using var transaction = _context.Database.BeginTransaction();
             try
             {
                 Evento? evento = _context.Eventos.Where(ev => ev.Id == id)
@@ -93,7 +93,7 @@ namespace Service
                     .FirstOrDefault();
                 if (evento == null)
                 {
-                    await transaction.Result.RollbackAsync();
+                    transaction.Rollback();
                     return HttpStatusCode.NotFound;
                 }
                 evento.Apresentacaotipoinstrumentos = _context.Apresentacaotipoinstrumentos.Where(ap => ap.IdApresentacao == evento.Id)
@@ -102,14 +102,49 @@ namespace Service
                         IdApresentacao = q.IdApresentacao,
                         IdTipoInstrumento = q.IdTipoInstrumento,
                     }).ToList();
+
+                if (evento.IdFigurinos.Count() > 0)
+                {
+                    foreach (var figurino in evento.IdFigurinos)
+                    {
+                        _context.Set<Dictionary<string, object>>("Figurinoapresentacao").Remove(new Dictionary<string, object>
+                        {
+                            { "IdFigurino", figurino.Id },
+                            { "IdApresentacao", evento.Id }
+                        });
+                        _context.SaveChanges();
+                    }
+                }
+
+                if(evento.Apresentacaotipoinstrumentos.Count > 0)
+                {
+                    foreach (Apresentacaotipoinstrumento ap in evento.Apresentacaotipoinstrumentos)
+                    {
+                        _context.Remove(ap);
+                        _context.SaveChanges();
+                    }
+                }
+
+                if(evento.Eventopessoas.Count > 0)
+                {
+                    foreach(Eventopessoa p in evento.Eventopessoas)
+                    {
+                        _context.Remove(p);
+                        _context.SaveChanges();
+                    }
+                }
+                evento.IdFigurinos.Clear();
+                evento.Apresentacaotipoinstrumentos.Clear();
+                evento.Eventopessoas.Clear();
+                
                 _context.Remove(evento);
                 _context.SaveChanges();
-                await transaction.Result.CommitAsync();
+                transaction.Commit();
                 return HttpStatusCode.OK;
             }
             catch
             {
-                await transaction.Result.RollbackAsync();
+                transaction.Rollback();
                 return HttpStatusCode.InternalServerError;
             }
         }
