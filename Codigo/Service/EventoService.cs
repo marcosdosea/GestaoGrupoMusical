@@ -76,7 +76,7 @@ namespace Service
         /// Método que deleta uma apresentação 
         /// </summary>
         /// <param name="id"></param>
-        public async Task<HttpStatusCode> Delete(int id)
+        public HttpStatusCode Delete(int id)
         {
             using var transaction = _context.Database.BeginTransaction();
             try

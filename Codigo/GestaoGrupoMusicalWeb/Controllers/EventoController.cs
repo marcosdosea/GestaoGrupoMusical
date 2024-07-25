@@ -213,9 +213,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: EventoController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(int id)
+        public ActionResult Delete(int id)
         {
-            HttpStatusCode result = await _evento.Delete(id);
+            HttpStatusCode result = _evento.Delete(id);
             switch (result)
             {
                 case HttpStatusCode.OK:
