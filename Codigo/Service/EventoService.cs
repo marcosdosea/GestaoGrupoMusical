@@ -76,46 +76,40 @@ namespace Service
         /// Método que deleta uma apresentação 
         /// </summary>
         /// <param name="id"></param>
-        public HttpStatusCode Delete(int id)
+        public async Task <HttpStatusCode> Delete(int id)
         {
-            using var transaction = _context.Database.BeginTransaction();
+            using var transaction = _context.Database.BeginTransactionAsync();
             try
             {
-                Evento? evento = _context.Eventos.Where(ev => ev.Id == id).FirstOrDefault();
+                Evento? evento = _context.Eventos.Where(ev => ev.Id == id)
+                    .Select(ev => new Evento()
+                    {
+                        Id = ev.Id,
+                        IdGrupoMusical = ev.IdGrupoMusical,
+                        IdColaboradorResponsavel = ev.IdColaboradorResponsavel,
+                        IdFigurinos = ev.IdFigurinos,
+                        Eventopessoas = ev.Eventopessoas,
+                    })
+                    .FirstOrDefault();
                 if (evento == null)
                 {
-                    transaction.Rollback();
+                    await transaction.Result.RollbackAsync();
                     return HttpStatusCode.NotFound;
                 }
-                Console.WriteLine("ID: " + evento.Id);
-                Console.WriteLine("FI: " + evento.IdFigurinos.Count);
-                Console.WriteLine("EV: " + evento.Eventopessoas.Count);
-                Console.WriteLine("AP: " + evento.Apresentacaotipoinstrumentos.Count);
-
-                if (evento.IdFigurinos.Count > 0)
-                {
-                    _context.RemoveRange(evento.IdFigurinos);
-                    _context.SaveChanges();
-                }
-                if (evento.Eventopessoas.Count > 0)
-                {
-                    _context.RemoveRange(evento.Eventopessoas);
-                    _context.SaveChanges();
-
-                }
-                if (evento.Apresentacaotipoinstrumentos.Count > 0)
-                {
-                    _context.RemoveRange(evento.Apresentacaotipoinstrumentos);
-                    _context.SaveChanges();
-                }
+                evento.Apresentacaotipoinstrumentos = _context.Apresentacaotipoinstrumentos.Where(ap => ap.IdApresentacao == evento.Id)
+                    .Select(q => new Apresentacaotipoinstrumento()
+                    {
+                        IdApresentacao = q.IdApresentacao,
+                        IdTipoInstrumento = q.IdTipoInstrumento,
+                    }).ToList();
                 _context.Remove(evento);
                 _context.SaveChanges();
-                transaction.Commit();
+                await transaction.Result.CommitAsync();
                 return HttpStatusCode.OK;
             }
             catch
             {
-                transaction.Rollback();
+                await transaction.Result.RollbackAsync();
                 return HttpStatusCode.InternalServerError;
             }
         }
