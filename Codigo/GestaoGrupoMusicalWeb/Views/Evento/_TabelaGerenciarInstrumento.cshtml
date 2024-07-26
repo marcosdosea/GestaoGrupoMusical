@@ -1,14 +1,14 @@
-﻿@model GestaoGrupoMusicalWeb.Models.GerenciarInstrumentoEventoViewModel
+﻿@model IEnumerable<Core.DTO.GerenciarInstrumentoEventoDTO>
 
 <div class="table-responsive">
     <table class="table mt-3">
         <thead>
             <tr class="bg-danger bg-opacity-75 text-white">
                 <th>
-                   Instrumento
+                    @Html.DisplayNameFor(model => model.Instrumento);
                 </th>
                 <th>
-                   Planejado
+                    @Html.DisplayNameFor(model => model.Local);
                 </th>
                 <th>
                     Solicitados
