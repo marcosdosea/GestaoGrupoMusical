@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = "Gerenciar Instrumento Evento";
     ViewData["Evento"] = "Eventos";
-    ViewData["GerenciarInstrumento"] = "Gerenciar Instrumento";
+    ViewData["GerenciarInstrumentoEvento"] = "Gerenciar Instrumento";
 }
 
 <partial name="_Notificar">
@@ -49,6 +49,7 @@
                     </div>
                </div>
             <div class="container">
+
                 <div class="form-group">
                     <label asp-for="IdFigurinoSelecionado" class="control-label"></label>
                     <select asp-items="@Model.FigurinoList" asp-for="IdFigurinoSelecionado" class="form-select" disabled></select>
@@ -58,38 +59,50 @@
 
             <div class="container">
                 <div class="form-group">
-                    <label asp-for="Local" class="control-label"></label>
-                    
+                    <label asp-for="Local" class="control-label"></label>                    
                     <input asp-for="Local" class="form-control" readonly />
                     <span asp-validation-for="Local" class="text-danger"></span>
-                </div>           
+                </div>                         
             </div>
             <div class="container">
-                <div class="form-group  col-md-4">
-                    <label asp-for="ListaInstrumentos" class="control-label"></label>
-                    <select asp-items="@Model.ListaInstrumentos" asp-for="ListaInstrumentos" class="form-select"></select>
-                    <span asp-validation-for="ListaInstrumentos" class="text-danger"></span>
+                <div class="row">                
+                    <div class="form-group  col-md-4">
+                         <label asp-for="ListaInstrumentos" class="control-label"></label>
+                        <select asp-items="@Model.ListaInstrumentos" asp-for="Id" class="form-select"></select>                                                           
+                        <span asp-validation-for="ListaInstrumentos" class="text-danger"></span>
+                       
+                    </div>
+                    <div class="form-group  col-md-4">
+                    <label asp-for="Quantidade" class="control-label"></label>
+                    <input asp-for="Quantidade" class="form-control" />
+                    <span asp-validation-for="Quantidade" class="text-danger"></span>
+                    </div>
+                    <div class=" col-md-4  d-flex d-grig gap-2 mx-auto d-flex flex-sm-column-reverse">
+                       <input class="btn btn-secondary col-lg-5 mt-3 ml-3" type="submit" value="Adicionar" />
+                    </div>
                 </div>
             </div>
             <br />
             <br />
-            <div class="container">
-                <div class="row d-flex flex-column-reverse d-grig gap-2 mx-auto d-flex flex-sm-column-reverse flex-xl-row">
-                    <div class="col-5 d-none d-sm-block"></div>
-                    <a class="btn btn-light text-secondary border border-secondary d-grid gap-2 col-sm" asp-controller="Ensaio" asp-action="Index"> Voltar </a>
-                    <input type="submit" value="Adicionar" class="btn btn-secondary d-grid gap-2 col-sm " />
-                </div>
-            </div>                           
+          
+            <partial name="_TabelaGerenciarInstrumento">
 
+                <div class="row">
+                    <div class="d-flex justify-content-lg-end flex-column-reverse flex-lg-row">
+                        <a class="btn btn-outline-secondary col-lg-2 mt-3 me-lg-3 btn-" asp-controller="Evento" asp-action="Index">Voltar</a>                        
+                    </div>
+                </div>
         </div>
+       
                         
-    </div>  
+    </div>
 
     @section Header {
         @{
             await Html.RenderPartialAsync("_AutoCompleteCssPartial");
         }
     }
+
     @section Scripts {
         @{
             await Html.RenderPartialAsync("_ValidationScriptsPartial");
