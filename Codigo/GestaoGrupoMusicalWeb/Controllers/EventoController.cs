@@ -156,20 +156,24 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return RedirectToAction("Edit", eventoModel);
         }
 
-        // GET: EventoController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            var evento = _evento.Get(id);
-            var eventoModel = _mapper.Map<EventoViewModel>(evento);
-            return View(eventoModel);
-        }
-
         // POST: EventoController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, EventoViewModel eventoViewModel)
+        public ActionResult Delete(int id)
         {
-            _evento.Delete(id);
+            HttpStatusCode result = _evento.Delete(id);
+            switch (result)
+            {
+                case HttpStatusCode.OK:
+                    Notificar("Evento <b>Deletado</b> com <b>Sucesso</b>", Notifica.Sucesso);
+                    break;
+                case HttpStatusCode.NotFound:
+                    Notificar("Evento <b>não</b> encontrado.", Notifica.Alerta);
+                    break;
+                default:
+                    Notificar($"O <b>Evento</b> não pôde ser <b>deletado</b>. Consulte o suporte para detalhes.", Notifica.Erro);
+                    break;
+            }
             return RedirectToAction(nameof(Index));
         }
 
