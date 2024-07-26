@@ -21,7 +21,7 @@ namespace Service
         /// </summary>
         /// <param name="ensaio"></param>
         /// <returns>Verdadeiro(<see langword="true" />) se cadastrou com sucesso ou Falso(<see langword="false" />) se houve algum erro.</returns>
-        public async Task<HttpStatusCode> Create(Ensaio ensaio, IEnumerable<int> idRegentes)
+        public async Task<HttpStatusCode> Create(Ensaio ensaio, IEnumerable<int> idRegentes, int idFigurino)
         {
             using var transaction = _context.Database.BeginTransaction();
 
@@ -33,6 +33,25 @@ namespace Service
                     {
                         await _context.Ensaios.AddAsync(ensaio);
                         await _context.SaveChangesAsync();
+
+                        List<Ensaiopessoa> p = new();
+                        foreach(int id in idRegentes)
+                        {
+                            p.Add(new Ensaiopessoa
+                            {
+                                IdEnsaio = ensaio.Id,
+                                IdPessoa = id,
+                                IdPapelGrupo = 5 //5 significa que seja um Regente!
+                            });
+                        }
+                        _context.Ensaiopessoas.AddRange(p);
+                        _context.SaveChanges();
+                        _context.Set<Dictionary<string, object>>("Figurinoensaio").Add(new Dictionary<string, object>
+                        {
+                            {"IdFigurino", idFigurino },
+                            {"IdEnsaio", ensaio.Id }
+                        });
+                        _context.SaveChanges();
                         await transaction.CommitAsync();
 
                         return HttpStatusCode.OK;
@@ -53,7 +72,6 @@ namespace Service
             }
             catch
             {
-                Console.WriteLine("Caiu no catch");
                 await transaction.RollbackAsync();
                 return HttpStatusCode.InternalServerError;
             }

@@ -1,6 +1,6 @@
 ﻿@model GestaoGrupoMusicalWeb.Models.EnsaioViewModel
 @{
-    ViewData["Title"] = "Novo Enasaio";
+    ViewData["Title"] = "Novo Ensaio";
     ViewData["Ensaio"] = "Ensaio";
     ViewData["Create"] = "Cadastro";
 }
@@ -54,6 +54,15 @@
                             </div>
                             <span for="regentes" class="text-danger"></span>
                         </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="form-group">
+                            <label asp-for="IdFigurinoSelecionado" class="control-label"></label>
+                            <select asp-items="@Model.ListaFigurino" asp-for="IdFigurinoSelecionado" class="form-select"></select>
+                            <span asp-validation-for="IdFigurinoSelecionado" class="text-danger"></span>
+                    </div>
                 </div>
             </div>
             <div class="container">

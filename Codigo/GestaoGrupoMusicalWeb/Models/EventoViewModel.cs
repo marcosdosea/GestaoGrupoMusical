@@ -35,18 +35,19 @@ namespace GestaoGrupoMusicalWeb.Models
         public IEnumerable<FigurinoDropdownDTO> FigurinoList { get; set; } = null!;
 
         public SelectList? ListaPessoa { get; set; }
-        public SelectList? ListaGrupoMusical { get; set; }
+        public SelectList? ListaGrupoMusical { get; set; }       
+
     }
 
     public class EventoCreateViewlModel
     {
         public int Id { get; set; }
         public int IdGrupoMusical { get; set; }
+        public int? IdPessoa { get; set; }
 
         [Display(Name = "Início")]
         [Required(ErrorMessage = "A data inicial é obrigatório")]
         public DateTime? DataHoraInicio { get; set; }
-
 
         [Display(Name = "Final")]
         [Required(ErrorMessage = "A data final é obrigatório")]
@@ -57,8 +58,6 @@ namespace GestaoGrupoMusicalWeb.Models
         [Display(Name = "Figurino")]
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public int IdFigurinoSelecionado { get; set; }
-
-
 
         [Display(Name = "Local")]
         public string? Local { get; set; }
@@ -73,6 +72,40 @@ namespace GestaoGrupoMusicalWeb.Models
         public string? JsonLista { get; set; }
 
         public SelectList? ListaPessoa { get; set; }
+
+    } public class GerenciarInstrumentoEventoViewModel
+    {
+        public int Id { get; set; }
+        public int IdGrupoMusical { get; set; }
+        public int? IdPessoa { get; set; }
+
+        [Display(Name = "Início")]
+        [Required(ErrorMessage = "A data inicial é obrigatório")]
+        public DateTime? DataHoraInicio { get; set; }
+
+        [Display(Name = "Final")]
+        [Required(ErrorMessage = "A data final é obrigatório")]
+        public DateTime? DataHoraFim { get; set; }
+
+        public SelectList? FigurinoList { get; set; }
+
+        [Display(Name = "Figurino")]
+        [Required(ErrorMessage = "O campo {0} é obrigatório")]
+        public int? IdFigurinoSelecionado { get; set; }
+
+        [Display(Name = "Local")]
+        public string? Local { get; set; }
+        
+        [Display(Name = "Regentes")]
+        [Required(ErrorMessage = "O campo {0} é obrigatório")]
+        public IEnumerable<int>? IdRegentes { get; set; }              
+
+        public string? JsonLista { get; set; }
+
+        public SelectList? ListaPessoa { get; set; }
+        
+        [Display(Name = "Instrumento")]
+        public SelectList? ListaInstrumentos { get; set; }         
 
     }
 }

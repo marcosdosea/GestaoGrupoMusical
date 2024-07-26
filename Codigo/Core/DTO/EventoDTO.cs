@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
+using System.Xml.Linq;
 namespace Core.DTO
 {
     public class EventoDTO
@@ -11,6 +12,7 @@ namespace Core.DTO
     public class EventoIndexDTO
     {
         public int Id { get; set; }
+
         [Display(Name = "Data hora início")]
         public DateTime DataHoraInicio { get; set; }
         [Display(Name = "Local")]
@@ -20,6 +22,7 @@ namespace Core.DTO
         [Display(Name = "Confirmados")]
         public int Confirmados { get; set; }
     }
+
 
     public class GerenciarInstrumentoEventoDTO
     {

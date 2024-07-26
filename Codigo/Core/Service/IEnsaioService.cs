@@ -17,7 +17,7 @@ namespace Core.Service
         /// PreconditionFailed - Data de inicio fora do escopo, ou seja, ou seja a data inicio passa da data fim do evento<para />
         /// InternalServerError - Erro interno
         /// </returns>
-        Task<HttpStatusCode> Create(Ensaio ensaio, IEnumerable<int> idRegentes);
+        Task<HttpStatusCode> Create(Ensaio ensaio, IEnumerable<int> idRegentes, int idFigurino);
 
         /// <summary>
         /// Editar uma ensaio no banco de dados
