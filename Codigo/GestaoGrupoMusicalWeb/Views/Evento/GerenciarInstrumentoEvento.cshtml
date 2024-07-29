@@ -1,4 +1,4 @@
-﻿@model GestaoGrupoMusicalWeb.Models.GerenciarInstrumentoEventoViewModel
+﻿@model GestaoGrupoMusicalWeb.Models.GerenciarInstrumentoEventoViewModel;
 @{
     ViewData["Title"] = "Gerenciar Instrumento Evento";
     ViewData["Evento"] = "Eventos";
@@ -13,7 +13,7 @@
                 <ol class="breadcrumb px-3">
                     <strong>
                         <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Evento"]</a>
-                        <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["GerenciarInstrumento"]</spn>
+                        <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["GerenciarInstrumentoEvento"]</spn>
                     </strong>
                 </ol>
             </nav>
@@ -84,7 +84,7 @@
             </div>
             <br />
             <br />
-          
+
             <partial name="_TabelaGerenciarInstrumento">
 
                 <div class="row">
@@ -92,9 +92,7 @@
                         <a class="btn btn-outline-secondary col-lg-2 mt-3 me-lg-3 btn-" asp-controller="Evento" asp-action="Index">Voltar</a>                        
                     </div>
                 </div>
-        </div>
-       
-                        
+        </div>                               
     </div>
 
     @section Header {
