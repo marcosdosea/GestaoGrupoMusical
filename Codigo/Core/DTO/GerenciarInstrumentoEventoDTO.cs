@@ -25,5 +25,7 @@ namespace Core.DTO
         [Display(Name = "Instrumento")]
         public IEnumerable<Tipoinstrumento>? Instrumento { get; set; }
 
+        [Display(Name = "Instrumento")]
+        public string NomeInstrumento { get; set; } = string.Empty;
     }
 }
