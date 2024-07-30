@@ -166,7 +166,7 @@ namespace Service
 
         }
 
-        public Evento Get(int id)
+        public Evento? Get(int id)
         {
             return _context.Eventos.Find(id);
         }
