@@ -73,7 +73,8 @@ namespace GestaoGrupoMusicalWeb.Models
 
         public SelectList? ListaPessoa { get; set; }
 
-    } public class GerenciarInstrumentoEventoViewModel
+    }
+    public class GerenciarInstrumentoEventoViewModel
     {
         public int Id { get; set; }
         public int IdGrupoMusical { get; set; }

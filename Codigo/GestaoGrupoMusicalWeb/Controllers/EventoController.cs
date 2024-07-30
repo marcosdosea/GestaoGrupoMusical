@@ -214,6 +214,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             if (figurinosDropdown == null || !figurinosDropdown.Any())
             {
+
                 Notificar("É necessário cadastrar um Figurino para então cadastrar um Evento Musical.", Notifica.Informativo);
                 return RedirectToAction(nameof(Index));
             }
