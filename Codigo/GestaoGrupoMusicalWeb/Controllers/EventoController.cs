@@ -253,10 +253,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             if (figurinosDropdown == null || !figurinosDropdown.Any())
             {
+
                 Notificar("É necessário cadastrar um Figurino para então cadastrar um Evento Musical.", Notifica.Informativo);
                 return RedirectToAction(nameof(Index));
             }
-            var evento = _evento.Get(idGrupoMusical);
+            var evento = _evento.Get(id);
             EventoViewModel eventoView = _mapper.Map<EventoViewModel>(evento);
 
             InstrumentoMusicalViewModel instrumentoMusicalViewModel = new InstrumentoMusicalViewModel();

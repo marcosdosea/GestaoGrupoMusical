@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Core.DTO
 {
@@ -30,5 +25,7 @@ namespace Core.DTO
         [Display(Name = "Instrumento")]
         public IEnumerable<Tipoinstrumento>? Instrumento { get; set; }
 
+        [Display(Name = "Instrumento")]
+        public string NomeInstrumento { get; set; } = string.Empty;
     }
 }

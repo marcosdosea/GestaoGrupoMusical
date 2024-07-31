@@ -13,7 +13,7 @@
                 <ol class="breadcrumb px-3">
                     <strong>
                         <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Evento"]</a>
-                        <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["GerenciarInstrumento"]</spn>
+                        <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["GerenciarInstrumentoEvento"]</spn>
                     </strong>
                 </ol>
             </nav>
@@ -23,12 +23,12 @@
                     <div class="row">
                         <div class="form-group col-xxl-4">
                             <label asp-for="DataHoraInicio" class="control-label"></label>
-                            <input asp-for="DataHoraInicio" class="form-control" />
+                        <input asp-for="DataHoraInicio" class="form-control" readonly />
                             <span asp-validation-for="DataHoraInicio" class="text-danger"></span>
                         </div>
                         <div class="form-group col-xxl-4">
                             <label asp-for="DataHoraFim" class="control-label"></label>
-                            <input asp-for="DataHoraFim" class="form-control" />
+                        <input asp-for="DataHoraFim" class="form-control" readonly />
                             <span asp-validation-for="DataHoraFim" class="text-danger"></span>
                         </div>
                     </div>
@@ -37,7 +37,7 @@
                     <div class="row col-xl">
                         <div class="form-group">
                             <label asp-for="IdRegentes" class="control-label"></label>
-                            <select asp-for="IdRegentes" asp-items="@Model.ListaPessoa" class="form-select">
+                        <select asp-for="IdRegentes" asp-items="@Model.ListaPessoa" class="form-select" readonly>
                                 <option value=""></option>
                             </select>
                             <span asp-validation-for="IdRegentes" class="text-danger"></span>
@@ -52,7 +52,7 @@
 
                 <div class="form-group">
                     <label asp-for="IdFigurinoSelecionado" class="control-label"></label>
-                    <select asp-items="@Model.FigurinoList" asp-for="IdFigurinoSelecionado" class="form-select" disabled></select>
+                    <select asp-items="@Model.FigurinoList" asp-for="IdFigurinoSelecionado" class="form-select" readonly></select>
                     <span asp-validation-for="IdFigurinoSelecionado" class="text-danger"></span>
                 </div>
             </div>
@@ -84,17 +84,15 @@
             </div>
             <br />
             <br />
-          
-            <partial name="_TabelaGerenciarInstrumento">
+
+            <partial name="_TabelaGerenciarInstrumento" model="@Model.IdRegentes">
 
                 <div class="row">
                     <div class="d-flex justify-content-lg-end flex-column-reverse flex-lg-row">
                         <a class="btn btn-outline-secondary col-lg-2 mt-3 me-lg-3 btn-" asp-controller="Evento" asp-action="Index">Voltar</a>                        
                     </div>
                 </div>
-        </div>
-       
-                        
+        </div>                               
     </div>
 
     @section Header {
