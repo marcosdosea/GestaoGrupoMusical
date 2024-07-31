@@ -7,10 +7,11 @@ namespace Core.Service
     public interface IEventoService
     {
         Task<HttpStatusCode> Create(Evento evento, IEnumerable<int> idRegentes, int idFigurino);
-        void Edit(Evento evento);
+        HttpStatusCode Edit(Evento evento);
         HttpStatusCode Delete(int id);
         Evento? Get(int id);
         ICollection<Eventopessoa> GetEventoPessoasPorIdEvento(int idEvento);
+        ICollection<Eventopessoa> GetRegentesEventoPessoasPorIdEvento(int idEvento);
         IEnumerable<Evento> GetAll();
         IEnumerable<EventoDTO> GetAllDTO();
         IEnumerable<EventoIndexDTO> GetAllEventoIndexDTOPerIdGrupoMusical(int idGrupoMusical);

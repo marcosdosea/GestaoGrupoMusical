@@ -4,9 +4,6 @@ using Core.DTO;
 using Core.Service;
 using Email;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.Extensions.Logging;
-using System.Diagnostics;
 using System.Net;
 
 namespace Service
@@ -122,7 +119,7 @@ namespace Service
                     }
                 }
 
-                if(evento.Apresentacaotipoinstrumentos.Count > 0)
+                if (evento.Apresentacaotipoinstrumentos.Count > 0)
                 {
                     foreach (Apresentacaotipoinstrumento ap in evento.Apresentacaotipoinstrumentos)
                     {
@@ -131,9 +128,9 @@ namespace Service
                     }
                 }
 
-                if(evento.Eventopessoas.Count > 0)
+                if (evento.Eventopessoas.Count > 0)
                 {
-                    foreach(Eventopessoa p in evento.Eventopessoas)
+                    foreach (Eventopessoa p in evento.Eventopessoas)
                     {
                         _context.Remove(p);
                         _context.SaveChanges();
@@ -142,7 +139,7 @@ namespace Service
                 evento.IdFigurinos.Clear();
                 evento.Apresentacaotipoinstrumentos.Clear();
                 evento.Eventopessoas.Clear();
-                
+
                 _context.Remove(evento);
                 _context.SaveChanges();
                 transaction.Commit();
@@ -159,11 +156,63 @@ namespace Service
         /// Metodo usado para editar um Grupo Musical
         /// </summary>
         /// <param name="evento"></param>
-        public void Edit(Evento evento)
+        public HttpStatusCode Edit(Evento evento)
         {
-            _context.Update(evento);
-            _context.SaveChanges();
+            using var transaction = _context.Database.BeginTransaction();
 
+            try
+            {
+                if (evento.DataHoraFim > evento.DataHoraInicio)
+                {
+                    if (evento.DataHoraInicio.Date >= DateTime.Today)
+                    {
+                        //Caso existe já regentes cadastrado, primeiro deleta eles
+                        var evPessoaRegentes = GetRegentesEventoPessoasPorIdEvento(evento.Id);
+                        if (evPessoaRegentes.Count != 0)
+                        {
+                            _context.Eventopessoas.RemoveRange(evPessoaRegentes);
+                            _context.SaveChanges();
+                        }
+                        //Caso existe já figurinos cadastrado, primeiro deleta eles
+                        var figurinoApresentacoes = _context.Set<Dictionary<string, object>>("Figurinoapresentacao")
+                        .Where(fa => (int)fa["IdApresentacao"] == evento.Id).ToList();
+                        _context.Set<Dictionary<string, object>>("Figurinoapresentacao").RemoveRange(figurinoApresentacoes);
+                        _context.SaveChanges();
+                        figurinoApresentacoes = null;
+                        //Adiciona os novos regentes
+                        _context.AddRange(evento.Eventopessoas);
+                        _context.SaveChanges();
+                        //Adicinoa um figurino
+                        _context.Set<Dictionary<string, object>>("Figurinoapresentacao").Add(new Dictionary<string, object>
+                                      {
+                                          { "IdFigurino", evento.IdFigurinos.First().Id },
+                                          { "IdApresentacao", evento.Id }
+                                      });
+                        _context.SaveChanges();
+                        evento.IdFigurinos.Clear();
+                        evento.Eventopessoas.Clear();
+                        evento.Apresentacaotipoinstrumentos.Clear();
+                        _context.Update(evento);
+                        _context.SaveChanges();
+                        transaction.Commit();
+                        return HttpStatusCode.OK;
+                    }
+                    else
+                    {
+                        transaction.Rollback();
+                        return HttpStatusCode.BadRequest;
+                    }
+                }
+                else
+                {
+                    transaction.Rollback();
+                    return HttpStatusCode.PreconditionFailed;
+                }
+            }
+            catch
+            {
+                return HttpStatusCode.InternalServerError;
+            }
         }
 
         public Evento? Get(int id)
@@ -175,8 +224,15 @@ namespace Service
         {
             var query = (from eventoPessoa in _context.Eventopessoas
                          where eventoPessoa.IdEvento == idEvento
-                         select eventoPessoa
-                                              ).AsNoTracking().ToList();
+                         select eventoPessoa).AsNoTracking().ToList();
+            return query;
+        }
+
+        public ICollection<Eventopessoa> GetRegentesEventoPessoasPorIdEvento(int idEvento)
+        {
+            var query = (from eventoPessoa in _context.Eventopessoas
+                         where eventoPessoa.IdEvento == idEvento && eventoPessoa.IdPapelGrupoPapelGrupo == 5
+                         select eventoPessoa).AsNoTracking().ToList();
             return query;
         }
 
