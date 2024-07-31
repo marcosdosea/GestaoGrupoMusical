@@ -131,21 +131,56 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: EventoController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
-            Console.WriteLine("ID" + id);
-
             var evento = _evento.Get(id);
-            var eventoModel = _mapper.Map<EventoViewModel>(evento);
-            eventoModel.ListaPessoa = new SelectList(_pessoa.GetAll(), "Id", "Nome");
-            return View(eventoModel);
+            if(evento == null)
+            {
+                Notificar("Evento <b>não</b> encontrado.", Notifica.Alerta);
+                return RedirectToAction(nameof(Index));
+            }
+            var listaPessoasAutoComplete = await _pessoa.GetRegentesForAutoCompleteAsync(evento.IdGrupoMusical);
+            if (listaPessoasAutoComplete == null || !listaPessoasAutoComplete.Any())
+            {
+                Notificar("É necessário cadastrar pelo menos um Regente para então cadastrar um Evento Musical.", Notifica.Informativo);
+                return RedirectToAction(nameof(Index));
+            }
+            var figurinosDropdown = await _figurino.GetAllFigurinoDropdown(evento.IdGrupoMusical);
+
+            if (figurinosDropdown == null || !figurinosDropdown.Any())
+            {
+                Notificar("É necessário cadastrar um Figurino para então cadastrar um Evento Musical.", Notifica.Informativo);
+                return RedirectToAction(nameof(Index));
+            }
+            EventoCreateViewlModel eventoModelCreate = new()
+            {
+                Id = evento.Id,
+                IdGrupoMusical = evento.IdGrupoMusical,
+                DataHoraInicio = evento.DataHoraInicio,
+                DataHoraFim = evento.DataHoraFim,
+                Local = evento.Local,
+                Repertorio = evento.Repertorio,
+                ListaPessoa = new SelectList(listaPessoasAutoComplete, "Id", "Nome"),
+                FigurinoList = new SelectList(figurinosDropdown, "Id", "Nome")
+            };
+
+            ViewData["exemploRegente"] = listaPessoasAutoComplete.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
+            eventoModelCreate.JsonLista = listaPessoasAutoComplete.ToJson();
+            return View(eventoModelCreate);
         }
 
+        bool teste = true;
         // POST: EventoController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, EventoViewModel eventoModel)
+        public ActionResult Edit(EventoCreateViewlModel eventoModel)
         {
+            Console.WriteLine("------------------------------\n");
+            if(teste)
+            {
+                Console.WriteLine(eventoModel.Id);
+                return RedirectToAction(nameof(Index));
+            }
             if (ModelState.IsValid)
             {
                 var evento = _mapper.Map<Evento>(eventoModel);
@@ -242,7 +277,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             ViewData["exemploRegente"] = listaPessoasAutoComplete.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
             gerenciarInstrumentoEvento.JsonLista = listaPessoasAutoComplete.ToJson();
             return View(gerenciarInstrumentoEvento);
-        } 
+        }
 
      
     }
