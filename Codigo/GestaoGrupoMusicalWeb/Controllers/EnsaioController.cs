@@ -138,15 +138,17 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 Notificar("<b>Ensaio não encontrado!</b>", Notifica.Alerta);
                 return RedirectToAction(nameof(Index));
             }
-            var lista = await _pessoa.GetRegentesForAutoCompleteAsync(Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
+            var listaRegentes = await _pessoa.GetRegentesForAutoCompleteAsync(Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
+            var listaFigurinos = await _figurino.GetAllFigurinoDropdown(Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
 
             EnsaioViewModel ensaioModel = _mapper.Map<EnsaioViewModel>(ensaio);
 
-            ensaioModel.ListaPessoa = new SelectList(lista, "Id", "Nome");
+            ensaioModel.ListaPessoa = new SelectList(listaRegentes, "Id", "Nome");
+            ensaioModel.ListaFigurino = new SelectList(listaFigurinos, "Id", "Nome");
 
-            ViewData["exemploRegente"] = lista.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
+            ViewData["exemploRegente"] = listaRegentes.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
             ViewData["jsonIdRegentes"] = (await _ensaio.GetIdRegentesEnsaioAsync(id)).ToJson();
-            ensaioModel.JsonLista = lista.ToJson();
+            ensaioModel.JsonLista = listaRegentes.ToJson();
             return View(ensaioModel);
         }
 
@@ -184,8 +186,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 }
             }
             var lista = await _pessoa.GetRegentesForAutoCompleteAsync(Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
+            var listaFigurinos = await _figurino.GetAllFigurinoDropdown(Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
 
             ensaioViewModel.ListaPessoa = new SelectList(lista, "Id", "Nome");
+            ensaioViewModel.ListaFigurino = new SelectList(listaFigurinos, "Id", "Nome");
 
             ViewData["exemploRegente"] = lista.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
             ViewData["jsonIdRegentes"] = (await _ensaio.GetIdRegentesEnsaioAsync(ensaioViewModel.Id)).ToJson();
@@ -248,13 +252,15 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         [Authorize(Roles = "ADMINISTRADOR GRUPO,COLABORADOR,REGENTE")]
-        // GET: EnsaioController/RegistrarFrequencia/5
+        // GET: EnsaioController/RegistrarFrequencia
         public async Task<ActionResult> RegistrarFrequencia(int idEnsaio)
         {
+            //idEnsaio = 23;
+
             int idGrupoMusical = await _grupoMusical.GetIdGrupo(User.Identity.Name);
 
-            var listaPessoasAutoComplete = await _pessoa.GetRegentesForAutoCompleteAsync(idGrupoMusical);
-            if (listaPessoasAutoComplete == null || !listaPessoasAutoComplete.Any())
+            var listaRegentes = await _pessoa.GetRegentesForAutoCompleteAsync(idGrupoMusical);
+            if (listaRegentes == null || !listaRegentes.Any())
             {
                 Notificar("É necessário cadastrar pelo menos um Regente para então registrar uma frequência.", Notifica.Informativo);
                 return RedirectToAction(nameof(Index));
@@ -272,21 +278,14 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             EnsaioViewModel ensaioView = _mapper.Map<EnsaioViewModel>(ensaio);
 
-            FrequenciaEnsaioViewModel frequenciaEnsaio = new()
-            {
-                IdGrupoMusical = idGrupoMusical,
-                DataHoraInicio = ensaioView.DataHoraInicio,
-                DataHoraFim    = ensaioView.DataHoraFim,
-                Tipo           = ensaioView.Tipo,
-                ListaPessoa    = new SelectList(listaPessoasAutoComplete, "Id", "Nome"),
-                ListaFigurino  = new SelectList(listaFigurinos, "Id", "Nome"),
-                Local          = ensaioView.Local
-            };
+            ensaioView.ListaPessoa = new SelectList(listaRegentes, "Id", "Nome");
+            ensaioView.ListaFigurino = new SelectList(listaFigurinos, "Id", "Nome");
 
-            ViewData["exemploRegente"] = listaPessoasAutoComplete.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
-            frequenciaEnsaio.JsonLista = listaPessoasAutoComplete.ToJson();
+            ViewData["exemploRegente"] = listaRegentes.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
+            ViewData["jsonIdRegentes"] = (await _ensaio.GetIdRegentesEnsaioAsync(ensaioView.Id)).ToJson();
+            ensaioView.JsonLista = listaRegentes.ToJson();
 
-            return View(frequenciaEnsaio);
+            return View(ensaioView);
         }
 
         [Authorize(Roles = "ADMINISTRADOR GRUPO,COLABORADOR,REGENTE")]
