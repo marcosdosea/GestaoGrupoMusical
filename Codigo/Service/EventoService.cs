@@ -4,8 +4,6 @@ using Core.DTO;
 using Core.Service;
 using Email;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.Extensions.Logging;
 using System.Net;
 
 namespace Service
@@ -81,27 +79,161 @@ namespace Service
         /// Método que deleta uma apresentação 
         /// </summary>
         /// <param name="id"></param>
-        public void Delete(int id)
+        public HttpStatusCode Delete(int id)
         {
-            var evento = _context.Eventos.Find(id);
-            _context.Remove(evento);
-            _context.SaveChanges();
+            using var transaction = _context.Database.BeginTransaction();
+            try
+            {
+                Evento? evento = _context.Eventos.Where(ev => ev.Id == id)
+                    .Select(ev => new Evento()
+                    {
+                        Id = ev.Id,
+                        IdGrupoMusical = ev.IdGrupoMusical,
+                        IdColaboradorResponsavel = ev.IdColaboradorResponsavel,
+                        IdFigurinos = ev.IdFigurinos,
+                        Eventopessoas = ev.Eventopessoas,
+                    })
+                    .FirstOrDefault();
+                if (evento == null)
+                {
+                    transaction.Rollback();
+                    return HttpStatusCode.NotFound;
+                }
+                evento.Apresentacaotipoinstrumentos = _context.Apresentacaotipoinstrumentos.Where(ap => ap.IdApresentacao == evento.Id)
+                    .Select(q => new Apresentacaotipoinstrumento()
+                    {
+                        IdApresentacao = q.IdApresentacao,
+                        IdTipoInstrumento = q.IdTipoInstrumento,
+                    }).ToList();
+
+                if (evento.IdFigurinos.Count() > 0)
+                {
+                    foreach (var figurino in evento.IdFigurinos)
+                    {
+                        _context.Set<Dictionary<string, object>>("Figurinoapresentacao").Remove(new Dictionary<string, object>
+                        {
+                            { "IdFigurino", figurino.Id },
+                            { "IdApresentacao", evento.Id }
+                        });
+                        _context.SaveChanges();
+                    }
+                }
+
+                if (evento.Apresentacaotipoinstrumentos.Count > 0)
+                {
+                    foreach (Apresentacaotipoinstrumento ap in evento.Apresentacaotipoinstrumentos)
+                    {
+                        _context.Remove(ap);
+                        _context.SaveChanges();
+                    }
+                }
+
+                if (evento.Eventopessoas.Count > 0)
+                {
+                    foreach (Eventopessoa p in evento.Eventopessoas)
+                    {
+                        _context.Remove(p);
+                        _context.SaveChanges();
+                    }
+                }
+                evento.IdFigurinos.Clear();
+                evento.Apresentacaotipoinstrumentos.Clear();
+                evento.Eventopessoas.Clear();
+
+                _context.Remove(evento);
+                _context.SaveChanges();
+                transaction.Commit();
+                return HttpStatusCode.OK;
+            }
+            catch
+            {
+                transaction.Rollback();
+                return HttpStatusCode.InternalServerError;
+            }
         }
 
         /// <summary>
         /// Metodo usado para editar um Grupo Musical
         /// </summary>
         /// <param name="evento"></param>
-        public void Edit(Evento evento)
+        public HttpStatusCode Edit(Evento evento)
         {
-            _context.Update(evento);
-            _context.SaveChanges();
+            using var transaction = _context.Database.BeginTransaction();
 
+            try
+            {
+                if (evento.DataHoraFim > evento.DataHoraInicio)
+                {
+                    if (evento.DataHoraInicio.Date >= DateTime.Today)
+                    {
+                        //Caso existe já regentes cadastrado, primeiro deleta eles
+                        var evPessoaRegentes = GetRegentesEventoPessoasPorIdEvento(evento.Id);
+                        if (evPessoaRegentes.Count != 0)
+                        {
+                            _context.Eventopessoas.RemoveRange(evPessoaRegentes);
+                            _context.SaveChanges();
+                        }
+                        //Caso existe já figurinos cadastrado, primeiro deleta eles
+                        var figurinoApresentacoes = _context.Set<Dictionary<string, object>>("Figurinoapresentacao")
+                        .Where(fa => (int)fa["IdApresentacao"] == evento.Id).ToList();
+                        _context.Set<Dictionary<string, object>>("Figurinoapresentacao").RemoveRange(figurinoApresentacoes);
+                        _context.SaveChanges();
+                        figurinoApresentacoes = null;
+                        //Adiciona os novos regentes
+                        _context.AddRange(evento.Eventopessoas);
+                        _context.SaveChanges();
+                        //Adicinoa um figurino
+                        _context.Set<Dictionary<string, object>>("Figurinoapresentacao").Add(new Dictionary<string, object>
+                                      {
+                                          { "IdFigurino", evento.IdFigurinos.First().Id },
+                                          { "IdApresentacao", evento.Id }
+                                      });
+                        _context.SaveChanges();
+                        evento.IdFigurinos.Clear();
+                        evento.Eventopessoas.Clear();
+                        evento.Apresentacaotipoinstrumentos.Clear();
+                        _context.Update(evento);
+                        _context.SaveChanges();
+                        transaction.Commit();
+                        return HttpStatusCode.OK;
+                    }
+                    else
+                    {
+                        transaction.Rollback();
+                        return HttpStatusCode.BadRequest;
+                    }
+                }
+                else
+                {
+                    transaction.Rollback();
+                    return HttpStatusCode.PreconditionFailed;
+                }
+            }
+            catch
+            {
+                return HttpStatusCode.InternalServerError;
+            }
         }
 
-        public Evento Get(int id)
+        public Evento? Get(int id)
         {
             return _context.Eventos.Find(id);
+        }
+
+        public ICollection<Eventopessoa> GetEventoPessoasPorIdEvento(int idEvento)
+        {
+            var query = (from eventoPessoa in _context.Eventopessoas
+                         where eventoPessoa.IdEvento == idEvento
+                         select eventoPessoa).AsNoTracking().ToList();
+            return query;
+        }
+
+        public ICollection<Eventopessoa> GetRegentesEventoPessoasPorIdEvento(int idEvento)
+        {
+            var query = (from eventoPessoa in _context.Eventopessoas
+                         where eventoPessoa.IdEvento == idEvento && eventoPessoa.IdPapelGrupoPapelGrupo == 5
+                         select eventoPessoa).AsNoTracking().ToList();
+            return query;
         }
 
         public IEnumerable<Evento> GetAll()
@@ -123,6 +255,22 @@ namespace Service
                 });
 
             return query.AsNoTracking();
+        }
+
+        public IEnumerable<EventoIndexDTO> GetAllIndexDTO()
+        {
+            var query = _context.Eventos
+                .OrderBy(g => g.DataHoraInicio).
+                Select(g => new EventoIndexDTO
+                {
+                    Id = g.Id,
+                    DataHoraInicio = g.DataHoraInicio,
+                    Local = g.Local,
+                    Planejados = 0,
+                    Confirmados = 0
+                }
+                ).AsNoTracking();
+            return query;
         }
 
         public IEnumerable<EventoIndexDTO> GetAllEventoIndexDTOPerIdGrupoMusical(int idGrupoMusical)

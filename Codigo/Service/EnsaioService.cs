@@ -188,9 +188,9 @@ namespace Service
         /// </summary>
         /// <param name="id"></param>
         /// <returns>O Ensaio correspondente ao id ou um Ensaio vazio</returns>
-        public async Task<Ensaio> Get(int id)
+        public Ensaio Get(int id)
         {
-            return await _context.Ensaios.FindAsync(id) ?? new Ensaio();
+            return _context.Ensaios.Find(id);
         }
         /// <summary>
         /// Consulta todos os Ensaios no banco de dados
@@ -436,7 +436,7 @@ namespace Service
         {
             try
             {
-                var ensaio = await Get(idEnsaio);
+                var ensaio = Get(idEnsaio);
                 if (ensaio != null)
                 {
                     List<EmailModel> emailsBody = new List<EmailModel>();
