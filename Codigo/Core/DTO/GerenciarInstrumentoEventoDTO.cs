@@ -5,6 +5,7 @@ namespace Core.DTO
     public class GerenciarInstrumentoEventoDTO
     {
         public int Id { get; set; }
+        public int IdInstrumento { get; set; }
 
         [Display(Name = "Data hora início")]
         
@@ -22,10 +23,12 @@ namespace Core.DTO
         [Display(Name = "Local")]
         public string? Local { get; set; }
 
-        [Display(Name = "Instrumento")]
-        public IEnumerable<Tipoinstrumento>? Instrumento { get; set; }
+        [Display(Name = "Instrumentos")]
+        public IEnumerable<Tipoinstrumento>? Instrumentos { get; set; }
+        
+        public string Planejado { get; set; }
+        public string Solicitados { get; set; }
+        public string Confirmados { get; set; }
 
-        [Display(Name = "Instrumento")]
-        public string NomeInstrumento { get; set; } = string.Empty;
     }
 }

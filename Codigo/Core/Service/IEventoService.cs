@@ -17,5 +17,7 @@ namespace Core.Service
         IEnumerable<EventoIndexDTO> GetAllEventoIndexDTOPerIdGrupoMusical(int idGrupoMusical);
         DatatableResponse<EventoIndexDTO> GetDataPage(DatatableRequest request, int idGrupo);
         HttpStatusCode NotificarEventoViaEmail(IEnumerable<PessoaEnviarEmailDTO> pessoas, int idEvento);
+
+        Task<HttpStatusCode> CreateApresentacaoInstrumento(Apresentacaotipoinstrumento apresentacaotipoinstrumento);
     }
 }
