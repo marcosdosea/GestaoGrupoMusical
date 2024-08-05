@@ -5,53 +5,59 @@
         <thead>
             <tr class="bg-danger bg-opacity-75 text-white">
                 <th>
-                    @Html.DisplayNameFor(model => model.Instrumento)
+                    @Html.DisplayNameFor(model => model.Instrumentos)
+                </th>      
+                <th>
+                    @Html.DisplayNameFor(model => model.Planejado)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Local)
+                    @Html.DisplayNameFor(model => model.Solicitados)
                 </th>
                 <th>
-                    Solicitados
-                </th>
-                <th>
-                    Confirmados
+                    @Html.DisplayNameFor(model => model.Confirmados)
                 </th>              
                 <th>Ações</th>
             </tr>
         </thead>
         <tbody>
-          
+            @if(Model!=null)
+            {
+            @foreach (var item in Model)
+            {
                 <tr class="border-bottom border-danger border-opacity-75 align-middle">
                     <td>
-                        Tambor
+                        @item.Instrumentos
+                    </td>               
+                    <td>
+                        @item.Planejado
                     </td>
                     <td>
-                        10
+                        @item.Solicitados
                     </td>
                     <td>
-                        5
-                    </td>
-                    <td>
-                        3
+                        @item.Confirmados
                     </td>                   
                     <td class="py-3 border-0 d-flex flex-column flex-lg-row gap-3">
-                       
+                        <form id="@(item.Id + "_notificar")" asp-controller="InstrumentoMusical" asp-action="NotificarViaEmail" asp-route-Id="@item.Id" asp-route-IdInstrumento="@item.IdInstrumento" method="post">
                             <a role="button" class="btn btn-sm btn-secondary"
                                data-bs-toggle="modal" data-bs-target="#notificarMovimentacaoModal"
-                               onclick="showModal(' +"_notificar")', 'notificarMovimentacaoModal')">
+                               onclick="showModal('@(item.Id + "_notificar")', 'notificarMovimentacaoModal')">
                                 <i class="fa-solid fa-envelope"></i>
                                 Notificar
-                            </a>                                                
+                            </a>
+                        </form>
+                        <form id="@(item.Id + "_delete")" asp-controller="InstrumentoMusical" asp-action="DeleteMovimentacao" asp-route-Id="@item.Id" asp-route-IdInstrumento="@item.IdInstrumento" method="post">
                             <a role="button" class="btn btn-sm btn-secondary"
                                data-bs-toggle="modal" data-bs-target="#excluirMovimentacaoModal"
-                               onclick="showModal('+ "_delete")', 'excluirMovimentacaoModal')">
+                               onclick="showModal('@(item.Id + "_delete")', 'excluirMovimentacaoModal')">
                                 <i class="fa-solid fa-xmark"> </i>
                                 Excluir
                             </a>
-                        
+                        </form>
                     </td>
                 </tr>
-            
+            }
+            }
         </tbody>
     </table>
   

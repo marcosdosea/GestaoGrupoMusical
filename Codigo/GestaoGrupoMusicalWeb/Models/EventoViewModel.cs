@@ -1,4 +1,5 @@
-﻿using Core.DTO;
+﻿using Core;
+using Core.DTO;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
@@ -78,6 +79,8 @@ namespace GestaoGrupoMusicalWeb.Models
     {
         public int Id { get; set; }
         public int IdGrupoMusical { get; set; }
+        public int IdTipoInstrumento { get; set; }
+        public int IdApresentacao { get; set; }
         public int? IdPessoa { get; set; }
 
         [Display(Name = "Início")]
@@ -108,6 +111,7 @@ namespace GestaoGrupoMusicalWeb.Models
         [Display(Name = "Instrumento")]
         public SelectList? ListaInstrumentos { get; set; }
         public int Quantidade { get; set; }
+        public IEnumerable<GerenciarInstrumentoEventoDTO>? GerenciarInstrumentos { get; set; }        
 
     }
 }

@@ -310,6 +310,22 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return View(gerenciarInstrumentoEvento);
         }
 
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> GerenciarInstrumentoEvento(GerenciarInstrumentoEventoViewModel gerenciarInstrumentoEventoViewModel)
+        {              
 
+            Apresentacaotipoinstrumento apresentacaotipoinstrumento = new Apresentacaotipoinstrumento
+            {
+                IdApresentacao = gerenciarInstrumentoEventoViewModel.IdApresentacao,
+                IdTipoInstrumento = gerenciarInstrumentoEventoViewModel.IdTipoInstrumento,              
+                QuantidadePlanejada = gerenciarInstrumentoEventoViewModel.Quantidade              
+            };
+
+            HttpStatusCode resul = await _evento.CreateApresentacaoInstrumento(apresentacaotipoinstrumento);           
+
+            return RedirectToAction(nameof(GerenciarInstrumentoEvento), new { id = apresentacaotipoinstrumento.IdApresentacao });
+        }
     }
 }
