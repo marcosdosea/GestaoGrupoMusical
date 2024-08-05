@@ -81,34 +81,60 @@ namespace Service
         /// </summary>
         /// <param name="id"></param>
         /// <returns>Verdadeiro(<see langword="true" />) se deletou com sucesso ou Falso(<see langword="false" />) se houve algum erro.</returns>
-        public async Task<HttpStatusCode> Delete(int id)
+        public HttpStatusCode Delete(int id)
         {
             using var transaction = _context.Database.BeginTransaction();
             try
             {
-                var ensaioDB = await _context.Ensaios.Where(e => e.Id == id).AsNoTracking().SingleOrDefaultAsync();
-                if(ensaioDB == null)
-                {
-                    await transaction.RollbackAsync();
+                Ensaio? ensaio = _context.Ensaios.Where(es => es.Id == id)
+                    .Select(es => new Ensaio()
+                    {
+                        Id = es.Id,
+                        IdGrupoMusical = es.IdGrupoMusical,
+                        IdColaboradorResponsavel = es.IdColaboradorResponsavel,
+                        IdFigurinos = es.IdFigurinos,
+                        Ensaiopessoas = es.Ensaiopessoas,
+                    })
+                    .FirstOrDefault();
+
+                if (ensaio == null) {
+                    transaction.Rollback();
                     return HttpStatusCode.NotFound;
                 }
 
-                var ensaiosPessoa = await _context.Ensaiopessoas.Where(e => e.IdEnsaio == id).ToListAsync();
-                foreach (var ensaio_pessoa in ensaiosPessoa)
+                if (ensaio.IdFigurinos.Count() > 0)
                 {
-                    _context.Ensaiopessoas.Remove(ensaio_pessoa);
+                    foreach (var figurino in ensaio.IdFigurinos)
+                    {
+                        _context.Set<Dictionary<string, object>>("Figurinoensaio").Remove(new Dictionary<string, object>
+                        {
+                            { "IdFigurino", figurino.Id },
+                            { "IdEnsaio", ensaio.Id }
+                        });
+                        _context.SaveChanges();
+                    }
                 }
 
-                var ensaio = await _context.Ensaios.FindAsync(id);
-                _context.Remove(ensaio);
-                await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
+                if (ensaio.Ensaiopessoas.Count() > 0)
+                {
+                    foreach (Ensaiopessoa p in ensaio.Ensaiopessoas)
+                    {
+                        _context.Remove(p);
+                        _context.SaveChanges();
+                    }
+                }
 
+                ensaio.IdFigurinos.Clear();
+                ensaio.Ensaiopessoas.Clear();
+
+                _context.Remove(ensaio);
+                _context.SaveChanges();
+                transaction.Commit();
                 return HttpStatusCode.OK;
 
             }catch
             {
-                await transaction.RollbackAsync();
+                transaction.Rollback();
                 return HttpStatusCode.InternalServerError;
             }
         }

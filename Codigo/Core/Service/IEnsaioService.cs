@@ -40,7 +40,7 @@ namespace Core.Service
         /// OK - Sucesso <para />
         /// InternalServerError - Erro interno
         /// </returns>
-        Task<HttpStatusCode> Delete(int id);
+        HttpStatusCode Delete(int id);
         Ensaio Get(int id);
         Task<IEnumerable<Ensaio>> GetAll();
         Task<IEnumerable<EnsaioDTO>> GetAllDTO();

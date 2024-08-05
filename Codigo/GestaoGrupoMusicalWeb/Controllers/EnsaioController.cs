@@ -212,7 +212,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> Delete(EnsaioViewModel ensaioModel)
         {
             String mensagem = String.Empty;
-            switch (await _ensaio.Delete(ensaioModel.Id))
+            switch (_ensaio.Delete(ensaioModel.Id))
             {
                 case HttpStatusCode.OK:
                     mensagem = "Ensaio <b>Deletado</b> com <b>Sucesso</b>";
