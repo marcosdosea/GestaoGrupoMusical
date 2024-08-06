@@ -810,6 +810,14 @@ namespace Service
             return await query.AsNoTracking().ToListAsync();
         }
 
+        public async Task<IEnumerable<AssociadoDTO>> GetAssociadoAtivos(int idGrupoMusical) { 
+            var query = _context.Pessoas
+                .Where(p => p.IdGrupoMusical == idGrupoMusical && p.Ativo == 1)
+                .Select(p => new AssociadoDTO { Id = p.Id, Nome = p.Nome, Cpf = p.Cpf });
+
+            return await query.AsNoTracking().ToListAsync();
+        }
+
         /// <summary>
         /// Muda a role do user identity por outra
         /// </summary>

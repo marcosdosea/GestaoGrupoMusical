@@ -3,6 +3,7 @@
     ViewData["Title"] = "Registrar Frequência de Ensaio";
     ViewData["Ensaio"] = "Ensaios";
     ViewData["Registrar Frequência"] = "Registrar Frequência";
+    var pessoas = ViewBag.AssociadosAtivos as SelectList;
 }
 
 <partial name="_Notificar">
@@ -80,9 +81,23 @@
                 <div class="container">
                     <div class="row">
                         <div class="form-group">
-                            <label asp-for="Repertorio" class="control-label"></label>
-                            <textarea asp-for="Repertorio" class="form-control"></textarea>
-                            <span asp-validation-for="Repertorio" class="text-danger"></span>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>CPF</th>
+                                        <th>Nome</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in pessoas)
+                                    {
+                                        <tr>
+                                            <td>@item.Value</td>
+                                            <td>@item.Text</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>

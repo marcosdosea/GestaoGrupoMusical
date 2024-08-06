@@ -159,7 +159,9 @@ namespace Core.Service
         Task<HttpStatusCode> AtivarAssociado(string cpf);
 
         Task<IEnumerable<AutoCompleteRegenteDTO>> GetRegentesForAutoCompleteAsync(int idGrupoMusical);
-        
+
+        Task<IEnumerable<AssociadoDTO>> GetAssociadoAtivos(int idGrupoMusical);
+
         /// <summary>
         /// Atualiza as informações do usuário
         /// </summary>
