@@ -30,12 +30,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
         // GET: MaterialEstudoController
         [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
-        public async Task<ActionResult> Index()
+        public ActionResult Index()
         {
-            int idGrupoMusical = await _grupoMusical.GetIdGrupo(User.Identity.Name);
-            var listaMaterialEstudo = await _materialEstudo.GetAllMaterialEstudoPerIdGrupo(idGrupoMusical);
-            var materialEstudoIndexDTO = _mapper.Map<List<MaterialEstudoIndexDTO>>(listaMaterialEstudo);
-            return View(materialEstudoIndexDTO);
+            return View();
         }
 
         public async Task<IActionResult> GetDataPage(DatatableRequest request)
@@ -44,7 +41,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             var listaMaterialEstudo = await _materialEstudo.GetAllMaterialEstudoPerIdGrupo(idGrupoMusical);
             var materialEstudoIndexDTO = _mapper.Map<List<MaterialEstudoIndexDTO>>(listaMaterialEstudo);
 
-            var response = _materialEstudo.GetDataPage(request, await _grupoMusical.GetIdGrupo(User.Identity.Name), materialEstudoIndexDTO);
+            var response = _materialEstudo.GetDataPage(request, materialEstudoIndexDTO);
             return Json(response);
         }
 

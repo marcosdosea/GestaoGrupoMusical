@@ -77,7 +77,7 @@ namespace Service
             return query;
         }
 
-        public DatatableResponse<MaterialEstudoIndexDTO> GetDataPage(DatatableRequest request, int idGrupo,IEnumerable <MaterialEstudoIndexDTO> materialEstudoIndexDTO)
+        public DatatableResponse<MaterialEstudoIndexDTO> GetDataPage(DatatableRequest request,IEnumerable <MaterialEstudoIndexDTO> materialEstudoIndexDTO)
         {
             var totalRecords = materialEstudoIndexDTO.Count();
             if (request.Search != null && request.Search.GetValueOrDefault("value") != null)
