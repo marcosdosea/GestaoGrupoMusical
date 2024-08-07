@@ -274,12 +274,22 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            var listaAssociadosAtivos = await _pessoa.GetAssociadoAtivos(idGrupoMusical);
+
+            if(listaAssociadosAtivos == null || !listaAssociadosAtivos.Any())
+            {
+                Notificar("É necessário pelo menos um Associado Ativo para então registrar uma frequência.", Notifica.Informativo);
+                return RedirectToAction(nameof(Index));
+            }
+            ViewBag.AssociadosAtivos = listaAssociadosAtivos;
+
             var ensaio = _ensaio.Get(idEnsaio);
 
             EnsaioViewModel ensaioView = _mapper.Map<EnsaioViewModel>(ensaio);
 
             ensaioView.ListaPessoa = new SelectList(listaRegentes, "Id", "Nome");
             ensaioView.ListaFigurino = new SelectList(listaFigurinos, "Id", "Nome");
+            ensaioView.ListaAssociadosAtivos = new SelectList(listaAssociadosAtivos, "Id", "Nome", "Cpf");
 
             ViewData["exemploRegente"] = listaRegentes.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
             ViewData["jsonIdRegentes"] = (await _ensaio.GetIdRegentesEnsaioAsync(ensaioView.Id)).ToJson();

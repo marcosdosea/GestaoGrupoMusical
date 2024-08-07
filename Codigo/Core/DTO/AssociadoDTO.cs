@@ -10,6 +10,7 @@ namespace Core.DTO
     {
         public int Id { get; set; }
         public string Nome { get; set; } = null!;
+        public string? Cpf { get; set; }
         public sbyte Ativo { get; set; }
     }
 
