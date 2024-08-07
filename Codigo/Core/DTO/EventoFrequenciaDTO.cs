@@ -18,6 +18,9 @@ namespace Core.DTO
 
         public string Tipo { get; set; } = string.Empty;
 
+        [Display(Name = "Figurino")]
+        public IEnumerable<string>? Figurino { get; set; }
+        
         public IEnumerable<string>? Regentes { get; set; }
 
         public IEnumerable<EventoListaFrequenciaDTO>? Frequencias { get; set; }
@@ -27,7 +30,7 @@ namespace Core.DTO
     {
         public int IdPessoa { get; set; }
 
-        public int IdEnsaio { get; set; }
+        public int IdEvento { get; set; }
 
         [Display(Name = "CPF")]
         public string Cpf { get; set; } = string.Empty;
