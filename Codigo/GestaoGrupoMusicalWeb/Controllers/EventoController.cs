@@ -17,23 +17,23 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
     public class EventoController : BaseController
     {
-        private readonly IEventoService _evento;
+        private readonly IEventoService _eventoService;
         private readonly IMapper _mapper;
-        private readonly IGrupoMusicalService _grupoMusical;
+        private readonly IGrupoMusicalService _grupoMusicalService;
         private readonly IPessoaService _pessoaService;
-        private readonly IFigurinoService _figurino;
-        private readonly IInstrumentoMusicalService _tipoIntrumentoMusical;
+        private readonly IFigurinoService _figurinoService;
+        private readonly IInstrumentoMusicalService _tipoIntrumentoMusicalService;
 
 
 
         public EventoController(IEventoService evento, IMapper mapper, IGrupoMusicalService grupoMusical, IPessoaService pessoaService, IFigurinoService figurino, IInstrumentoMusicalService tipoInstrumentoMusical)
         {
-            _evento = evento;
+            _eventoService = evento;
             _mapper = mapper;
-            _grupoMusical = grupoMusical;
+            _grupoMusicalService = grupoMusical;
             _pessoaService = pessoaService;
-            _figurino = figurino;
-            _tipoIntrumentoMusical = tipoInstrumentoMusical;
+            _figurinoService = figurino;
+            _tipoIntrumentoMusicalService = tipoInstrumentoMusical;
         }
 
         // GET: EventoController
@@ -44,14 +44,14 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         public async Task<IActionResult> GetDataPage(DatatableRequest request)
         {
-            var response = _evento.GetDataPage(request, await _grupoMusical.GetIdGrupo(User.Identity.Name));
+            var response = _eventoService.GetDataPage(request, await _grupoMusicalService.GetIdGrupo(User.Identity.Name));
             return Json(response);
         }
 
         // GET: EventoController/Details/5
         public ActionResult Details(int id)
         {
-            var evento = _evento.Get(id);
+            var evento = _eventoService.Get(id);
             var eventoModel = _mapper.Map<EventoViewModel>(evento);
             return View(eventoModel);
         }
@@ -60,7 +60,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> Create()
         {
 
-            int idGrupoMusical = await _grupoMusical.GetIdGrupo(User.Identity.Name);
+            int idGrupoMusical = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
 
             var listaPessoasAutoComplete = await _pessoaService.GetRegentesForAutoCompleteAsync(idGrupoMusical);
             if (listaPessoasAutoComplete == null || !listaPessoasAutoComplete.Any())
@@ -68,7 +68,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 Notificar("É necessário cadastrar pelo menos um Regente para então cadastrar um Evento Musical.", Notifica.Informativo);
                 return RedirectToAction(nameof(Index));
             }
-            var figurinosDropdown = await _figurino.GetAllFigurinoDropdown(idGrupoMusical);
+            var figurinosDropdown = await _figurinoService.GetAllFigurinoDropdown(idGrupoMusical);
 
             if (figurinosDropdown == null || !figurinosDropdown.Any())
             {
@@ -94,7 +94,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             if (ModelState.IsValid && eventoModel.IdRegentes != null)
             {
-                int idGrupoMusical = await _grupoMusical.GetIdGrupo(User.Identity.Name);
+                int idGrupoMusical = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
                 eventoModel.IdGrupoMusical = idGrupoMusical;
 
                 int auxIdPessoa = (await _pessoaService.GetByCpf(User.Identity.Name))?.Id ?? 0;
@@ -103,7 +103,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     Evento evento = _mapper.Map<Evento>(eventoModel);
                     evento.IdColaboradorResponsavel = auxIdPessoa;
                     string mensagem = "";
-                    switch (await _evento.Create(evento, eventoModel.IdRegentes, eventoModel.IdFigurinoSelecionado))
+                    switch (await _eventoService.Create(evento, eventoModel.IdRegentes, eventoModel.IdFigurinoSelecionado))
                     {
                         case HttpStatusCode.OK:
                             Notificar("Evento <b>Cadastrado</b> com <b>Sucesso</b>", Notifica.Sucesso);
@@ -134,7 +134,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: EventoController/Edit/5
         public async Task<ActionResult> Edit(int id)
         {
-            var evento = _evento.Get(id);
+            var evento = _eventoService.Get(id);
             if (evento == null)
             {
                 Notificar("Evento <b>não</b> encontrado.", Notifica.Alerta);
@@ -146,7 +146,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 Notificar("É necessário cadastrar pelo menos um Regente para então cadastrar um Evento Musical.", Notifica.Informativo);
                 return RedirectToAction(nameof(Index));
             }
-            var figurinosDropdown = await _figurino.GetAllFigurinoDropdown(evento.IdGrupoMusical);
+            var figurinosDropdown = await _figurinoService.GetAllFigurinoDropdown(evento.IdGrupoMusical);
 
             if (figurinosDropdown == null || !figurinosDropdown.Any())
             {
@@ -200,7 +200,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     }
                     evento.IdFigurinos.Add(new Figurino() { Id = eventoModel.IdFigurinoSelecionado });
                 }
-                switch (_evento.Edit(evento))
+                switch (_eventoService.Edit(evento))
                 {
                     case HttpStatusCode.OK:
                         Notificar("Evento <b>Editado</b> com <b>Sucesso</b>", Notifica.Sucesso);
@@ -226,7 +226,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id)
         {
-            HttpStatusCode result = _evento.Delete(id);
+            HttpStatusCode result = _eventoService.Delete(id);
             switch (result)
             {
                 case HttpStatusCode.OK:
@@ -244,8 +244,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         public async Task<ActionResult> NotificarEventoViaEmail(int id)
         {
-            var pessoas = await _grupoMusical.GetAllPeopleFromGrupoMusical(await _grupoMusical.GetIdGrupo(User.Identity.Name));
-            switch (_evento.NotificarEventoViaEmail(pessoas, id))
+            var pessoas = await _grupoMusicalService.GetAllPeopleFromGrupoMusical(await _grupoMusicalService.GetIdGrupo(User.Identity.Name));
+            switch (_eventoService.NotificarEventoViaEmail(pessoas, id))
             {
                 case HttpStatusCode.OK:
                     Notificar("Notificação de Evento foi <b>Enviada</b> com <b>Sucesso</b>.", Notifica.Sucesso);
@@ -270,7 +270,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> GerenciarInstrumentoEvento(int id)
         {
 
-            int idGrupoMusical = await _grupoMusical.GetIdGrupo(User.Identity.Name);
+            int idGrupoMusical = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
 
             var listaPessoasAutoComplete = await _pessoaService.GetRegentesForAutoCompleteAsync(idGrupoMusical);
             if (listaPessoasAutoComplete == null || !listaPessoasAutoComplete.Any())
@@ -279,7 +279,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            var figurinosDropdown = await _figurino.GetAllFigurinoDropdown(idGrupoMusical);
+            var figurinosDropdown = await _figurinoService.GetAllFigurinoDropdown(idGrupoMusical);
 
             if (figurinosDropdown == null || !figurinosDropdown.Any())
             {
@@ -287,11 +287,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 Notificar("É necessário cadastrar um Figurino para então cadastrar um Evento Musical.", Notifica.Informativo);
                 return RedirectToAction(nameof(Index));
             }
-            var evento = _evento.Get(id);
+            var evento = _eventoService.Get(id);
             EventoViewModel eventoView = _mapper.Map<EventoViewModel>(evento);
 
             InstrumentoMusicalViewModel instrumentoMusicalViewModel = new InstrumentoMusicalViewModel();
-            IEnumerable<Tipoinstrumento> listaInstrumentos = await _tipoIntrumentoMusical.GetAllTipoInstrumento();
+            IEnumerable<Tipoinstrumento> listaInstrumentos = await _tipoIntrumentoMusicalService.GetAllTipoInstrumento();
             instrumentoMusicalViewModel.ListaInstrumentos = new SelectList(listaInstrumentos, "Id", "Nome", null);
 
             GerenciarInstrumentoEventoViewModel gerenciarInstrumentoEvento = new GerenciarInstrumentoEventoViewModel
@@ -323,7 +323,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 QuantidadePlanejada = gerenciarInstrumentoEventoViewModel.Quantidade              
             };
 
-            HttpStatusCode resul = await _evento.CreateApresentacaoInstrumento(apresentacaotipoinstrumento);           
+            HttpStatusCode resul = await _eventoService.CreateApresentacaoInstrumento(apresentacaotipoinstrumento);           
 
             return RedirectToAction(nameof(GerenciarInstrumentoEvento), new { id = apresentacaotipoinstrumento.IdApresentacao });
         }
