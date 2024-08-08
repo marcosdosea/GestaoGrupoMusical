@@ -405,19 +405,11 @@ namespace Service
             return null;
         }
 
-        public async Task<HttpStatusCode> CreateApresentacaoInstrumento(Apresentacaotipoinstrumento apresentacaotipoinstrumento)
+        public async Task CreateApresentacaoInstrumento(Apresentacaotipoinstrumento apresentacaotipoinstrumento)
         {
-            try
-            {
                 await _context.Apresentacaotipoinstrumentos.AddAsync(apresentacaotipoinstrumento);
                 await _context.SaveChangesAsync();
-
-                return HttpStatusCode.Created;
-            }
-            catch
-            {
-                return HttpStatusCode.InternalServerError; //se tudo der errado
-            }
+         
         }
     }
 }

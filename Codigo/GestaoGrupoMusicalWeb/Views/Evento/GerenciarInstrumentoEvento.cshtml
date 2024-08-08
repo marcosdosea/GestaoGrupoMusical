@@ -71,7 +71,7 @@
                          <label asp-for="ListaInstrumentos" class="control-label"></label>
                         <select asp-items="@Model.ListaInstrumentos" asp-for="Id" class="form-select"></select>                                                           
                         <span asp-validation-for="ListaInstrumentos" class="text-danger"></span>
-                       
+                        <input type="hidden" asp-for="IdTipoInstrumento" />
                     </div>
                     <div class="form-group  col-md-4">
                     <label asp-for="Quantidade" class="control-label"></label>
