@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Core;
+using Core.DTO;
 using GestaoGrupoMusicalWeb.Models;
 
 namespace GestaoGrupoMusicalWeb.Mapper
@@ -10,6 +11,7 @@ namespace GestaoGrupoMusicalWeb.Mapper
         public InformativoProfile()
         {
             CreateMap<InformativoViewModel, Informativo>().ReverseMap();
+            CreateMap<InformativoIndexDTO, Informativo>().ReverseMap();
         }
     }
 }
