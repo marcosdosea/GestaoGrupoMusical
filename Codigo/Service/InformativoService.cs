@@ -4,6 +4,7 @@ using Core.DTO;
 using Core.Service;
 using Email;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Net;
 
 namespace Service
@@ -90,11 +91,11 @@ namespace Service
 
         public DatatableResponse<InformativoIndexDTO> GetDataPage(DatatableRequest request, IEnumerable<InformativoIndexDTO> listaInformativoDTO)
         {
-            Console.WriteLine("### Service dataPage ###");
             var totalRecords = listaInformativoDTO.Count();
             if (request.Search != null && request.Search.GetValueOrDefault("value") != null)
             {
-                listaInformativoDTO = listaInformativoDTO.Where(g => g.Mensagem.ToString().Contains(request.Search.GetValueOrDefault("value")!));
+                listaInformativoDTO = listaInformativoDTO.Where(g => g.Mensagem.ToString().Contains(request.Search.GetValueOrDefault("value")!, StringComparison.OrdinalIgnoreCase)
+                                                           || g.Data.ToString().Contains(request.Search.GetValueOrDefault("value")!));
             }
 
             if (request.Order != null && request.Order[0].GetValueOrDefault("column")!.Equals("0"))

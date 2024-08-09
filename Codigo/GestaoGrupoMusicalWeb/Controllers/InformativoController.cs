@@ -28,22 +28,18 @@ namespace GestaoGrupoMusicalWeb.Controllers
             _mapper = mapper;
         }
 
-        public async Task<ActionResult> Index()
+        public  ActionResult Index()
         {
-            var informativos = await _informativoService.GetAll();
-            return View(_mapper.Map<IEnumerable<InformativoViewModel>>(informativos));
+            return View();
         }
 
         public async Task<IActionResult> GetDataPage(DatatableRequest request)
         {
             int idGrupoMusical = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
-            //var listaInformativo = _informativoService.GetAllInformativoServicePorIdGrupoMusical(idGrupoMusical);
-            //var listaInformativoDTO = _mapper.Map<List<InformativoIndexDTO>>(listaInformativo);
-            Console.WriteLine("\n#################################");
-            //Console.WriteLine("Cont: " + listaInformativoDTO.Count);
-
-            //var response = _informativoService.GetDataPage(request, listaInformativoDTO);
-            return Json(null);
+            var listaInformativo = _informativoService.GetAllInformativoServicePorIdGrupoMusical(idGrupoMusical);
+            var listaInformativoDTO = _mapper.Map<List<InformativoIndexDTO>>(listaInformativo);
+            var response = _informativoService.GetDataPage(request, listaInformativoDTO);
+            return Json(response);
         }
 
         // GET: InformativoController/Details/5
