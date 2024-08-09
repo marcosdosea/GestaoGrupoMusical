@@ -327,5 +327,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             return RedirectToAction(nameof(GerenciarInstrumentoEvento), new { id = apresentacaotipoinstrumento.IdApresentacao });
         }
+
+        public ActionResult GerenciarSolicitacaoEvento(int id)
+        {
+
+            return View();
+        }
     }
 }

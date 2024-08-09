@@ -23,5 +23,7 @@ namespace Core.Service
         Task<IEnumerable<FigurinoDropdownDTO>> GetAllFigurinoDropdown(int idGrupo);
         Task<IEnumerable<Eventopessoa>> GetPessoas(int idGrupo);
         Task<HttpStatusCode> CreateApresentacaoInstrumento(Apresentacaotipoinstrumento apresentacaotipoinstrumento);
+        IEnumerable<SolicitacaoEventoPessoasDTO> GetSolicitacaoEventoPessoas(int idEvento);
+        GerenciarSolicitacaoEventoDTO? GetSolicitacoesEventoDTO(int idEvento);
     }
 }
