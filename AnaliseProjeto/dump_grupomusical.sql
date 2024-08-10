@@ -470,7 +470,7 @@ CREATE TABLE IF NOT EXISTS `GrupoMusical`.`ApresentacaoTipoInstrumento` (
   `idTipoInstrumento` INT NOT NULL,
   `quantidadePlanejada` INT NOT NULL DEFAULT 0,
   `quantidadeConfirmada` INT NOT NULL DEFAULT 0,
-  `quantidadeInscritos` INT NOT NULL DEFAULT 0,
+  `quantidadeSolicitada` INT NOT NULL DEFAULT 0,
   PRIMARY KEY (`idApresentacao`, `idTipoInstrumento`),
   INDEX `fk_ApresentacaoTipoInstrumento_TipoInstrumento1_idx` (`idTipoInstrumento` ASC),
   INDEX `fk_ApresentacaoTipoInstrumento_Apresentacao1_idx` (`idApresentacao` ASC),

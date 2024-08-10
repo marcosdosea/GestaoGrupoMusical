@@ -13,7 +13,7 @@ public partial class Apresentacaotipoinstrumento
 
     public int QuantidadeConfirmada { get; set; }
 
-    public int QuantidadeInscritos { get; set; }
+    public int QuantidadeSolicitada { get; set; }
 
     public virtual Evento IdApresentacaoNavigation { get; set; } = null!;
 

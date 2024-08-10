@@ -84,8 +84,8 @@ public partial class GrupoMusicalContext : DbContext
             entity.Property(e => e.IdApresentacao).HasColumnName("idApresentacao");
             entity.Property(e => e.IdTipoInstrumento).HasColumnName("idTipoInstrumento");
             entity.Property(e => e.QuantidadeConfirmada).HasColumnName("quantidadeConfirmada");
-            entity.Property(e => e.QuantidadeInscritos).HasColumnName("quantidadeInscritos");
             entity.Property(e => e.QuantidadePlanejada).HasColumnName("quantidadePlanejada");
+            entity.Property(e => e.QuantidadeSolicitada).HasColumnName("quantidadeSolicitada");
 
             entity.HasOne(d => d.IdApresentacaoNavigation).WithMany(p => p.Apresentacaotipoinstrumentos)
                 .HasForeignKey(d => d.IdApresentacao)
