@@ -1,4 +1,4 @@
-﻿using Core;
+using Core;
 using Core.DTO;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
@@ -114,4 +114,40 @@ namespace GestaoGrupoMusicalWeb.Models
         public IEnumerable<GerenciarInstrumentoEventoDTO>? GerenciarInstrumentos { get; set; }        
 
     }
+    public class FrequenciaEventoViewModel
+    {
+        public int Id { get; set; }
+        public int IdGrupoMusical { get; set; }
+
+        [Display(Name = "Início")]
+        [Required(ErrorMessage = "O campo {0} é obrigatório")]
+        public DateTime? DataHoraInicio { get; set; }
+
+        [Display(Name = "Final")]
+        [Required(ErrorMessage = "O campo {0} é obrigatório")]
+        public DateTime? DataHoraFim { get; set; }
+
+        [Display(Name = "Tipo")]
+        [Required(ErrorMessage = "O campo {0} é obrigatório")]
+        public Tipo Tipo { get; set; }
+
+        [Display(Name = "Regentes")]
+        [Required(ErrorMessage = "O campo {0} é obrigatório")]
+        public IEnumerable<int>? IdRegentes { get; set; }
+
+        public SelectList? ListaPessoa { get; set; }
+
+        [Display(Name = "Figurino")]
+        [Required(ErrorMessage = "O campo {0} é obrigatório")]
+        public int IdFigurinoSelecionado { get; set; }
+
+        public SelectList? ListaFigurino { get; set; }
+
+        [Display(Name = "Local")]
+        [MaxLength(100, ErrorMessage = "O campo {0} deve ter no máximo 100 caracteres")]
+        public string? Local { get; set; }
+
+        public string? JsonLista { get; set; }
+    }
+
 }
