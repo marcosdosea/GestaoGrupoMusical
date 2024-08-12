@@ -1,4 +1,4 @@
-﻿using Core;
+using Core;
 using Core.Datatables;
 using Core.DTO;
 using Core.Service;
@@ -419,5 +419,52 @@ namespace Service
                 return HttpStatusCode.InternalServerError; //se tudo der errado
             }
         }
+        public async Task<HttpStatusCode> RegistrarFrequenciaAsync(List<EventoListaFrequenciaDTO> frequencias)
+        {
+            try
+            {
+                if (!frequencias.Any())
+                {
+                    return HttpStatusCode.BadRequest;
+                }
+                int idEvento = frequencias.First().IdEvento;
+
+                var dbFrequencias = _context.Eventopessoas
+                                    .Where(ep => ep.IdEvento == frequencias.First().IdEvento)
+                                    .OrderBy(ep => ep.IdPessoaNavigation.Nome);
+
+                if (dbFrequencias == null)
+                {
+                    return HttpStatusCode.NotFound;
+                }
+
+                if (dbFrequencias.Count() != frequencias.Count)
+                {
+                    return HttpStatusCode.Conflict;
+                }
+
+                int pos = 0;
+                await dbFrequencias.ForEachAsync(dbFrequencia =>
+                {
+                    if (dbFrequencia.IdEvento == frequencias[0].IdEvento && dbFrequencia.IdPessoa == frequencias[pos].IdPessoa)
+                    {
+                        dbFrequencia.JustificativaAceita = Convert.ToSByte(frequencias[pos].JustificativaAceita);
+                        dbFrequencia.Presente = Convert.ToSByte(frequencias[pos].Presente);
+
+                        _context.Update(dbFrequencia);
+                    }
+                    pos++;
+                });
+
+                await _context.SaveChangesAsync();
+
+                return HttpStatusCode.OK;
+            }
+            catch
+            {
+                return HttpStatusCode.InternalServerError;
+            }
+        }
     }
+
 }
