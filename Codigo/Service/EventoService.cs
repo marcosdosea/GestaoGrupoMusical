@@ -455,6 +455,8 @@ namespace Service
             };
             g.EventoSolicitacaoPessoasDTO = GetSolicitacaoEventoPessoas(idEvento);
 
+
+
             return g;
         }
     }

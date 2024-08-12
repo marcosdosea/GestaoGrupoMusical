@@ -1,73 +1,59 @@
-﻿@model GestaoGrupoMusicalWeb.Models.EventoViewModel
+﻿@model GestaoGrupoMusicalWeb.Models.GerenciarSolicitacaoEventoViewModel
 
 @{
     ViewData["Title"] = "GerenciarSolicitacaoEvento";
+    ViewData["Evento"] = "Evento";
+    ViewData["Solicitacao"] = "Gerenciar Solicitações";
 }
 
-<h1>GerenciarSolicitacaoEvento</h1>
-
-<h4>EventoViewModel</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="GerenciarSolicitacaoEvento">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IdGrupoMusical" class="control-label"></label>
-                <input asp-for="IdGrupoMusical" class="form-control" />
-                <span asp-validation-for="IdGrupoMusical" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DataHoraInicio" class="control-label"></label>
-                <input asp-for="DataHoraInicio" class="form-control" />
-                <span asp-validation-for="DataHoraInicio" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DataHoraFim" class="control-label"></label>
-                <input asp-for="DataHoraFim" class="form-control" />
-                <span asp-validation-for="DataHoraFim" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Local" class="control-label"></label>
-                <input asp-for="Local" class="form-control" />
-                <span asp-validation-for="Local" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Repertorio" class="control-label"></label>
-                <input asp-for="Repertorio" class="form-control" />
-                <span asp-validation-for="Repertorio" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IdColaboradorResponsavel" class="control-label"></label>
-                <input asp-for="IdColaboradorResponsavel" class="form-control" />
-                <span asp-validation-for="IdColaboradorResponsavel" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IdRegente" class="control-label"></label>
-                <input asp-for="IdRegente" class="form-control" />
-                <span asp-validation-for="IdRegente" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="JsonLista" class="control-label"></label>
-                <input asp-for="JsonLista" class="form-control" />
-                <span asp-validation-for="JsonLista" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+<partial name="_Notificar">
+    <div class="row">
+        <div class="col-md-8">
+            <h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">Aprovar Solicitação Participação Evento</h1>
+            <nav>
+                <ol class="breadcrumb px-3">
+                    <strong>
+                        <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Evento"]</a>
+                        <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Solicitacao"]</spn>
+                    </strong>
+                </ol>
+            </nav>
+            <hr />
+            <br />
+            <form id="formSolicitacao" asp-action="GerenciarSolicitacaoEvento">
+                <div class="container">
+                    <div class="row">
+                        <div class="form-group col-xxl-4">
+                            <label asp-for="DataHoraInicio" class="control-label"></label>
+                            <input asp-for="DataHoraInicio" readonly class="form-control" />
+                           
+                        </div>
+                        <div class="form-group col-xxl-4">
+                            <label asp-for="DataHoraFim" class="control-label"></label>
+                            <input asp-for="DataHoraFim" readonly class="form-control" />
+                           
+                        </div>
+                    </div>
+                </div>
+                <div class="container">
+                    <label asp-for="NomesRegentes" class="control-label"></label>
+                    <input asp-for="NomesRegentes" readonly class="form-control" />
+                </div>
+                <br />
+                <br />
+                <div class="container">
+                    <div class="row d-flex flex-column-reverse d-grig gap-2 mx-auto d-flex flex-sm-column-reverse flex-xl-row">
+                        <div class="col-5 d-none d-sm-block"></div>
+                        <a class="btn btn-light text-secondary border border-secondary d-grid gap-2 col-sm" asp-controller="Evento" asp-action="Index"> Voltar </a>
+                        <input type="submit" value="Adicionar" class="btn btn-secondary d-grid gap-2 col-sm " />
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+    }
