@@ -435,6 +435,7 @@ namespace Service
                              IdInstrumento = tipoInstrumento.Id,
                              NomeInstrumento = tipoInstrumento.Nome,
                              IdAssociado = pessoa.Id,
+                             IdPapelGrupo = eventoPessoa.IdPapelGrupoPapelGrupo,
                              NomeAssociado = pessoa.Nome,
                          }).AsNoTracking().ToList();
 
@@ -454,9 +455,20 @@ namespace Service
                 DataHoraFim = evento.DataHoraFim,
             };
             g.EventoSolicitacaoPessoasDTO = GetSolicitacaoEventoPessoas(idEvento);
-
-
-
+            Console.WriteLine("Count: " + g.EventoSolicitacaoPessoasDTO.Count());
+            foreach (SolicitacaoEventoPessoasDTO s in g.EventoSolicitacaoPessoasDTO)
+            {
+                if(s.IdPapelGrupo == 5)
+                {
+                    if (g.NomesRegentes.Length > 0)
+                        g.NomesRegentes += ";" + s.NomeAssociado;
+                    else
+                        g.NomesRegentes = s.NomeAssociado;
+                }
+                Console.WriteLine("Papel: " + s.IdPapelGrupo);
+            }
+            g.EventoSolicitacaoPessoasDTO = g.EventoSolicitacaoPessoasDTO.Where(e => e.IdPapelGrupo != 5);
+            Console.WriteLine("Count: " + g.EventoSolicitacaoPessoasDTO.Count());
             return g;
         }
     }
