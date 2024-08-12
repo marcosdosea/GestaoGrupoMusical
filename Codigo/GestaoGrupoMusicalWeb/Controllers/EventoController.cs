@@ -327,5 +327,82 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             return RedirectToAction(nameof(GerenciarInstrumentoEvento), new { id = apresentacaotipoinstrumento.IdApresentacao });
         }
+        [Authorize(Roles = "ADMINISTRADOR GRUPO,COLABORADOR,REGENTE")]
+        // GET: EventoController/RegistrarFrequencia/5
+        public async Task<ActionResult> RegistrarFrequencia(int idEvento)
+        {
+            int idGrupoMusical = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
+
+            var listaPessoasAutoComplete = await _pessoaService.GetRegentesForAutoCompleteAsync(idGrupoMusical);
+            if (listaPessoasAutoComplete == null || !listaPessoasAutoComplete.Any())
+            {
+                Notificar("É necessário cadastrar pelo menos um Regente para então registrar uma frequência.", Notifica.Informativo);
+                return RedirectToAction(nameof(Index));
+            }
+
+            var listaFigurinos = await _figurinoService.GetAllFigurinoDropdown(idGrupoMusical);
+            if (listaFigurinos == null || !listaFigurinos.Any())
+            {
+                Notificar("É necessário cadastrar pelo menos um Figurino para então registrar uma frequência.", Notifica.Informativo);
+                return RedirectToAction(nameof(Index));
+            }
+
+            var evento = _eventoService.Get(idEvento);
+            if (evento == null)
+            {
+                Notificar("Evento não encontrado.", Notifica.Erro);
+                return RedirectToAction(nameof(Index));
+            }
+
+            EventoViewModel eventoView = _mapper.Map<EventoViewModel>(evento);
+            if (eventoView == null)
+            {
+                Notificar("Erro ao mapear o evento.", Notifica.Erro);
+                return RedirectToAction(nameof(Index));
+            }
+
+            FrequenciaEventoViewModel frequenciaEvento = new()
+            {
+                IdGrupoMusical = idGrupoMusical,
+                DataHoraInicio = eventoView.DataHoraInicio,
+                DataHoraFim = eventoView.DataHoraFim,
+                ListaPessoa = new SelectList(listaPessoasAutoComplete, "Id", "Nome"),
+                ListaFigurino = new SelectList(listaFigurinos, "Id", "Nome"),
+                Local = eventoView.Local
+            };
+
+            ViewData["exemploRegente"] = listaPessoasAutoComplete.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
+            frequenciaEvento.JsonLista = listaPessoasAutoComplete.ToJson();
+
+            return View(frequenciaEvento);
+        }
+
+        [Authorize(Roles = "ADMINISTRADOR GRUPO,COLABORADOR,REGENTE")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> RegistrarFrequencia(List<EventoListaFrequenciaDTO> listaFrequencia)
+        {
+            switch (await _eventoService.RegistrarFrequenciaAsync(listaFrequencia))
+            {
+                case HttpStatusCode.OK:
+                    Notificar("Lista de <b>Frequência</b> salva com <b>Sucesso</b>", Notifica.Sucesso);
+                    break;
+                case HttpStatusCode.BadRequest:
+                    Notificar("A <b>Lista</b> enviada <b>Não</b> possui registros", Notifica.Alerta);
+                    return RedirectToAction(nameof(Index));
+                case HttpStatusCode.Conflict:
+                    Notificar("A <b>Lista</b> enviada é <b>Inválida</b>", Notifica.Erro);
+                    break;
+                case HttpStatusCode.NotFound:
+                    Notificar("A <b>Lista</b> enviada não foi <b>Encontrada</b>", Notifica.Erro);
+                    break;
+                case HttpStatusCode.InternalServerError:
+                    Notificar("Desculpe, ocorreu um <b>Erro</b> ao registrar a Lista de <b>Frequência</b>.", Notifica.Erro);
+                    break;
+            }
+            return RedirectToAction(nameof(RegistrarFrequencia), new { idEnsaio = listaFrequencia.First().IdEvento });
+        }
+
+
     }
 }
