@@ -27,11 +27,11 @@ namespace Core.DTO
     {
         //esse ID é do evento
         public int Id { get; set; }
-        public DateTime? DataHoraInicio { get; set; }
+        public DateTime DataHoraInicio { get; set; }
 
-        public DateTime? DataHoraFim { get; set; }
+        public DateTime DataHoraFim { get; set; }
 
-        public string? NomesRegentes { get; set; }
+        public string NomesRegentes { get; set; } = null!;
         public IEnumerable<SolicitacaoEventoPessoasDTO>? EventoSolicitacaoPessoasDTO { get; set; }
     }
 
@@ -42,7 +42,22 @@ namespace Core.DTO
         public int IdAssociado { get; set; }
         public string NomeAssociado { get; set; } = null!;
         public int Faltas { get; set; }
-        public bool Inadiplencia { get; set; } = false;
-        public bool Aprovado { get; set; } = false;
+        public int Inadiplencia { get; set; }
+        public InscricaoEventoPessoa aprovado;
+    }
+
+
+    /// <summary>
+    /// Tabela EventoPessoa tem o tipo de inscricao.
+    /// </summary>
+    public enum InscricaoEventoPessoa
+    {
+        INSCRITO,
+        DEFERIDO,
+        INDEFERIDO
     }
 }
+
+
+
+//ENUM('INSCRITO', 'DEFERIDO', 'INDEFERIDO')

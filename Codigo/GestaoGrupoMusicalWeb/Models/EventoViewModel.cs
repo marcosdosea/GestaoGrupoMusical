@@ -119,11 +119,11 @@ namespace GestaoGrupoMusicalWeb.Models
     {
         //esse ID é do evento
         public int Id { get; set; }
-        public DateTime? DataHoraInicio { get; set; }
+        public DateTime DataHoraInicio { get; set; }
 
-        public DateTime? DataHoraFim { get; set; }
+        public DateTime DataHoraFim { get; set; }
 
-        public string? NomesRegentes { get;set; }
+        public string NomesRegentes { get;set; } = null!;
         public IEnumerable<SolicitacaoEventoPessoasDTO>? EventoSolicitacaoPessoasDTO { get; set; }
     }
 }
