@@ -1,0 +1,59 @@
+﻿@model GestaoGrupoMusicalWeb.Models.GerenciarSolicitacaoEventoViewModel
+
+@{
+    ViewData["Title"] = "GerenciarSolicitacaoEvento";
+    ViewData["Evento"] = "Evento";
+    ViewData["Solicitacao"] = "Gerenciar Solicitações";
+}
+
+<partial name="_Notificar">
+    <div class="row">
+        <div class="col-md-8">
+            <h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">Aprovar Solicitação Participação Evento</h1>
+            <nav>
+                <ol class="breadcrumb px-3">
+                    <strong>
+                        <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Evento"]</a>
+                        <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Solicitacao"]</spn>
+                    </strong>
+                </ol>
+            </nav>
+            <hr />
+            <br />
+            <form id="formSolicitacao" asp-action="GerenciarSolicitacaoEvento">
+                <div class="container">
+                    <div class="row">
+                        <div class="form-group col-xxl-4">
+                            <label asp-for="DataHoraInicio" class="control-label"></label>
+                            <input asp-for="DataHoraInicio" readonly class="form-control" />
+                           
+                        </div>
+                        <div class="form-group col-xxl-4">
+                            <label asp-for="DataHoraFim" class="control-label"></label>
+                            <input asp-for="DataHoraFim" readonly class="form-control" />
+                           
+                        </div>
+                    </div>
+                </div>
+                <div class="container">
+                    <label asp-for="NomesRegentes" class="control-label"></label>
+                    <input asp-for="NomesRegentes" readonly class="form-control" />
+                </div>
+                <br />
+                <br />
+                <div class="container">
+                    <div class="row d-flex flex-column-reverse d-grig gap-2 mx-auto d-flex flex-sm-column-reverse flex-xl-row">
+                        <div class="col-5 d-none d-sm-block"></div>
+                        <a class="btn btn-light text-secondary border border-secondary d-grid gap-2 col-sm" asp-controller="Evento" asp-action="Index"> Voltar </a>
+                        <input type="submit" value="Adicionar" class="btn btn-secondary d-grid gap-2 col-sm " />
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+    }

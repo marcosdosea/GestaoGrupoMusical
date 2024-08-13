@@ -419,5 +419,57 @@ namespace Service
                 return HttpStatusCode.InternalServerError; //se tudo der errado
             }
         }
+
+        public IEnumerable<SolicitacaoEventoPessoasDTO> GetSolicitacaoEventoPessoas(int idEvento)
+        {
+            var query = (from evento in _context.Eventos
+                         join eventoPessoa in _context.Eventopessoas
+                         on evento.Id equals eventoPessoa.IdEvento
+                         join tipoInstrumento in _context.Tipoinstrumentos
+                         on eventoPessoa.IdTipoInstrumento equals tipoInstrumento.Id
+                         join pessoa in _context.Pessoas
+                         on eventoPessoa.IdPessoa equals pessoa.Id
+                         where idEvento == evento.Id
+                         select new SolicitacaoEventoPessoasDTO
+                         {
+                             IdInstrumento = tipoInstrumento.Id,
+                             NomeInstrumento = tipoInstrumento.Nome,
+                             IdAssociado = pessoa.Id,
+                             IdPapelGrupo = eventoPessoa.IdPapelGrupoPapelGrupo,
+                             NomeAssociado = pessoa.Nome,
+                         }).AsNoTracking().ToList();
+
+            return query;
+        }
+
+        public GerenciarSolicitacaoEventoDTO? GetSolicitacoesEventoDTO(int idEvento)
+        {
+            Evento? evento = Get(idEvento);
+            if (evento == null)
+                return null;
+
+            GerenciarSolicitacaoEventoDTO g = new()
+            {
+                Id = idEvento,
+                DataHoraInicio = evento.DataHoraInicio,
+                DataHoraFim = evento.DataHoraFim,
+            };
+            g.EventoSolicitacaoPessoasDTO = GetSolicitacaoEventoPessoas(idEvento);
+            Console.WriteLine("Count: " + g.EventoSolicitacaoPessoasDTO.Count());
+            foreach (SolicitacaoEventoPessoasDTO s in g.EventoSolicitacaoPessoasDTO)
+            {
+                if(s.IdPapelGrupo == 5)
+                {
+                    if (g.NomesRegentes.Length > 0)
+                        g.NomesRegentes += ";" + s.NomeAssociado;
+                    else
+                        g.NomesRegentes = s.NomeAssociado;
+                }
+                Console.WriteLine("Papel: " + s.IdPapelGrupo);
+            }
+            g.EventoSolicitacaoPessoasDTO = g.EventoSolicitacaoPessoasDTO.Where(e => e.IdPapelGrupo != 5);
+            Console.WriteLine("Count: " + g.EventoSolicitacaoPessoasDTO.Count());
+            return g;
+        }
     }
 }
