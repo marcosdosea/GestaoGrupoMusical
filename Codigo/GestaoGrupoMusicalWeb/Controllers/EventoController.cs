@@ -324,8 +324,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 IdApresentacao = gerenciarInstrumentoEventoViewModel.IdApresentacao,
                 IdTipoInstrumento = gerenciarInstrumentoEventoViewModel.IdTipoInstrumento,              
                 QuantidadePlanejada = gerenciarInstrumentoEventoViewModel.Quantidade              
-            };
-            Console.WriteLine(gerenciarInstrumentoEventoViewModel.IdTipoInstrumento);
+            };           
 
             await _evento.CreateApresentacaoInstrumento(apresentacaotipoinstrumento);           
 
