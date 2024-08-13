@@ -255,7 +255,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: EnsaioController/RegistrarFrequencia
         public async Task<ActionResult> RegistrarFrequencia(int idEnsaio)
         {
-            //idEnsaio = 23;
+            //idEnsaio = 1;
+            Console.WriteLine("-----------------------------------------------------------------------");
+            Console.WriteLine("Ensaio: " + idEnsaio);
+            Console.WriteLine("-----------------------------------------------------------------------");
 
             int idGrupoMusical = await _grupoMusical.GetIdGrupo(User.Identity.Name);
 
@@ -281,7 +284,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 Notificar("É necessário pelo menos um Associado Ativo para então registrar uma frequência.", Notifica.Informativo);
                 return RedirectToAction(nameof(Index));
             }
-            ViewBag.AssociadosAtivos = listaAssociadosAtivos;
+            ViewBag.ListaAssociadosAtivos = listaAssociadosAtivos;
 
             var ensaio = _ensaio.Get(idEnsaio);
 
