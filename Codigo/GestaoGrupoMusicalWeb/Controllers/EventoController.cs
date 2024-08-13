@@ -324,9 +324,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 IdApresentacao = gerenciarInstrumentoEventoViewModel.IdApresentacao,
                 IdTipoInstrumento = gerenciarInstrumentoEventoViewModel.IdTipoInstrumento,              
                 QuantidadePlanejada = gerenciarInstrumentoEventoViewModel.Quantidade              
-            };           
-
-            await _evento.CreateApresentacaoInstrumento(apresentacaotipoinstrumento);           
+            };
+            
+            HttpStatusCode resul = await _evento.CreateApresentacaoInstrumento(apresentacaotipoinstrumento);           
 
             return RedirectToAction(nameof(GerenciarInstrumentoEvento), new { id = apresentacaotipoinstrumento.IdApresentacao });
         }

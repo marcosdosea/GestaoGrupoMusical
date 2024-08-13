@@ -22,6 +22,6 @@ namespace Core.Service
         Task<string> GetNomeInstrumento(int id);
         Task<IEnumerable<FigurinoDropdownDTO>> GetAllFigurinoDropdown(int idGrupo);
         Task<IEnumerable<Eventopessoa>> GetPessoas(int idGrupo);
-        Task CreateApresentacaoInstrumento(Apresentacaotipoinstrumento apresentacaotipoinstrumento);
+        Task<HttpStatusCode> CreateApresentacaoInstrumento(Apresentacaotipoinstrumento apresentacaotipoinstrumento);
     }
 }

@@ -397,19 +397,14 @@ namespace Service
                }).AsNoTracking().ToListAsync();
 
             return query;
-        }
+        }        
 
-        public IEnumerable<GerenciarInstrumentoEventoDTO> GetGerenciarInstrumentoEventoDTO(int id, IEnumerable<Tipoinstrumento>? instrumento)
-        {
-
-            return null;
-        }
-
-        public async Task CreateApresentacaoInstrumento(Apresentacaotipoinstrumento apresentacaotipoinstrumento)
+        public async Task<HttpStatusCode> CreateApresentacaoInstrumento(Apresentacaotipoinstrumento apresentacaotipoinstrumento)
         {
                 await _context.Apresentacaotipoinstrumentos.AddAsync(apresentacaotipoinstrumento);
                 await _context.SaveChangesAsync();
-         
+
+            return HttpStatusCode.Created;
         }
     }
 }
