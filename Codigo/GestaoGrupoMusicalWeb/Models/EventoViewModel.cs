@@ -114,4 +114,22 @@ namespace GestaoGrupoMusicalWeb.Models
         public IEnumerable<GerenciarInstrumentoEventoDTO>? GerenciarInstrumentos { get; set; }        
 
     }
+
+    public class GerenciarSolicitacaoEventoViewModel
+    {
+        //esse ID é do evento
+        public int Id { get; set; }
+
+
+        [Display(Name = "Início")]
+        public DateTime DataHoraInicio { get; set; }
+
+
+        [Display(Name = "Fim")]
+        public DateTime DataHoraFim { get; set; }
+
+        [Display(Name = "Regentes")]
+        public string NomesRegentes { get;set; } = null!;
+        public IEnumerable<SolicitacaoEventoPessoasDTO>? EventoSolicitacaoPessoasDTO { get; set; }
+    }
 }

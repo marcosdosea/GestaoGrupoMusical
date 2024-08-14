@@ -1,10 +1,12 @@
 using AutoMapper;
 using Core;
+using Core.Datatables;
 using Core.DTO;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Org.BouncyCastle.Asn1.Ocsp;
 using Service;
 using System.Net;
 
@@ -26,10 +28,18 @@ namespace GestaoGrupoMusicalWeb.Controllers
             _mapper = mapper;
         }
 
-        public async Task<ActionResult> Index()
+        public  ActionResult Index()
         {
-            var informativos = await _informativoService.GetAll();
-            return View(_mapper.Map<IEnumerable<InformativoViewModel>>(informativos));
+            return View();
+        }
+
+        public async Task<IActionResult> GetDataPage(DatatableRequest request)
+        {
+            int idGrupoMusical = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
+            var listaInformativo = _informativoService.GetAllInformativoServicePorIdGrupoMusical(idGrupoMusical);
+            var listaInformativoDTO = _mapper.Map<List<InformativoIndexDTO>>(listaInformativo);
+            var response = _informativoService.GetDataPage(request, listaInformativoDTO);
+            return Json(response);
         }
 
         // GET: InformativoController/Details/5
@@ -143,28 +153,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
 
         // POST: InformativoController/GetDataPage
-        [HttpPost]
-        public async Task<IActionResult> GetDataPage()
-        {
-            try
-            {
-                var informativos = await _informativoService.GetAll();
-
-                var result = new
-                {
-                    draw = HttpContext.Request.Form["draw"].FirstOrDefault(),
-                    recordsTotal = informativos.Count(),
-                    recordsFiltered = informativos.Count(),
-                    data = _mapper.Map<IEnumerable<InformativoViewModel>>(informativos)
-                };
-
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { error = ex.Message });
-            }
-        }
+        
         public async Task<IActionResult> NotificarInformativoViaEmail(uint id)
         {
             var pessoas = await _grupoMusicalService.GetAllPeopleFromGrupoMusical(await _grupoMusicalService.GetIdGrupo(User.Identity.Name));

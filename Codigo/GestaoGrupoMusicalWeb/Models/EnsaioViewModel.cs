@@ -50,6 +50,7 @@ namespace GestaoGrupoMusicalWeb.Models
 
         public SelectList? ListaPessoa { get; set; }
         public SelectList? ListaFigurino { get; set; }
+        public SelectList? ListaAssociadosAtivos { get; set; }
     }
 
     public class FrequenciaEnsaioViewModel

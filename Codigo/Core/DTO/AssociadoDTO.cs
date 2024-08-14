@@ -9,7 +9,8 @@ namespace Core.DTO
     public class AssociadoDTO
     {
         public int Id { get; set; }
-        public string Nome { get; set; } = null!;
+        public string? Nome { get; set; }
+        public string? Cpf { get; set; }
         public sbyte Ativo { get; set; }
     }
 

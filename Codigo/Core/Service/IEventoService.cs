@@ -1,4 +1,4 @@
-﻿using Core.Datatables;
+ï»¿using Core.Datatables;
 using Core.DTO;
 using System.Net;
 
@@ -6,7 +6,6 @@ namespace Core.Service
 {
     public interface IEventoService
     {
-        //Vou deixar comentado para quem come�ou a fazer terminar e descomentar apenas quando n�o tiver erro de compila��o
         //Task<HttpStatusCode> RegistrarFrequenciaAsync(List<EventoListaFrequenciaDTO> listaFrequencia);
         Task<HttpStatusCode> Create(Evento evento, IEnumerable<int> idRegentes, int idFigurino);
         HttpStatusCode Delete(int id);

@@ -22,4 +22,43 @@ namespace Core.DTO
         [Display(Name = "Confirmados")]
         public int Confirmados { get; set; }
     }
+
+    public class GerenciarSolicitacaoEventoDTO
+    {
+        //esse ID é do evento
+        public int Id { get; set; }
+        public DateTime DataHoraInicio { get; set; }
+
+        public DateTime DataHoraFim { get; set; }
+
+        public string NomesRegentes { get; set; } = "";
+        public IEnumerable<SolicitacaoEventoPessoasDTO>? EventoSolicitacaoPessoasDTO { get; set; }
+    }
+
+    public class SolicitacaoEventoPessoasDTO
+    {
+        public int IdInstrumento { get; set; }
+        public string NomeInstrumento { get; set; } = null!;
+        public int IdAssociado { get; set; }
+        public int IdPapelGrupo { get; set; }
+        public string NomeAssociado { get; set; } = null!;
+        public int Faltas { get; set; }
+        public int Inadiplencia { get; set; }
+        public InscricaoEventoPessoa aprovado;
+    }
+
+
+    /// <summary>
+    /// Tabela EventoPessoa tem o tipo de inscricao.
+    /// </summary>
+    public enum InscricaoEventoPessoa
+    {
+        INSCRITO,
+        DEFERIDO,
+        INDEFERIDO
+    }
 }
+
+
+
+//ENUM('INSCRITO', 'DEFERIDO', 'INDEFERIDO')

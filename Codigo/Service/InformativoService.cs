@@ -4,6 +4,7 @@ using Core.DTO;
 using Core.Service;
 using Email;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Net;
 
 namespace Service
@@ -75,40 +76,54 @@ namespace Service
             return query;
         }
 
-        public DatatableResponse<InformativoIndexDTO> GetDataPage(DatatableRequest request, int idGrupo, IEnumerable<InformativoIndexDTO> InformativoIndexDTO)
+        public IEnumerable<Informativo> GetAllInformativoServicePorIdGrupoMusical(int idGrupoMusical)
         {
-            var totalRecords = InformativoIndexDTO.Count();
+            var query = (from informativo in _context.Informativos
+                               where informativo.IdGrupoMusical == idGrupoMusical
+                               select new Informativo()
+                               {
+                                   Id = informativo.Id,
+                                   Data = informativo.Data,
+                                   Mensagem = informativo.Mensagem,
+                               }).ToList();
+            return query;
+        }
+
+        public DatatableResponse<InformativoIndexDTO> GetDataPage(DatatableRequest request, IEnumerable<InformativoIndexDTO> listaInformativoDTO)
+        {
+            var totalRecords = listaInformativoDTO.Count();
             if (request.Search != null && request.Search.GetValueOrDefault("value") != null)
             {
-                InformativoIndexDTO = InformativoIndexDTO.Where(g => g.Mensagem.ToString().Contains(request.Search.GetValueOrDefault("value")!));
+                listaInformativoDTO = listaInformativoDTO.Where(g => g.Mensagem.ToString().Contains(request.Search.GetValueOrDefault("value")!, StringComparison.OrdinalIgnoreCase)
+                                                           || g.Data.ToString().Contains(request.Search.GetValueOrDefault("value")!));
             }
 
             if (request.Order != null && request.Order[0].GetValueOrDefault("column")!.Equals("0"))
             {
                 if (request.Order[0].GetValueOrDefault("dir")!.Equals("asc"))
                 {
-                    InformativoIndexDTO = InformativoIndexDTO.OrderByDescending(g => g.Data);
+                    listaInformativoDTO = listaInformativoDTO.OrderByDescending(g => g.Data);
                 }
                 else
                 {
-                    InformativoIndexDTO = InformativoIndexDTO.OrderBy(g => g.Data);
+                    listaInformativoDTO = listaInformativoDTO.OrderBy(g => g.Data);
                 }
             }
             else if (request.Order != null && request.Order[0].GetValueOrDefault("column")!.Equals("1"))
             {
                 if (request.Order[0].GetValueOrDefault("dir")!.Equals("asc"))
-                    InformativoIndexDTO = InformativoIndexDTO.OrderBy(g => g.Mensagem);
+                    listaInformativoDTO = listaInformativoDTO.OrderBy(g => g.Mensagem);
                 else
-                    InformativoIndexDTO = InformativoIndexDTO.OrderByDescending(g => g.Mensagem);
+                    listaInformativoDTO = listaInformativoDTO.OrderByDescending(g => g.Mensagem);
             }
 
-            int countRecordsFiltered = InformativoIndexDTO.Count();
+            int countRecordsFiltered = listaInformativoDTO.Count();
 
-            InformativoIndexDTO = InformativoIndexDTO.Skip(request.Start).Take(request.Length);
+            listaInformativoDTO = listaInformativoDTO.Skip(request.Start).Take(request.Length);
 
             return new DatatableResponse<InformativoIndexDTO>
             {
-                Data = InformativoIndexDTO.ToList(),
+                Data = listaInformativoDTO.ToList(),
                 Draw = request.Draw,
                 RecordsFiltered = countRecordsFiltered,
                 RecordsTotal = totalRecords
