@@ -175,7 +175,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(EventoCreateViewlModel eventoModel)
         {
-           
+
             if (ModelState.IsValid && eventoModel.IdFigurinoSelecionado != 0 && eventoModel.IdRegentes != null && eventoModel.IdRegentes.Any())
             {
                 var colaborador = await _pessoaService.GetByCpf(User.Identity?.Name);
@@ -314,16 +314,16 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> GerenciarInstrumentoEvento(GerenciarInstrumentoEventoViewModel gerenciarInstrumentoEventoViewModel)
-        {              
+        {
 
             Apresentacaotipoinstrumento apresentacaotipoinstrumento = new Apresentacaotipoinstrumento
             {
                 IdApresentacao = gerenciarInstrumentoEventoViewModel.IdApresentacao,
-                IdTipoInstrumento = gerenciarInstrumentoEventoViewModel.IdTipoInstrumento,              
-                QuantidadePlanejada = gerenciarInstrumentoEventoViewModel.Quantidade              
+                IdTipoInstrumento = gerenciarInstrumentoEventoViewModel.IdTipoInstrumento,
+                QuantidadePlanejada = gerenciarInstrumentoEventoViewModel.Quantidade
             };
 
-            HttpStatusCode resul = await _eventoService.CreateApresentacaoInstrumento(apresentacaotipoinstrumento);           
+            HttpStatusCode resul = await _eventoService.CreateApresentacaoInstrumento(apresentacaotipoinstrumento);
 
             return RedirectToAction(nameof(GerenciarInstrumentoEvento), new { id = apresentacaotipoinstrumento.IdApresentacao });
         }
@@ -333,8 +333,16 @@ namespace GestaoGrupoMusicalWeb.Controllers
             GerenciarSolicitacaoEventoDTO? g = _eventoService.GetSolicitacoesEventoDTO(id);
             Console.WriteLine("\n###############################");
             Console.WriteLine("ID: " + g.Id);
-            Console.WriteLine("DATA: " + g.DataHoraInicio.ToString() + " | "+ g.DataHoraFim.ToString());
+            Console.WriteLine("DATA: " + g.DataHoraInicio.ToString() + " | " + g.DataHoraFim.ToString());
             Console.WriteLine("Regentes: " + g.NomesRegentes);
+            Console.WriteLine("\n### Associados ###");
+            if (g.EventoSolicitacaoPessoasDTO != null)
+            {
+                foreach (var a in g.EventoSolicitacaoPessoasDTO)
+                {
+                    Console.WriteLine("Instrumento: " + a.NomeInstrumento + "\nAssociado: " + a.NomeAssociado + "\nFaltas: " + a.Faltas + "\nInadiplencia: " + a.Inadiplencia + "\nTipoInscricao: " + a.aprovado.ToString());
+                }
+            }
 
             GerenciarSolicitacaoEventoViewModel? model = _mapper.Map<GerenciarSolicitacaoEventoViewModel>(g);
 

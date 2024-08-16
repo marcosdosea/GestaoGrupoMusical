@@ -422,6 +422,7 @@ namespace Service
 
         public IEnumerable<SolicitacaoEventoPessoasDTO> GetSolicitacaoEventoPessoas(int idEvento)
         {
+            DateTime twoMonthsAgo = DateTime.Now.AddMonths(-2);
             var query = (from evento in _context.Eventos
                          join eventoPessoa in _context.Eventopessoas
                          on evento.Id equals eventoPessoa.IdEvento
@@ -434,11 +435,17 @@ namespace Service
                          {
                              IdInstrumento = tipoInstrumento.Id,
                              NomeInstrumento = tipoInstrumento.Nome,
-                             IdAssociado = pessoa.Id,
+                             IdAssociado = eventoPessoa.IdPessoa,
                              IdPapelGrupo = eventoPessoa.IdPapelGrupoPapelGrupo,
                              NomeAssociado = pessoa.Nome,
+                             Faltas = _context.Ensaiopessoas.
+                             Count(
+                                 ep => ep.IdPessoa == pessoa.Id &&
+                                 ep.Presente == 0 &&
+                                 ep.JustificativaAceita == 0 &&
+                                 ep.IdEnsaioNavigation.DataHoraInicio >= twoMonthsAgo &&
+                                 ep.IdEnsaioNavigation.PresencaObrigatoria == 1),
                          }).AsNoTracking().ToList();
-
             return query;
         }
 

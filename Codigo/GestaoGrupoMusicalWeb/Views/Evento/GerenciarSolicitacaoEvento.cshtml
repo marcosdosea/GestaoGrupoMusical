@@ -26,12 +26,12 @@
                         <div class="form-group col-xxl-4">
                             <label asp-for="DataHoraInicio" class="control-label"></label>
                             <input asp-for="DataHoraInicio" readonly class="form-control" />
-                           
+
                         </div>
                         <div class="form-group col-xxl-4">
                             <label asp-for="DataHoraFim" class="control-label"></label>
                             <input asp-for="DataHoraFim" readonly class="form-control" />
-                           
+
                         </div>
                     </div>
                 </div>
@@ -39,8 +39,60 @@
                     <label asp-for="NomesRegentes" class="control-label"></label>
                     <input asp-for="NomesRegentes" readonly class="form-control" />
                 </div>
-                <br />
-                <br />
+                <br /><br />
+                <div class="container">
+                    <table class="table">
+                        <thead>
+                            <tr class="bg-danger bg-opacity-75 text-white">
+                                <th class="border-0">
+                                    <span class="text-white">Instrumento</span>
+                                </th>
+                                <th class="border-0">
+                                    <span class="text-white">Associado</span>
+                                </th>
+
+                                <th class=" border-0">
+                                    <span class="text-white">Faltas</span>
+                                </th>
+                                <th class=" border-0 ">
+                                    <span class="text-white">Inadimplência</span>
+                                </th>
+                                <th class=" border-0">
+                                    <span class="text-white">Aprovado</span>
+                                </th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="Container">
+                            @if (Model.EventoSolicitacaoPessoasDTO != null)
+                            {
+                                @foreach (var item in Model.EventoSolicitacaoPessoasDTO)
+                                {
+                                    <tr class="border-bottom border-danger border-opacity-75 p-3 align-middle">
+                                        <td class="p-3">
+                                            @Html.DisplayFor(modelItem => item.NomeInstrumento)
+                                        </td>
+                                        <td class="p-3">
+                                            @Html.DisplayFor(modelItem => item.NomeAssociado)
+                                        </td>
+                                        <td class="p-3">
+                                            @Html.DisplayFor(modelItem => item.Faltas)
+                                        </td>
+                                        <td class="p-3">
+                                            @Html.DisplayFor(modelItem => item.Inadiplencia)
+                                        </td>
+                                        <td class="p-3">
+                                            @Html.DropDownListFor(modelItem => item.aprovado, new SelectList(Enum.GetValues(typeof(Core.DTO.InscricaoEventoPessoa))))
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                        <!-- <Partial name="_NomeTabela" model="Model." />-->
+
+                    </table>
+                </div>
+                <br /> <br />
                 <div class="container">
                     <div class="row d-flex flex-column-reverse d-grig gap-2 mx-auto d-flex flex-sm-column-reverse flex-xl-row">
                         <div class="col-5 d-none d-sm-block"></div>
