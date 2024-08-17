@@ -1,4 +1,4 @@
-ï»¿using Core.Datatables;
+using Core.Datatables;
 using Core.DTO;
 using System.Net;
 
