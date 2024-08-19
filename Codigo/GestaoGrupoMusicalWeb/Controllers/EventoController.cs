@@ -329,7 +329,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return RedirectToAction(nameof(GerenciarInstrumentoEvento), new { id = apresentacaotipoinstrumento.IdApresentacao });
         }
 
-        public ActionResult GerenciarSolicitacaoEvento(int id)
+        /* public ActionResult GerenciarSolicitacaoEvento(int id)
         {
             GerenciarSolicitacaoEventoDTO? g = _eventoService.GetSolicitacoesEventoDTO(id);
             Console.WriteLine("\n###############################");
@@ -340,6 +340,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
             GerenciarSolicitacaoEventoViewModel? model = _mapper.Map<GerenciarSolicitacaoEventoViewModel>(g);
 
             return View(model);
-        }
+        } */
     }
 }
