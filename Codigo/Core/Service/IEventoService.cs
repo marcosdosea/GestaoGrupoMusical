@@ -6,7 +6,6 @@ namespace Core.Service
 {
     public interface IEventoService
     {
-        //Vou deixar comentado para quem começou a fazer terminar e descomentar apenas quando não tiver erro de compilação
         //Task<HttpStatusCode> RegistrarFrequenciaAsync(List<EventoListaFrequenciaDTO> listaFrequencia);
         Task<HttpStatusCode> Create(Evento evento, IEnumerable<int> idRegentes, int idFigurino);
         HttpStatusCode Delete(int id);
@@ -23,7 +22,5 @@ namespace Core.Service
         Task<IEnumerable<FigurinoDropdownDTO>> GetAllFigurinoDropdown(int idGrupo);
         Task<IEnumerable<Eventopessoa>> GetPessoas(int idGrupo);
         Task<HttpStatusCode> CreateApresentacaoInstrumento(Apresentacaotipoinstrumento apresentacaotipoinstrumento);
-        IEnumerable<SolicitacaoEventoPessoasDTO> GetSolicitacaoEventoPessoas(int idEvento);
-        GerenciarSolicitacaoEventoDTO? GetSolicitacoesEventoDTO(int idEvento);
     }
 }

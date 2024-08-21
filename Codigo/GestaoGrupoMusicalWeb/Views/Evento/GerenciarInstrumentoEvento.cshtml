@@ -49,14 +49,12 @@
                     </div>
                </div>
             <div class="container">
-
                 <div class="form-group">
                     <label asp-for="IdFigurinoSelecionado" class="control-label"></label>
                     <select asp-items="@Model.FigurinoList" asp-for="IdFigurinoSelecionado" class="form-select" readonly></select>
                     <span asp-validation-for="IdFigurinoSelecionado" class="text-danger"></span>
                 </div>
             </div>
-
             <div class="container">
                 <div class="form-group">
                     <label asp-for="Local" class="control-label"></label>                    
@@ -71,15 +69,16 @@
                          <label asp-for="ListaInstrumentos" class="control-label"></label>
                         <select asp-items="@Model.ListaInstrumentos" asp-for="Id" class="form-select"></select>                                                           
                         <span asp-validation-for="ListaInstrumentos" class="text-danger"></span>
-                       
+                        <input type="hidden" asp-for="@Model.IdTipoInstrumento" />
                     </div>
                     <div class="form-group  col-md-4">
                     <label asp-for="Quantidade" class="control-label"></label>
-                    <input asp-for="Quantidade" class="form-control" />
-                    <span asp-validation-for="Quantidade" class="text-danger"></span>
+                    <input asp-for="Quantidade" class="form-control" />                    
                     </div>
+                        <span asp-validation-for="Quantidade" class="text-danger"></span>
                     <div class=" col-md-4  d-flex d-grig gap-2 mx-auto d-flex flex-sm-column-reverse">
-                       <input class="btn btn-secondary col-lg-5 mt-3 ml-3" type="submit" value="Adicionar" />
+                            <!-- <input class="btn btn-secondary col-lg-4 mt-3 ml-3" type="submit" value="Adicionar"/> -->
+                       <input type="submit" value="Adicionar" class="btn btn-secondary d-grid gap-2 col-sm " />
                     </div>
                 </div>
             </div>

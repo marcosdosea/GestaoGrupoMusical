@@ -126,8 +126,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             else
             {
                 Notificar("<b>Erro</b>! Há algo errado ao cadastrar um novo Evento", Notifica.Erro);
-            }
-            Console.WriteLine("View model");
+            }            
             return RedirectToAction(nameof(Index));
         }
 
@@ -315,6 +314,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> GerenciarInstrumentoEvento(GerenciarInstrumentoEventoViewModel gerenciarInstrumentoEventoViewModel)
         {
+
+            Console.WriteLine("INSTRUMENTOS", gerenciarInstrumentoEventoViewModel.IdTipoInstrumento);
+            Console.WriteLine("QUANTIDADE", gerenciarInstrumentoEventoViewModel.Quantidade);
 
             Apresentacaotipoinstrumento apresentacaotipoinstrumento = new Apresentacaotipoinstrumento
             {
