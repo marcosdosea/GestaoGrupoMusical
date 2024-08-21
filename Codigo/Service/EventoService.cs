@@ -445,6 +445,17 @@ namespace Service
                                  ep.JustificativaAceita == 0 &&
                                  ep.IdEnsaioNavigation.DataHoraInicio >= twoMonthsAgo &&
                                  ep.IdEnsaioNavigation.PresencaObrigatoria == 1),
+                             //antes de pegar inadinplencia, pergunta se a pessoa eh um associado,
+                             //pois apenas sao pros associados evitando fazer consultas descenessarias.
+                             Inadiplencia = eventoPessoa.IdPapelGrupoPapelGrupo == 1 ?
+                             _context.Receitafinanceiras.Where
+                             (
+                                 rf => rf.Receitafinanceirapessoas.Any(
+                                     rfp => rfp.IdPessoa == eventoPessoa.IdPessoa &&
+                                       rfp.Status != "PAGO" &&
+                                       rfp.Status != "ISENTO" &&
+                                     rf.DataFim < DateTime.Now.Date
+                                     )).Count() : 0,
                          }).AsNoTracking().ToList();
             return query;
         }
@@ -462,20 +473,7 @@ namespace Service
                 DataHoraFim = evento.DataHoraFim,
             };
             g.EventoSolicitacaoPessoasDTO = GetSolicitacaoEventoPessoas(idEvento);
-            Console.WriteLine("Count: " + g.EventoSolicitacaoPessoasDTO.Count());
-            foreach (SolicitacaoEventoPessoasDTO s in g.EventoSolicitacaoPessoasDTO)
-            {
-                if(s.IdPapelGrupo == 5)
-                {
-                    if (g.NomesRegentes.Length > 0)
-                        g.NomesRegentes += ";" + s.NomeAssociado;
-                    else
-                        g.NomesRegentes = s.NomeAssociado;
-                }
-                Console.WriteLine("Papel: " + s.IdPapelGrupo);
-            }
             g.EventoSolicitacaoPessoasDTO = g.EventoSolicitacaoPessoasDTO.Where(e => e.IdPapelGrupo != 5);
-            Console.WriteLine("Count: " + g.EventoSolicitacaoPessoasDTO.Count());
             return g;
         }
     }
