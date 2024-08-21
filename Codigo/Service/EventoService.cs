@@ -460,6 +460,16 @@ namespace Service
                 DataHoraFim = evento.DataHoraFim,
             };
             g.EventoSolicitacaoPessoasDTO = GetSolicitacaoEventoPessoas(idEvento);
+            foreach (SolicitacaoEventoPessoasDTO s in g.EventoSolicitacaoPessoasDTO)
+            {
+                if (s.IdPapelGrupo == 5)
+                {
+                    if (g.NomesRegentes.Length > 0)
+                        g.NomesRegentes += "; " + s.NomeAssociado;
+                    else
+                        g.NomesRegentes = s.NomeAssociado;
+                }
+            }
             g.EventoSolicitacaoPessoasDTO = g.EventoSolicitacaoPessoasDTO.Where(e => e.IdPapelGrupo != 5);
             return g;
         }
