@@ -1,4 +1,5 @@
 ### Contas para entrar no grupoMusical para testes ###
+### Todas as senhas para entrar no grupo são 123456 ###
 
 ## Colaborador do Grupo
 - **Email:** vereverynice.tester1@gmail.com
@@ -9,7 +10,6 @@
 - **Email:** karinaqueijo.g@gmail.com
 - **CPF:** 994.370.570-10
 - **Senha:** nova@123
-- **Senha para sites:** Nova@Nova@#5@
 
 ## Regente do Grupo
 - **Email:** kah24.ales@gmail.com
