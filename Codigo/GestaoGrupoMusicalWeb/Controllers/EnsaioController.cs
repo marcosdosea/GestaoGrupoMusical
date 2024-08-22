@@ -255,7 +255,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: EnsaioController/RegistrarFrequencia
         public async Task<ActionResult> RegistrarFrequencia(int idEnsaio)
         {
-            //idEnsaio = 1;
+            idEnsaio = 1;
             Console.WriteLine("-----------------------------------------------------------------------");
             Console.WriteLine("Ensaio: " + idEnsaio);
             Console.WriteLine("-----------------------------------------------------------------------");
@@ -284,7 +284,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 Notificar("É necessário pelo menos um Associado Ativo para então registrar uma frequência.", Notifica.Informativo);
                 return RedirectToAction(nameof(Index));
             }
-            ViewBag.ListaAssociadosAtivos = listaAssociadosAtivos;
 
             var ensaio = _ensaio.Get(idEnsaio);
 
@@ -292,7 +291,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             ensaioView.ListaPessoa = new SelectList(listaRegentes, "Id", "Nome");
             ensaioView.ListaFigurino = new SelectList(listaFigurinos, "Id", "Nome");
-            ensaioView.ListaAssociadosAtivos = new SelectList(listaAssociadosAtivos, "Id", "Nome", "Cpf");
+            ensaioView.AssociadosDTO = listaAssociadosAtivos;
 
             ViewData["exemploRegente"] = listaRegentes.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
             ViewData["jsonIdRegentes"] = (await _ensaio.GetIdRegentesEnsaioAsync(ensaioView.Id)).ToJson();

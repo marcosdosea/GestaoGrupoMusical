@@ -160,7 +160,7 @@ namespace Core.Service
 
         Task<IEnumerable<AutoCompleteRegenteDTO>> GetRegentesForAutoCompleteAsync(int idGrupoMusical);
 
-        Task<IEnumerable<AssociadoDTO>> GetAssociadoAtivos(int idGrupoMusical);
+        Task<List<AssociadoDTO>> GetAssociadoAtivos(int idGrupoMusical);
 
         /// <summary>
         /// Atualiza as informações do usuário
