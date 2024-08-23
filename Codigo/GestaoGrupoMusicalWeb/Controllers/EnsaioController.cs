@@ -253,13 +253,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         [Authorize(Roles = "ADMINISTRADOR GRUPO,COLABORADOR,REGENTE")]
         // GET: EnsaioController/RegistrarFrequencia
-        public async Task<ActionResult> RegistrarFrequencia(int idEnsaio)
+        public async Task<ActionResult> RegistrarFrequencia(int id)
         {
-            idEnsaio = 1;
-            Console.WriteLine("-----------------------------------------------------------------------");
-            Console.WriteLine("Ensaio: " + idEnsaio);
-            Console.WriteLine("-----------------------------------------------------------------------");
-
+            //O id passado no metodo é de Ensaio
             int idGrupoMusical = await _grupoMusical.GetIdGrupo(User.Identity.Name);
 
             var listaRegentes = await _pessoa.GetRegentesForAutoCompleteAsync(idGrupoMusical);
@@ -285,7 +281,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            var ensaio = _ensaio.Get(idEnsaio);
+            var ensaio = _ensaio.Get(id);
 
             EnsaioViewModel ensaioView = _mapper.Map<EnsaioViewModel>(ensaio);
 
