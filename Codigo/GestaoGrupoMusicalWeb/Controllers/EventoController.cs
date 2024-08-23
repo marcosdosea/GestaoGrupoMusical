@@ -330,12 +330,56 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return RedirectToAction(nameof(GerenciarInstrumentoEvento), new { id = apresentacaotipoinstrumento.IdApresentacao });
         }
 
+
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         public ActionResult GerenciarSolicitacaoEvento(int id)
         {
             GerenciarSolicitacaoEventoDTO? g = _eventoService.GetSolicitacoesEventoDTO(id);
             GerenciarSolicitacaoEventoViewModel? model = _mapper.Map<GerenciarSolicitacaoEventoViewModel>(g);
-
+            Console.WriteLine("######## P #########");
+            Console.WriteLine(model.Id);
+            Console.WriteLine("Count: " + model.EventoSolicitacaoPessoasDTO?.Count());
+            Console.WriteLine("status: " + model.EventoSolicitacaoPessoasDTO?.First().AprovadoModel.ToString());
             return View(model);
         }
+
+        public ActionResult GerenciarSolicitacaoEventoModel(GerenciarSolicitacaoEventoViewModel model)
+        {
+            GerenciarSolicitacaoEventoDTO? g = _mapper.Map<GerenciarSolicitacaoEventoDTO>(model);
+            Console.WriteLine("\n###########################");
+            Console.WriteLine("ID: " + g.Id);
+            Console.WriteLine("NomesRegentes: " + g.NomesRegentes);
+            Console.WriteLine("Count: " + g.EventoSolicitacaoPessoasDTO?.Count());
+
+            if (g.EventoSolicitacaoPessoasDTO != null)
+            {
+                foreach (var v in g.EventoSolicitacaoPessoasDTO)
+                {
+                    Console.WriteLine("### ASSOCIADO ###");
+                    Console.WriteLine("Nome: " + v.NomeAssociado);
+                    Console.WriteLine("Papel: " + v.IdPapelGrupo);
+                    Console.WriteLine("Faltas: " + v.Faltas);
+                    Console.WriteLine("Inadiplencia: " + v.Inadiplencia);
+                    Console.WriteLine("Aprovado: " + v.AprovadoModel.ToString());
+                    Console.WriteLine("AprovadoModel: " + v.Aprovado.ToString() + "\n");
+                }
+            }
+
+            switch(_eventoService.EditSolicitacoesEvento(g))
+            {
+                case IEventoService.EventoStatus.Success:
+                    Notificar("Solicitação de participação do evento feito <b>solicitação</b> dos associados.", Notifica.Sucesso);
+                    break;
+                case IEventoService.EventoStatus.SemAlteracoes:
+                    Notificar("<b>Alerta!</b> Não houve alterações na solicitação de participação do evento dos associados.", Notifica.Alerta);
+                    break;
+                default:
+                    Notificar("Desculpe, ocorreu um <b>Erro</b> durante o geremciamento de <b>solicitação</b> dos associados.", Notifica.Erro);
+                    break;
+            }
+            
+            return RedirectToAction(nameof(GerenciarSolicitacaoEvento), new { id = model.Id });
+        }
+
     }
 }

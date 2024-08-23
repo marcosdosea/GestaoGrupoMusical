@@ -5,6 +5,7 @@ using Core.Service;
 using Email;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
+using static Core.Service.IEventoService;
 
 namespace Service
 {
@@ -397,12 +398,12 @@ namespace Service
                }).AsNoTracking().ToListAsync();
 
             return query;
-        }        
+        }
 
         public async Task<HttpStatusCode> CreateApresentacaoInstrumento(Apresentacaotipoinstrumento apresentacaotipoinstrumento)
         {
-                await _context.Apresentacaotipoinstrumentos.AddAsync(apresentacaotipoinstrumento);
-                await _context.SaveChangesAsync();
+            await _context.Apresentacaotipoinstrumentos.AddAsync(apresentacaotipoinstrumento);
+            await _context.SaveChangesAsync();
 
             return HttpStatusCode.Created;
         }
@@ -443,9 +444,13 @@ namespace Service
                                        rfp.Status != "ISENTO" &&
                                      rf.DataFim < DateTime.Now.Date
                                      )).Count() : 0,
+                             AprovadoModel = ConvertAprovadoParaEnum(eventoPessoa.Status),
+                             Aprovado = ConvertAprovadoParaEnum(eventoPessoa.Status)
                          }).AsNoTracking().ToList();
             return query;
         }
+
+
 
         public GerenciarSolicitacaoEventoDTO? GetSolicitacoesEventoDTO(int idEvento)
         {
@@ -473,5 +478,58 @@ namespace Service
             g.EventoSolicitacaoPessoasDTO = g.EventoSolicitacaoPessoasDTO.Where(e => e.IdPapelGrupo != 5);
             return g;
         }
+
+        public EventoStatus EditSolicitacoesEvento(GerenciarSolicitacaoEventoDTO g)
+        {
+            //using var transaction = _context.Database.BeginTransaction();
+            Console.WriteLine("\n##### SERVICE #####");
+            var transaction = _context.Database.BeginTransaction();
+            try
+            {
+                if (g.EventoSolicitacaoPessoasDTO == null || !g.EventoSolicitacaoPessoasDTO.Any())
+                    return EventoStatus.ErroGenerico;
+                //Remover os que NAO foram editados para aumentar o desempenho.
+                g.EventoSolicitacaoPessoasDTO = g.EventoSolicitacaoPessoasDTO.Where(e => e.Aprovado != e.AprovadoModel);
+                if (g.EventoSolicitacaoPessoasDTO.Count() == 0)
+                {
+                    transaction.Rollback();
+                    return EventoStatus.SemAlteracoes;
+                }
+
+                //primeiro verifica se houve mudancas de INSCRITO para INDEFERIDO ou mudancas que
+                //foram de INDEFERIDO para INSCRITO, pois nao ha impacto em outra tabela
+                List<SolicitacaoEventoPessoasDTO> auxSolicitacaoEvento = g.EventoSolicitacaoPessoasDTO.Where(
+                    es => (es.Aprovado == InscricaoEventoPessoa.INSCRITO && es.AprovadoModel == InscricaoEventoPessoa.INDEFERIDO) ||
+                    (es.Aprovado == InscricaoEventoPessoa.INDEFERIDO && es.AprovadoModel == InscricaoEventoPessoa.INSCRITO)
+                    ).ToList();
+                if (auxSolicitacaoEvento.Count != 0)
+                {
+                    for (int i = 0; i < auxSolicitacaoEvento.Count; i++)
+                    {
+                        Eventopessoa? e = _context.Eventopessoas.Where(
+                            ep => ep.IdPessoa == auxSolicitacaoEvento[i].IdAssociado &&
+                            ep.IdTipoInstrumento == auxSolicitacaoEvento[i].IdInstrumento &&
+                            ep.IdEvento == g.Id 
+                        ).FirstOrDefault();
+                        if(e != null)
+                        {
+                            e.Status = auxSolicitacaoEvento[i].AprovadoModel.ToString();
+                            _context.Update(e);
+                            _context.SaveChanges();
+                        }
+                    }
+                }
+                transaction.Commit();
+            }
+            catch
+            {
+                transaction.Rollback();
+                return EventoStatus.ErroGenerico;
+            }
+
+            return EventoStatus.Success;
+        }
+
+
     }
 }

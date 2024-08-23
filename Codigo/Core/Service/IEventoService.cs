@@ -24,5 +24,22 @@ namespace Core.Service
         Task<HttpStatusCode> CreateApresentacaoInstrumento(Apresentacaotipoinstrumento apresentacaotipoinstrumento);
         GerenciarSolicitacaoEventoDTO? GetSolicitacoesEventoDTO(int idEvento);
         IEnumerable<SolicitacaoEventoPessoasDTO> GetSolicitacaoEventoPessoas(int idEvento);
+        public EventoStatus EditSolicitacoesEvento(GerenciarSolicitacaoEventoDTO g);
+
+        public static InscricaoEventoPessoa ConvertAprovadoParaEnum(string aprovado)
+        {
+            if (aprovado.ToLower().Contains("indeferido"))
+                return InscricaoEventoPessoa.INDEFERIDO;
+            if (aprovado.ToLower().Contains("deferido"))
+                return InscricaoEventoPessoa.DEFERIDO;
+            return InscricaoEventoPessoa.INSCRITO;
+        }
+        public enum EventoStatus
+        {
+            Success,
+            UltrapassouLimiteQuantidadePlanejada,
+            ErroGenerico,
+            SemAlteracoes
+        }
     }
 }

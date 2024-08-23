@@ -44,7 +44,8 @@ namespace Core.DTO
         public string NomeAssociado { get; set; } = null!;
         public int Faltas { get; set; }
         public int Inadiplencia { get; set; }
-        public InscricaoEventoPessoa aprovado;
+        public InscricaoEventoPessoa AprovadoModel { get; set; }
+        public InscricaoEventoPessoa Aprovado { get; set; }
     }
 
 
