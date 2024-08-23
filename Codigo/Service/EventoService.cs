@@ -493,7 +493,7 @@ namespace Service
                 if (g.EventoSolicitacaoPessoasDTO.Count() == 0)
                 {
                     transaction.Rollback();
-                    return EventoStatus.SemAlteracoes;
+                    return EventoStatus.SemAlteracao;
                 }
 
                 //primeiro verifica se houve mudancas de INSCRITO para INDEFERIDO ou mudancas que
@@ -519,6 +519,23 @@ namespace Service
                         }
                     }
                 }
+                //Agora filtro para mexer na tabela ApresentacaoTipoInstrumento
+                g.EventoSolicitacaoPessoasDTO = g.EventoSolicitacaoPessoasDTO.Where(
+                    e => e.Aprovado == InscricaoEventoPessoa.DEFERIDO || 
+                    e.AprovadoModel == InscricaoEventoPessoa.DEFERIDO
+                    );
+                Console.WriteLine("#### APRESENTACAOTIPOINSTRUMENTO ####");
+                Console.WriteLine("Sobraram: " + g.EventoSolicitacaoPessoasDTO.Count());
+                if (g.EventoSolicitacaoPessoasDTO.Count() > 0)
+                {
+                    List<Apresentacaotipoinstrumento> at = _context.Apresentacaotipoinstrumentos.Where(
+                        ati => ati.IdApresentacao == g.Id &&
+                        g.EventoSolicitacaoPessoasDTO.Select(ev => ev.IdInstrumento).ToList().Contains(ati.IdTipoInstrumento)
+                        ).AsNoTracking().ToList();
+                    Console.WriteLine("#### APRESENTACAOTIPOINSTRUMENTO ####");
+                    Console.WriteLine("APCount: " + at.Count());
+                }
+                
                 transaction.Commit();
             }
             catch

@@ -39,7 +39,7 @@ namespace Core.Service
             Success,
             UltrapassouLimiteQuantidadePlanejada,
             ErroGenerico,
-            SemAlteracoes
+            SemAlteracao
         }
     }
 }

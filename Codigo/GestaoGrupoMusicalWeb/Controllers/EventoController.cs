@@ -370,8 +370,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 case IEventoService.EventoStatus.Success:
                     Notificar("Solicitação de participação do evento feito <b>solicitação</b> dos associados.", Notifica.Sucesso);
                     break;
-                case IEventoService.EventoStatus.SemAlteracoes:
-                    Notificar("<b>Alerta!</b> Não houve alterações na solicitação de participação do evento dos associados.", Notifica.Alerta);
+                case IEventoService.EventoStatus.SemAlteracao:
+                    Notificar("<b>Alerta!</b> Não houve alterações na solicitação de participação do evento dos associados.", Notifica.Informativo);
                     break;
                 default:
                     Notificar("Desculpe, ocorreu um <b>Erro</b> durante o geremciamento de <b>solicitação</b> dos associados.", Notifica.Erro);
