@@ -64,24 +64,25 @@
             </div>
             <form asp-action="GerenciarInstrumentoEvento">
             <div class="container">
-                <div class="row">                
+                <div class="row col-md-12">                
                     <div class="form-group  col-md-4">
                          <label asp-for="ListaInstrumentos" class="control-label"></label>
                         <select asp-items="@Model.ListaInstrumentos" asp-for="Id" class="form-select"></select>                                                           
                         <span asp-validation-for="ListaInstrumentos" class="text-danger"></span>
                         <input type="hidden" asp-for="@Model.IdTipoInstrumento" />
-                    </div>
+                    </div>                       
                     <div class="form-group  col-md-4">
-                    <label asp-for="Quantidade" class="control-label"></label>
-                    <input asp-for="Quantidade" class="form-control" />                    
-                    </div>
+                        <label asp-for="Quantidade" class="control-label"></label>
+                        <input asp-for="Quantidade" class="form-control" />
                         <span asp-validation-for="Quantidade" class="text-danger"></span>
-                    <div class=" col-md-4  d-flex d-grig gap-2 mx-auto d-flex flex-sm-column-reverse">
-                            <!-- <input class="btn btn-secondary col-lg-4 mt-3 ml-3" type="submit" value="Adicionar"/> -->
-                       <input type="submit" value="Adicionar" class="btn btn-secondary d-grid gap-2 col-sm " />
                     </div>
+                        <div class="form-group col-md-4 justify-content-lg-end flex-column-reverse flex-lg-row">
+                            <input class="btn btn-secondary  btn-lg w-100 mt-3" type="submit" value="Adicionar" />
+                    </div>
+                                     
                 </div>
             </div>
+            
         </form>
             <br />
             <br />
