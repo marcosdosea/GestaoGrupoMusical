@@ -5,6 +5,7 @@ using Core.Service;
 using Email;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
+using static Core.Service.IEventoService;
 
 namespace Service
 {
@@ -397,18 +398,19 @@ namespace Service
                }).AsNoTracking().ToListAsync();
 
             return query;
-        }        
+        }
 
         public async Task<HttpStatusCode> CreateApresentacaoInstrumento(Apresentacaotipoinstrumento apresentacaotipoinstrumento)
         {
-                await _context.Apresentacaotipoinstrumentos.AddAsync(apresentacaotipoinstrumento);
-                await _context.SaveChangesAsync();
+            await _context.Apresentacaotipoinstrumentos.AddAsync(apresentacaotipoinstrumento);
+            await _context.SaveChangesAsync();
 
             return HttpStatusCode.Created;
         }
 
         public IEnumerable<SolicitacaoEventoPessoasDTO> GetSolicitacaoEventoPessoas(int idEvento)
         {
+            DateTime twoMonthsAgo = DateTime.Now.AddMonths(-2);
             var query = (from evento in _context.Eventos
                          join eventoPessoa in _context.Eventopessoas
                          on evento.Id equals eventoPessoa.IdEvento
@@ -421,13 +423,34 @@ namespace Service
                          {
                              IdInstrumento = tipoInstrumento.Id,
                              NomeInstrumento = tipoInstrumento.Nome,
-                             IdAssociado = pessoa.Id,
+                             IdAssociado = eventoPessoa.IdPessoa,
                              IdPapelGrupo = eventoPessoa.IdPapelGrupoPapelGrupo,
                              NomeAssociado = pessoa.Nome,
+                             Faltas = _context.Ensaiopessoas.
+                             Count(
+                                 ep => ep.IdPessoa == pessoa.Id &&
+                                 ep.Presente == 0 &&
+                                 ep.JustificativaAceita == 0 &&
+                                 ep.IdEnsaioNavigation.DataHoraInicio >= twoMonthsAgo &&
+                                 ep.IdEnsaioNavigation.PresencaObrigatoria == 1),
+                             //antes de pegar inadinplencia, pergunta se a pessoa eh um associado,
+                             //pois apenas sao pros associados evitando fazer consultas descenessarias.
+                             Inadiplencia = eventoPessoa.IdPapelGrupoPapelGrupo == 1 ?
+                             _context.Receitafinanceiras.Where
+                             (
+                                 rf => rf.Receitafinanceirapessoas.Any(
+                                     rfp => rfp.IdPessoa == eventoPessoa.IdPessoa &&
+                                       rfp.Status != "PAGO" &&
+                                       rfp.Status != "ISENTO" &&
+                                     rf.DataFim < DateTime.Now.Date
+                                     )).Count() : 0,
+                             AprovadoModel = ConvertAprovadoParaEnum(eventoPessoa.Status),
+                             Aprovado = ConvertAprovadoParaEnum(eventoPessoa.Status)
                          }).AsNoTracking().ToList();
-
             return query;
         }
+
+
 
         public GerenciarSolicitacaoEventoDTO? GetSolicitacoesEventoDTO(int idEvento)
         {
@@ -442,21 +465,88 @@ namespace Service
                 DataHoraFim = evento.DataHoraFim,
             };
             g.EventoSolicitacaoPessoasDTO = GetSolicitacaoEventoPessoas(idEvento);
-            Console.WriteLine("Count: " + g.EventoSolicitacaoPessoasDTO.Count());
             foreach (SolicitacaoEventoPessoasDTO s in g.EventoSolicitacaoPessoasDTO)
             {
-                if(s.IdPapelGrupo == 5)
+                if (s.IdPapelGrupo == 5)
                 {
                     if (g.NomesRegentes.Length > 0)
-                        g.NomesRegentes += ";" + s.NomeAssociado;
+                        g.NomesRegentes += "; " + s.NomeAssociado;
                     else
                         g.NomesRegentes = s.NomeAssociado;
                 }
-                Console.WriteLine("Papel: " + s.IdPapelGrupo);
             }
             g.EventoSolicitacaoPessoasDTO = g.EventoSolicitacaoPessoasDTO.Where(e => e.IdPapelGrupo != 5);
-            Console.WriteLine("Count: " + g.EventoSolicitacaoPessoasDTO.Count());
             return g;
         }
+
+        public EventoStatus EditSolicitacoesEvento(GerenciarSolicitacaoEventoDTO g)
+        {
+            //using var transaction = _context.Database.BeginTransaction();
+            Console.WriteLine("\n##### SERVICE #####");
+            var transaction = _context.Database.BeginTransaction();
+            try
+            {
+                if (g.EventoSolicitacaoPessoasDTO == null || !g.EventoSolicitacaoPessoasDTO.Any())
+                    return EventoStatus.ErroGenerico;
+                //Remover os que NAO foram editados para aumentar o desempenho.
+                g.EventoSolicitacaoPessoasDTO = g.EventoSolicitacaoPessoasDTO.Where(e => e.Aprovado != e.AprovadoModel);
+                if (g.EventoSolicitacaoPessoasDTO.Count() == 0)
+                {
+                    transaction.Rollback();
+                    return EventoStatus.SemAlteracao;
+                }
+
+                //primeiro verifica se houve mudancas de INSCRITO para INDEFERIDO ou mudancas que
+                //foram de INDEFERIDO para INSCRITO, pois nao ha impacto em outra tabela
+                List<SolicitacaoEventoPessoasDTO> auxSolicitacaoEvento = g.EventoSolicitacaoPessoasDTO.Where(
+                    es => (es.Aprovado == InscricaoEventoPessoa.INSCRITO && es.AprovadoModel == InscricaoEventoPessoa.INDEFERIDO) ||
+                    (es.Aprovado == InscricaoEventoPessoa.INDEFERIDO && es.AprovadoModel == InscricaoEventoPessoa.INSCRITO)
+                    ).ToList();
+                if (auxSolicitacaoEvento.Count != 0)
+                {
+                    for (int i = 0; i < auxSolicitacaoEvento.Count; i++)
+                    {
+                        Eventopessoa? e = _context.Eventopessoas.Where(
+                            ep => ep.IdPessoa == auxSolicitacaoEvento[i].IdAssociado &&
+                            ep.IdTipoInstrumento == auxSolicitacaoEvento[i].IdInstrumento &&
+                            ep.IdEvento == g.Id 
+                        ).FirstOrDefault();
+                        if(e != null)
+                        {
+                            e.Status = auxSolicitacaoEvento[i].AprovadoModel.ToString();
+                            _context.Update(e);
+                            _context.SaveChanges();
+                        }
+                    }
+                }
+                //Agora filtro para mexer na tabela ApresentacaoTipoInstrumento
+                g.EventoSolicitacaoPessoasDTO = g.EventoSolicitacaoPessoasDTO.Where(
+                    e => e.Aprovado == InscricaoEventoPessoa.DEFERIDO || 
+                    e.AprovadoModel == InscricaoEventoPessoa.DEFERIDO
+                    );
+                Console.WriteLine("#### APRESENTACAOTIPOINSTRUMENTO ####");
+                Console.WriteLine("Sobraram: " + g.EventoSolicitacaoPessoasDTO.Count());
+                if (g.EventoSolicitacaoPessoasDTO.Count() > 0)
+                {
+                    List<Apresentacaotipoinstrumento> at = _context.Apresentacaotipoinstrumentos.Where(
+                        ati => ati.IdApresentacao == g.Id &&
+                        g.EventoSolicitacaoPessoasDTO.Select(ev => ev.IdInstrumento).ToList().Contains(ati.IdTipoInstrumento)
+                        ).AsNoTracking().ToList();
+                    Console.WriteLine("#### APRESENTACAOTIPOINSTRUMENTO ####");
+                    Console.WriteLine("APCount: " + at.Count());
+                }
+                
+                transaction.Commit();
+            }
+            catch
+            {
+                transaction.Rollback();
+                return EventoStatus.ErroGenerico;
+            }
+
+            return EventoStatus.Success;
+        }
+
+
     }
 }

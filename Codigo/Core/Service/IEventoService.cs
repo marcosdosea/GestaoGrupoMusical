@@ -22,5 +22,24 @@ namespace Core.Service
         Task<IEnumerable<FigurinoDropdownDTO>> GetAllFigurinoDropdown(int idGrupo);
         Task<IEnumerable<Eventopessoa>> GetPessoas(int idGrupo);
         Task<HttpStatusCode> CreateApresentacaoInstrumento(Apresentacaotipoinstrumento apresentacaotipoinstrumento);
+        GerenciarSolicitacaoEventoDTO? GetSolicitacoesEventoDTO(int idEvento);
+        IEnumerable<SolicitacaoEventoPessoasDTO> GetSolicitacaoEventoPessoas(int idEvento);
+        public EventoStatus EditSolicitacoesEvento(GerenciarSolicitacaoEventoDTO g);
+
+        public static InscricaoEventoPessoa ConvertAprovadoParaEnum(string aprovado)
+        {
+            if (aprovado.ToLower().Contains("indeferido"))
+                return InscricaoEventoPessoa.INDEFERIDO;
+            if (aprovado.ToLower().Contains("deferido"))
+                return InscricaoEventoPessoa.DEFERIDO;
+            return InscricaoEventoPessoa.INSCRITO;
+        }
+        public enum EventoStatus
+        {
+            Success,
+            UltrapassouLimiteQuantidadePlanejada,
+            ErroGenerico,
+            SemAlteracao
+        }
     }
 }

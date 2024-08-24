@@ -132,4 +132,5 @@ namespace GestaoGrupoMusicalWeb.Models
         public string NomesRegentes { get;set; } = null!;
         public IEnumerable<SolicitacaoEventoPessoasDTO>? EventoSolicitacaoPessoasDTO { get; set; }
     }
+
 }
