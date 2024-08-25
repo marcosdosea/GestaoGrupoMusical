@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Service;
 using Core.DTO;
 using System.Security.Claims;
+using System.Configuration;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -23,10 +24,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IPessoaService _pessoaService;
         private readonly IFigurinoService _figurinoService;
         private readonly IInstrumentoMusicalService _tipoIntrumentoMusicalService;
+        private int FaltasPessoasEmEnsaioMeses { get; }
 
 
-
-        public EventoController(IEventoService evento, IMapper mapper, IGrupoMusicalService grupoMusical, IPessoaService pessoaService, IFigurinoService figurino, IInstrumentoMusicalService tipoInstrumentoMusical)
+        public EventoController(IEventoService evento, IMapper mapper, 
+            IGrupoMusicalService grupoMusical, IPessoaService pessoaService, 
+            IFigurinoService figurino, IInstrumentoMusicalService tipoInstrumentoMusical,
+            IConfiguration configuration)
         {
             _eventoService = evento;
             _mapper = mapper;
@@ -34,6 +38,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             _pessoaService = pessoaService;
             _figurinoService = figurino;
             _tipoIntrumentoMusicalService = tipoInstrumentoMusical;
+            FaltasPessoasEmEnsaioMeses = configuration.GetValue<int>("Aplication:FaltasPessoasEmEnsaioEmMeses");
         }
 
         // GET: EventoController
@@ -53,6 +58,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             var evento = _eventoService.Get(id);
             var eventoModel = _mapper.Map<EventoViewModel>(evento);
+            
+
             return View(eventoModel);
         }
 
@@ -334,12 +341,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         public ActionResult GerenciarSolicitacaoEvento(int id)
         {
-            GerenciarSolicitacaoEventoDTO? g = _eventoService.GetSolicitacoesEventoDTO(id);
+            GerenciarSolicitacaoEventoDTO? g = _eventoService.GetSolicitacoesEventoDTO(id, FaltasPessoasEmEnsaioMeses);
             GerenciarSolicitacaoEventoViewModel? model = _mapper.Map<GerenciarSolicitacaoEventoViewModel>(g);
-            Console.WriteLine("######## P #########");
-            Console.WriteLine(model.Id);
-            Console.WriteLine("Count: " + model.EventoSolicitacaoPessoasDTO?.Count());
-            Console.WriteLine("status: " + model.EventoSolicitacaoPessoasDTO?.First().AprovadoModel.ToString());
             return View(model);
         }
 

@@ -408,51 +408,48 @@ namespace Service
             return HttpStatusCode.Created;
         }
 
-        public IEnumerable<SolicitacaoEventoPessoasDTO> GetSolicitacaoEventoPessoas(int idEvento)
+        public IEnumerable<SolicitacaoEventoPessoasDTO> GetSolicitacaoEventoPessoas(int idEvento, int pegarFaltasEmMesesAtras)
         {
-            DateTime twoMonthsAgo = DateTime.Now.AddMonths(-2);
-            var query = (from evento in _context.Eventos
-                         join eventoPessoa in _context.Eventopessoas
-                         on evento.Id equals eventoPessoa.IdEvento
-                         join tipoInstrumento in _context.Tipoinstrumentos
-                         on eventoPessoa.IdTipoInstrumento equals tipoInstrumento.Id
-                         join pessoa in _context.Pessoas
-                         on eventoPessoa.IdPessoa equals pessoa.Id
-                         where idEvento == evento.Id
+            DateTime doisMesesAtras = DateTime.Now.AddMonths(pegarFaltasEmMesesAtras);
+            var query = (from eventoPessoa in _context.Eventopessoas
+                         where idEvento == eventoPessoa.IdEvento
                          select new SolicitacaoEventoPessoasDTO
                          {
-                             IdInstrumento = tipoInstrumento.Id,
-                             NomeInstrumento = tipoInstrumento.Nome,
+                             IdInstrumento = eventoPessoa.IdTipoInstrumentoNavigation.Id,
+                             NomeInstrumento = eventoPessoa.IdTipoInstrumentoNavigation.Nome,
                              IdAssociado = eventoPessoa.IdPessoa,
                              IdPapelGrupo = eventoPessoa.IdPapelGrupoPapelGrupo,
-                             NomeAssociado = pessoa.Nome,
-                             Faltas = _context.Ensaiopessoas.
-                             Count(
-                                 ep => ep.IdPessoa == pessoa.Id &&
-                                 ep.Presente == 0 &&
-                                 ep.JustificativaAceita == 0 &&
-                                 ep.IdEnsaioNavigation.DataHoraInicio >= twoMonthsAgo &&
-                                 ep.IdEnsaioNavigation.PresencaObrigatoria == 1),
-                             //antes de pegar inadinplencia, pergunta se a pessoa eh um associado,
-                             //pois apenas sao pros associados evitando fazer consultas descenessarias.
-                             Inadiplencia = eventoPessoa.IdPapelGrupoPapelGrupo == 1 ?
-                             _context.Receitafinanceiras.Where
-                             (
-                                 rf => rf.Receitafinanceirapessoas.Any(
-                                     rfp => rfp.IdPessoa == eventoPessoa.IdPessoa &&
-                                       rfp.Status != "PAGO" &&
-                                       rfp.Status != "ISENTO" &&
-                                     rf.DataFim < DateTime.Now.Date
-                                     )).Count() : 0,
+                             NomeAssociado = eventoPessoa.IdPessoaNavigation.Nome,
                              AprovadoModel = ConvertAprovadoParaEnum(eventoPessoa.Status),
                              Aprovado = ConvertAprovadoParaEnum(eventoPessoa.Status)
                          }).AsNoTracking().ToList();
+
+            for (int i = 0; i < query.Count; i++)
+            {
+                if (query[i].IdPapelGrupo != 1)
+                    continue;
+                query[i].Faltas = _context.Ensaiopessoas.
+                             Count(
+                                 ep => ep.IdPessoa == query[i].IdAssociado &&
+                                 ep.Presente == 0 &&
+                                 ep.JustificativaAceita == 0 &&
+                                 ep.IdEnsaioNavigation.DataHoraInicio >= doisMesesAtras &&
+                                 ep.IdEnsaioNavigation.PresencaObrigatoria == 1);
+
+                query[i].Inadiplencia = _context.Receitafinanceiras.Where
+                    (
+                    rf => rf.Receitafinanceirapessoas.Any(
+                        rfp => rfp.IdPessoa == query[i].IdAssociado &&
+                        rfp.Status != "PAGO" && 
+                        rf.DataFim > DateTime.Now.Date
+                        )).Count();
+            }
             return query;
         }
 
 
 
-        public GerenciarSolicitacaoEventoDTO? GetSolicitacoesEventoDTO(int idEvento)
+        public GerenciarSolicitacaoEventoDTO? GetSolicitacoesEventoDTO(int idEvento, int pegarFaltasEmMesesAtras)
         {
             Evento? evento = Get(idEvento);
             if (evento == null)
@@ -463,8 +460,9 @@ namespace Service
                 Id = idEvento,
                 DataHoraInicio = evento.DataHoraInicio,
                 DataHoraFim = evento.DataHoraFim,
+                FaltasPessoasEmEnsaioMeses = pegarFaltasEmMesesAtras
             };
-            g.EventoSolicitacaoPessoasDTO = GetSolicitacaoEventoPessoas(idEvento);
+            g.EventoSolicitacaoPessoasDTO = GetSolicitacaoEventoPessoas(idEvento, pegarFaltasEmMesesAtras);
             foreach (SolicitacaoEventoPessoasDTO s in g.EventoSolicitacaoPessoasDTO)
             {
                 if (s.IdPapelGrupo == 5)
@@ -509,9 +507,9 @@ namespace Service
                         Eventopessoa? e = _context.Eventopessoas.Where(
                             ep => ep.IdPessoa == auxSolicitacaoEvento[i].IdAssociado &&
                             ep.IdTipoInstrumento == auxSolicitacaoEvento[i].IdInstrumento &&
-                            ep.IdEvento == g.Id 
+                            ep.IdEvento == g.Id
                         ).FirstOrDefault();
-                        if(e != null)
+                        if (e != null)
                         {
                             e.Status = auxSolicitacaoEvento[i].AprovadoModel.ToString();
                             _context.Update(e);
@@ -521,7 +519,7 @@ namespace Service
                 }
                 //Agora filtro para mexer na tabela ApresentacaoTipoInstrumento
                 g.EventoSolicitacaoPessoasDTO = g.EventoSolicitacaoPessoasDTO.Where(
-                    e => e.Aprovado == InscricaoEventoPessoa.DEFERIDO || 
+                    e => e.Aprovado == InscricaoEventoPessoa.DEFERIDO ||
                     e.AprovadoModel == InscricaoEventoPessoa.DEFERIDO
                     );
                 Console.WriteLine("#### APRESENTACAOTIPOINSTRUMENTO ####");
@@ -535,7 +533,7 @@ namespace Service
                     Console.WriteLine("#### APRESENTACAOTIPOINSTRUMENTO ####");
                     Console.WriteLine("APCount: " + at.Count());
                 }
-                
+
                 transaction.Commit();
             }
             catch
