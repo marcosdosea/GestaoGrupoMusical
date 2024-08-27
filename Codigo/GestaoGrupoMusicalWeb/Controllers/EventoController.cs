@@ -349,24 +349,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public ActionResult GerenciarSolicitacaoEventoModel(GerenciarSolicitacaoEventoViewModel model)
         {
             GerenciarSolicitacaoEventoDTO? g = _mapper.Map<GerenciarSolicitacaoEventoDTO>(model);
-            Console.WriteLine("\n###########################");
-            Console.WriteLine("ID: " + g.Id);
-            Console.WriteLine("NomesRegentes: " + g.NomesRegentes);
-            Console.WriteLine("Count: " + g.EventoSolicitacaoPessoasDTO?.Count());
-
-            if (g.EventoSolicitacaoPessoasDTO != null)
-            {
-                foreach (var v in g.EventoSolicitacaoPessoasDTO)
-                {
-                    Console.WriteLine("### ASSOCIADO ###");
-                    Console.WriteLine("Nome: " + v.NomeAssociado);
-                    Console.WriteLine("Papel: " + v.IdPapelGrupo);
-                    Console.WriteLine("Faltas: " + v.Faltas);
-                    Console.WriteLine("Inadiplencia: " + v.Inadiplencia);
-                    Console.WriteLine("Aprovado: " + v.AprovadoModel.ToString());
-                    Console.WriteLine("AprovadoModel: " + v.Aprovado.ToString() + "\n");
-                }
-            }
 
             switch(_eventoService.EditSolicitacoesEvento(g))
             {

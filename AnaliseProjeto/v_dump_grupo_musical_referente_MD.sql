@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `grupomusical` /*!40100 DEFAULT CHARACTER SET utf8 */;
-USE `grupomusical`;
 -- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: grupomusical
@@ -44,6 +42,7 @@ CREATE TABLE `apresentacaotipoinstrumento` (
 
 LOCK TABLES `apresentacaotipoinstrumento` WRITE;
 /*!40000 ALTER TABLE `apresentacaotipoinstrumento` DISABLE KEYS */;
+INSERT INTO `apresentacaotipoinstrumento` VALUES (1,3,5,0,1);
 /*!40000 ALTER TABLE `apresentacaotipoinstrumento` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -565,7 +564,7 @@ CREATE TABLE `informativo` (
   KEY `fk_GrupoMusicalPessoa_GrupoMusical1_idx` (`idGrupoMusical`),
   CONSTRAINT `fk_GrupoMusicalPessoa_GrupoMusical1` FOREIGN KEY (`idGrupoMusical`) REFERENCES `grupomusical` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_GrupoMusicalPessoa_Pessoa1` FOREIGN KEY (`idPessoa`) REFERENCES `pessoa` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -574,6 +573,7 @@ CREATE TABLE `informativo` (
 
 LOCK TABLES `informativo` WRITE;
 /*!40000 ALTER TABLE `informativo` DISABLE KEYS */;
+INSERT INTO `informativo` VALUES (1,1,2,'Informativo','2024-08-26 21:30:05',1);
 /*!40000 ALTER TABLE `informativo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -596,7 +596,7 @@ CREATE TABLE `instrumentomusical` (
   KEY `fk_InstrumentoMusical_GrupoMusical1_idx` (`idGrupoMusical`),
   CONSTRAINT `fk_InstrumentoMusical_GrupoMusical1` FOREIGN KEY (`idGrupoMusical`) REFERENCES `grupomusical` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_InstrumentoMusical_TipoInstrumento1` FOREIGN KEY (`idTipoInstrumento`) REFERENCES `tipoinstrumento` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -605,6 +605,7 @@ CREATE TABLE `instrumentomusical` (
 
 LOCK TABLES `instrumentomusical` WRITE;
 /*!40000 ALTER TABLE `instrumentomusical` DISABLE KEYS */;
+INSERT INTO `instrumentomusical` VALUES (1,'00001','2024-08-26','DISPONIVEL',3,1);
 /*!40000 ALTER TABLE `instrumentomusical` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -652,7 +653,7 @@ CREATE TABLE `materialestudo` (
   KEY `fk_MaterialEstudo_Pessoa1_idx` (`idColaborador`),
   CONSTRAINT `fk_MaterialEstudo_GrupoMusical1` FOREIGN KEY (`idGrupoMusical`) REFERENCES `grupomusical` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_MaterialEstudo_Pessoa1` FOREIGN KEY (`idColaborador`) REFERENCES `pessoa` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -661,6 +662,7 @@ CREATE TABLE `materialestudo` (
 
 LOCK TABLES `materialestudo` WRITE;
 /*!40000 ALTER TABLE `materialestudo` DISABLE KEYS */;
+INSERT INTO `materialestudo` VALUES (1,'Videos no youtube','www.youtube.com','2024-08-26 21:32:59',1,2),(2,'Vídeos no Google','www.google.com','2024-08-26 21:33:09',1,2),(3,'Vídeo no instagram','www.instagram.com','2024-08-26 21:33:21',1,2),(5,'video no twiter','www.twitch.com','2024-08-26 21:35:31',1,2);
 /*!40000 ALTER TABLE `materialestudo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -923,10 +925,6 @@ LOCK TABLES `tipoinstrumento` WRITE;
 INSERT INTO `tipoinstrumento` VALUES (0,'NENHUM'),(1,'Tambor'),(2,'Flauta'),(3,'Violão'),(4,'Xilofone'),(5,'Guitarra');
 /*!40000 ALTER TABLE `tipoinstrumento` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Dumping routines for database 'grupomusical'
---
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -937,4 +935,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-08-21 21:35:22
+-- Dump completed on 2024-08-26 21:52:57
