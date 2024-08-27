@@ -7,116 +7,107 @@
 }
 
 <partial name="_Notificar">
-    <div class="container">
-        <h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">Aprovar Solicitação Participação Evento</h1>
-        <nav>
-            <ol class="breadcrumb px-3">
-                <strong>
-                    <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Evento"]</a>
-                    <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Solicitacao"]</spn>
-                </strong>
-            </ol>
-        </nav>
-        <hr />
-        <br />
-        <form id="formSolicitacao" asp-action="GerenciarSolicitacaoEventoModel">
-            <div class="form-group" hidden>
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" readonly class="form-control" />
+    <h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">Aprovar Solicitação Participação Evento</h1>
+    <nav>
+        <ol class="breadcrumb px-3">
+            <strong>
+                <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Evento"]</a>
+                <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Solicitacao"]</spn>
+            </strong>
+        </ol>
+    </nav>
+    <hr />
+    <br />
+    <form id="formSolicitacao" asp-action="GerenciarSolicitacaoEventoModel">
+        <div class="form-group" hidden>
+            <label asp-for="Id" class="control-label"></label>
+            <input asp-for="Id" readonly class="form-control" />
+        </div>
+        <div class="row mb-4">
+            <div class="form-group col-xxl-2">
+                <label asp-for="DataHoraInicio" class="control-label"></label>
+                <input asp-for="DataHoraInicio" style="width:170px;" readonly class="form-control" />
             </div>
-            <div class="container">
-                <div class="row">
-                    <div class="form-group col-xxl-4">
-                        <label asp-for="DataHoraInicio" class="control-label"></label>
-                        <input asp-for="DataHoraInicio" readonly class="form-control" />
+            <div class="form-group col-xxl-2">
+                <label asp-for="DataHoraFim" class="control-label"></label>
+                <input asp-for="DataHoraFim" style="width:170px;" readonly class="form-control" />
+            </div>
+        </div>
+        <label asp-for="NomesRegentes" class="control-label"></label>
+        <input asp-for="NomesRegentes" readonly class="form-control" />
+        <br /><br />
+        <table class="table">
+            <thead>
+                <tr class="bg-danger bg-opacity-75 text-white">
+                    <th class="border-0">
+                        <span class="text-white">Instrumento</span>
+                    </th>
+                    <th class="border-0">
+                        <span class="text-white">Associado</span>
+                    </th>
 
-                    </div>
-                    <div class="form-group col-xxl-4">
-                        <label asp-for="DataHoraFim" class="control-label"></label>
-                        <input asp-for="DataHoraFim" readonly class="form-control" />
-                    </div>
-                </div>
-            </div>
-            <div class="container">
-                <label asp-for="NomesRegentes" class="control-label"></label>
-                <input asp-for="NomesRegentes" readonly class="form-control" />
-            </div>
-            <br /><br />
-            <div class="container">
-                <table class="table">
-                    <thead>
-                        <tr class="bg-danger bg-opacity-75 text-white">
-                            <th class="border-0">
-                                <span class="text-white">Instrumento</span>
-                            </th>
-                            <th class="border-0">
-                                <span class="text-white">Associado</span>
-                            </th>
+                    <th class=" border-0">
+                        <span class="text-white">Faltas</span>
+                    </th>
+                    <th class=" border-0 ">
+                        <span class="text-white">Inadimplência</span>
+                    </th>
+                    <th class=" border-0">
+                        <span class="text-white">Aprovado</span>
+                    </th>
+                </tr>
+            </thead>
 
-                            <th class=" border-0">
-                                <span class="text-white">Faltas</span>
-                            </th>
-                            <th class=" border-0 ">
-                                <span class="text-white">Inadimplência</span>
-                            </th>
-                            <th class=" border-0">
-                                <span class="text-white">Aprovado</span>
-                            </th>
+            <tbody>
+                @if (Model.EventoSolicitacaoPessoasDTO != null)
+                {
+                    int index = 0;
+                    @foreach (var item in Model.EventoSolicitacaoPessoasDTO)
+                    {
+                        <tr class="border-bottom border-danger border-opacity-75 p-3 align-middle">
+                            <td class="p-3">
+                                @Html.DisplayFor(modelItem => item.NomeInstrumento)
+                                <input type="hidden" name="EventoSolicitacaoPessoasDTO[@index].NomeInstrumento" value="@item.NomeInstrumento" />
+                                <input type="hidden" name="EventoSolicitacaoPessoasDTO[@index].IdInstrumento" value="@item.IdInstrumento" />
+                            </td>
+                            <td class="p-3">
+                                @Html.DisplayFor(modelItem => item.NomeAssociado)
+                                <input type="hidden" name="EventoSolicitacaoPessoasDTO[@index].NomeAssociado" value="@item.NomeAssociado" />
+                                <input type="hidden" name="EventoSolicitacaoPessoasDTO[@index].IdAssociado" value="@item.IdAssociado" />
+                            </td>
+                            <td class="p-3">
+                                @Html.DisplayFor(modelItem => item.Faltas)
+                                <input type="hidden" name="EventoSolicitacaoPessoasDTO[@index].Faltas" value="@item.Faltas" />
+                            </td>
+                            <td class="p-3">
+                                @Html.DisplayFor(modelItem => item.Inadiplencia)
+                                <input type="hidden" name="EventoSolicitacaoPessoasDTO[@index].Inadiplencia" value="@item.Inadiplencia" />
+                            </td>
+                            <td class="p-3">
+                                <select asp-for="@item.AprovadoModel" class="form-select"
+                                        asp-items="Html.GetEnumSelectList<Core.DTO.InscricaoEventoPessoa>()"
+                                        onchange="updateHiddenInput(this, 'hiddenAprovadoModel_@index')">
+                                </select>
+                                <input type="hidden" id="hiddenAprovadoModel_@index"
+                                       name="EventoSolicitacaoPessoasDTO[@index].AprovadoModel"
+                                       value="@item.AprovadoModel" />
+                                <input type="hidden" name="EventoSolicitacaoPessoasDTO[@index].Aprovado" value="@item.Aprovado" />
+                            </td>
                         </tr>
-                    </thead>
-
-                    <tbody>
-                        @if (Model.EventoSolicitacaoPessoasDTO != null)
-                        {
-                            int index = 0;
-                            @foreach (var item in Model.EventoSolicitacaoPessoasDTO)
-                            {
-                                <tr class="border-bottom border-danger border-opacity-75 p-3 align-middle">
-                                    <td class="p-3">
-                                        @Html.DisplayFor(modelItem => item.NomeInstrumento)
-                                        <input type="hidden" name="EventoSolicitacaoPessoasDTO[@index].NomeInstrumento" value="@item.NomeInstrumento" />
-                                        <input type="hidden" name="EventoSolicitacaoPessoasDTO[@index].IdInstrumento" value="@item.IdInstrumento" />
-                                    </td>
-                                    <td class="p-3">
-                                        @Html.DisplayFor(modelItem => item.NomeAssociado)
-                                        <input type="hidden" name="EventoSolicitacaoPessoasDTO[@index].NomeAssociado" value="@item.NomeAssociado" />
-                                        <input type="hidden" name="EventoSolicitacaoPessoasDTO[@index].IdAssociado" value="@item.IdAssociado" />
-                                    </td>
-                                    <td class="p-3">
-                                        @Html.DisplayFor(modelItem => item.Faltas)
-                                        <input type="hidden" name="EventoSolicitacaoPessoasDTO[@index].Faltas" value="@item.Faltas" />
-                                    </td>
-                                    <td class="p-3">
-                                        @Html.DisplayFor(modelItem => item.Inadiplencia)
-                                        <input type="hidden" name="EventoSolicitacaoPessoasDTO[@index].Inadiplencia" value="@item.Inadiplencia" />
-                                    </td>
-                                    <td class="p-3">
-                                        <select asp-for="@item.AprovadoModel" class="form-select"
-                                                asp-items="Html.GetEnumSelectList<Core.DTO.InscricaoEventoPessoa>()"
-                                                onchange="updateHiddenInput(this, 'hiddenAprovadoModel_@index')">
-                                        </select>
-                                        <input type="hidden" id="hiddenAprovadoModel_@index"
-                                               name="EventoSolicitacaoPessoasDTO[@index].AprovadoModel"
-                                               value="@item.AprovadoModel" />
-                                        <input type="hidden" name="EventoSolicitacaoPessoasDTO[@index].Aprovado" value="@item.Aprovado" />
-                                    </td>
-                                </tr>
-                                index++;
-                            }
-                        }
-                    </tbody>
-                </table>
+                        index++;
+                    }
+                }
+            </tbody>
+        </table>
+        <br /> <br />
+        <div class="container">
+            <div class="row d-flex flex-column-reverse d-grig gap-2 mx-auto d-flex flex-sm-column-reverse flex-xl-row">
+                <div class="col-5 d-none d-sm-block"></div>
+                <a class="btn btn-light text-secondary border border-secondary d-grid gap-2 col-sm" asp-controller="Evento" asp-action="Index"> Voltar </a>
+                <input type="submit" value="Salvar" class="btn btn-secondary d-grid gap-2 col-sm " />
             </div>
-            <br /> <br />
-            <div class="container">
-                <div class="row d-flex flex-column-reverse d-grig gap-2 mx-auto d-flex flex-sm-column-reverse flex-xl-row">
-                    <div class="col-5 d-none d-sm-block"></div>
-                    <a class="btn btn-light text-secondary border border-secondary d-grid gap-2 col-sm" asp-controller="Evento" asp-action="Index"> Voltar </a>
-                    <input type="submit" value="Salvar" class="btn btn-secondary d-grid gap-2 col-sm " />
-                </div>
-            </div>
-        </form>
-    </div>
+        </div>
+    </form>
 
     @section Scripts {
         @{

@@ -371,10 +371,16 @@ namespace GestaoGrupoMusicalWeb.Controllers
             switch(_eventoService.EditSolicitacoesEvento(g))
             {
                 case IEventoService.EventoStatus.Success:
-                    Notificar("Solicitação de participação do evento feito <b>solicitação</b> dos associados.", Notifica.Sucesso);
+                    Notificar("Solicitação de <b>participação</b> do evento alterado com <b>sucesso</b>.", Notifica.Sucesso);
                     break;
                 case IEventoService.EventoStatus.SemAlteracao:
                     Notificar("<b>Alerta!</b> Não houve alterações na solicitação de participação do evento dos associados.", Notifica.Informativo);
+                    break;
+                case IEventoService.EventoStatus.QuantidadeSolicitadaNegativa:
+                    Notificar("<b>Erro!</b> Solicitação de participação do evento está <b>negativa</b>. Consulte o <b>suporte</b>.", Notifica.Erro);
+                    break;
+                case IEventoService.EventoStatus.UltrapassouLimiteQuantidadePlanejada:
+                    Notificar("<b>Erro!</b> Ultrapassou o <b>limite</b> de participação de associados em um determinado <b>instrumento</b>", Notifica.Erro);
                     break;
                 default:
                     Notificar("Desculpe, ocorreu um <b>Erro</b> durante o geremciamento de <b>solicitação</b> dos associados.", Notifica.Erro);
