@@ -27,18 +27,17 @@
                         <div class="row">
                             <div class="form-group col-xxl-4">
                                 <label asp-for="DataHoraInicio" class="control-label"></label>
-                                <input asp-for="DataHoraInicio" class="form-control" />
+                                <input asp-for="DataHoraInicio" readonly class="form-control" />
                                 <span asp-validation-for="DataHoraInicio" class="text-danger"></span>
                             </div>
                             <div class="form-group col-xxl-4">
                                 <label asp-for="DataHoraFim" class="control-label"></label>
-                                <input asp-for="DataHoraFim" class="form-control" />
+                                <input asp-for="DataHoraFim" readonly class="form-control" />
                                 <span asp-validation-for="DataHoraFim" class="text-danger"></span>
                             </div>
                             <div class="form-group col-xl">
                                 <label asp-for="Tipo" class="control-label"></label>
-                                <select asp-for="Tipo" class="form-select" asp-items="Html.GetEnumSelectList<Tipo>()">
-                                </select>
+                                <input asp-for="Tipo" readonly class="form-control" />
                                 <span asp-validation-for="Tipo" class="text-danger"></span>
                             </div>
                         </div>
@@ -47,14 +46,7 @@
                         <div class="row">
                             <div class="form-group col-xl">
                                 <label asp-for="IdRegentes" class="control-label"></label>
-                                <span class="d-inline-block my-2" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Escreva o nome do Regente. Ex: @ViewData["exemploRegente"]">
-                                    <button class="btn btn-outline-secondary btn-sm fw-bold" type="button">?</button>
-                                </span>
-                                <select multiple asp-for="IdRegentes" class="d-none" asp-items="Model.ListaPessoa">
-                                </select>
-                                <input class="form-control" id="regentes" placeholder="Informe o Regente." />
-                                <div id="blockNames" class="d-flex flex-column gap-2">
-                                </div>
+                                <input asp-for="IdRegentes" readonly class="form-control" />
                                 <span for="regentes" class="text-danger"></span>
                             </div>
                         </div>
@@ -64,7 +56,7 @@
                     <div class="row">
                         <div class="form-group">
                             <label asp-for="IdFigurinoSelecionado" class="control-label"></label>
-                            <select asp-items="@Model.ListaFigurino" asp-for="IdFigurinoSelecionado" class="form-select"></select>
+                            <input asp-for="IdFigurinoSelecionado" readonly class="form-control" />
                             <span asp-validation-for="IdFigurinoSelecionado" class="text-danger"></span>
                         </div>
                     </div>
@@ -73,7 +65,7 @@
                     <div class="row">
                         <div class="form-group">
                             <label asp-for="Local" class="control-label"></label>
-                            <input asp-for="Local" class="form-control" />
+                            <input asp-for="Local" readonly class="form-control" />
                             <span asp-validation-for="Local" class="text-danger"></span>
                         </div>
                     </div>
@@ -83,17 +75,21 @@
                         <div class="form-group">
                             <table>
                                 <thead>
-                                    <tr>
-                                        <th>CPF</th>
-                                        <th>Nome</th>
+                                    <tr class="bg-danger bg-opacity-75 text-white">
+                                        <th class="border-0">
+                                            <span class="text-white">CPF</span>
+                                        </th>
+                                        <th class="border-0">
+                                            <span class="text-white">Nome</span>
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @{
                                         for (int i = 0; i < Model.AssociadosDTO.Count; i++)
                                         {
-                                            <tr>
-                                                <td>
+                                            <tr class="border-bottom border-danger border-opacity-75 p-3 align-middle">
+                                                <td class="p-3">
                                                     @Html.TextBoxFor(model => Model.AssociadosDTO[i].Nome
                                                         , new
                                                         {
@@ -101,7 +97,7 @@
                                                         })
                                                 </td>
 
-                                                <td>
+                                                <td class="p-3">
                                                     @Html.TextBoxFor(model => Model.AssociadosDTO[i].Cpf
                                                          , new
                                                          {
