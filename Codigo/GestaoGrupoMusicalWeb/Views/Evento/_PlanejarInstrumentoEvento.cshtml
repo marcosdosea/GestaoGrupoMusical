@@ -1,0 +1,24 @@
+﻿@model GestaoGrupoMusicalWeb.Models.PlanejarInstrumentoEventoViewModel
+
+<div class="container">
+    <form asp-action="Create" asp-controller="GerenciarInstrumentoEvento">
+        
+    <div class="row col-md-12">
+        <div class="form-group  col-md-4">
+                <label asp-for="IdInstrumento" class="control-label"></label>
+                <select asp-items="Model.ListaInstrumentos" asp-for="Id" class="form-select"></select>
+                <span asp-validation-for="ListaInstrumentos" class="text-danger"></span>
+                <input type="hidden" asp-for="IdInstrumento" />
+        </div>
+        <div class="form-group  col-md-4">
+            <label asp-for="Quantidade" class="control-label"></label>
+            <input asp-for="Quantidade" class="form-control" />
+            <span asp-validation-for="Quantidade" class="text-danger"></span>
+        </div>
+        <div class="form-group col-md-4 justify-content-lg-end flex-column-reverse flex-lg-row">
+            <input class="btn btn-secondary  btn-lg w-100 mt-3" type="submit" value="Adicionar" />
+        </div>
+
+    </div>     
+    </form>
+</div>

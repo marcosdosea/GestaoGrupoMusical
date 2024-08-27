@@ -18,36 +18,36 @@
                 </ol>
             </nav>
             <hr />
-            <br />            
-                <div class="container">
-                    <div class="row">
-                        <div class="form-group col-xxl-4">
-                            <label asp-for="DataHoraInicio" class="control-label"></label>
+            <br />
+            <div class="container">
+                <div class="row">
+                    <div class="form-group col-xxl-4">
+                        <label asp-for="DataHoraInicio" class="control-label"></label>
                         <input asp-for="DataHoraInicio" class="form-control" readonly />
-                            <span asp-validation-for="DataHoraInicio" class="text-danger"></span>
-                        </div>
-                        <div class="form-group col-xxl-4">
-                            <label asp-for="DataHoraFim" class="control-label"></label>
+                        <span asp-validation-for="DataHoraInicio" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-xxl-4">
+                        <label asp-for="DataHoraFim" class="control-label"></label>
                         <input asp-for="DataHoraFim" class="form-control" readonly />
-                            <span asp-validation-for="DataHoraFim" class="text-danger"></span>
-                        </div>
+                        <span asp-validation-for="DataHoraFim" class="text-danger"></span>
                     </div>
                 </div>
-                <div class="container">                  
-                    <div class="row col-xl">
-                        <div class="form-group">
-                            <label asp-for="IdRegentes" class="control-label"></label>
+            </div>
+            <div class="container">
+                <div class="row col-xl">
+                    <div class="form-group">
+                        <label asp-for="IdRegentes" class="control-label"></label>
                         <select asp-for="IdRegentes" asp-items="@Model.ListaPessoa" class="form-select" readonly>
-                                <option value=""></option>
-                            </select>
-                            <span asp-validation-for="IdRegentes" class="text-danger"></span>
-                        </div>                    
-                        <div>
-                            <input type="hidden" asp-for="IdGrupoMusical" />
-                            <input type="hidden" asp-for="Id" />
-                        </div>
+                            <option value=""></option>
+                        </select>
+                        <span asp-validation-for="IdRegentes" class="text-danger"></span>
                     </div>
-               </div>
+                    <div>
+                        <input type="hidden" asp-for="IdGrupoMusical" />
+                        <input type="hidden" asp-for="Id" />
+                    </div>
+                </div>
+            </div>
             <div class="container">
                 <div class="form-group">
                     <label asp-for="IdFigurinoSelecionado" class="control-label"></label>
@@ -57,41 +57,40 @@
             </div>
             <div class="container">
                 <div class="form-group">
-                    <label asp-for="Local" class="control-label"></label>                    
+                    <label asp-for="Local" class="control-label"></label>
                     <input asp-for="Local" class="form-control" readonly />
                     <span asp-validation-for="Local" class="text-danger"></span>
-                </div>                         
-            </div>
-            <form asp-action="GerenciarInstrumentoEvento">
-            <div class="container">
-                <div class="row">                
-                    <div class="form-group  col-md-4">
-                         <label asp-for="ListaInstrumentos" class="control-label"></label>
-                        <select asp-items="@Model.ListaInstrumentos" asp-for="Id" class="form-select"></select>                                                           
-                        <span asp-validation-for="ListaInstrumentos" class="text-danger"></span>
-                        <input type="hidden" asp-for="@Model.IdTipoInstrumento" />
-                    </div>
-                    <div class="form-group  col-md-4">
-                    <label asp-for="Quantidade" class="control-label"></label>
-                    <input asp-for="Quantidade" class="form-control" />                    
-                    </div>
-                        <span asp-validation-for="Quantidade" class="text-danger"></span>
-                    <div class=" col-md-4  d-flex d-grig gap-2 mx-auto d-flex flex-sm-column-reverse">
-                            <!-- <input class="btn btn-secondary col-lg-4 mt-3 ml-3" type="submit" value="Adicionar"/> -->
-                       <input type="submit" value="Adicionar" class="btn btn-secondary d-grid gap-2 col-sm " />
-                    </div>
                 </div>
             </div>
-        </form>
-            <br />
-            <br />
-          <partial name="_TabelaGerenciarInstrumento" model="@Model.GerenciarInstrumentos">
-            <div class="row">
-                <div class="d-flex justify-content-lg-end flex-column-reverse flex-lg-row">
-                    <a class="btn btn-outline-secondary col-lg-2 mt-3 me-lg-3 btn-" asp-controller="Evento" asp-action="Index">Voltar</a>                        
+            <form asp-action="Create" asp-action="GerenciarInstrumentoEvento">
+                <div class="container">
+                    <div class="row col-md-12">
+                        <div class="form-group  col-md-4">
+                            <label asp-for="ListaInstrumentos" class="control-label"></label>
+                            <select asp-items="@Model.ListaInstrumentos" asp-for="Id" class="form-select"></select>
+                            <span asp-validation-for="ListaInstrumentos" class="text-danger"></span>
+                            <input type="hidden" asp-for="@Model.IdTipoInstrumento" />
+                        </div>
+                        <div class="form-group  col-md-4">
+                            <label asp-for="Quantidade" class="control-label"></label>
+                            <input asp-for="Quantidade" class="form-control" />
+                            <span asp-validation-for="Quantidade" class="text-danger"></span>
+                        </div>                        
+                        <div class="form-group col-md-4 justify-content-lg-end flex-column-reverse flex-lg-row">
+                            <input class="btn btn-secondary  btn-lg w-100 mt-3" type="submit" value="Adicionar" />
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>                               
+            </form>
+            <br />
+            <br />
+            <partial name="_TabelaGerenciarInstrumento" model="@Model.GerenciarInstrumentos">
+                <div class="row">
+                    <div class="d-flex justify-content-lg-end flex-column-reverse flex-lg-row">
+                        <a class="btn btn-outline-secondary col-lg-2 mt-3 me-lg-3 btn-" asp-controller="Evento" asp-action="Index">Voltar</a>
+                    </div>
+                </div>
+        </div>
     </div>
     @section Header {
         @{
