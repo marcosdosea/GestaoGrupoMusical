@@ -22,8 +22,8 @@ namespace Core.Service
         Task<IEnumerable<FigurinoDropdownDTO>> GetAllFigurinoDropdown(int idGrupo);
         Task<IEnumerable<Eventopessoa>> GetPessoas(int idGrupo);
         Task<HttpStatusCode> CreateApresentacaoInstrumento(Apresentacaotipoinstrumento apresentacaotipoinstrumento);
-        GerenciarSolicitacaoEventoDTO? GetSolicitacoesEventoDTO(int idEvento);
-        IEnumerable<SolicitacaoEventoPessoasDTO> GetSolicitacaoEventoPessoas(int idEvento);
+        GerenciarSolicitacaoEventoDTO? GetSolicitacoesEventoDTO(int idEvento, int pegarFaltasEmMesesAtras);
+        IEnumerable<SolicitacaoEventoPessoasDTO> GetSolicitacaoEventoPessoas(int idEvento, int pegarFaltasEmMesesAtras);
         public EventoStatus EditSolicitacoesEvento(GerenciarSolicitacaoEventoDTO g);
 
         public static InscricaoEventoPessoa ConvertAprovadoParaEnum(string aprovado)
@@ -39,7 +39,9 @@ namespace Core.Service
             Success,
             UltrapassouLimiteQuantidadePlanejada,
             ErroGenerico,
-            SemAlteracao
+            SemAlteracao,
+            QuantidadeConfirmadaNegativa,
+            QuantidadeSolicitadaNegativa
         }
     }
 }

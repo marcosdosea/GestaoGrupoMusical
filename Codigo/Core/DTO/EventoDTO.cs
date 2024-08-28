@@ -32,6 +32,8 @@ namespace Core.DTO
         public DateTime DataHoraFim { get; set; }
 
         public string NomesRegentes { get; set; } = "";
+
+        public int FaltasPessoasEmEnsaioMeses { get; set; }
         public IEnumerable<SolicitacaoEventoPessoasDTO>? EventoSolicitacaoPessoasDTO { get; set; }
     }
 

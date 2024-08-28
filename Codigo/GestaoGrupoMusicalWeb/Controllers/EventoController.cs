@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Service;
 using Core.DTO;
 using System.Security.Claims;
+using System.Configuration;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -23,10 +24,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IPessoaService _pessoaService;
         private readonly IFigurinoService _figurinoService;
         private readonly IInstrumentoMusicalService _tipoIntrumentoMusicalService;
+        private int FaltasPessoasEmEnsaioMeses { get; }
 
 
-
-        public EventoController(IEventoService evento, IMapper mapper, IGrupoMusicalService grupoMusical, IPessoaService pessoaService, IFigurinoService figurino, IInstrumentoMusicalService tipoInstrumentoMusical)
+        public EventoController(IEventoService evento, IMapper mapper, 
+            IGrupoMusicalService grupoMusical, IPessoaService pessoaService, 
+            IFigurinoService figurino, IInstrumentoMusicalService tipoInstrumentoMusical,
+            IConfiguration configuration)
         {
             _eventoService = evento;
             _mapper = mapper;
@@ -34,6 +38,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             _pessoaService = pessoaService;
             _figurinoService = figurino;
             _tipoIntrumentoMusicalService = tipoInstrumentoMusical;
+            FaltasPessoasEmEnsaioMeses = configuration.GetValue<int>("Aplication:FaltasPessoasEmEnsaioEmMeses");
         }
 
         // GET: EventoController
@@ -53,6 +58,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             var evento = _eventoService.Get(id);
             var eventoModel = _mapper.Map<EventoViewModel>(evento);
+            
+
             return View(eventoModel);
         }
 
@@ -334,44 +341,28 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         public ActionResult GerenciarSolicitacaoEvento(int id)
         {
-            GerenciarSolicitacaoEventoDTO? g = _eventoService.GetSolicitacoesEventoDTO(id);
+            GerenciarSolicitacaoEventoDTO? g = _eventoService.GetSolicitacoesEventoDTO(id, FaltasPessoasEmEnsaioMeses);
             GerenciarSolicitacaoEventoViewModel? model = _mapper.Map<GerenciarSolicitacaoEventoViewModel>(g);
-            Console.WriteLine("######## P #########");
-            Console.WriteLine(model.Id);
-            Console.WriteLine("Count: " + model.EventoSolicitacaoPessoasDTO?.Count());
-            Console.WriteLine("status: " + model.EventoSolicitacaoPessoasDTO?.First().AprovadoModel.ToString());
             return View(model);
         }
 
         public ActionResult GerenciarSolicitacaoEventoModel(GerenciarSolicitacaoEventoViewModel model)
         {
             GerenciarSolicitacaoEventoDTO? g = _mapper.Map<GerenciarSolicitacaoEventoDTO>(model);
-            Console.WriteLine("\n###########################");
-            Console.WriteLine("ID: " + g.Id);
-            Console.WriteLine("NomesRegentes: " + g.NomesRegentes);
-            Console.WriteLine("Count: " + g.EventoSolicitacaoPessoasDTO?.Count());
-
-            if (g.EventoSolicitacaoPessoasDTO != null)
-            {
-                foreach (var v in g.EventoSolicitacaoPessoasDTO)
-                {
-                    Console.WriteLine("### ASSOCIADO ###");
-                    Console.WriteLine("Nome: " + v.NomeAssociado);
-                    Console.WriteLine("Papel: " + v.IdPapelGrupo);
-                    Console.WriteLine("Faltas: " + v.Faltas);
-                    Console.WriteLine("Inadiplencia: " + v.Inadiplencia);
-                    Console.WriteLine("Aprovado: " + v.AprovadoModel.ToString());
-                    Console.WriteLine("AprovadoModel: " + v.Aprovado.ToString() + "\n");
-                }
-            }
 
             switch(_eventoService.EditSolicitacoesEvento(g))
             {
                 case IEventoService.EventoStatus.Success:
-                    Notificar("Solicitação de participação do evento feito <b>solicitação</b> dos associados.", Notifica.Sucesso);
+                    Notificar("Solicitação de <b>participação</b> do evento alterado com <b>sucesso</b>.", Notifica.Sucesso);
                     break;
                 case IEventoService.EventoStatus.SemAlteracao:
                     Notificar("<b>Alerta!</b> Não houve alterações na solicitação de participação do evento dos associados.", Notifica.Informativo);
+                    break;
+                case IEventoService.EventoStatus.QuantidadeSolicitadaNegativa:
+                    Notificar("<b>Erro!</b> Solicitação de participação do evento está <b>negativa</b>. Consulte o <b>suporte</b>.", Notifica.Erro);
+                    break;
+                case IEventoService.EventoStatus.UltrapassouLimiteQuantidadePlanejada:
+                    Notificar("<b>Erro!</b> Ultrapassou o <b>limite</b> de participação de associados em um determinado <b>instrumento</b>", Notifica.Erro);
                     break;
                 default:
                     Notificar("Desculpe, ocorreu um <b>Erro</b> durante o geremciamento de <b>solicitação</b> dos associados.", Notifica.Erro);

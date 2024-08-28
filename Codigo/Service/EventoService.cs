@@ -408,51 +408,48 @@ namespace Service
             return HttpStatusCode.Created;
         }
 
-        public IEnumerable<SolicitacaoEventoPessoasDTO> GetSolicitacaoEventoPessoas(int idEvento)
+        public IEnumerable<SolicitacaoEventoPessoasDTO> GetSolicitacaoEventoPessoas(int idEvento, int pegarFaltasEmMesesAtras)
         {
-            DateTime twoMonthsAgo = DateTime.Now.AddMonths(-2);
-            var query = (from evento in _context.Eventos
-                         join eventoPessoa in _context.Eventopessoas
-                         on evento.Id equals eventoPessoa.IdEvento
-                         join tipoInstrumento in _context.Tipoinstrumentos
-                         on eventoPessoa.IdTipoInstrumento equals tipoInstrumento.Id
-                         join pessoa in _context.Pessoas
-                         on eventoPessoa.IdPessoa equals pessoa.Id
-                         where idEvento == evento.Id
+            DateTime doisMesesAtras = DateTime.Now.AddMonths(pegarFaltasEmMesesAtras);
+            var query = (from eventoPessoa in _context.Eventopessoas
+                         where idEvento == eventoPessoa.IdEvento
                          select new SolicitacaoEventoPessoasDTO
                          {
-                             IdInstrumento = tipoInstrumento.Id,
-                             NomeInstrumento = tipoInstrumento.Nome,
+                             IdInstrumento = eventoPessoa.IdTipoInstrumentoNavigation.Id,
+                             NomeInstrumento = eventoPessoa.IdTipoInstrumentoNavigation.Nome,
                              IdAssociado = eventoPessoa.IdPessoa,
                              IdPapelGrupo = eventoPessoa.IdPapelGrupoPapelGrupo,
-                             NomeAssociado = pessoa.Nome,
-                             Faltas = _context.Ensaiopessoas.
-                             Count(
-                                 ep => ep.IdPessoa == pessoa.Id &&
-                                 ep.Presente == 0 &&
-                                 ep.JustificativaAceita == 0 &&
-                                 ep.IdEnsaioNavigation.DataHoraInicio >= twoMonthsAgo &&
-                                 ep.IdEnsaioNavigation.PresencaObrigatoria == 1),
-                             //antes de pegar inadinplencia, pergunta se a pessoa eh um associado,
-                             //pois apenas sao pros associados evitando fazer consultas descenessarias.
-                             Inadiplencia = eventoPessoa.IdPapelGrupoPapelGrupo == 1 ?
-                             _context.Receitafinanceiras.Where
-                             (
-                                 rf => rf.Receitafinanceirapessoas.Any(
-                                     rfp => rfp.IdPessoa == eventoPessoa.IdPessoa &&
-                                       rfp.Status != "PAGO" &&
-                                       rfp.Status != "ISENTO" &&
-                                     rf.DataFim < DateTime.Now.Date
-                                     )).Count() : 0,
+                             NomeAssociado = eventoPessoa.IdPessoaNavigation.Nome,
                              AprovadoModel = ConvertAprovadoParaEnum(eventoPessoa.Status),
                              Aprovado = ConvertAprovadoParaEnum(eventoPessoa.Status)
                          }).AsNoTracking().ToList();
+
+            for (int i = 0; i < query.Count; i++)
+            {
+                if (query[i].IdPapelGrupo != 1)
+                    continue;
+                query[i].Faltas = _context.Ensaiopessoas.AsNoTracking().
+                             Count(
+                                 ep => ep.IdPessoa == query[i].IdAssociado &&
+                                 ep.Presente == 0 &&
+                                 ep.JustificativaAceita == 0 &&
+                                 ep.IdEnsaioNavigation.DataHoraInicio >= doisMesesAtras &&
+                                 ep.IdEnsaioNavigation.PresencaObrigatoria == 1);
+
+                query[i].Inadiplencia = _context.Receitafinanceiras.Where
+                    (
+                    rf => rf.Receitafinanceirapessoas.Any(
+                        rfp => rfp.IdPessoa == query[i].IdAssociado &&
+                        rfp.Status != "PAGO" &&
+                        rf.DataFim > DateTime.Now.Date
+                        )).AsNoTracking().Count();
+            }
             return query;
         }
 
 
 
-        public GerenciarSolicitacaoEventoDTO? GetSolicitacoesEventoDTO(int idEvento)
+        public GerenciarSolicitacaoEventoDTO? GetSolicitacoesEventoDTO(int idEvento, int pegarFaltasEmMesesAtras)
         {
             Evento? evento = Get(idEvento);
             if (evento == null)
@@ -463,8 +460,9 @@ namespace Service
                 Id = idEvento,
                 DataHoraInicio = evento.DataHoraInicio,
                 DataHoraFim = evento.DataHoraFim,
+                FaltasPessoasEmEnsaioMeses = pegarFaltasEmMesesAtras
             };
-            g.EventoSolicitacaoPessoasDTO = GetSolicitacaoEventoPessoas(idEvento);
+            g.EventoSolicitacaoPessoasDTO = GetSolicitacaoEventoPessoas(idEvento, pegarFaltasEmMesesAtras);
             foreach (SolicitacaoEventoPessoasDTO s in g.EventoSolicitacaoPessoasDTO)
             {
                 if (s.IdPapelGrupo == 5)
@@ -481,27 +479,30 @@ namespace Service
 
         public EventoStatus EditSolicitacoesEvento(GerenciarSolicitacaoEventoDTO g)
         {
-            //using var transaction = _context.Database.BeginTransaction();
-            Console.WriteLine("\n##### SERVICE #####");
             var transaction = _context.Database.BeginTransaction();
             try
             {
-                if (g.EventoSolicitacaoPessoasDTO == null || !g.EventoSolicitacaoPessoasDTO.Any())
-                    return EventoStatus.ErroGenerico;
-                //Remover os que NAO foram editados para aumentar o desempenho.
+                if (g.EventoSolicitacaoPessoasDTO == null || g.EventoSolicitacaoPessoasDTO.Count() < 1)
+                {
+                    transaction.Rollback();
+                    return EventoStatus.SemAlteracao;
+                }
                 g.EventoSolicitacaoPessoasDTO = g.EventoSolicitacaoPessoasDTO.Where(e => e.Aprovado != e.AprovadoModel);
                 if (g.EventoSolicitacaoPessoasDTO.Count() == 0)
                 {
                     transaction.Rollback();
                     return EventoStatus.SemAlteracao;
                 }
-
-                //primeiro verifica se houve mudancas de INSCRITO para INDEFERIDO ou mudancas que
-                //foram de INDEFERIDO para INSCRITO, pois nao ha impacto em outra tabela
+                List<int> auxIdInstrumento = g.EventoSolicitacaoPessoasDTO.Select(ev => ev.IdInstrumento).ToList();
+                List<Apresentacaotipoinstrumento> at = _context.Apresentacaotipoinstrumentos.Where(
+                       ati => ati.IdApresentacao == g.Id &&
+                       auxIdInstrumento.Contains(ati.IdTipoInstrumento)
+                       ).AsNoTracking().ToList();
                 List<SolicitacaoEventoPessoasDTO> auxSolicitacaoEvento = g.EventoSolicitacaoPessoasDTO.Where(
                     es => (es.Aprovado == InscricaoEventoPessoa.INSCRITO && es.AprovadoModel == InscricaoEventoPessoa.INDEFERIDO) ||
                     (es.Aprovado == InscricaoEventoPessoa.INDEFERIDO && es.AprovadoModel == InscricaoEventoPessoa.INSCRITO)
                     ).ToList();
+
                 if (auxSolicitacaoEvento.Count != 0)
                 {
                     for (int i = 0; i < auxSolicitacaoEvento.Count; i++)
@@ -509,42 +510,90 @@ namespace Service
                         Eventopessoa? e = _context.Eventopessoas.Where(
                             ep => ep.IdPessoa == auxSolicitacaoEvento[i].IdAssociado &&
                             ep.IdTipoInstrumento == auxSolicitacaoEvento[i].IdInstrumento &&
-                            ep.IdEvento == g.Id 
+                            ep.IdEvento == g.Id
                         ).FirstOrDefault();
-                        if(e != null)
+                        if (e != null)
                         {
                             e.Status = auxSolicitacaoEvento[i].AprovadoModel.ToString();
                             _context.Update(e);
                             _context.SaveChanges();
                         }
+                        else
+                        {
+                            transaction.Rollback();
+                            return EventoStatus.ErroGenerico;
+                        }
                     }
                 }
-                //Agora filtro para mexer na tabela ApresentacaoTipoInstrumento
                 g.EventoSolicitacaoPessoasDTO = g.EventoSolicitacaoPessoasDTO.Where(
-                    e => e.Aprovado == InscricaoEventoPessoa.DEFERIDO || 
+                    e => e.Aprovado == InscricaoEventoPessoa.DEFERIDO ||
                     e.AprovadoModel == InscricaoEventoPessoa.DEFERIDO
                     );
-                Console.WriteLine("#### APRESENTACAOTIPOINSTRUMENTO ####");
-                Console.WriteLine("Sobraram: " + g.EventoSolicitacaoPessoasDTO.Count());
                 if (g.EventoSolicitacaoPessoasDTO.Count() > 0)
                 {
-                    List<Apresentacaotipoinstrumento> at = _context.Apresentacaotipoinstrumentos.Where(
-                        ati => ati.IdApresentacao == g.Id &&
-                        g.EventoSolicitacaoPessoasDTO.Select(ev => ev.IdInstrumento).ToList().Contains(ati.IdTipoInstrumento)
-                        ).AsNoTracking().ToList();
-                    Console.WriteLine("#### APRESENTACAOTIPOINSTRUMENTO ####");
-                    Console.WriteLine("APCount: " + at.Count());
+                    auxSolicitacaoEvento = g.EventoSolicitacaoPessoasDTO.Where(
+                        ep => ep.Aprovado == InscricaoEventoPessoa.DEFERIDO || 
+                        ep.AprovadoModel == InscricaoEventoPessoa.DEFERIDO
+                        ).ToList();
+                    if (auxSolicitacaoEvento.Count != 0)
+                    {
+                        for (int i = 0; i < auxSolicitacaoEvento.Count; i++)
+                        {
+                            Eventopessoa? e = _context.Eventopessoas.Where(
+                            ep => ep.IdPessoa == auxSolicitacaoEvento[i].IdAssociado &&
+                            ep.IdTipoInstrumento == auxSolicitacaoEvento[i].IdInstrumento &&
+                            ep.IdEvento == g.Id).FirstOrDefault();
+                            Apresentacaotipoinstrumento? auxAt = at.Where(
+                                        at => at.IdApresentacao == g.Id
+                                        && at.IdTipoInstrumento == auxSolicitacaoEvento[i].IdInstrumento).FirstOrDefault();
+                            if (auxAt != null && e != null)
+                            {
+                                if (auxSolicitacaoEvento[i].Aprovado == InscricaoEventoPessoa.DEFERIDO)
+                                {
+                                    auxAt.QuantidadeConfirmada--;
+                                }
+                                else if(auxSolicitacaoEvento[i].Aprovado == InscricaoEventoPessoa.INDEFERIDO || auxSolicitacaoEvento[i].Aprovado == InscricaoEventoPessoa.INSCRITO)
+                                {
+                                    auxAt.QuantidadeConfirmada++;
+                                }
+                                else
+                                {
+                                    transaction.Rollback();
+                                    return EventoStatus.ErroGenerico;
+                                }
+                                if(auxAt.QuantidadeConfirmada < 0)
+                                {
+                                    transaction.Rollback();
+                                    return EventoStatus.QuantidadeConfirmadaNegativa;
+                                }
+                                if(auxAt.QuantidadeConfirmada > auxAt.QuantidadePlanejada)
+                                {
+                                    transaction.Rollback();
+                                    return EventoStatus.UltrapassouLimiteQuantidadePlanejada;
+                                }
+                                
+                                e.Status = auxSolicitacaoEvento[i].AprovadoModel.ToString();
+                                _context.Update(e);
+                                _context.SaveChanges();
+                            }
+                            else
+                            {
+                                transaction.Rollback();
+                                return EventoStatus.ErroGenerico;
+                            }
+                        }
+                    }
                 }
-                
+                _context.UpdateRange(at);
+                _context.SaveChanges();
                 transaction.Commit();
+                return EventoStatus.Success;
             }
             catch
             {
                 transaction.Rollback();
                 return EventoStatus.ErroGenerico;
             }
-
-            return EventoStatus.Success;
         }
 
 
