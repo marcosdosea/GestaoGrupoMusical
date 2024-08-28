@@ -126,8 +126,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             else
             {
                 Notificar("<b>Erro</b>! Há algo errado ao cadastrar um novo Evento", Notifica.Erro);
-            }
-            Console.WriteLine("View model");
+            }            
             return RedirectToAction(nameof(Index));
         }
 
@@ -175,7 +174,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(EventoCreateViewlModel eventoModel)
         {
-           
+
             if (ModelState.IsValid && eventoModel.IdFigurinoSelecionado != 0 && eventoModel.IdRegentes != null && eventoModel.IdRegentes.Any())
             {
                 var colaborador = await _pessoaService.GetByCpf(User.Identity?.Name);
@@ -314,67 +313,116 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> GerenciarInstrumentoEvento(GerenciarInstrumentoEventoViewModel gerenciarInstrumentoEventoViewModel)
-        {              
+        {
+
+            Console.WriteLine("INSTRUMENTOS", gerenciarInstrumentoEventoViewModel.IdTipoInstrumento);
+            Console.WriteLine("QUANTIDADE", gerenciarInstrumentoEventoViewModel.Quantidade);
 
             Apresentacaotipoinstrumento apresentacaotipoinstrumento = new Apresentacaotipoinstrumento
             {
                 IdApresentacao = gerenciarInstrumentoEventoViewModel.IdApresentacao,
-                IdTipoInstrumento = gerenciarInstrumentoEventoViewModel.IdTipoInstrumento,              
-                QuantidadePlanejada = gerenciarInstrumentoEventoViewModel.Quantidade              
+                IdTipoInstrumento = gerenciarInstrumentoEventoViewModel.IdTipoInstrumento,
+                QuantidadePlanejada = gerenciarInstrumentoEventoViewModel.Quantidade
             };
 
-            HttpStatusCode resul = await _eventoService.CreateApresentacaoInstrumento(apresentacaotipoinstrumento);           
+            HttpStatusCode resul = await _eventoService.CreateApresentacaoInstrumento(apresentacaotipoinstrumento);
 
             return RedirectToAction(nameof(GerenciarInstrumentoEvento), new { id = apresentacaotipoinstrumento.IdApresentacao });
         }
+
+
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
+        public ActionResult GerenciarSolicitacaoEvento(int id)
+        {
+            GerenciarSolicitacaoEventoDTO? g = _eventoService.GetSolicitacoesEventoDTO(id);
+            GerenciarSolicitacaoEventoViewModel? model = _mapper.Map<GerenciarSolicitacaoEventoViewModel>(g);
+            Console.WriteLine("######## P #########");
+            Console.WriteLine(model.Id);
+            Console.WriteLine("Count: " + model.EventoSolicitacaoPessoasDTO?.Count());
+            Console.WriteLine("status: " + model.EventoSolicitacaoPessoasDTO?.First().AprovadoModel.ToString());
+            return View(model);
+        }
+
+        public ActionResult GerenciarSolicitacaoEventoModel(GerenciarSolicitacaoEventoViewModel model)
+        {
+            GerenciarSolicitacaoEventoDTO? g = _mapper.Map<GerenciarSolicitacaoEventoDTO>(model);
+            Console.WriteLine("\n###########################");
+            Console.WriteLine("ID: " + g.Id);
+            Console.WriteLine("NomesRegentes: " + g.NomesRegentes);
+            Console.WriteLine("Count: " + g.EventoSolicitacaoPessoasDTO?.Count());
+
+            if (g.EventoSolicitacaoPessoasDTO != null)
+            {
+                foreach (var v in g.EventoSolicitacaoPessoasDTO)
+                {
+                    Console.WriteLine("### ASSOCIADO ###");
+                    Console.WriteLine("Nome: " + v.NomeAssociado);
+                    Console.WriteLine("Papel: " + v.IdPapelGrupo);
+                    Console.WriteLine("Faltas: " + v.Faltas);
+                    Console.WriteLine("Inadiplencia: " + v.Inadiplencia);
+                    Console.WriteLine("Aprovado: " + v.AprovadoModel.ToString());
+                    Console.WriteLine("AprovadoModel: " + v.Aprovado.ToString() + "\n");
+                }
+            }
+
+            switch(_eventoService.EditSolicitacoesEvento(g))
+            {
+                case IEventoService.EventoStatus.Success:
+                    Notificar("Solicitação de participação do evento feito <b>solicitação</b> dos associados.", Notifica.Sucesso);
+                    break;
+                case IEventoService.EventoStatus.SemAlteracao:
+                    Notificar("<b>Alerta!</b> Não houve alterações na solicitação de participação do evento dos associados.", Notifica.Informativo);
+                    break;
+                default:
+                    Notificar("Desculpe, ocorreu um <b>Erro</b> durante o geremciamento de <b>solicitação</b> dos associados.", Notifica.Erro);
+                    break;
+            }
+            
+            return RedirectToAction(nameof(GerenciarSolicitacaoEvento), new { id = model.Id });
+        }
         [Authorize(Roles = "ADMINISTRADOR GRUPO,COLABORADOR,REGENTE")]
-        // GET: EventoController/RegistrarFrequencia/5
+        // GET: EventoController/RegistrarFrequencia
         public async Task<ActionResult> RegistrarFrequencia(int idEvento)
         {
+            idEvento = 1;
             int idGrupoMusical = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
 
-            var listaPessoasAutoComplete = await _pessoaService.GetRegentesForAutoCompleteAsync(idGrupoMusical);
-            if (listaPessoasAutoComplete == null || !listaPessoasAutoComplete.Any())
+            var listaRegentes = await _pessoaService.GetRegentesForAutoCompleteAsync(idGrupoMusical);
+            if (listaRegentes == null || !listaRegentes.Any())
             {
                 Notificar("É necessário cadastrar pelo menos um Regente para então registrar uma frequência.", Notifica.Informativo);
                 return RedirectToAction(nameof(Index));
             }
 
             var listaFigurinos = await _figurinoService.GetAllFigurinoDropdown(idGrupoMusical);
+
             if (listaFigurinos == null || !listaFigurinos.Any())
             {
                 Notificar("É necessário cadastrar pelo menos um Figurino para então registrar uma frequência.", Notifica.Informativo);
                 return RedirectToAction(nameof(Index));
             }
 
-            var evento = _eventoService.Get(idEvento);
-            if (evento == null)
+            var listaAssociadosAtivos = await _pessoaService.GetAssociadoAtivos(idGrupoMusical);
+
+            if (listaAssociadosAtivos == null || !listaAssociadosAtivos.Any())
             {
-                Notificar("Evento não encontrado.", Notifica.Erro);
+                Notificar("É necessário pelo menos um Associado Ativo para então registrar uma frequência.", Notifica.Informativo);
                 return RedirectToAction(nameof(Index));
             }
+
+            var evento = _eventoService.Get(idEvento);
 
             EventoViewModel eventoView = _mapper.Map<EventoViewModel>(evento);
-            if (eventoView == null)
-            {
-                Notificar("Erro ao mapear o evento.", Notifica.Erro);
-                return RedirectToAction(nameof(Index));
-            }
 
-            FrequenciaEventoViewModel frequenciaEvento = new()
-            {
-                IdGrupoMusical = idGrupoMusical,
-                DataHoraInicio = eventoView.DataHoraInicio,
-                DataHoraFim = eventoView.DataHoraFim,
-                ListaPessoa = new SelectList(listaPessoasAutoComplete, "Id", "Nome"),
-                ListaFigurino = new SelectList(listaFigurinos, "Id", "Nome"),
-                Local = eventoView.Local
-            };
+            eventoView.ListaPessoa = new SelectList(listaRegentes, "Id", "Nome");
+            eventoView.ListaFigurino = new SelectList(listaFigurinos, "Id", "Nome");
+            eventoView.AssociadosDTO = listaAssociadosAtivos;
 
-            ViewData["exemploRegente"] = listaPessoasAutoComplete.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
-            frequenciaEvento.JsonLista = listaPessoasAutoComplete.ToJson();
+            ViewData["exemploRegente"] = listaRegentes.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
+            ViewData["jsonIdRegentes"] = (await _eventoService.GetIdRegentesEventoAsync(eventoView.Id)).ToJson();
+            eventoView.JsonLista = listaRegentes.ToJson();
 
-            return View(frequenciaEvento);
+            return View(eventoView);
         }
 
         [Authorize(Roles = "ADMINISTRADOR GRUPO,COLABORADOR,REGENTE")]
@@ -400,7 +448,58 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     Notificar("Desculpe, ocorreu um <b>Erro</b> ao registrar a Lista de <b>Frequência</b>.", Notifica.Erro);
                     break;
             }
-            return RedirectToAction(nameof(RegistrarFrequencia), new { idEnsaio = listaFrequencia.First().IdEvento });
+            return RedirectToAction(nameof(RegistrarFrequencia), new { idEvento = listaFrequencia.First().IdEvento });
+        }
+
+        [Authorize(Roles = "ASSOCIADO")]
+        public async Task<ActionResult> EventoAssociado()
+        {
+            var model = await _eventoService.GetEventosByIdPessoaAsync(Convert.ToInt32(User.FindFirst("Id")?.Value));
+
+            return View(model);
+        }
+        [Authorize(Roles = "ASSOCIADO")]
+        public async Task<ActionResult> JustificarAusencia(int idEvento)
+        {
+            var model = await _eventoService.GetEventoPessoaAsync(idEvento, Convert.ToInt32(User.FindFirst("Id")?.Value));
+
+            if (model == null)
+            {
+                return RedirectToAction(nameof(EventoAssociado));
+            }
+            EventoJustificativaViewModel eventoJustificativa = new()
+            {
+                IdEvento = model.IdEvento,
+                Justificativa = model.JustificativaFalta
+            };
+            return View(eventoJustificativa);
+        }
+
+        [Authorize(Roles = "ASSOCIADO")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> JustificarAusencia(EventoJustificativaViewModel eventoJustificativa)
+        {
+            if (ModelState.IsValid)
+            {
+                switch (await _eventoService.RegistrarJustificativaAsync(eventoJustificativa.IdEvento, Convert.ToInt32(User.FindFirst("Id")?.Value), eventoJustificativa.Justificativa))
+                {
+                    case HttpStatusCode.OK:
+                        Notificar("<b>Justificativa</b> registrada com <b>Sucesso</b>", Notifica.Sucesso);
+                        return RedirectToAction(nameof(EventoAssociado));
+                    case HttpStatusCode.NotFound:
+                        Notificar("A <b>Justificativa</b> enviada é <b>Inválida</b>", Notifica.Erro);
+                        break;
+                    case HttpStatusCode.Unauthorized:
+                        Notificar("Desculpe, <b>Não</b> foi possível <b>Registrar</b> a <b>Justificativa</b>", Notifica.Erro);
+                        break;
+                    case HttpStatusCode.InternalServerError:
+                        Notificar("Desculpe, ocorreu um <b>Erro</b> ao registrar a <b>Justificativa</b>, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                        break;
+                }
+            }
+
+            return View(eventoJustificativa);
         }
 
 
