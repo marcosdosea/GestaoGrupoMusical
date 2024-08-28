@@ -7,9 +7,11 @@ namespace Core.Service
     public interface IEventoService
     {
         Task<HttpStatusCode> RegistrarFrequenciaAsync(List<EventoListaFrequenciaDTO> listaFrequencia);
+        Task<HttpStatusCode> RegistrarJustificativaAsync(int idEvento, int idPessoa, string? justificativa);
+        Task<IEnumerable<int>> GetIdRegentesEventoAsync(int idEvento);
         Task<HttpStatusCode> Create(Evento evento, IEnumerable<int> idRegentes, int idFigurino);
         HttpStatusCode Delete(int id);
-        void Edit(Evento evento);
+        HttpStatusCode Edit(Evento evento);
         Evento Get(int id);
         ICollection<Eventopessoa> GetEventoPessoasPorIdEvento(int idEvento);
         IEnumerable<Evento> GetAll();
@@ -21,7 +23,27 @@ namespace Core.Service
         Task<string> GetNomeInstrumento(int id);
         Task<IEnumerable<FigurinoDropdownDTO>> GetAllFigurinoDropdown(int idGrupo);
         Task<IEnumerable<Eventopessoa>> GetPessoas(int idGrupo);
+        Task<Eventopessoa?> GetEventoPessoaAsync(int idEvento, int idPessoa);
+        Task<IEnumerable<EventoAssociadoDTO>> GetEventosByIdPessoaAsync(int idPessoa);
         Task<HttpStatusCode> CreateApresentacaoInstrumento(Apresentacaotipoinstrumento apresentacaotipoinstrumento);
+        GerenciarSolicitacaoEventoDTO? GetSolicitacoesEventoDTO(int idEvento);
+        IEnumerable<SolicitacaoEventoPessoasDTO> GetSolicitacaoEventoPessoas(int idEvento);
+        public EventoStatus EditSolicitacoesEvento(GerenciarSolicitacaoEventoDTO g);
 
+        public static InscricaoEventoPessoa ConvertAprovadoParaEnum(string aprovado)
+        {
+            if (aprovado.ToLower().Contains("indeferido"))
+                return InscricaoEventoPessoa.INDEFERIDO;
+            if (aprovado.ToLower().Contains("deferido"))
+                return InscricaoEventoPessoa.DEFERIDO;
+            return InscricaoEventoPessoa.INSCRITO;
+        }
+        public enum EventoStatus
+        {
+            Success,
+            UltrapassouLimiteQuantidadePlanejada,
+            ErroGenerico,
+            SemAlteracao
+        }
     }
 }
