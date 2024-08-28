@@ -9,34 +9,48 @@ namespace GestaoGrupoMusicalWeb.Models
     {
         [Key]
         public int Id { get; set; }
+
         [Display(Name = "Grupo Musical")]
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public int IdGrupoMusical { get; set; }
+
         [Display(Name = "Data hora início")]
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public DateTime DataHoraInicio { get; set; }
+
         [Display(Name = "Data Hora Fim")]
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public DateTime DataHoraFim { get; set; }
+
         [Display(Name = "Local")]
         public string? Local { get; set; }
+
         [Display(Name = "Repetório")]
         public string? Repertorio { get; set; }
+
         [Display(Name = "Colaborador Reponsável")]
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public int IdColaboradorResponsavel { get; set; }
+
         [Display(Name = "Regente")]
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public int IdRegente { get; set; }
 
+        [Display(Name = "Figurinos")]
+        [Required(ErrorMessage = "O campo {0} é obrigatório")]
+        public int IdFigurinoSelecionado { get; set; }
+
         [Display(Name = "Regentes")]
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public IEnumerable<int>? IdRegentes { get; set; }
+
         public string? JsonLista { get; set; }
         public IEnumerable<FigurinoDropdownDTO> FigurinoList { get; set; } = null!;
 
         public SelectList? ListaPessoa { get; set; }
-        public SelectList? ListaGrupoMusical { get; set; }       
+        public SelectList? ListaGrupoMusical { get; set; }
+        public SelectList? ListaFigurino { get; set; }
+        public List<AssociadoDTO> AssociadosDTO { get; set; }
 
     }
 
@@ -111,8 +125,37 @@ namespace GestaoGrupoMusicalWeb.Models
         [Display(Name = "Instrumento")]
         public SelectList? ListaInstrumentos { get; set; }
         public int Quantidade { get; set; }
-        public IEnumerable<GerenciarInstrumentoEventoDTO>? GerenciarInstrumentos { get; set; }        
+        public IEnumerable<GerenciarInstrumentoEventoDTO>? GerenciarInstrumentos { get; set; }       
 
+    }
+    public class PlanejarInstrumentoEventoViewModel
+    {
+        public int Id { get; set; }
+
+        public int IdInstrumento { get; set; }
+
+        [Display(Name = "Instrumento")]
+        public SelectList? ListaInstrumentos { get; set; }
+        public int Quantidade { get; set; }
+        public IEnumerable<InstrumentoPlanejadoEventoDTO>? InstrumentoEventoPlanejado { get; set; }
+    }
+
+        public class GerenciarSolicitacaoEventoViewModel
+    {
+        //esse ID é do evento
+        public int Id { get; set; }
+
+
+        [Display(Name = "Início")]
+        public DateTime DataHoraInicio { get; set; }
+
+
+        [Display(Name = "Fim")]
+        public DateTime DataHoraFim { get; set; }
+
+        [Display(Name = "Regentes")]
+        public string NomesRegentes { get;set; } = null!;
+        public IEnumerable<SolicitacaoEventoPessoasDTO>? EventoSolicitacaoPessoasDTO { get; set; }
     }
     public class FrequenciaEventoViewModel
     {
@@ -127,19 +170,11 @@ namespace GestaoGrupoMusicalWeb.Models
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public DateTime? DataHoraFim { get; set; }
 
-        [Display(Name = "Tipo")]
-        [Required(ErrorMessage = "O campo {0} é obrigatório")]
-        public Tipo Tipo { get; set; }
-
         [Display(Name = "Regentes")]
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public IEnumerable<int>? IdRegentes { get; set; }
 
         public SelectList? ListaPessoa { get; set; }
-
-        [Display(Name = "Figurino")]
-        [Required(ErrorMessage = "O campo {0} é obrigatório")]
-        public int IdFigurinoSelecionado { get; set; }
 
         public SelectList? ListaFigurino { get; set; }
 
