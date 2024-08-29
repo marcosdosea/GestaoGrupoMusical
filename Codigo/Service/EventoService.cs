@@ -4,6 +4,7 @@ using Core.DTO;
 using Core.Service;
 using Email;
 using Microsoft.EntityFrameworkCore;
+using MySql.Data.MySqlClient;
 using System.Net;
 using static Core.Service.IEventoService;
 
@@ -276,15 +277,16 @@ namespace Service
 
         public IEnumerable<EventoIndexDTO> GetAllEventoIndexDTOPerIdGrupoMusical(int idGrupoMusical)
         {
-            var query = _context.Eventos.Where(g => g.IdGrupoMusical == idGrupoMusical)
-                .OrderBy(g => g.DataHoraInicio).
+            var query = _context.Eventos.Where(g => g.IdGrupoMusical == idGrupoMusical).
                 Select(g => new EventoIndexDTO
                 {
                     Id = g.Id,
                     DataHoraInicio = g.DataHoraInicio,
                     Local = g.Local,
-                    Planejados = 0,
-                    Confirmados = 0,
+                    Planejados = _context.Apresentacaotipoinstrumentos.
+                    Where(ap => ap.IdApresentacao == g.Id).Sum(ap => ap.QuantidadePlanejada),
+                    Confirmados = _context.Apresentacaotipoinstrumentos.
+                    Where(ap => ap.IdApresentacao == g.Id).Sum(ap => ap.QuantidadeConfirmada)
                 }
                 ).AsNoTracking();
             return query;
@@ -304,7 +306,7 @@ namespace Service
 
             if (request.Order != null && request.Order[0].GetValueOrDefault("column")!.Equals("0"))
             {
-                if (request.Order[0].GetValueOrDefault("dir")!.Equals("asc"))
+                if (!request.Order[0].GetValueOrDefault("dir")!.Equals("asc"))
                     eventos = eventos.OrderBy(g => g.DataHoraInicio);
                 else
                     eventos = eventos.OrderByDescending(g => g.DataHoraInicio);
