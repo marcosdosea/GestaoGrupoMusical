@@ -52,12 +52,12 @@
                         "datatype": "json"
                     },
                     "columnDefs": [{
-                        "targets": [0],
+                        "targets": [2],
                         "visible": true,
                         "searchable": false
                     },
                     {
-                        "targets": [3],
+                        "targets": [2],
                         "visible": true,
                         "searchable": false,
                         "orderable": false
@@ -72,7 +72,8 @@
                                 var date = new Date(data);
                                 var day = String(date.getDate()).padStart(2, '0');
                                 var month = String(date.getMonth() + 1).padStart(2, '0');
-                                var year = date.getFullYear(); var hours = String(date.getHours()).padStart(2, '0');
+                                var year = date.getFullYear();
+                                var hours = String(date.getHours()).padStart(2, '0');
                                 var minutes = String(date.getMinutes()).padStart(2, '0');
                                 var seconds = String(date.getSeconds()).padStart(2, '0');
                                 return day + '/' + month + '/' + year + ' ' + hours + ':' + minutes + ':' + seconds;
@@ -80,7 +81,7 @@
                         },
                         { "data": "local", "name": "Local", "autoWidth": true },
                         { "data": "planejados", "name": "Planejados", "autoWidth": true },
-                        { "data": "confirmados", "name": "Repertorio", "autoWidth": true },
+                        { "data": "confirmados", "name": "Confirmados", "autoWidth": true },
                         {
                             "render": function (data, type, full, meta) {
 
