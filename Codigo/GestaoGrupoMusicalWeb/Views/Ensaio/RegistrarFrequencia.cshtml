@@ -71,9 +71,8 @@
                     </div>
                 </div>
                 <div class="container">
-                    <div class="row">
                         <div class="form-group">
-                            <table>
+                            <table class="table">
                                 <thead>
                                     <tr class="bg-danger bg-opacity-75 text-white">
                                         <th class="border-0">
@@ -90,19 +89,11 @@
                                         {
                                             <tr class="border-bottom border-danger border-opacity-75 p-3 align-middle">
                                                 <td class="p-3">
-                                                    @Html.TextBoxFor(model => Model.AssociadosDTO[i].Nome
-                                                        , new
-                                                        {
-                                                            @readonly = "readonly"
-                                                        })
+                                                    @Html.DisplayFor(model => Model.AssociadosDTO[i].Nome)
                                                 </td>
 
                                                 <td class="p-3">
-                                                    @Html.TextBoxFor(model => Model.AssociadosDTO[i].Cpf
-                                                         , new
-                                                         {
-                                                             @readonly = "readonly"
-                                                         })
+                                                    @Html.DisplayFor(model => Model.AssociadosDTO[i].Cpf)
                                                 </td>
                                             </tr>
                                         }
@@ -110,7 +101,6 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div>
                 </div>
                 <br />
                 <br />
