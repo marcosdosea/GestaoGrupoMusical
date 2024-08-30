@@ -7,24 +7,33 @@ using System.Threading.Tasks;
 
 namespace Core.DTO
 {
-    public class FinanceiroIndexDTO
+    public class FinanceiroIndexDataPage
     {
+        [Key]
         public int Id { get; set; }
 
+        [Display(Name = "Descrição")]
         public string Descricao { get; set; } = string.Empty;
 
+        [Display(Name = "Início")]
         public DateTime DataInicio { get; set; }
 
+        [Display(Name = "Final")]
         public DateTime DataFim { get; set; }
 
 
+        [Display(Name = "Pagos")]
         public int Pagos { get; set; }
 
+        [Display(Name = "Isentos")]
         public int Isentos { get; set; }
 
+        [Display(Name = "Atrasos")]
         public int Atrasos { get; set; }
 
-        public int Recebido { get; set; }
+        [Display(Name = "Recebidos")]
+        public float Recebido { get; set; }
 
+        public int ReceitaFinanceiraMesesAtrasados { get; set; }
     }
 }
