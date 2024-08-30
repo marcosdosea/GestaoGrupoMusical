@@ -1,0 +1,79 @@
+﻿@model IEnumerable<GestaoGrupoMusicalWeb.Models.FinanceiroIndexViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Descricao)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DataInicio)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DataFim)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Pagos)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Isentos)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Atrasos)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Recebido)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Descricao)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DataInicio)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DataFim)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Pagos)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Isentos)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Atrasos)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Recebido)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                        @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                        @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                    </td>
+                </tr>
+            }
+    </tbody>
+</table>
