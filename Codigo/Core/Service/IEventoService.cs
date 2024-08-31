@@ -6,7 +6,10 @@ namespace Core.Service
 {
     public interface IEventoService
     {
-        //Task<HttpStatusCode> RegistrarFrequenciaAsync(List<EventoListaFrequenciaDTO> listaFrequencia);
+        Task<HttpStatusCode> RegistrarFrequenciaAsync(List<EventoListaFrequenciaDTO> listaFrequencia);
+        Task<HttpStatusCode> RegistrarJustificativaAsync(int idEvento, int idPessoa, string? justificativa);
+        Task<IEnumerable<int>> GetIdRegentesEventoAsync(int idEvento);
+
         Task<HttpStatusCode> Create(Evento evento, IEnumerable<int> idRegentes, int idFigurino);
         HttpStatusCode Delete(int id);
         HttpStatusCode Edit(Evento evento);
@@ -21,9 +24,11 @@ namespace Core.Service
         Task<string> GetNomeInstrumento(int id);
         Task<IEnumerable<FigurinoDropdownDTO>> GetAllFigurinoDropdown(int idGrupo);
         Task<IEnumerable<Eventopessoa>> GetPessoas(int idGrupo);
+        Task<Eventopessoa?> GetEventoPessoaAsync(int idEvento, int idPessoa);
+        Task<IEnumerable<EventoAssociadoDTO>> GetEventosByIdPessoaAsync(int idPessoa);
         Task<HttpStatusCode> CreateApresentacaoInstrumento(Apresentacaotipoinstrumento apresentacaotipoinstrumento);
-        GerenciarSolicitacaoEventoDTO? GetSolicitacoesEventoDTO(int idEvento, int pegarFaltasEmMesesAtras);
-        IEnumerable<SolicitacaoEventoPessoasDTO> GetSolicitacaoEventoPessoas(int idEvento, int pegarFaltasEmMesesAtras);
+        GerenciarSolicitacaoEventoDTO? GetSolicitacoesEventoDTO(int idEvento);
+        IEnumerable<SolicitacaoEventoPessoasDTO> GetSolicitacaoEventoPessoas(int idEvento);
         public EventoStatus EditSolicitacoesEvento(GerenciarSolicitacaoEventoDTO g);
 
         public static InscricaoEventoPessoa ConvertAprovadoParaEnum(string aprovado)
@@ -39,9 +44,7 @@ namespace Core.Service
             Success,
             UltrapassouLimiteQuantidadePlanejada,
             ErroGenerico,
-            SemAlteracao,
-            QuantidadeConfirmadaNegativa,
-            QuantidadeSolicitadaNegativa
+            SemAlteracao
         }
     }
 }
