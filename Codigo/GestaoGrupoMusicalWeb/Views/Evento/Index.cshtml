@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Core.DTO.EventoIndexDTO>
+@model IEnumerable<Core.DTO.EventoIndexDTO>
 
 <link href="~/lib/datatable/css/datatables.min.css" rel="stylesheet" />
 @{
@@ -52,12 +52,12 @@
                         "datatype": "json"
                     },
                     "columnDefs": [{
-                        "targets": [2],
+                        "targets": [0],
                         "visible": true,
                         "searchable": false
                     },
                     {
-                        "targets": [2],
+                        "targets": [3],
                         "visible": true,
                         "searchable": false,
                         "orderable": false
@@ -72,8 +72,7 @@
                                 var date = new Date(data);
                                 var day = String(date.getDate()).padStart(2, '0');
                                 var month = String(date.getMonth() + 1).padStart(2, '0');
-                                var year = date.getFullYear();
-                                var hours = String(date.getHours()).padStart(2, '0');
+                                var year = date.getFullYear(); var hours = String(date.getHours()).padStart(2, '0');
                                 var minutes = String(date.getMinutes()).padStart(2, '0');
                                 var seconds = String(date.getSeconds()).padStart(2, '0');
                                 return day + '/' + month + '/' + year + ' ' + hours + ':' + minutes + ':' + seconds;
@@ -81,7 +80,7 @@
                         },
                         { "data": "local", "name": "Local", "autoWidth": true },
                         { "data": "planejados", "name": "Planejados", "autoWidth": true },
-                        { "data": "confirmados", "name": "Confirmados", "autoWidth": true },
+                        { "data": "confirmados", "name": "Repertorio", "autoWidth": true },
                         {
                             "render": function (data, type, full, meta) {
 
@@ -89,7 +88,7 @@
                                     '<a onclick="showConfirmationModal(' + full.id + ')" class="btn btn-sm btn-secondary" role="button"><i class="fa-solid fa-xmark"></i> Excluir</a> ' +
                                     '<a class="btn btn btn-secondary btn-sm  m-2" href="/Evento/GerenciarInstrumentoEvento/' + full.id + '"><i class="fa-solid fa-pen-to-square"> </i> Instrumentos</a> <br>' +
                                     '<a class="btn btn btn-secondary btn-sm  m-2" href="/Evento/GerenciarSolicitacaoEvento/' + full.id + '"><i class="fa-solid fa-pen-to-square"> </i> Solicitações</a> ' +
-                                    '<a class="btn btn btn-secondary btn-sm  m-2"><i class="fa-solid fa-pen-to-square"> </i> Frequência</a> ' +
+                                    '<a class="btn btn btn-secondary btn-sm  m-2" href="/Evento/RegistrarFrequencia/' + full.id + '"><i class="fa-solid fa-pen-to-square" > </i> Frequência</a > ' +
                                     '<a onclick="showConfirmationModalNotificar(' + full.id + ')" class="btn btn btn-secondary btn-sm  m-2" "><i class="fa-solid fa-envelope"> </i> Notificar</a> ';
 
                             }
