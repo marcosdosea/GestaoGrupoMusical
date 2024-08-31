@@ -32,8 +32,7 @@ namespace Core.DTO
         public int Atrasos { get; set; }
 
         [Display(Name = "Recebidos")]
-        public float Recebido { get; set; }
+        public decimal Recebido { get; set; }
 
-        public int ReceitaFinanceiraMesesAtrasados { get; set; }
     }
 }

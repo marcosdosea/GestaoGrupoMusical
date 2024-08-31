@@ -38,13 +38,31 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         public async Task<IActionResult> GetDataPage(DatatableRequest request)
         {
-            Console.WriteLine("### RECEITA DATAPAGE ###");
             int idGrupoMusical = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
 
             var listaReceitaFinanceira = await _financeiroService.GetAllFinanceiroPorIdGrupo(idGrupoMusical, ReceitaFinanceiraMesesAtrasados);
 
-            Console.WriteLine(listaReceitaFinanceira.Count() + "\n");
             var response = _financeiroService.GetDataPage(request, listaReceitaFinanceira);
+            Console.WriteLine("### RECEITA DATAPAGE ### " + listaReceitaFinanceira.Count());
+            Console.WriteLine("### RECEITA DATAPAGE ### " + response.Data?.Count());
+            
+            if(response.Data?.Count() > 0)
+            {
+                Console.WriteLine("NOT NULL");
+                foreach (var item in response.Data)
+                {
+                    Console.WriteLine("### ITEM ###");
+                    Console.WriteLine("ID: " + item.Id);
+                    Console.WriteLine("PAGOS: " + item.Pagos);
+                    Console.WriteLine("ISENTOS: " + item.Isentos);
+                    Console.WriteLine("Atrasos: " + item.Atrasos);
+                    Console.WriteLine("Recebido: " + item.Recebido);
+                }
+            }
+            else
+            {
+                Console.WriteLine("NULL");
+            }
             response.Data = null;
             
             return Json(response);

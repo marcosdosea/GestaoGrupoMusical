@@ -21,7 +21,7 @@ namespace Service
 
         public async Task<IEnumerable<FinanceiroIndexDataPage>> GetAllFinanceiroPorIdGrupo(int idGrupoMusical, int mesesAtrasados)
         {
-            DateTime dataMesesAtrasados = DateTime.Now.Date.AddMonths(mesesAtrasados);
+            DateTime dataMesesAtrasados = DateTime.Now.Date;
             var query = await (from financeiro in _context.Receitafinanceiras
                                where financeiro.IdGrupoMusical == idGrupoMusical
                                select new FinanceiroIndexDataPage
@@ -37,9 +37,9 @@ namespace Service
                                     && rfp.Status == "ISENTO").Count(),
                                    Atrasos = financeiro.Receitafinanceirapessoas.
                                    Where(rfp => rfp.IdReceitaFinanceira == financeiro.Id
-                                    && rfp.Status == "ISENTO" || rfp.Status == "ENVIADO"
+                                    && rfp.Status == "ENVIADO"
                                     && financeiro.DataFim < dataMesesAtrasados).Count(),
-                                   Recebido = (float)financeiro.Receitafinanceirapessoas.
+                                   Recebido = financeiro.Receitafinanceirapessoas.
                                    Sum(rfp => rfp.ValorPago),
                                }).ToListAsync();
             return query;
@@ -82,9 +82,7 @@ namespace Service
             }
 
             int countRecordsFiltered = financeiroIndexDTO.Count();
-
-            financeiroIndexDTO = financeiroIndexDTO.Skip(request.Start).Take(request.Length);
-
+            //financeiroIndexDTO = financeiroIndexDTO.Skip(request.Start).Take(request.Length);
             return new DatatableResponse<FinanceiroIndexDataPage>
             {
                 Data = financeiroIndexDTO.ToList(),
