@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Authorization;
 using Service;
 using Core.DTO;
 using System.Security.Claims;
-using System.Configuration;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -24,13 +23,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IPessoaService _pessoaService;
         private readonly IFigurinoService _figurinoService;
         private readonly IInstrumentoMusicalService _tipoIntrumentoMusicalService;
-        private int FaltasPessoasEmEnsaioMeses { get; }
 
 
-        public EventoController(IEventoService evento, IMapper mapper, 
-            IGrupoMusicalService grupoMusical, IPessoaService pessoaService, 
-            IFigurinoService figurino, IInstrumentoMusicalService tipoInstrumentoMusical,
-            IConfiguration configuration)
+
+        public EventoController(IEventoService evento, IMapper mapper, IGrupoMusicalService grupoMusical, IPessoaService pessoaService, IFigurinoService figurino, IInstrumentoMusicalService tipoInstrumentoMusical)
         {
             _eventoService = evento;
             _mapper = mapper;
@@ -38,7 +34,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
             _pessoaService = pessoaService;
             _figurinoService = figurino;
             _tipoIntrumentoMusicalService = tipoInstrumentoMusical;
-            FaltasPessoasEmEnsaioMeses = configuration.GetValue<int>("Aplication:FaltasPessoasEmEnsaioEmMeses");
         }
 
         // GET: EventoController
@@ -58,8 +53,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             var evento = _eventoService.Get(id);
             var eventoModel = _mapper.Map<EventoViewModel>(evento);
-            
-
             return View(eventoModel);
         }
 
@@ -133,7 +126,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             else
             {
                 Notificar("<b>Erro</b>! Há algo errado ao cadastrar um novo Evento", Notifica.Erro);
-            }            
+            }
             return RedirectToAction(nameof(Index));
         }
 
@@ -159,6 +152,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 Notificar("É necessário cadastrar um Figurino para então cadastrar um Evento Musical.", Notifica.Informativo);
                 return RedirectToAction(nameof(Index));
             }
+
             EventoCreateViewlModel eventoModelCreate = new()
             {
                 Id = evento.Id,
@@ -341,36 +335,175 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         public ActionResult GerenciarSolicitacaoEvento(int id)
         {
-            GerenciarSolicitacaoEventoDTO? g = _eventoService.GetSolicitacoesEventoDTO(id, FaltasPessoasEmEnsaioMeses);
+            GerenciarSolicitacaoEventoDTO? g = _eventoService.GetSolicitacoesEventoDTO(id);
             GerenciarSolicitacaoEventoViewModel? model = _mapper.Map<GerenciarSolicitacaoEventoViewModel>(g);
+            Console.WriteLine("######## P #########");
+            Console.WriteLine(model.Id);
+            Console.WriteLine("Count: " + model.EventoSolicitacaoPessoasDTO?.Count());
+            Console.WriteLine("status: " + model.EventoSolicitacaoPessoasDTO?.First().AprovadoModel.ToString());
             return View(model);
         }
 
         public ActionResult GerenciarSolicitacaoEventoModel(GerenciarSolicitacaoEventoViewModel model)
         {
             GerenciarSolicitacaoEventoDTO? g = _mapper.Map<GerenciarSolicitacaoEventoDTO>(model);
+            Console.WriteLine("\n###########################");
+            Console.WriteLine("ID: " + g.Id);
+            Console.WriteLine("NomesRegentes: " + g.NomesRegentes);
+            Console.WriteLine("Count: " + g.EventoSolicitacaoPessoasDTO?.Count());
 
-            switch(_eventoService.EditSolicitacoesEvento(g))
+            if (g.EventoSolicitacaoPessoasDTO != null)
+            {
+                foreach (var v in g.EventoSolicitacaoPessoasDTO)
+                {
+                    Console.WriteLine("### ASSOCIADO ###");
+                    Console.WriteLine("Nome: " + v.NomeAssociado);
+                    Console.WriteLine("Papel: " + v.IdPapelGrupo);
+                    Console.WriteLine("Faltas: " + v.Faltas);
+                    Console.WriteLine("Inadiplencia: " + v.Inadiplencia);
+                    Console.WriteLine("Aprovado: " + v.AprovadoModel.ToString());
+                    Console.WriteLine("AprovadoModel: " + v.Aprovado.ToString() + "\n");
+                }
+            }
+
+            switch (_eventoService.EditSolicitacoesEvento(g))
             {
                 case IEventoService.EventoStatus.Success:
-                    Notificar("Solicitação de <b>participação</b> do evento alterado com <b>sucesso</b>.", Notifica.Sucesso);
+                    Notificar("Solicitação de participação do evento feito <b>solicitação</b> dos associados.", Notifica.Sucesso);
                     break;
                 case IEventoService.EventoStatus.SemAlteracao:
                     Notificar("<b>Alerta!</b> Não houve alterações na solicitação de participação do evento dos associados.", Notifica.Informativo);
-                    break;
-                case IEventoService.EventoStatus.QuantidadeSolicitadaNegativa:
-                    Notificar("<b>Erro!</b> Solicitação de participação do evento está <b>negativa</b>. Consulte o <b>suporte</b>.", Notifica.Erro);
-                    break;
-                case IEventoService.EventoStatus.UltrapassouLimiteQuantidadePlanejada:
-                    Notificar("<b>Erro!</b> Ultrapassou o <b>limite</b> de participação de associados em um determinado <b>instrumento</b>", Notifica.Erro);
                     break;
                 default:
                     Notificar("Desculpe, ocorreu um <b>Erro</b> durante o geremciamento de <b>solicitação</b> dos associados.", Notifica.Erro);
                     break;
             }
-            
+
             return RedirectToAction(nameof(GerenciarSolicitacaoEvento), new { id = model.Id });
         }
+        [Authorize(Roles = "ADMINISTRADOR GRUPO,COLABORADOR,REGENTE")]
+        // GET: EventoController/RegistrarFrequencia
+        public async Task<ActionResult> RegistrarFrequencia(int idEvento)
+        {
+            idEvento = 1;
+            int idGrupoMusical = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
+
+            var listaRegentes = await _pessoaService.GetRegentesForAutoCompleteAsync(idGrupoMusical);
+
+            if (listaRegentes == null || !listaRegentes.Any())
+            {
+                Notificar("É necessário cadastrar pelo menos um Regente para então registrar uma frequência.", Notifica.Informativo);
+                return RedirectToAction(nameof(Index));
+            }
+
+            var listaFigurinos = await _figurinoService.GetAllFigurinoDropdown(idGrupoMusical);
+
+            if (listaFigurinos == null || !listaFigurinos.Any())
+            {
+                Notificar("É necessário cadastrar pelo menos um Figurino para então registrar uma frequência.", Notifica.Informativo);
+                return RedirectToAction(nameof(Index));
+            }
+
+            var listaAssociadosAtivos = await _pessoaService.GetAssociadoAtivos(idGrupoMusical);
+
+            if (listaAssociadosAtivos == null || !listaAssociadosAtivos.Any())
+            {
+                Notificar("É necessário pelo menos um Associado Ativo para então registrar uma frequência.", Notifica.Informativo);
+                return RedirectToAction(nameof(Index));
+            }
+
+            var evento = _eventoService.Get(idEvento);
+
+            EventoViewModel eventoView = _mapper.Map<EventoViewModel>(evento);
+
+            eventoView.ListaPessoa = new SelectList(listaRegentes, "Id", "Nome");
+            eventoView.ListaFigurino = new SelectList(listaFigurinos, "Id", "Nome");
+            eventoView.AssociadosDTO = listaAssociadosAtivos;
+
+            ViewData["exemploRegente"] = listaRegentes.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
+            ViewData["jsonIdRegentes"] = (await _eventoService.GetIdRegentesEventoAsync(eventoView.Id)).ToJson();
+            eventoView.JsonLista = listaRegentes.ToJson();
+
+            return View(eventoView);
+        }
+
+        [Authorize(Roles = "ADMINISTRADOR GRUPO,COLABORADOR,REGENTE")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> RegistrarFrequencia(List<EventoListaFrequenciaDTO> listaFrequencia)
+        {
+            switch (await _eventoService.RegistrarFrequenciaAsync(listaFrequencia))
+            {
+                case HttpStatusCode.OK:
+                    Notificar("Lista de <b>Frequência</b> salva com <b>Sucesso</b>", Notifica.Sucesso);
+                    break;
+                case HttpStatusCode.BadRequest:
+                    Notificar("A <b>Lista</b> enviada <b>Não</b> possui registros", Notifica.Alerta);
+                    return RedirectToAction(nameof(Index));
+                case HttpStatusCode.Conflict:
+                    Notificar("A <b>Lista</b> enviada é <b>Inválida</b>", Notifica.Erro);
+                    break;
+                case HttpStatusCode.NotFound:
+                    Notificar("A <b>Lista</b> enviada não foi <b>Encontrada</b>", Notifica.Erro);
+                    break;
+                case HttpStatusCode.InternalServerError:
+                    Notificar("Desculpe, ocorreu um <b>Erro</b> ao registrar a Lista de <b>Frequência</b>.", Notifica.Erro);
+                    break;
+            }
+            return RedirectToAction(nameof(RegistrarFrequencia), new { idEvento = listaFrequencia.First().IdEvento });
+        }
+
+        [Authorize(Roles = "ASSOCIADO")]
+        public async Task<ActionResult> EventoAssociado()
+        {
+            var model = await _eventoService.GetEventosByIdPessoaAsync(Convert.ToInt32(User.FindFirst("Id")?.Value));
+
+            return View(model);
+        }
+        [Authorize(Roles = "ASSOCIADO")]
+        public async Task<ActionResult> JustificarAusencia(int idEvento)
+        {
+            var model = await _eventoService.GetEventoPessoaAsync(idEvento, Convert.ToInt32(User.FindFirst("Id")?.Value));
+
+            if (model == null)
+            {
+                return RedirectToAction(nameof(EventoAssociado));
+            }
+            EventoJustificativaViewModel eventoJustificativa = new()
+            {
+                IdEvento = model.IdEvento,
+                Justificativa = model.JustificativaFalta
+            };
+            return View(eventoJustificativa);
+        }
+
+        [Authorize(Roles = "ASSOCIADO")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> JustificarAusencia(EventoJustificativaViewModel eventoJustificativa)
+        {
+            if (ModelState.IsValid)
+            {
+                switch (await _eventoService.RegistrarJustificativaAsync(eventoJustificativa.IdEvento, Convert.ToInt32(User.FindFirst("Id")?.Value), eventoJustificativa.Justificativa))
+                {
+                    case HttpStatusCode.OK:
+                        Notificar("<b>Justificativa</b> registrada com <b>Sucesso</b>", Notifica.Sucesso);
+                        return RedirectToAction(nameof(EventoAssociado));
+                    case HttpStatusCode.NotFound:
+                        Notificar("A <b>Justificativa</b> enviada é <b>Inválida</b>", Notifica.Erro);
+                        break;
+                    case HttpStatusCode.Unauthorized:
+                        Notificar("Desculpe, <b>Não</b> foi possível <b>Registrar</b> a <b>Justificativa</b>", Notifica.Erro);
+                        break;
+                    case HttpStatusCode.InternalServerError:
+                        Notificar("Desculpe, ocorreu um <b>Erro</b> ao registrar a <b>Justificativa</b>, se isso persistir entre em contato com o suporte", Notifica.Erro);
+                        break;
+                }
+            }
+
+            return View(eventoJustificativa);
+        }
+
 
     }
 }
