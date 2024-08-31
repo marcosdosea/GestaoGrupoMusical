@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +12,7 @@ namespace Core.DTO
         public string? Nome { get; set; }
         public string? Cpf { get; set; }
         public sbyte Ativo { get; set; }
+        public string? Justificativa { get; set; }
     }
 
     public class ColaboradoresDTO
@@ -25,5 +26,6 @@ namespace Core.DTO
         public string? Data { get; set; }
 
         public string? Papel { get; set; }
+
     }
 }
