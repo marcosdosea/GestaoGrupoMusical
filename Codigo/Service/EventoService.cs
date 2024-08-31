@@ -1,10 +1,9 @@
-﻿using Core;
+using Core;
 using Core.Datatables;
 using Core.DTO;
 using Core.Service;
 using Email;
 using Microsoft.EntityFrameworkCore;
-using MySql.Data.MySqlClient;
 using System.Net;
 using static Core.Service.IEventoService;
 
@@ -277,16 +276,15 @@ namespace Service
 
         public IEnumerable<EventoIndexDTO> GetAllEventoIndexDTOPerIdGrupoMusical(int idGrupoMusical)
         {
-            var query = _context.Eventos.Where(g => g.IdGrupoMusical == idGrupoMusical).
+            var query = _context.Eventos.Where(g => g.IdGrupoMusical == idGrupoMusical)
+                .OrderBy(g => g.DataHoraInicio).
                 Select(g => new EventoIndexDTO
                 {
                     Id = g.Id,
                     DataHoraInicio = g.DataHoraInicio,
                     Local = g.Local,
-                    Planejados = _context.Apresentacaotipoinstrumentos.
-                    Where(ap => ap.IdApresentacao == g.Id).Sum(ap => ap.QuantidadePlanejada),
-                    Confirmados = _context.Apresentacaotipoinstrumentos.
-                    Where(ap => ap.IdApresentacao == g.Id).Sum(ap => ap.QuantidadeConfirmada)
+                    Planejados = 0,
+                    Confirmados = 0,
                 }
                 ).AsNoTracking();
             return query;
@@ -306,7 +304,7 @@ namespace Service
 
             if (request.Order != null && request.Order[0].GetValueOrDefault("column")!.Equals("0"))
             {
-                if (!request.Order[0].GetValueOrDefault("dir")!.Equals("asc"))
+                if (request.Order[0].GetValueOrDefault("dir")!.Equals("asc"))
                     eventos = eventos.OrderBy(g => g.DataHoraInicio);
                 else
                     eventos = eventos.OrderByDescending(g => g.DataHoraInicio);
@@ -410,48 +408,51 @@ namespace Service
             return HttpStatusCode.Created;
         }
 
-        public IEnumerable<SolicitacaoEventoPessoasDTO> GetSolicitacaoEventoPessoas(int idEvento, int pegarFaltasEmMesesAtras)
+        public IEnumerable<SolicitacaoEventoPessoasDTO> GetSolicitacaoEventoPessoas(int idEvento)
         {
-            DateTime doisMesesAtras = DateTime.Now.AddMonths(pegarFaltasEmMesesAtras);
-            var query = (from eventoPessoa in _context.Eventopessoas
-                         where idEvento == eventoPessoa.IdEvento
+            DateTime twoMonthsAgo = DateTime.Now.AddMonths(-2);
+            var query = (from evento in _context.Eventos
+                         join eventoPessoa in _context.Eventopessoas
+                         on evento.Id equals eventoPessoa.IdEvento
+                         join tipoInstrumento in _context.Tipoinstrumentos
+                         on eventoPessoa.IdTipoInstrumento equals tipoInstrumento.Id
+                         join pessoa in _context.Pessoas
+                         on eventoPessoa.IdPessoa equals pessoa.Id
+                         where idEvento == evento.Id
                          select new SolicitacaoEventoPessoasDTO
                          {
-                             IdInstrumento = eventoPessoa.IdTipoInstrumentoNavigation.Id,
-                             NomeInstrumento = eventoPessoa.IdTipoInstrumentoNavigation.Nome,
+                             IdInstrumento = tipoInstrumento.Id,
+                             NomeInstrumento = tipoInstrumento.Nome,
                              IdAssociado = eventoPessoa.IdPessoa,
                              IdPapelGrupo = eventoPessoa.IdPapelGrupoPapelGrupo,
-                             NomeAssociado = eventoPessoa.IdPessoaNavigation.Nome,
+                             NomeAssociado = pessoa.Nome,
+                             Faltas = _context.Ensaiopessoas.
+                             Count(
+                                 ep => ep.IdPessoa == pessoa.Id &&
+                                 ep.Presente == 0 &&
+                                 ep.JustificativaAceita == 0 &&
+                                 ep.IdEnsaioNavigation.DataHoraInicio >= twoMonthsAgo &&
+                                 ep.IdEnsaioNavigation.PresencaObrigatoria == 1),
+                             //antes de pegar inadinplencia, pergunta se a pessoa eh um associado,
+                             //pois apenas sao pros associados evitando fazer consultas descenessarias.
+                             Inadiplencia = eventoPessoa.IdPapelGrupoPapelGrupo == 1 ?
+                             _context.Receitafinanceiras.Where
+                             (
+                                 rf => rf.Receitafinanceirapessoas.Any(
+                                     rfp => rfp.IdPessoa == eventoPessoa.IdPessoa &&
+                                       rfp.Status != "PAGO" &&
+                                       rfp.Status != "ISENTO" &&
+                                     rf.DataFim < DateTime.Now.Date
+                                     )).Count() : 0,
                              AprovadoModel = ConvertAprovadoParaEnum(eventoPessoa.Status),
                              Aprovado = ConvertAprovadoParaEnum(eventoPessoa.Status)
                          }).AsNoTracking().ToList();
-
-            for (int i = 0; i < query.Count; i++)
-            {
-                if (query[i].IdPapelGrupo != 1)
-                    continue;
-                query[i].Faltas = _context.Ensaiopessoas.AsNoTracking().
-                             Count(
-                                 ep => ep.IdPessoa == query[i].IdAssociado &&
-                                 ep.Presente == 0 &&
-                                 ep.JustificativaAceita == 0 &&
-                                 ep.IdEnsaioNavigation.DataHoraInicio >= doisMesesAtras &&
-                                 ep.IdEnsaioNavigation.PresencaObrigatoria == 1);
-
-                query[i].Inadiplencia = _context.Receitafinanceiras.Where
-                    (
-                    rf => rf.Receitafinanceirapessoas.Any(
-                        rfp => rfp.IdPessoa == query[i].IdAssociado &&
-                        rfp.Status != "PAGO" &&
-                        rf.DataFim > DateTime.Now.Date
-                        )).AsNoTracking().Count();
-            }
             return query;
         }
 
 
 
-        public GerenciarSolicitacaoEventoDTO? GetSolicitacoesEventoDTO(int idEvento, int pegarFaltasEmMesesAtras)
+        public GerenciarSolicitacaoEventoDTO? GetSolicitacoesEventoDTO(int idEvento)
         {
             Evento? evento = Get(idEvento);
             if (evento == null)
@@ -462,9 +463,8 @@ namespace Service
                 Id = idEvento,
                 DataHoraInicio = evento.DataHoraInicio,
                 DataHoraFim = evento.DataHoraFim,
-                FaltasPessoasEmEnsaioMeses = pegarFaltasEmMesesAtras
             };
-            g.EventoSolicitacaoPessoasDTO = GetSolicitacaoEventoPessoas(idEvento, pegarFaltasEmMesesAtras);
+            g.EventoSolicitacaoPessoasDTO = GetSolicitacaoEventoPessoas(idEvento);
             foreach (SolicitacaoEventoPessoasDTO s in g.EventoSolicitacaoPessoasDTO)
             {
                 if (s.IdPapelGrupo == 5)
@@ -481,30 +481,27 @@ namespace Service
 
         public EventoStatus EditSolicitacoesEvento(GerenciarSolicitacaoEventoDTO g)
         {
+            //using var transaction = _context.Database.BeginTransaction();
+            Console.WriteLine("\n##### SERVICE #####");
             var transaction = _context.Database.BeginTransaction();
             try
             {
-                if (g.EventoSolicitacaoPessoasDTO == null || g.EventoSolicitacaoPessoasDTO.Count() < 1)
-                {
-                    transaction.Rollback();
-                    return EventoStatus.SemAlteracao;
-                }
+                if (g.EventoSolicitacaoPessoasDTO == null || !g.EventoSolicitacaoPessoasDTO.Any())
+                    return EventoStatus.ErroGenerico;
+                //Remover os que NAO foram editados para aumentar o desempenho.
                 g.EventoSolicitacaoPessoasDTO = g.EventoSolicitacaoPessoasDTO.Where(e => e.Aprovado != e.AprovadoModel);
                 if (g.EventoSolicitacaoPessoasDTO.Count() == 0)
                 {
                     transaction.Rollback();
                     return EventoStatus.SemAlteracao;
                 }
-                List<int> auxIdInstrumento = g.EventoSolicitacaoPessoasDTO.Select(ev => ev.IdInstrumento).ToList();
-                List<Apresentacaotipoinstrumento> at = _context.Apresentacaotipoinstrumentos.Where(
-                       ati => ati.IdApresentacao == g.Id &&
-                       auxIdInstrumento.Contains(ati.IdTipoInstrumento)
-                       ).AsNoTracking().ToList();
+
+                //primeiro verifica se houve mudancas de INSCRITO para INDEFERIDO ou mudancas que
+                //foram de INDEFERIDO para INSCRITO, pois nao ha impacto em outra tabela
                 List<SolicitacaoEventoPessoasDTO> auxSolicitacaoEvento = g.EventoSolicitacaoPessoasDTO.Where(
                     es => (es.Aprovado == InscricaoEventoPessoa.INSCRITO && es.AprovadoModel == InscricaoEventoPessoa.INDEFERIDO) ||
                     (es.Aprovado == InscricaoEventoPessoa.INDEFERIDO && es.AprovadoModel == InscricaoEventoPessoa.INSCRITO)
                     ).ToList();
-
                 if (auxSolicitacaoEvento.Count != 0)
                 {
                     for (int i = 0; i < auxSolicitacaoEvento.Count; i++)
@@ -520,84 +517,167 @@ namespace Service
                             _context.Update(e);
                             _context.SaveChanges();
                         }
-                        else
-                        {
-                            transaction.Rollback();
-                            return EventoStatus.ErroGenerico;
-                        }
                     }
                 }
+                //Agora filtro para mexer na tabela ApresentacaoTipoInstrumento
                 g.EventoSolicitacaoPessoasDTO = g.EventoSolicitacaoPessoasDTO.Where(
                     e => e.Aprovado == InscricaoEventoPessoa.DEFERIDO ||
                     e.AprovadoModel == InscricaoEventoPessoa.DEFERIDO
                     );
+                Console.WriteLine("#### APRESENTACAOTIPOINSTRUMENTO ####");
+                Console.WriteLine("Sobraram: " + g.EventoSolicitacaoPessoasDTO.Count());
                 if (g.EventoSolicitacaoPessoasDTO.Count() > 0)
                 {
-                    auxSolicitacaoEvento = g.EventoSolicitacaoPessoasDTO.Where(
-                        ep => ep.Aprovado == InscricaoEventoPessoa.DEFERIDO || 
-                        ep.AprovadoModel == InscricaoEventoPessoa.DEFERIDO
-                        ).ToList();
-                    if (auxSolicitacaoEvento.Count != 0)
-                    {
-                        for (int i = 0; i < auxSolicitacaoEvento.Count; i++)
-                        {
-                            Eventopessoa? e = _context.Eventopessoas.Where(
-                            ep => ep.IdPessoa == auxSolicitacaoEvento[i].IdAssociado &&
-                            ep.IdTipoInstrumento == auxSolicitacaoEvento[i].IdInstrumento &&
-                            ep.IdEvento == g.Id).FirstOrDefault();
-                            Apresentacaotipoinstrumento? auxAt = at.Where(
-                                        at => at.IdApresentacao == g.Id
-                                        && at.IdTipoInstrumento == auxSolicitacaoEvento[i].IdInstrumento).FirstOrDefault();
-                            if (auxAt != null && e != null)
-                            {
-                                if (auxSolicitacaoEvento[i].Aprovado == InscricaoEventoPessoa.DEFERIDO)
-                                {
-                                    auxAt.QuantidadeConfirmada--;
-                                }
-                                else if(auxSolicitacaoEvento[i].Aprovado == InscricaoEventoPessoa.INDEFERIDO || auxSolicitacaoEvento[i].Aprovado == InscricaoEventoPessoa.INSCRITO)
-                                {
-                                    auxAt.QuantidadeConfirmada++;
-                                }
-                                else
-                                {
-                                    transaction.Rollback();
-                                    return EventoStatus.ErroGenerico;
-                                }
-                                if(auxAt.QuantidadeConfirmada < 0)
-                                {
-                                    transaction.Rollback();
-                                    return EventoStatus.QuantidadeConfirmadaNegativa;
-                                }
-                                if(auxAt.QuantidadeConfirmada > auxAt.QuantidadePlanejada)
-                                {
-                                    transaction.Rollback();
-                                    return EventoStatus.UltrapassouLimiteQuantidadePlanejada;
-                                }
-                                
-                                e.Status = auxSolicitacaoEvento[i].AprovadoModel.ToString();
-                                _context.Update(e);
-                                _context.SaveChanges();
-                            }
-                            else
-                            {
-                                transaction.Rollback();
-                                return EventoStatus.ErroGenerico;
-                            }
-                        }
-                    }
+                    List<Apresentacaotipoinstrumento> at = _context.Apresentacaotipoinstrumentos.Where(
+                        ati => ati.IdApresentacao == g.Id &&
+                        g.EventoSolicitacaoPessoasDTO.Select(ev => ev.IdInstrumento).ToList().Contains(ati.IdTipoInstrumento)
+                        ).AsNoTracking().ToList();
+                    Console.WriteLine("#### APRESENTACAOTIPOINSTRUMENTO ####");
+                    Console.WriteLine("APCount: " + at.Count());
                 }
-                _context.UpdateRange(at);
-                _context.SaveChanges();
+
                 transaction.Commit();
-                return EventoStatus.Success;
             }
             catch
             {
                 transaction.Rollback();
                 return EventoStatus.ErroGenerico;
             }
+
+            return EventoStatus.Success;
+        }
+        public async Task<EventoFrequenciaDTO?> GetFrequenciaAsync(int idEvento, int idGrupoMusical)
+        {
+            var regentes = await _context.Eventopessoas
+                .Where(ep => ep.IdEvento == idEvento)
+                .OrderBy(ep => ep.IdPessoaNavigation.Nome)
+                .Select(ep => ep.IdPessoaNavigation.Nome)
+                .ToListAsync();
+
+            var frequencias = await _context.Eventopessoas
+                .Where(eventoPessoa => eventoPessoa.IdEvento == idEvento)
+                .OrderBy(eventoPessoa => eventoPessoa.IdPessoaNavigation.Nome)
+                .Select(eventoPessoa => new EventoListaFrequenciaDTO
+                {
+                    IdEvento = eventoPessoa.IdEvento,
+                    IdPessoa = eventoPessoa.IdPessoa,
+                    Cpf = eventoPessoa.IdPessoaNavigation.Cpf,
+                    NomeAssociado = eventoPessoa.IdPessoaNavigation.Nome,
+                    Justificativa = eventoPessoa.JustificativaFalta,
+                    Presente = Convert.ToBoolean(eventoPessoa.Presente),
+                    JustificativaAceita = Convert.ToBoolean(eventoPessoa.JustificativaAceita),
+                }).ToListAsync();
+
+            var query = from evento in _context.Eventos
+                        where evento.Id == idEvento && evento.IdGrupoMusical == idGrupoMusical
+                        select new EventoFrequenciaDTO
+                        {
+                            Inicio = evento.DataHoraInicio,
+                            Fim = evento.DataHoraFim,
+                            Regentes = regentes,
+                            Local = evento.Local,
+                            Frequencias = frequencias
+                        };
+
+            return await query.AsNoTracking().SingleOrDefaultAsync();
         }
 
+        public async Task<HttpStatusCode> RegistrarFrequenciaAsync(List<EventoListaFrequenciaDTO> frequencias)
+        {
+            try
+            {
+                if (!frequencias.Any())
+                {
+                    return HttpStatusCode.BadRequest;
+                }
+                int idEvento = frequencias.First().IdEvento;
+
+                var dbFrequencias = _context.Eventopessoas
+                                    .Where(ep => ep.IdEvento == frequencias.First().IdEvento)
+                                    .OrderBy(ep => ep.IdPessoaNavigation.Nome);
+
+                if (dbFrequencias == null)
+                {
+                    return HttpStatusCode.NotFound;
+                }
+
+                if (dbFrequencias.Count() != frequencias.Count)
+                {
+                    return HttpStatusCode.Conflict;
+                }
+
+                int pos = 0;
+                await dbFrequencias.ForEachAsync(dbFrequencia =>
+                {
+                    if (dbFrequencia.IdEvento == frequencias[0].IdEvento && dbFrequencia.IdPessoa == frequencias[pos].IdPessoa)
+                    {
+                        dbFrequencia.JustificativaAceita = Convert.ToSByte(frequencias[pos].JustificativaAceita);
+                        dbFrequencia.Presente = Convert.ToSByte(frequencias[pos].Presente);
+
+                        _context.Update(dbFrequencia);
+                    }
+                    pos++;
+                });
+
+                await _context.SaveChangesAsync();
+
+                return HttpStatusCode.OK;
+            }
+            catch
+            {
+                return HttpStatusCode.InternalServerError;
+            }
+        }
+        public async Task<IEnumerable<EventoAssociadoDTO>> GetEventosByIdPessoaAsync(int idPessoa)
+        {
+            var query = from eventoPessoa in _context.Eventopessoas
+                        where eventoPessoa.IdPessoa == idPessoa
+                        select new EventoAssociadoDTO
+                        {
+                            IdEvento = eventoPessoa.IdEvento,
+                            Inicio = eventoPessoa.IdEventoNavigation.DataHoraInicio,
+                            Fim = eventoPessoa.IdEventoNavigation.DataHoraFim,
+                            Presente = Convert.ToBoolean(eventoPessoa.Presente),
+                            Justificativa = eventoPessoa.JustificativaFalta,
+                            JustificativaAceita = Convert.ToBoolean(eventoPessoa.JustificativaAceita),
+                            Local = eventoPessoa.IdEventoNavigation.Local,
+                            Repertorio = eventoPessoa.IdEventoNavigation.Repertorio
+                        };
+
+            return await query.AsNoTracking().ToListAsync();
+        }
+        public async Task<Eventopessoa?> GetEventoPessoaAsync(int idEvento, int idPessoa)
+        {
+            return await _context.Eventopessoas.Where(ep => ep.IdEvento == idEvento && ep.IdPessoa == idPessoa).FirstOrDefaultAsync();
+        }
+        public async Task<HttpStatusCode> RegistrarJustificativaAsync(int idEvento, int idPessoa, string? justificativa)
+        {
+            try
+            {
+                var eventoPessoa = await GetEventoPessoaAsync(idEvento, idPessoa);
+                if (eventoPessoa == null)
+                {
+                    return HttpStatusCode.NotFound;
+                }
+
+                eventoPessoa.JustificativaFalta = justificativa;
+                eventoPessoa.Presente = 0;
+
+                _context.Update(eventoPessoa);
+                await _context.SaveChangesAsync();
+                return HttpStatusCode.OK;
+            }
+            catch
+            {
+                return HttpStatusCode.InternalServerError;
+            }
+        }
+        public async Task<IEnumerable<int>> GetIdRegentesEventoAsync(int idEnsaio)
+        {
+            return await _context.Ensaiopessoas
+                                 .Where(ep => ep.IdEnsaio == idEnsaio)
+                                 .Select(ep => ep.IdPessoa).ToListAsync();
+        }
 
     }
 }
