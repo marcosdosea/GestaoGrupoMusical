@@ -72,6 +72,7 @@
                         "orderable": false
 
                     }],
+                    "order": [[1, 'desc'],[2, 'desc'], [0, 'asc']],
                     "columns": [
                         {
                             "data": "descricao",
@@ -125,7 +126,7 @@
                         {
                             "render": function (data, type, full, meta) {
 
-                                return '<a class="btn btn btn-secondary btn-sm  m-2" href="/MaterialEstudo/Edit/' + full.id + '"><i class="fa-solid fa-pen-to-square"> </i> Editar</a> ' +
+                                return '<a class="btn btn btn-secondary btn-sm  m-2" href="/Financeiro/Edit/' + full.id + '"><i class="fa-solid fa-pen-to-square"> </i> Editar</a> ' +
                                     '<a onclick="showConfirmationModalDelete(' + full.id + ')" class="btn btn-sm btn-secondary" role="button"><i class="fa-solid fa-xmark"></i> Excluir</a>' +
                                     '</br><a onclick="showConfirmationModalNotificar(' + full.id + ')" class="btn btn btn-secondary btn-sm  m-2" "><i class="fa-solid fa-envelope"> </i> Notificar Associados</a> ';
                             }
@@ -138,15 +139,15 @@
             });
         </script>
     }
-    <div class="modal fade" id="financeiroModalDelete" tabindex="-1" aria-labelledby="materialEstudoLabel" aria-hidden="true">
+    <div class="modal fade" id="financeiroModalDelete" tabindex="-1" aria-labelledby="financeiroLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="admLabel">Confirmar Exclusão do Material de Estudo</h5>
+                    <h5 class="modal-title" id="admLabel1">Confirmar Exclusão do pagamento</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    Deseja <b>Excluir</b> o <b>Material de Estudo</b>?
+                <div class="modal-body1">
+                    Deseja <b>Excluir</b> o <b>pagamento</b>?
                 </div>
                 <form method="post" class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary col-3 me-4" data-bs-dismiss="modal">Não</button>
@@ -155,14 +156,14 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="financeiroModalNotificar" tabindex="-1" aria-labelledby="materialEstudoLabel" aria-hidden="true">
+    <div class="modal fade" id="financeiroModalNotificar" tabindex="-1" aria-labelledby="financeiroLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="admLabel">Confirmar Notificação do Material de Estudo</h5>
+                    <h5 class="modal-title" id="admLabel2">Confirmar Notificação do Material de Estudo</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body2">
                     Deseja <b>Notificar</b> o <b>Material de Estudo</b>?
                 </div>
                 <form method="post" class="modal-footer">
@@ -177,8 +178,8 @@
             var modal = document.getElementById('financeiroModalDelete');
             var modalForm = modal.querySelector('form');
             modalForm.action = '/Financeiro/Delete/' + formId;
-            var modalBody = modal.querySelector('.modal-body');
-            modalBody.innerHTML = 'Deseja <b>Excluir</b> o <b>Pagamento?</b>?';
+            var modalBody = modal.querySelector('.modal-body1');
+            modalBody.innerHTML = 'Deseja <b>Excluir</b> o <b>Pagamento</b>?';
             var modal = new bootstrap.Modal(modal);
             modal.show();
         }
@@ -187,8 +188,8 @@
             var modal = document.getElementById('financeiroModalNotificar');
             var modalForm = modal.querySelector('form');
             modalForm.action = '/financeiro/NotificarAssociadosViaEmail/' + formId;
-            var modalBody = modal.querySelector('.modal-body');
-            modalBody.innerHTML = 'Deseja <b>Notificar</b> o <b>Pagamento para todos os associados?</b>?';
+            var modalBody = modal.querySelector('.modal-body2');
+            modalBody.innerHTML = 'Deseja <b>Notificar</b> o <b>Pagamento</b> para todos os associados??';
             var modal = new bootstrap.Modal(modal);
             modal.show();
         }

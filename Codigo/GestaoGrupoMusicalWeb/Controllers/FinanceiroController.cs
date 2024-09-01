@@ -99,6 +99,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: Pagamento/Delete/5
+        [HttpPost]
         public ActionResult Delete(int id)
         {
             return View();

@@ -68,14 +68,10 @@ namespace Service
 
             if (request.Order != null && request.Order[0].GetValueOrDefault("column")!.Equals("0"))
             {
-                if (!request.Order[0].GetValueOrDefault("dir")!.Equals("asc"))
-                {
+                if (request.Order[0].GetValueOrDefault("dir")!.Equals("asc"))
                     financeiroIndexDTO = financeiroIndexDTO.OrderByDescending(g => g.Descricao);
-                }
                 else
-                {
                     financeiroIndexDTO = financeiroIndexDTO.OrderBy(g => g.Descricao);
-                }
             }
             else if (request.Order != null && request.Order[0].GetValueOrDefault("column")!.Equals("1"))
             {
