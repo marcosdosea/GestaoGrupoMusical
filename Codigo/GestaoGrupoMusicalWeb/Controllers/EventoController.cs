@@ -329,9 +329,22 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 IdTipoInstrumento = gerenciarInstrumentoEventoViewModel.IdTipoInstrumento,
                 QuantidadePlanejada = gerenciarInstrumentoEventoViewModel.Quantidade                             
             };
+           
+            switch (await _eventoService.CreateApresentacaoInstrumento(apresentacaotipoinstrumento))
+            {
+                case HttpStatusCode.OK:
+                    Notificar("Instrumento(s) Planejado(os) <b>Cadastrado</b> com <b>Sucesso</b>", Notifica.Sucesso);
+                    break;
+                case HttpStatusCode.Conflict:
+                    Notificar("<b>Erro!</b> já existe um instrumento planejado, clique no botão editar para adicionar atualizar a quantidade.", Notifica.Alerta);
+                    break;
+                default:
+                    Notificar("<b>Erro</b>! Desculpe, ocorreu um erro durante o <b>Cadastro</b> do instrumento.", Notifica.Erro);
+                    break;
+            }
 
-            HttpStatusCode resul = await _eventoService.CreateApresentacaoInstrumento(apresentacaotipoinstrumento);
-            
+
+
             return RedirectToAction(nameof(GerenciarInstrumentoEvento), new { id = apresentacaotipoinstrumento.IdApresentacao });
         }
 

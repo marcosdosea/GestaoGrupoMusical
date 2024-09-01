@@ -415,7 +415,7 @@ namespace Service
             {
                 
                 bool exists = await _context.Apresentacaotipoinstrumentos
-                    .AnyAsync(a => a.IdTipoInstrumento == apresentacaotipoinstrumento.IdTipoInstrumento);
+                    .AnyAsync(a => a.IdTipoInstrumento == apresentacaotipoinstrumento.IdTipoInstrumento && a.IdApresentacao == apresentacaotipoinstrumento.IdApresentacao);
 
                 if (exists)
                 {
@@ -427,12 +427,7 @@ namespace Service
                 await _context.SaveChangesAsync();
 
                 return HttpStatusCode.OK;
-            }
-            catch (DbUpdateException dbEx)
-            {
-                               
-                return HttpStatusCode.InternalServerError; 
-            }
+            }         
             catch (Exception ex)
             {
                                
