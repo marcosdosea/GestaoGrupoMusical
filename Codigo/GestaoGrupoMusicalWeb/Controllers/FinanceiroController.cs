@@ -1,13 +1,8 @@
 ﻿using AutoMapper;
-using Core;
 using Core.Datatables;
-using Core.DTO;
 using Core.Service;
-using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Service;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -17,17 +12,15 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IMapper _mapper;
         private readonly IGrupoMusicalService _grupoMusicalService;
         private readonly IPessoaService _pessoaService;
-        private int ReceitaFinanceiraMesesAtrasados { get; }
 
 
         public FinanceiroController(IFinanceiroService financeiroService,IMapper mapper, IGrupoMusicalService grupoMusical,
-            IPessoaService pessoaService,IConfiguration configuration)
+            IPessoaService pessoaService)
         {
             _financeiroService = financeiroService;
             _mapper = mapper;
             _grupoMusicalService = grupoMusical;
             _pessoaService = pessoaService;
-            ReceitaFinanceiraMesesAtrasados = configuration.GetValue<int>("Aplication:ReceitaFinanceiraMesesAtrasados");
         }
 
 
