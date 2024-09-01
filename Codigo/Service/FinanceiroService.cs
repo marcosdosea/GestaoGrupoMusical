@@ -19,14 +19,15 @@ namespace Service
             _context = context;
         }
 
-        public async Task<IEnumerable<FinanceiroIndexDataPage>> GetAllFinanceiroPorIdGrupo(int idGrupoMusical, int mesesAtrasados)
+        public  IEnumerable<FinanceiroIndexDataPage> GetAllFinanceiroPorIdGrupo(int idGrupoMusical)
         {
             DateTime dataMesesAtrasados = DateTime.Now.Date;
-            var query = await (from financeiro in _context.Receitafinanceiras
+            var query = (from financeiro in _context.Receitafinanceiras
                                where financeiro.IdGrupoMusical == idGrupoMusical
                                select new FinanceiroIndexDataPage
                                {
                                    Id = financeiro.Id,
+                                   Descricao = financeiro.Descricao,
                                    DataInicio = financeiro.DataInicio,
                                    DataFim = financeiro.DataFim,
                                    Pagos = financeiro.Receitafinanceirapessoas.
@@ -37,11 +38,21 @@ namespace Service
                                     && rfp.Status == "ISENTO").Count(),
                                    Atrasos = financeiro.Receitafinanceirapessoas.
                                    Where(rfp => rfp.IdReceitaFinanceira == financeiro.Id
-                                    && rfp.Status == "ENVIADO"
+                                    && rfp.Status == "ABERTO"
                                     && financeiro.DataFim < dataMesesAtrasados).Count(),
-                                   Recebido = financeiro.Receitafinanceirapessoas.
+                                   Recebido = financeiro.Receitafinanceirapessoas.Where(rfp => rfp.Status == "PAGO").
                                    Sum(rfp => rfp.ValorPago),
-                               }).ToListAsync();
+                               }).ToList();
+            if (query.Count() > 0)
+            {
+                foreach (var item in query)
+                {
+                    if(item.Descricao.Length > 15)
+                    {
+                        item.Descricao = item.Descricao.Substring(0, 15) + "...";
+                    }
+                }
+            }
             return query;
         }
 

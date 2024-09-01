@@ -76,7 +76,11 @@
                                 return day + '/' + month + '/' + year + "<br>" + hours + ":" + minutes + ":" + seconds;
                             }
                         },
-                        { "data": "nome", "name": "Nome", "autoWidth": true },
+                        {
+                            "data": "nome",
+                            "name": "Nome",
+                            "autoWidth": true
+                        },
                         {
                             "data": "link",
                             "name": "Link",
@@ -140,7 +144,7 @@
         function showConfirmationModalDelete(formId) {
             var modal = document.getElementById('materialEstudoModalDelete');
             var modalForm = modal.querySelector('form');
-            modalForm.action = '/MaterialEstudo/Delete/' + formId; 
+            modalForm.action = '/MaterialEstudo/Delete/' + formId;
             var modalBody = modal.querySelector('.modal-body');
             modalBody.innerHTML = 'Deseja <b>Excluir</b> o <b>Material de Estudo</b>?';
             var modal = new bootstrap.Modal(modal);

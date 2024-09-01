@@ -31,7 +31,7 @@ namespace Core.DTO
         [Display(Name = "Atrasos")]
         public int Atrasos { get; set; }
 
-        [Display(Name = "Recebidos")]
+        [Display(Name = "Recebido")]
         public decimal Recebido { get; set; }
 
     }

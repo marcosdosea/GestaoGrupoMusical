@@ -4,6 +4,7 @@ using Core.Datatables;
 using Core.DTO;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Service;
@@ -30,40 +31,21 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
 
-        // GET: Pagamento
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         public ActionResult Index()
         {
             return View();
         }
 
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
+        [HttpPost]
         public async Task<IActionResult> GetDataPage(DatatableRequest request)
         {
             int idGrupoMusical = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
 
-            var listaReceitaFinanceira = await _financeiroService.GetAllFinanceiroPorIdGrupo(idGrupoMusical, ReceitaFinanceiraMesesAtrasados);
+            var listaReceitaFinanceira = _financeiroService.GetAllFinanceiroPorIdGrupo(idGrupoMusical);
 
             var response = _financeiroService.GetDataPage(request, listaReceitaFinanceira);
-            Console.WriteLine("### RECEITA DATAPAGE ### " + listaReceitaFinanceira.Count());
-            Console.WriteLine("### RECEITA DATAPAGE ### " + response.Data?.Count());
-            
-            if(response.Data?.Count() > 0)
-            {
-                Console.WriteLine("NOT NULL");
-                foreach (var item in response.Data)
-                {
-                    Console.WriteLine("### ITEM ###");
-                    Console.WriteLine("ID: " + item.Id);
-                    Console.WriteLine("PAGOS: " + item.Pagos);
-                    Console.WriteLine("ISENTOS: " + item.Isentos);
-                    Console.WriteLine("Atrasos: " + item.Atrasos);
-                    Console.WriteLine("Recebido: " + item.Recebido);
-                }
-            }
-            else
-            {
-                Console.WriteLine("NULL");
-            }
-            response.Data = null;
             
             return Json(response);
         }
@@ -77,10 +59,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: Pagamento/Create
         public async Task<ActionResult> Create()
         {
-            Console.WriteLine("### CREATE DATAPAGE ###");
-            _ = await GetDataPage(new DatatableRequest());
-            return RedirectToAction("Index");
-            //return View();
+            return View();
         }
 
         // POST: Pagamento/Create
