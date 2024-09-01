@@ -6,6 +6,7 @@ using Core.Service;
 using Email;
 using Microsoft.EntityFrameworkCore;
 using MySql.Data.MySqlClient;
+using MySqlX.XDevAPI.Common;
 using Org.BouncyCastle.Crypto;
 using System.Net;
 using static Core.Service.IEventoService;
@@ -409,11 +410,36 @@ namespace Service
         }
 
         public async Task<HttpStatusCode> CreateApresentacaoInstrumento(Apresentacaotipoinstrumento apresentacaotipoinstrumento)
-        {          
-            await _context.Apresentacaotipoinstrumentos.AddAsync(apresentacaotipoinstrumento);
-            await _context.SaveChangesAsync();
+        {           
+            try
+            {
+                
+                bool exists = await _context.Apresentacaotipoinstrumentos
+                    .AnyAsync(a => a.IdTipoInstrumento == apresentacaotipoinstrumento.IdTipoInstrumento);
 
-            return HttpStatusCode.Created;
+                if (exists)
+                {
+                    
+                    return HttpStatusCode.Conflict;
+                }
+                
+                await _context.Apresentacaotipoinstrumentos.AddAsync(apresentacaotipoinstrumento);
+                await _context.SaveChangesAsync();
+
+                return HttpStatusCode.OK;
+            }
+            catch (DbUpdateException dbEx)
+            {
+                               
+                return HttpStatusCode.InternalServerError; 
+            }
+            catch (Exception ex)
+            {
+                               
+                return HttpStatusCode.InternalServerError; 
+            }
+
+
         }
 
         public IEnumerable<SolicitacaoEventoPessoasDTO> GetSolicitacaoEventoPessoas(int idEvento, int pegarFaltasEmMesesAtras)
