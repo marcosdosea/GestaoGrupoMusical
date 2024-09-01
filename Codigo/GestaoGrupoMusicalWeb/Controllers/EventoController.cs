@@ -312,7 +312,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 Local = eventoView.Local,
                 ListaInstrumentos = instrumentoMusicalViewModel.ListaInstrumentos,
             };
-            Console.WriteLine("INSTRUMENTOS get " + listaInstrumentos);
+            
             ViewData["exemploRegente"] = listaPessoasAutoComplete.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
             gerenciarInstrumentoEvento.JsonLista = listaPessoasAutoComplete.ToJson();
             return View(gerenciarInstrumentoEvento);
@@ -322,20 +322,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> CreateInstrumento(GerenciarInstrumentoEventoViewModel gerenciarInstrumentoEventoViewModel)
-        {
-            Console.WriteLine("APRESENTACAO " + gerenciarInstrumentoEventoViewModel.Id);
-            Console.WriteLine("INSTRUMENTOS " + gerenciarInstrumentoEventoViewModel.IdTipoInstrumento);
-            Console.WriteLine("QUANTIDADE " +  gerenciarInstrumentoEventoViewModel.Quantidade + "\n\n");
-
+        {           
             Apresentacaotipoinstrumento apresentacaotipoinstrumento = new Apresentacaotipoinstrumento
             {
                 IdApresentacao = gerenciarInstrumentoEventoViewModel.Id,
                 IdTipoInstrumento = gerenciarInstrumentoEventoViewModel.IdTipoInstrumento,
-                QuantidadePlanejada = gerenciarInstrumentoEventoViewModel.Quantidade 
-                
-                /*IdApresentacao = 2,
-                IdTipoInstrumento = 3,
-                QuantidadePlanejada =2*/
+                QuantidadePlanejada = gerenciarInstrumentoEventoViewModel.Quantidade                             
             };
 
             HttpStatusCode resul = await _eventoService.CreateApresentacaoInstrumento(apresentacaotipoinstrumento);
