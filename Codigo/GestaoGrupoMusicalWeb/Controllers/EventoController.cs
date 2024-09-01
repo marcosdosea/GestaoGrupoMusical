@@ -333,7 +333,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             switch (await _eventoService.CreateApresentacaoInstrumento(apresentacaotipoinstrumento))
             {
                 case HttpStatusCode.OK:
-                    Notificar("Instrumento(s) Planejado(os) <b>Cadastrado</b> com <b>Sucesso!</b>", Notifica.Sucesso);
+                    Notificar("Instrumento(s) Planejado(os) <b>Cadastrado(s)</b> com <b>Sucesso!</b>", Notifica.Sucesso);
                     break;
                 case HttpStatusCode.Conflict:
                     Notificar("<b>Erro!</b> já existe um instrumento planejado, clique no botão editar para adicionar atualizar a quantidade.", Notifica.Alerta);
