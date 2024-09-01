@@ -412,8 +412,7 @@ namespace Service
         public async Task<HttpStatusCode> CreateApresentacaoInstrumento(Apresentacaotipoinstrumento apresentacaotipoinstrumento)
         {           
             try
-            {
-                
+            {                
                 bool exists = await _context.Apresentacaotipoinstrumentos
                     .AnyAsync(a => a.IdTipoInstrumento == apresentacaotipoinstrumento.IdTipoInstrumento && a.IdApresentacao == apresentacaotipoinstrumento.IdApresentacao);
 
@@ -433,8 +432,6 @@ namespace Service
                                
                 return HttpStatusCode.InternalServerError; 
             }
-
-
         }
 
         public IEnumerable<SolicitacaoEventoPessoasDTO> GetSolicitacaoEventoPessoas(int idEvento, int pegarFaltasEmMesesAtras)
