@@ -18,8 +18,13 @@ namespace GestaoGrupoMusicalWeb.Models
         [Display(Name = "Data Hora Fim")]
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public DateTime DataHoraFim { get; set; }
+
         [Display(Name = "Local")]
-        public string? Local { get; set; }
+        public string? Local { get; set; } 
+        
+        [Display(Name = "Figurino")]
+        public string? FigurinoApresentacao { get; set; }
+
         [Display(Name = "Repetório")]
         public string? Repertorio { get; set; }
         [Display(Name = "Colaborador Reponsável")]
@@ -92,6 +97,7 @@ namespace GestaoGrupoMusicalWeb.Models
         public DateTime? DataHoraFim { get; set; }
 
         public SelectList? FigurinoList { get; set; }
+        public string? FigurinoApresentacao { get; set; }
 
         [Display(Name = "Figurino")]
         [Required(ErrorMessage = "O campo {0} é obrigatório")]

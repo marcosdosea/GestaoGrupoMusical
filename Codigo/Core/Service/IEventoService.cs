@@ -25,6 +25,7 @@ namespace Core.Service
         GerenciarSolicitacaoEventoDTO? GetSolicitacoesEventoDTO(int idEvento, int pegarFaltasEmMesesAtras);
         IEnumerable<SolicitacaoEventoPessoasDTO> GetSolicitacaoEventoPessoas(int idEvento, int pegarFaltasEmMesesAtras);
         public EventoStatus EditSolicitacoesEvento(GerenciarSolicitacaoEventoDTO g);
+        Task<IEnumerable<FigurinoApresentacaoDTO>> GetFigurinoApresentacao(int idGrupo);
 
         public static InscricaoEventoPessoa ConvertAprovadoParaEnum(string aprovado)
         {

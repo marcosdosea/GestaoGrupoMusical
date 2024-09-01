@@ -24,6 +24,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IPessoaService _pessoaService;
         private readonly IFigurinoService _figurinoService;
         private readonly IInstrumentoMusicalService _tipoIntrumentoMusicalService;
+        
         private int FaltasPessoasEmEnsaioMeses { get; }
 
 
@@ -285,6 +286,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            var figurinoApresentacao = await _eventoService.GetFigurinoApresentacao(id);
+
             var figurinosDropdown = await _figurinoService.GetAllFigurinoDropdown(idGrupoMusical);
 
             if (figurinosDropdown == null || !figurinosDropdown.Any())
@@ -305,8 +308,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 IdGrupoMusical = idGrupoMusical,
                 DataHoraInicio = eventoView.DataHoraInicio,
                 DataHoraFim = eventoView.DataHoraFim,
-                ListaPessoa = new SelectList(listaPessoasAutoComplete, "Id", "Nome"),
-                FigurinoList = new SelectList(figurinosDropdown, "Id", "Nome"),
+                ListaPessoa = new SelectList(listaPessoasAutoComplete, "Id", "Nome"),                              
+                FigurinoApresentacao = eventoView.FigurinoApresentacao,                
                 Local = eventoView.Local,
                 ListaInstrumentos = instrumentoMusicalViewModel.ListaInstrumentos,
             };
@@ -319,9 +322,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> GerenciarInstrumentoEvento(GerenciarInstrumentoEventoViewModel gerenciarInstrumentoEventoViewModel)
+        public async Task<ActionResult> CreateInstrumento(GerenciarInstrumentoEventoViewModel gerenciarInstrumentoEventoViewModel)
         {
 
+            Console.WriteLine("APRESENTACAO", gerenciarInstrumentoEventoViewModel.IdApresentacao);
             Console.WriteLine("INSTRUMENTOS", gerenciarInstrumentoEventoViewModel.IdTipoInstrumento);
             Console.WriteLine("QUANTIDADE", gerenciarInstrumentoEventoViewModel.Quantidade);
 
@@ -329,7 +333,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 IdApresentacao = gerenciarInstrumentoEventoViewModel.IdApresentacao,
                 IdTipoInstrumento = gerenciarInstrumentoEventoViewModel.IdTipoInstrumento,
-                QuantidadePlanejada = gerenciarInstrumentoEventoViewModel.Quantidade
+                QuantidadePlanejada = gerenciarInstrumentoEventoViewModel.Quantidade 
+                
+                /*IdApresentacao = 2,
+                IdTipoInstrumento = 3,
+                QuantidadePlanejada =2*/
             };
 
             HttpStatusCode resul = await _eventoService.CreateApresentacaoInstrumento(apresentacaotipoinstrumento);

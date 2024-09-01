@@ -21,12 +21,12 @@
             <br />
             <div class="container">
                 <div class="row">
-                    <div class="form-group col-xxl-4">
+                    <div class="col-xxl-4">
                         <label asp-for="DataHoraInicio" class="control-label"></label>
                         <input asp-for="DataHoraInicio" class="form-control" readonly />
                         <span asp-validation-for="DataHoraInicio" class="text-danger"></span>
                     </div>
-                    <div class="form-group col-xxl-4">
+                    <div class="col-xxl-4">
                         <label asp-for="DataHoraFim" class="control-label"></label>
                         <input asp-for="DataHoraFim" class="form-control" readonly />
                         <span asp-validation-for="DataHoraFim" class="text-danger"></span>
@@ -35,7 +35,7 @@
             </div>
             <div class="container">
                 <div class="row col-xl">
-                    <div class="form-group">
+                    <div >
                         <label asp-for="IdRegentes" class="control-label"></label>
                         <select asp-for="IdRegentes" asp-items="@Model.ListaPessoa" class="form-select" readonly>
                             <option value=""></option>
@@ -49,33 +49,36 @@
                 </div>
             </div>
             <div class="container">
-                <div class="form-group">
+                <div>
                     <label asp-for="IdFigurinoSelecionado" class="control-label"></label>
-                    <select asp-items="@Model.FigurinoList" asp-for="IdFigurinoSelecionado" class="form-select" readonly></select>
-                    <span asp-validation-for="IdFigurinoSelecionado" class="text-danger"></span>
+                    <input asp-for="@Model.FigurinoList" class="form-control" readonly />
+                    <span asp-validation-for="FigurinoList" class="text-danger"></span>
                 </div>
             </div>
             <div class="container">
-                <div class="form-group">
+                <div>
                     <label asp-for="Local" class="control-label"></label>
                     <input asp-for="Local" class="form-control" readonly />
                     <span asp-validation-for="Local" class="text-danger"></span>
                 </div>
             </div>
-            <form asp-action="Create" asp-action="GerenciarInstrumentoEvento">
+            <form asp-action="CreateInstrumento">
                 <div class="container">
-                    <div class="row col-md-12">
+                    <div class="row col-md-12">                      
                         <div class="form-group  col-md-4">
                             <label asp-for="ListaInstrumentos" class="control-label"></label>
-                            <select asp-items="@Model.ListaInstrumentos" asp-for="Id" class="form-select"></select>
-                            <span asp-validation-for="ListaInstrumentos" class="text-danger"></span>
+                            <select asp-items="@Model.ListaInstrumentos" asp-for="IdTipoInstrumento" class="form-select"></select>
                             <input type="hidden" asp-for="@Model.IdTipoInstrumento" />
-                        </div>
+                        </div>                                    
                         <div class="form-group  col-md-4">
                             <label asp-for="Quantidade" class="control-label"></label>
                             <input asp-for="Quantidade" class="form-control" />
                             <span asp-validation-for="Quantidade" class="text-danger"></span>
-                        </div>                        
+                        </div>
+                        <div class="form-group" hidden>
+                            <label asp-for="IdApresentacao" class="control-label"></label>
+                            <input asp-for="IdApresentacao" readonly class="form-control" />
+                        </div>
                         <div class="form-group col-md-4 justify-content-lg-end flex-column-reverse flex-lg-row">
                             <input class="btn btn-secondary  btn-lg w-100 mt-3" type="submit" value="Adicionar" />
                         </div>

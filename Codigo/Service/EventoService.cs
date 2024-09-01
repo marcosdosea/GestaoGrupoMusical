@@ -13,6 +13,8 @@ namespace Service
     public class EventoService : IEventoService
     {
         private readonly GrupoMusicalContext _context;
+        
+        
 
         public EventoService(GrupoMusicalContext context)
         {
@@ -386,6 +388,23 @@ namespace Service
                     Id = g.Id,
                     Nome = g.Nome
                 }).AsNoTracking().ToListAsync();
+            return query;
+        }
+
+            public async Task<IEnumerable<FigurinoApresentacaoDTO>> FigurinoApresentacao(int idFigurinoApresentacao)
+        {
+            var query = await _context.Figurinos
+                .Where(figurino => figurino.IdGrupoMusical == idFigurinoApresentacao)
+                .Where(figurino => _context.FigurinoApresentacaos
+                    .Any(figurinoApresentacao => figurinoApresentacao.idApresentacao == figurino.Id))
+                .Select(g => new FigurinoEvento
+                {
+                    Id = g.Id,
+                    Nome = g.Nome
+                })
+                .AsNoTracking()
+                .ToListAsync();
+
 
             return query;
         }

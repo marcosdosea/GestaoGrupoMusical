@@ -16,4 +16,11 @@ namespace Core.DTO
         public int Id { get; set; }
         public string Nome { get; set; } = null!;
     }
+
+    public class FigurinoEvento
+    {
+        public int Id { get; set; }
+        public string Nome { get; set; } = null!;
+    }
+
 }
