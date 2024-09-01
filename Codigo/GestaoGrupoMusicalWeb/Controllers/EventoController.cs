@@ -284,9 +284,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 Notificar("É necessário cadastrar pelo menos um Regente para então cadastrar um Evento Musical.", Notifica.Informativo);
                 return RedirectToAction(nameof(Index));
-            }
-
-            var figurinoApresentacao = await _eventoService.GetFigurinoApresentacao(id);
+            }         
 
             var figurinosDropdown = await _figurinoService.GetAllFigurinoDropdown(idGrupoMusical);
 
@@ -297,9 +295,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 return RedirectToAction(nameof(Index));
             }
             var evento = _eventoService.Get(id);
-            EventoViewModel eventoView = _mapper.Map<EventoViewModel>(evento);
+            EventoViewModel eventoView = _mapper.Map<EventoViewModel>(evento);                       
 
             InstrumentoMusicalViewModel instrumentoMusicalViewModel = new InstrumentoMusicalViewModel();
+
             IEnumerable<Tipoinstrumento> listaInstrumentos = await _tipoIntrumentoMusicalService.GetAllTipoInstrumento();
             instrumentoMusicalViewModel.ListaInstrumentos = new SelectList(listaInstrumentos, "Id", "Nome", null);
 
@@ -308,12 +307,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 IdGrupoMusical = idGrupoMusical,
                 DataHoraInicio = eventoView.DataHoraInicio,
                 DataHoraFim = eventoView.DataHoraFim,
-                ListaPessoa = new SelectList(listaPessoasAutoComplete, "Id", "Nome"),                              
-                FigurinoApresentacao = eventoView.FigurinoApresentacao,                
+                ListaPessoa = new SelectList(listaPessoasAutoComplete, "Id", "Nome"),
+                FigurinoList = new SelectList(figurinosDropdown, "Id", "Nome"),                              
                 Local = eventoView.Local,
                 ListaInstrumentos = instrumentoMusicalViewModel.ListaInstrumentos,
             };
-
+            Console.WriteLine("INSTRUMENTOS get " + listaInstrumentos);
             ViewData["exemploRegente"] = listaPessoasAutoComplete.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
             gerenciarInstrumentoEvento.JsonLista = listaPessoasAutoComplete.ToJson();
             return View(gerenciarInstrumentoEvento);
@@ -324,14 +323,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> CreateInstrumento(GerenciarInstrumentoEventoViewModel gerenciarInstrumentoEventoViewModel)
         {
-
-            Console.WriteLine("APRESENTACAO", gerenciarInstrumentoEventoViewModel.IdApresentacao);
-            Console.WriteLine("INSTRUMENTOS", gerenciarInstrumentoEventoViewModel.IdTipoInstrumento);
-            Console.WriteLine("QUANTIDADE", gerenciarInstrumentoEventoViewModel.Quantidade);
+            Console.WriteLine("APRESENTACAO " + gerenciarInstrumentoEventoViewModel.Id);
+            Console.WriteLine("INSTRUMENTOS " + gerenciarInstrumentoEventoViewModel.IdTipoInstrumento);
+            Console.WriteLine("QUANTIDADE " +  gerenciarInstrumentoEventoViewModel.Quantidade + "\n\n");
 
             Apresentacaotipoinstrumento apresentacaotipoinstrumento = new Apresentacaotipoinstrumento
             {
-                IdApresentacao = gerenciarInstrumentoEventoViewModel.IdApresentacao,
+                IdApresentacao = gerenciarInstrumentoEventoViewModel.Id,
                 IdTipoInstrumento = gerenciarInstrumentoEventoViewModel.IdTipoInstrumento,
                 QuantidadePlanejada = gerenciarInstrumentoEventoViewModel.Quantidade 
                 
@@ -341,7 +339,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             };
 
             HttpStatusCode resul = await _eventoService.CreateApresentacaoInstrumento(apresentacaotipoinstrumento);
-
+            
             return RedirectToAction(nameof(GerenciarInstrumentoEvento), new { id = apresentacaotipoinstrumento.IdApresentacao });
         }
 

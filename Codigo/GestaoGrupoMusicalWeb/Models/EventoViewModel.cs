@@ -97,6 +97,8 @@ namespace GestaoGrupoMusicalWeb.Models
         public DateTime? DataHoraFim { get; set; }
 
         public SelectList? FigurinoList { get; set; }
+
+        [Display(Name = "Figurino")]
         public string? FigurinoApresentacao { get; set; }
 
         [Display(Name = "Figurino")]

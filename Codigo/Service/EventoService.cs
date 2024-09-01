@@ -394,27 +394,7 @@ namespace Service
                     Nome = g.Nome
                 }).AsNoTracking().ToListAsync();
             return query;
-        }
-
-        public async Task<IEnumerable<FigurinoApresentacaoDTO>> GetFigurinoApresentacao(int idFigurinoApresentacao)
-        {
-            
-            var query = await _context.Figurinos
-              .Join(
-                  _context.FigurinoApresentacao,
-                  figurino => figurino.Id, // Chave de figurino
-                  figurinoApresentacao => figurinoApresentacao.IdFigurino, // Chave estrangeira de figurinoApresentacao
-                  (figurino, figurinoApresentacao) => new { Figurino = figurino, FigurinoApresentacao = figurinoApresentacao } // Resultado do join
-              )
-              .Where(joinedResult => joinedResult.FigurinoApresentacao.IdFigurino == idFigurinoApresentacao) // Filtro de condição
-              .Select(joinedResult => joinedResult.Figurino) // Seleciona apenas os dados de Figurino
-              .AsNoTracking()
-              .ToListAsync();
-            var result = _mapper.Map<IEnumerable<FigurinoApresentacaoDTO>>(query);
-            
-
-            return result;
-        }
+        }       
 
         public async Task<IEnumerable<Eventopessoa>> GetPessoas(int idGrupo)
         {
@@ -429,7 +409,7 @@ namespace Service
         }
 
         public async Task<HttpStatusCode> CreateApresentacaoInstrumento(Apresentacaotipoinstrumento apresentacaotipoinstrumento)
-        {
+        {          
             await _context.Apresentacaotipoinstrumentos.AddAsync(apresentacaotipoinstrumento);
             await _context.SaveChangesAsync();
 

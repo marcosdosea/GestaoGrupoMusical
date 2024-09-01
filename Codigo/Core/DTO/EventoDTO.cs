@@ -62,10 +62,4 @@ namespace Core.DTO
     }
 }
 
-
-public class FigurinoApresentacaoDTO
-{
-    public int IdFigurino { get; set; }
-    public int IdApresentacao { get; set; }
-}
 //ENUM('INSCRITO', 'DEFERIDO', 'INDEFERIDO')
