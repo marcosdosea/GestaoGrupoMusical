@@ -5,9 +5,11 @@ namespace Core;
 
 public partial class FigurinoApresentacao
 {
-    public int idFigurino { get; set; }
+    public int IdFigurino { get; set; }
 
-    public int idApresentacao { get; set; }
+    public int IdApresentacao { get; set; }    
 
-   
+    public virtual Evento IdApresentacaoEvento { get; set; } = null!;
+
+    public virtual Figurino IdManequimNIdFigurinoEventoavigation { get; set; } = null!;
 }

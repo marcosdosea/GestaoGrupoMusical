@@ -1,24 +1,29 @@
-﻿using Core;
+﻿using AutoMapper;
+using Core;
 using Core.Datatables;
 using Core.DTO;
 using Core.Service;
 using Email;
 using Microsoft.EntityFrameworkCore;
 using MySql.Data.MySqlClient;
+using Org.BouncyCastle.Crypto;
 using System.Net;
 using static Core.Service.IEventoService;
+
 
 namespace Service
 {
     public class EventoService : IEventoService
     {
         private readonly GrupoMusicalContext _context;
-        
-        
+        private readonly IMapper _mapper;
 
-        public EventoService(GrupoMusicalContext context)
+
+        public EventoService(GrupoMusicalContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
+
         }
 
         /// <summary>
@@ -391,22 +396,24 @@ namespace Service
             return query;
         }
 
-            public async Task<IEnumerable<FigurinoApresentacaoDTO>> FigurinoApresentacao(int idFigurinoApresentacao)
+        public async Task<IEnumerable<FigurinoApresentacaoDTO>> GetFigurinoApresentacao(int idFigurinoApresentacao)
         {
+            
             var query = await _context.Figurinos
-                .Where(figurino => figurino.IdGrupoMusical == idFigurinoApresentacao)
-                .Where(figurino => _context.FigurinoApresentacaos
-                    .Any(figurinoApresentacao => figurinoApresentacao.idApresentacao == figurino.Id))
-                .Select(g => new FigurinoEvento
-                {
-                    Id = g.Id,
-                    Nome = g.Nome
-                })
-                .AsNoTracking()
-                .ToListAsync();
+              .Join(
+                  _context.FigurinoApresentacao,
+                  figurino => figurino.Id, // Chave de figurino
+                  figurinoApresentacao => figurinoApresentacao.IdFigurino, // Chave estrangeira de figurinoApresentacao
+                  (figurino, figurinoApresentacao) => new { Figurino = figurino, FigurinoApresentacao = figurinoApresentacao } // Resultado do join
+              )
+              .Where(joinedResult => joinedResult.FigurinoApresentacao.IdFigurino == idFigurinoApresentacao) // Filtro de condição
+              .Select(joinedResult => joinedResult.Figurino) // Seleciona apenas os dados de Figurino
+              .AsNoTracking()
+              .ToListAsync();
+            var result = _mapper.Map<IEnumerable<FigurinoApresentacaoDTO>>(query);
+            
 
-
-            return query;
+            return result;
         }
 
         public async Task<IEnumerable<Eventopessoa>> GetPessoas(int idGrupo)
