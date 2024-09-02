@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Core;
+﻿using Core;
 using Core.Datatables;
 using Core.DTO;
 using Core.Service;
@@ -16,14 +15,12 @@ namespace Service
 {
     public class EventoService : IEventoService
     {
-        private readonly GrupoMusicalContext _context;
-        private readonly IMapper _mapper;
+        private readonly GrupoMusicalContext _context;        
 
 
-        public EventoService(GrupoMusicalContext context, IMapper mapper)
+        public EventoService(GrupoMusicalContext context)
         {
-            _context = context;
-            _mapper = mapper;
+            _context = context;            
 
         }
 
