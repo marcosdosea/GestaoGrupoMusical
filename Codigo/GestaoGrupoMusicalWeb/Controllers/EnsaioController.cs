@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NuGet.Protocol;
 using System.Net;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -255,25 +256,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: EnsaioController/RegistrarFrequencia
         public async Task<ActionResult> RegistrarFrequencia(int id)
         {
-            //O id passado no metodo é de Ensaio
+            Console.WriteLine("-----------------------------------------");
+            Console.WriteLine(id);
+            Console.WriteLine("-----------------------------------------");
+
             int idGrupoMusical = await _grupoMusical.GetIdGrupo(User.Identity.Name);
 
-            var listaRegentes = await _pessoa.GetRegentesForAutoCompleteAsync(idGrupoMusical);
-            if (listaRegentes == null || !listaRegentes.Any())
-            {
-                Notificar("É necessário cadastrar pelo menos um Regente para então registrar uma frequência.", Notifica.Informativo);
-                return RedirectToAction(nameof(Index));
-            }
-
-            var listaFigurinos = await _figurino.GetAllFigurinoDropdown(idGrupoMusical);
-
-            if (listaFigurinos == null || !listaFigurinos.Any())
-            {
-                Notificar("É necessário cadastrar pelo menos um Figurino para então registrar uma frequência.", Notifica.Informativo);
-                return RedirectToAction(nameof(Index));
-            }
-
-            var listaAssociadosAtivos = await _pessoa.GetAssociadoAtivos(idGrupoMusical);
+            var listaAssociadosAtivos = _ensaio.GetAssociadoAtivos(id);
 
             if(listaAssociadosAtivos == null || !listaAssociadosAtivos.Any())
             {
@@ -281,17 +270,35 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            foreach (var item in listaAssociadosAtivos)
+            {
+                Console.WriteLine(item.Cpf);
+            }
+
+            var listaRegentes = _pessoa.GetNomesRegentes(id);
+
             var ensaio = _ensaio.Get(id);
 
-            EnsaioViewModel ensaioView = _mapper.Map<EnsaioViewModel>(ensaio);
+            FrequenciaEnsaioViewModel ensaioView = new()
+            {
+                Id = id,
+                IdGrupoMusical = idGrupoMusical,
+                DataHoraInicio = ensaio.DataHoraInicio,
+                DataHoraFim = ensaio.DataHoraFim,
+                Tipo = ensaio.Tipo == "FIXO" ? Models.Tipo.FIXO : Models.Tipo.EXTRA,
+                Figurino = _figurino.GetNomeFigurino(id),
+                Local = ensaio.Local
+            };
 
-            ensaioView.ListaPessoa = new SelectList(listaRegentes, "Id", "Nome");
-            ensaioView.ListaFigurino = new SelectList(listaFigurinos, "Id", "Nome");
+            foreach (AutoCompleteRegenteDTO s in listaRegentes)
+            {
+                    if (ensaioView.Regentes.Length > 0)
+                        ensaioView.Regentes += "; " + s.Nome;
+                    else
+                        ensaioView.Regentes = s.Nome;
+            }
+
             ensaioView.AssociadosDTO = listaAssociadosAtivos;
-
-            ViewData["exemploRegente"] = listaRegentes.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
-            ViewData["jsonIdRegentes"] = (await _ensaio.GetIdRegentesEnsaioAsync(ensaioView.Id)).ToJson();
-            ensaioView.JsonLista = listaRegentes.ToJson();
 
             return View(ensaioView);
         }

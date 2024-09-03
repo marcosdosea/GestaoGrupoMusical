@@ -810,12 +810,21 @@ namespace Service
             return await query.AsNoTracking().ToListAsync();
         }
 
-        public async Task<List<AssociadoDTO>> GetAssociadoAtivos(int idGrupoMusical) { 
+       public async Task<List<AssociadoDTO>> GetAssociadoAtivos(int idGrupoMusical) { 
             var query = _context.Pessoas
-                .Where(p => p.IdGrupoMusical == idGrupoMusical && p.Ativo == 1)
+                .Where(p => p.IdGrupoMusical == idGrupoMusical && p.Ativo == 1 && p.IdPapelGrupo == 1)
                 .Select(p => new AssociadoDTO { Id = p.Id, Nome = p.Nome, Cpf = p.Cpf });
 
             return await query.AsNoTracking().ToListAsync();
+        } 
+
+        public IEnumerable<AutoCompleteRegenteDTO> GetNomesRegentes(int idEnsaio)
+        {
+            var query = _context.Ensaiopessoas
+                        .Where(p => p.IdEnsaio == idEnsaio && p.IdPapelGrupo == 5)
+                        .Select(p => new AutoCompleteRegenteDTO { Nome = p.IdPessoaNavigation.Nome });
+
+            return query.AsNoTracking().ToList();
         }
 
         /// <summary>

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Data;
 using System.Net;
 using Core.Datatables;
+using Microsoft.Extensions.Logging;
 
 namespace Service
 {
@@ -247,6 +248,32 @@ namespace Service
                 RecordsFiltered = countRecordsFiltered,
                 RecordsTotal = totalRecords
             };
+        }
+
+        public string GetNomeFigurino(int idEnsaio)
+        {
+            var figurinoEnsaio = _context.Set<Dictionary<string, object>>("Figurinoensaio")
+                .Where(fa => (int)fa["IdEnsaio"] == idEnsaio).AsNoTracking().FirstOrDefault();
+
+            if (figurinoEnsaio != null)
+            {
+                if (figurinoEnsaio.ContainsKey("IdFigurino") && figurinoEnsaio.ContainsKey("IdEnsaio"))
+                {
+                    int idFigurino = (int)figurinoEnsaio["IdFigurino"];
+                    int idEnsaioResgatado = (int)figurinoEnsaio["IdEnsaio"];
+
+                    string? nomeFigurino = (from figurino in _context.Figurinos
+                                           join fe in _context.Set<Dictionary<string, object>>("Figurinoensaio")
+                                           on figurino.Id equals (int)fe["IdFigurino"]
+                                           where (int)fe["IdEnsaio"] == idEnsaioResgatado && figurino.Id == idFigurino
+                                           select figurino.Nome)
+                                  .FirstOrDefault();
+
+                    return nomeFigurino ?? "";
+                }
+            }
+
+            return "";
         }
     }
 }

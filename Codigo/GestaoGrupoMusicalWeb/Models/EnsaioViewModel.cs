@@ -70,28 +70,20 @@ namespace GestaoGrupoMusicalWeb.Models
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public Tipo Tipo { get; set; }
 
-        [Display(Name = "Regentes")]
-        [Required(ErrorMessage = "O campo {0} é obrigatório")]
-        public IEnumerable<int>? IdRegentes { get; set; }
+        public string Regentes { get; set; } = string.Empty;
 
-        public SelectList? ListaPessoa { get; set; }
+        public string? Figurino { get; set; }
 
-        [Display(Name = "Figurino")]
-        [Required(ErrorMessage = "O campo {0} é obrigatório")]
-        public int IdFigurinoSelecionado { get; set; }
-
-        public SelectList? ListaFigurino { get; set; }
+        public List<AssociadoDTO>? AssociadosDTO { get; set; }
 
         [Display(Name = "Local")]
         [MaxLength(100, ErrorMessage = "O campo {0} deve ter no máximo 100 caracteres")]
         public string? Local { get; set; }
-
-        public string? JsonLista { get; set; }
     }
 
     public enum Tipo 
     { 
-        Fixo,
-        Extra
+        FIXO,
+        EXTRA
     }
 }

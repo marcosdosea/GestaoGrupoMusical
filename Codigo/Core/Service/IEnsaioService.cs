@@ -77,6 +77,8 @@ namespace Core.Service
         Task<HttpStatusCode> RegistrarJustificativaAsync(int idEnsaio, int idPessoa, string? justificativa);
         Task<HttpStatusCode> NotificarEnsaioViaEmail(IEnumerable<PessoaEnviarEmailDTO> pessoas, int idEnsaio);
 
+        List<AssociadoDTO> GetAssociadoAtivos(int idEnsaio);
+
         Task<DatatableResponse<EnsaioIndexDTO>> GetDataPage(DatatableRequest request, int idGrupo);
     }
 }

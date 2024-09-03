@@ -420,6 +420,25 @@ namespace Service
                                  .Select(ep => ep.IdPessoa).ToListAsync();
         }
 
+        public List<AssociadoDTO> GetAssociadoAtivos(int idEnsaio)
+        {
+            var query = _context.Ensaiopessoas
+                .Where(p => p.IdEnsaio == idEnsaio && p.IdPessoaNavigation.Ativo == 1 && p.IdPapelGrupo == 1)
+                .Select(p => new AssociadoDTO { Id = p.IdEnsaio, Nome = p.IdPessoaNavigation.Nome, Cpf = p.IdPessoaNavigation.Cpf, IdPapelGrupo = p.IdPapelGrupo }).AsNoTracking().ToList();
+
+            Console.WriteLine("-----------------------------------------");
+            Console.WriteLine(query.Count());
+            Console.WriteLine(idEnsaio);
+            Console.WriteLine("-----------------------------------------");
+
+            foreach (var item in query)
+            {
+                Console.WriteLine(item.IdPapelGrupo);
+            }
+
+            return query;
+        }
+
         public async Task<DatatableResponse<EnsaioIndexDTO>> GetDataPage(DatatableRequest request, int idGrupo)
         {
             var ensaios = await GetAllIndexDTO(idGrupo);

@@ -162,6 +162,8 @@ namespace Core.Service
 
         Task<List<AssociadoDTO>> GetAssociadoAtivos(int idGrupoMusical);
 
+        IEnumerable<AutoCompleteRegenteDTO> GetNomesRegentes(int idEnsaio);
+
         /// <summary>
         /// Atualiza as informações do usuário
         /// </summary>
