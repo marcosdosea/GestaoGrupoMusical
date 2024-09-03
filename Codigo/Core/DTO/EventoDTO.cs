@@ -62,6 +62,4 @@ namespace Core.DTO
     }
 }
 
-
-
 //ENUM('INSCRITO', 'DEFERIDO', 'INDEFERIDO')

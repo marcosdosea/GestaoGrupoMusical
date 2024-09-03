@@ -24,6 +24,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IPessoaService _pessoaService;
         private readonly IFigurinoService _figurinoService;
         private readonly IInstrumentoMusicalService _tipoIntrumentoMusicalService;
+        
         private int FaltasPessoasEmEnsaioMeses { get; }
 
 
@@ -283,7 +284,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 Notificar("É necessário cadastrar pelo menos um Regente para então cadastrar um Evento Musical.", Notifica.Informativo);
                 return RedirectToAction(nameof(Index));
-            }
+            }         
 
             var figurinosDropdown = await _figurinoService.GetAllFigurinoDropdown(idGrupoMusical);
 
@@ -294,9 +295,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 return RedirectToAction(nameof(Index));
             }
             var evento = _eventoService.Get(id);
-            EventoViewModel eventoView = _mapper.Map<EventoViewModel>(evento);
+            EventoViewModel eventoView = _mapper.Map<EventoViewModel>(evento);                       
 
             InstrumentoMusicalViewModel instrumentoMusicalViewModel = new InstrumentoMusicalViewModel();
+
             IEnumerable<Tipoinstrumento> listaInstrumentos = await _tipoIntrumentoMusicalService.GetAllTipoInstrumento();
             instrumentoMusicalViewModel.ListaInstrumentos = new SelectList(listaInstrumentos, "Id", "Nome", null);
 
@@ -306,11 +308,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 DataHoraInicio = eventoView.DataHoraInicio,
                 DataHoraFim = eventoView.DataHoraFim,
                 ListaPessoa = new SelectList(listaPessoasAutoComplete, "Id", "Nome"),
-                FigurinoList = new SelectList(figurinosDropdown, "Id", "Nome"),
+                FigurinoList = new SelectList(figurinosDropdown, "Id", "Nome"),                              
                 Local = eventoView.Local,
                 ListaInstrumentos = instrumentoMusicalViewModel.ListaInstrumentos,
             };
-
+            
             ViewData["exemploRegente"] = listaPessoasAutoComplete.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
             gerenciarInstrumentoEvento.JsonLista = listaPessoasAutoComplete.ToJson();
             return View(gerenciarInstrumentoEvento);
@@ -319,20 +321,29 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> GerenciarInstrumentoEvento(GerenciarInstrumentoEventoViewModel gerenciarInstrumentoEventoViewModel)
-        {
-
-            Console.WriteLine("INSTRUMENTOS", gerenciarInstrumentoEventoViewModel.IdTipoInstrumento);
-            Console.WriteLine("QUANTIDADE", gerenciarInstrumentoEventoViewModel.Quantidade);
-
+        public async Task<ActionResult> CreateInstrumento(GerenciarInstrumentoEventoViewModel gerenciarInstrumentoEventoViewModel)
+        {           
             Apresentacaotipoinstrumento apresentacaotipoinstrumento = new Apresentacaotipoinstrumento
             {
-                IdApresentacao = gerenciarInstrumentoEventoViewModel.IdApresentacao,
+                IdApresentacao = gerenciarInstrumentoEventoViewModel.Id,
                 IdTipoInstrumento = gerenciarInstrumentoEventoViewModel.IdTipoInstrumento,
-                QuantidadePlanejada = gerenciarInstrumentoEventoViewModel.Quantidade
+                QuantidadePlanejada = gerenciarInstrumentoEventoViewModel.Quantidade                             
             };
+           
+            switch (await _eventoService.CreateApresentacaoInstrumento(apresentacaotipoinstrumento))
+            {
+                case HttpStatusCode.OK:
+                    Notificar("Instrumento(s) Planejado(os) <b>Cadastrado(s)</b> com <b>Sucesso!</b>", Notifica.Sucesso);
+                    break;
+                case HttpStatusCode.Conflict:
+                    Notificar("<b>Erro!</b> já existe um instrumento planejado, clique no botão editar para adicionar atualizar a quantidade.", Notifica.Alerta);
+                    break;
+                default:
+                    Notificar("<b>Erro!</b> Desculpe, ocorreu um erro durante o <b>Cadastro</b> do instrumento.", Notifica.Erro);
+                    break;
+            }
 
-            HttpStatusCode resul = await _eventoService.CreateApresentacaoInstrumento(apresentacaotipoinstrumento);
+
 
             return RedirectToAction(nameof(GerenciarInstrumentoEvento), new { id = apresentacaotipoinstrumento.IdApresentacao });
         }

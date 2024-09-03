@@ -24,7 +24,7 @@ namespace Core.Service
         Task<HttpStatusCode> CreateApresentacaoInstrumento(Apresentacaotipoinstrumento apresentacaotipoinstrumento);
         GerenciarSolicitacaoEventoDTO? GetSolicitacoesEventoDTO(int idEvento, int pegarFaltasEmMesesAtras);
         IEnumerable<SolicitacaoEventoPessoasDTO> GetSolicitacaoEventoPessoas(int idEvento, int pegarFaltasEmMesesAtras);
-        public EventoStatus EditSolicitacoesEvento(GerenciarSolicitacaoEventoDTO g);
+        public EventoStatus EditSolicitacoesEvento(GerenciarSolicitacaoEventoDTO g);        
 
         public static InscricaoEventoPessoa ConvertAprovadoParaEnum(string aprovado)
         {
