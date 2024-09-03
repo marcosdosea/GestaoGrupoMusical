@@ -1,0 +1,138 @@
+﻿@model GestaoGrupoMusicalWeb.Models.EventoViewModel
+@{
+    ViewData["Title"] = "Registrar Frequência de Evento";
+    ViewData["Evento"] = "Evento";
+    ViewData["Registrar Frequência"] = "Registrar Frequência";
+    var pessoas = ViewBag.ListaAssociadosAtivos as SelectList;
+}
+
+<partial name="_Notificar">
+
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="p-3 bg-danger bg-opacity-75 text-white fs-5 text-center">Registrar Frequencia</h1>
+            <nav>
+                <ol class="breadcrumb px-3">
+                    <strong>
+                        <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Evento"]</a>
+                        <span class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Registrar Frequência"]</span>
+                    </strong>
+                </ol>
+            </nav>
+            <hr />
+            <br />
+            <form id="formCreate" asp-action="Edit">
+                <div class="container">
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label asp-for="DataHoraInicio" class="control-label"></label>
+                            <input asp-for="DataHoraInicio" readonly class="form-control" />
+                            <span asp-validation-for="DataHoraInicio" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label asp-for="DataHoraFim" class="control-label"></label>
+                            <input asp-for="DataHoraFim" readonly class="form-control" />
+                            <span asp-validation-for="DataHoraFim" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label asp-for="IdRegentes" class="control-label"></label>
+                            <!-- Essa parte está em teste para avaliar se está vindo o id referente ao regente -->
+                            <input type="text" readonly class="form-control"
+                                   value="@(Model.ListaPessoa != null && Model.IdRegentes != null
+                        ? string.Join(", ", Model.ListaPessoa
+                                        .Where(p => Model.IdRegentes.Contains(int.Parse(p.Value)))
+                                        .Select(p => p.Text))
+                        : "N/A")" />
+                            <span asp-validation-for="IdRegentes" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label asp-for="IdFigurinoSelecionado" class="control-label"></label>
+                            <!-- Essa parte está em teste para avaliar se está vindo o id referente ao figurino -->
+                            <input type="text" readonly class="form-control"
+                                   value="@(Model.ListaFigurino != null
+                        ? Model.ListaFigurino
+                                .FirstOrDefault(f => f.Value == Model.IdFigurinoSelecionado.ToString())?.Text
+                        : "N/A")" /> 
+                            <span asp-validation-for="IdFigurinoSelecionado" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label asp-for="Local" class="control-label"></label>
+                            <input asp-for="Local" readonly class="form-control" />
+                            <span asp-validation-for="Local" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <table class="table">
+                            <thead>
+                                <tr class="bg-danger bg-opacity-75 text-white">
+                                    <th class="border-0">CPF</th>
+                                    <th class="border-0">Associado</th>
+                                    <th class="border-0">Justificativa Ausência</th>
+                                    <th class="border-0">Presente</th>
+                                    <th class="border-0">Justificativa Aceita</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    for (int i = 0; i < Model.AssociadosDTO.Count; i++)
+                                    {
+                                        <tr class="border-bottom border-danger border-opacity-75 p-3 align-middle">
+                                            <td class="p-3">
+                                                @Html.DisplayFor(model => Model.AssociadosDTO[i].Cpf)
+                                            </td>
+                                            <td class="p-3">
+                                                @Html.DisplayFor(model => Model.AssociadosDTO[i].Nome)
+                                            </td>
+                                            <td class="p-3">
+                                                @Html.DisplayFor(model => Model.AssociadosDTO[i].JustificativaFalta)
+                                            </td>
+                                            <td class="p-3 text-center">
+                                                <input type="radio" name="Presente_@i" value="Presente" />
+                                            </td>
+                                            <td class="p-3 text-center">
+                                                <input type="radio" name="Presente_@i" value="JustificativaAceita" />
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="row justify-content-end">
+                        <div class="col-md-3 d-flex justify-content-between">
+                            <input type="submit" value="Salvar" class="btn btn-secondary btn-lg ms-2" />
+                            <a class="btn btn-light text-secondary border border-secondary btn-lg" asp-controller="Ensaio" asp-action="Index">Voltar</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener("load", () => {
+            fillAutocomplete('@(Html.Raw(Model.JsonLista))', "regentes", "IdRegentes", "formCreate", "O campo Regentes é obrigatório", '@(Html.Raw(ViewData["jsonIdRegentes"]))');
+        });
+    </script>
+
+    @section Header {
+        @{
+            await Html.RenderPartialAsync("_AutoCompleteCssPartial");
+        }
+    }
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+            await Html.RenderPartialAsync("_EnablePopoversPartial");
+            await Html.RenderPartialAsync("_AutoCompletePartial");
+        }
+    }
