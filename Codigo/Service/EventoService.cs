@@ -619,6 +619,118 @@ namespace Service
             }
         }
 
+        public async Task<EventoFrequenciaDTO?> GetFrequenciaAsync(int idEvento, int idGrupoMusical)
+        {
+            var regentes = await _context.Eventopessoas
+                .Where(ep => ep.IdEvento == idEvento)
+                .OrderBy(ep => ep.IdPessoaNavigation.Nome)
+                .Select(ep => ep.IdPessoaNavigation.Nome)
+                .ToListAsync();
 
+            var frequencias = await _context.Eventopessoas
+                .Where(eventoPessoa => eventoPessoa.IdEvento == idEvento)
+                .OrderBy(eventoPessoa => eventoPessoa.IdPessoaNavigation.Nome)
+                .Select(eventoPessoa => new EventoListaFrequenciaDTO
+                {
+                    IdEvento = eventoPessoa.IdEvento,
+                    IdPessoa = eventoPessoa.IdPessoa,
+                    Cpf = eventoPessoa.IdPessoaNavigation.Cpf,
+                    NomeAssociado = eventoPessoa.IdPessoaNavigation.Nome,
+                    Justificativa = eventoPessoa.JustificativaFalta,
+                    Presente = Convert.ToBoolean(eventoPessoa.Presente),
+                    JustificativaAceita = Convert.ToBoolean(eventoPessoa.JustificativaAceita),
+                }).ToListAsync();
+
+            var query = from evento in _context.Eventos
+                        where evento.Id == idEvento && evento.IdGrupoMusical == idGrupoMusical
+                        select new EventoFrequenciaDTO
+                        {
+                            Inicio = evento.DataHoraInicio,
+                            Fim = evento.DataHoraFim,
+                            Regentes = regentes,
+                            Local = evento.Local,
+                            Frequencias = frequencias
+                        };
+
+            return await query.AsNoTracking().SingleOrDefaultAsync();
+        }
+        public async Task<HttpStatusCode> RegistrarFrequenciaAsync(List<EventoListaFrequenciaDTO> frequencias)
+        {
+            try
+            {
+                if (!frequencias.Any())
+                {
+                    return HttpStatusCode.BadRequest;
+                }
+                int idEvento = frequencias.First().IdEvento;
+
+                var dbFrequencias = _context.Eventopessoas
+                                    .Where(ep => ep.IdEvento == frequencias.First().IdEvento)
+                                    .OrderBy(ep => ep.IdPessoaNavigation.Nome);
+
+                if (dbFrequencias == null)
+                {
+                    return HttpStatusCode.NotFound;
+                }
+
+                if (dbFrequencias.Count() != frequencias.Count)
+                {
+                    return HttpStatusCode.Conflict;
+                }
+
+                int pos = 0;
+                await dbFrequencias.ForEachAsync(dbFrequencia =>
+                {
+                    if (dbFrequencia.IdEvento == frequencias[0].IdEvento && dbFrequencia.IdPessoa == frequencias[pos].IdPessoa)
+                    {
+                        dbFrequencia.JustificativaAceita = Convert.ToSByte(frequencias[pos].JustificativaAceita);
+                        dbFrequencia.Presente = Convert.ToSByte(frequencias[pos].Presente);
+
+                        _context.Update(dbFrequencia);
+                    }
+                    pos++;
+                });
+
+                await _context.SaveChangesAsync();
+
+                return HttpStatusCode.OK;
+            }
+            catch
+            {
+                return HttpStatusCode.InternalServerError;
+            }
+        }
+        public async Task<Eventopessoa?> GetEventoPessoaAsync(int idEvento, int idPessoa)
+        {
+            return await _context.Eventopessoas.Where(ep => ep.IdEvento == idEvento && ep.IdPessoa == idPessoa).FirstOrDefaultAsync();
+        }
+        public async Task<HttpStatusCode> RegistrarJustificativaAsync(int idEvento, int idPessoa, string? justificativa)
+        {
+            try
+            {
+                var eventoPessoa = await GetEventoPessoaAsync(idEvento, idPessoa);
+                if (eventoPessoa == null)
+                {
+                    return HttpStatusCode.NotFound;
+                }
+
+                eventoPessoa.JustificativaFalta = justificativa;
+                eventoPessoa.Presente = 0;
+
+                _context.Update(eventoPessoa);
+                await _context.SaveChangesAsync();
+                return HttpStatusCode.OK;
+            }
+            catch
+            {
+                return HttpStatusCode.InternalServerError;
+            }
+        }
+        public async Task<IEnumerable<int>> GetIdRegentesEventoAsync(int idEnsaio)
+        {
+            return await _context.Ensaiopessoas
+                                 .Where(ep => ep.IdEnsaio == idEnsaio)
+                                 .Select(ep => ep.IdPessoa).ToListAsync();
+        }
     }
 }
