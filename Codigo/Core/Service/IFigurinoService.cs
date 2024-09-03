@@ -44,6 +44,7 @@ namespace Core.Service
         Task<HttpStatusCode> DeleteEstoque(int idFigurino, int idManequim);
         Task<HttpStatusCode> EditEstoque(Figurinomanequim estoque);
         Task<EstoqueDTO> GetEstoque(int idFigurino, int idManequim);
+        string GetNomeFigurino(int idEnsaio);
 
         Task<DatatableResponse<Figurino>> GetDataPage(DatatableRequest request, int idGrupo);
     }
