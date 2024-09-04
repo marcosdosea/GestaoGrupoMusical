@@ -275,5 +275,30 @@ namespace Service
 
             return "";
         }
+         public string GetNomeFigurinoEvento(int idApresentacao)
+         {
+             var figurinoApresentacao = _context.Set<Dictionary<string, object>>("Figurinoensaio")
+                 .Where(fa => (int)fa["idApresentacao"] == idApresentacao).AsNoTracking().FirstOrDefault();
+        
+             if (figurinoApresentacao != null)
+             {
+                 if (figurinoApresentacao.ContainsKey("IdFigurino") && figurinoApresentacao.ContainsKey("idApresentacao"))
+                 {
+                     int idFigurino = (int)figurinoApresentacao["IdFigurino"];
+                     int idEnsaioResgatado = (int)figurinoApresentacao["idApresentacao"];
+        
+                     string? nomeFigurino = (from figurino in _context.Figurinos
+                                             join fe in _context.Set<Dictionary<string, object>>("Figurinoevento")
+                                             on figurino.Id equals (int)fe["IdFigurino"]
+                                             where (int)fe["idApresentacao"] == idEnsaioResgatado && figurino.Id == idFigurino
+                                             select figurino.Nome)
+                                   .FirstOrDefault();
+        
+                     return nomeFigurino ?? "";
+                 }
+             }
+        
+             return "";
+         }
     }
 }
