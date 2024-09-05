@@ -1,14 +1,14 @@
-﻿@model IEnumerable<Core.DTO.GerenciarInstrumentoEventoDTO>
+﻿@model GestaoGrupoMusicalWeb.Models.GerenciarInstrumentoEventoViewModel
 
 <div class="table-responsive">
     <table class="table mt-3">
         <thead>
             <tr class="bg-danger bg-opacity-75 text-white">
                 <th>
-                    @Html.DisplayNameFor(model => model.Instrumentos)
+                    @Html.DisplayNameFor(model => model.ListaInstrumentos)
                 </th>      
                 <th>
-                    @Html.DisplayNameFor(model => model.Planejado)
+                    @Html.DisplayNameFor(model => model.Planejados)
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.Solicitados)
@@ -20,13 +20,13 @@
             </tr>
         </thead>
         <tbody>
-            @if(Model!=null)
+            @if (Model.InstrumentosPlanejadoEventoDTO != null)
             {
-            @foreach (var item in Model)
+                @foreach (var item in Model.InstrumentosPlanejadoEventoDTO)
             {
                 <tr class="border-bottom border-danger border-opacity-75 align-middle">
                     <td>
-                        @item.Instrumentos
+                        @item.IdInstrumento
                     </td>               
                     <td>
                         @item.Planejado
@@ -55,7 +55,7 @@
                             </a>
                         </form>
                     </td>
-                </tr>
+                </tr>                    
             }
             }
         </tbody>
@@ -100,3 +100,14 @@
         </div>
     </div>
 </div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+}
+<script>
+    function updateHiddenInput(selectElement, hiddenInputId) {
+        document.getElementById(hiddenInputId).value = selectElement.value
+    }
+</script>

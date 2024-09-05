@@ -24,14 +24,15 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IPessoaService _pessoaService;
         private readonly IFigurinoService _figurinoService;
         private readonly IInstrumentoMusicalService _tipoIntrumentoMusicalService;
-        
+        private readonly IMovimentacaoInstrumentoService _movimentacaoInstrumento;
+
         private int FaltasPessoasEmEnsaioMeses { get; }
 
 
         public EventoController(IEventoService evento, IMapper mapper, 
             IGrupoMusicalService grupoMusical, IPessoaService pessoaService, 
             IFigurinoService figurino, IInstrumentoMusicalService tipoInstrumentoMusical,
-            IConfiguration configuration)
+            IConfiguration configuration, IMovimentacaoInstrumentoService movimentacaoInstrumento)
         {
             _eventoService = evento;
             _mapper = mapper;
@@ -40,6 +41,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             _figurinoService = figurino;
             _tipoIntrumentoMusicalService = tipoInstrumentoMusical;
             FaltasPessoasEmEnsaioMeses = configuration.GetValue<int>("Aplication:FaltasPessoasEmEnsaioEmMeses");
+            _movimentacaoInstrumento = movimentacaoInstrumento;
         }
 
         // GET: EventoController
@@ -276,6 +278,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         public async Task<ActionResult> GerenciarInstrumentoEvento(int id)
         {
+            var movimentacao = await _movimentacaoInstrumento.GetEmprestimoByIdInstrumento(id);
 
             int idGrupoMusical = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
 
@@ -308,9 +311,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 DataHoraInicio = eventoView.DataHoraInicio,
                 DataHoraFim = eventoView.DataHoraFim,
                 ListaPessoa = new SelectList(listaPessoasAutoComplete, "Id", "Nome"),
-                FigurinoList = new SelectList(figurinosDropdown, "Id", "Nome"),                              
+                FigurinoList = new SelectList(figurinosDropdown, "Id", "Nome"),
                 Local = eventoView.Local,
-                ListaInstrumentos = instrumentoMusicalViewModel.ListaInstrumentos,
+                ListaInstrumentos = instrumentoMusicalViewModel.ListaInstrumentos,                
             };
             
             ViewData["exemploRegente"] = listaPessoasAutoComplete.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];

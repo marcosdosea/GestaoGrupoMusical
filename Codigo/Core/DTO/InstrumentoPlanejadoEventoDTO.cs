@@ -11,9 +11,8 @@ namespace Core.DTO
     {
         public int Id { get; set; }
         public int IdInstrumento { get; set; }
-
-        [Display(Name = "Instrumentos")]
-        public IEnumerable<Tipoinstrumento>? Instrumentos { get; set; }
-        public int Quantidade { get; set; }
+        public int Planejados { get; set; }
+        public int Solicitdos { get; set; }
+        public int Confirmados { get; set; }
     }
 }
