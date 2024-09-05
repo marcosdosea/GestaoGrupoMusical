@@ -14,6 +14,8 @@ namespace Core.DTO
         public string? Cpf { get; set; }
         public sbyte Ativo { get; set; }
         public string? JustificativaFalta { get; set; }
+        public sbyte Presente { get; set; }
+        public sbyte JustificativaAceita { get; set; }
     }
 
     public class ColaboradoresDTO

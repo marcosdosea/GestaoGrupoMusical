@@ -10,7 +10,7 @@ namespace GestaoGrupoMusicalWeb.Mapper
         public EnsaioProfile()
         {
             CreateMap<EnsaioViewModel, Ensaio>().ReverseMap();
-            CreateMap<FrequenciaEnsaioViewModel, EnsaioFrequenciaDTO>().ReverseMap();
+            CreateMap<FrequenciaEnsaioViewModel, FrequenciaEnsaioDTO>().ReverseMap();
         }
     }
 }

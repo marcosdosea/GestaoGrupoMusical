@@ -44,7 +44,6 @@ namespace Core.Service
         Ensaio Get(int id);
         Task<IEnumerable<Ensaio>> GetAll();
         Task<IEnumerable<EnsaioDTO>> GetAllDTO();
-        Task<EnsaioFrequenciaDTO?> GetFrequenciaAsync(int idEnsaio, int idGrupoMusical);
 
         /// <summary>
         /// Registra a lista de frequência no banco de dados
@@ -57,7 +56,7 @@ namespace Core.Service
         /// NotFound - Lista não encontrada <para />
         /// InternalServerError - Erro interno
         /// </returns>
-        Task<HttpStatusCode> RegistrarFrequenciaAsync(List<EnsaioListaFrequenciaDTO> frequencias);
+        HttpStatusCode RegistrarFrequencia(FrequenciaEnsaioDTO frequencia);
         Task<IEnumerable<EnsaioIndexDTO>> GetAllIndexDTO(int idGrupo);
         EnsaioDetailsDTO GetDetailsDTO(int idEnsaio);
         Task<IEnumerable<int>> GetIdRegentesEnsaioAsync(int idEnsaio);

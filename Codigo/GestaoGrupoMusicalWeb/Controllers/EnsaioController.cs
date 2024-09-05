@@ -256,10 +256,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: EnsaioController/RegistrarFrequencia
         public async Task<ActionResult> RegistrarFrequencia(int id)
         {
-            Console.WriteLine("-----------------------------------------");
-            Console.WriteLine(id);
-            Console.WriteLine("-----------------------------------------");
-
             int idGrupoMusical = await _grupoMusical.GetIdGrupo(User.Identity.Name);
 
             var listaAssociadosAtivos = _ensaio.GetAssociadoAtivos(id);
@@ -268,11 +264,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 Notificar("É necessário pelo menos um Associado Ativo para então registrar uma frequência.", Notifica.Informativo);
                 return RedirectToAction(nameof(Index));
-            }
-
-            foreach (var item in listaAssociadosAtivos)
-            {
-                Console.WriteLine(item.Cpf);
             }
 
             var listaRegentes = _pessoa.GetNomesRegentes(id);
@@ -305,10 +296,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         [Authorize(Roles = "ADMINISTRADOR GRUPO,COLABORADOR,REGENTE")]
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> RegistrarFrequencia(List<EnsaioListaFrequenciaDTO> listaFrequencia)
+        public ActionResult PostRegistrarFrequencia(FrequenciaEnsaioViewModel frequenciaEnsaio)
         {
-            switch(await _ensaio.RegistrarFrequenciaAsync(listaFrequencia))
+            var frequencia = _mapper.Map<FrequenciaEnsaioDTO>(frequenciaEnsaio);
+
+            switch (_ensaio.RegistrarFrequencia(frequencia))
             {
                 case HttpStatusCode.OK:
                     Notificar("Lista de <b>Frequência</b> salva com <b>Sucesso</b>", Notifica.Sucesso);
@@ -326,8 +318,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     Notificar("Desculpe, ocorreu um <b>Erro</b> ao registrar a Lista de <b>Frequência</b>.", Notifica.Erro);
                     break;
             }
-            return RedirectToAction(nameof(RegistrarFrequencia), new { idEnsaio = listaFrequencia.First().IdEnsaio });
+
+            return RedirectToAction(nameof(RegistrarFrequencia), new { id = 1 });
         }
+
 
         [Authorize(Roles = "ASSOCIADO")]
         public async Task<ActionResult> EnsaiosAssociado ()

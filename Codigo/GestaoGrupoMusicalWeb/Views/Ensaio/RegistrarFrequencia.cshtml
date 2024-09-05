@@ -8,108 +8,121 @@
 
 <partial name="_Notificar">
 
-    <div class="row">
-        <div class="col-md-8">
-            <h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">Registrar Frequencia</h1>
-            <nav>
-                <ol class="breadcrumb px-3">
-                    <strong>
-                        <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Ensaio"]</a>
-                        <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Registrar Frequência"]</spn>
-                    </strong>
-                </ol>
-            </nav>
-            <hr />
-            <br />
-            <form id="formCreate" asp-action="Edit">
-                <div class="container">
-                    <div class="row">
-                        <div class="row">
-                            <div class="form-group col-xxl-4">
-                                <label asp-for="DataHoraInicio" class="control-label"></label>
-                                <input asp-for="DataHoraInicio" readonly class="form-control" />
-                            </div>
-                            <div class="form-group col-xxl-4">
-                                <label asp-for="DataHoraFim" class="control-label"></label>
-                                <input asp-for="DataHoraFim" readonly class="form-control" />
-                            </div>
-                            <div class="form-group col-xl">
-                                <label asp-for="Tipo" class="control-label"></label>
-                                <input asp-for="Tipo" readonly class="form-control" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="form-group col-xl">
-                            <label asp-for="Regentes" class="control-label"></label>
-                            <input asp-for="Regentes" readonly class="form-control" />
-                        </div>
-                    </div>
+    <h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">Registrar Frequencia</h1>
+    <nav>
+        <ol class="breadcrumb px-3">
+            <strong>
+                <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Ensaio"]</a>
+                <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Registrar Frequência"]</spn>
+            </strong>
+        </ol>
+    </nav>
+    <hr />
+    <br />
+    <form id="formCreate" asp-action="PostRegistrarFrequencia">
+        <div class="row">
+            <div class="row">
+                <div class="form-group col-xxl-4">
+                    <label asp-for="DataHoraInicio" class="control-label"></label>
+                    <input asp-for="DataHoraInicio" readonly class="form-control" />
+                    <input type="hidden" asp-for="Id" readonly class="form-control" />
                 </div>
-                <div class="container">
-                    <div class="row">
-                        <div class="form-group">
-                            <label asp-for="Figurino" class="control-label"></label>
-                            <input asp-for="Figurino" readonly class="form-control" />
-                        </div>
-                    </div>
+                <div class="form-group col-xxl-4">
+                    <label asp-for="DataHoraFim" class="control-label"></label>
+                    <input asp-for="DataHoraFim" readonly class="form-control" />
                 </div>
-                <div class="container mb-5">
-                    <div class="row">
-                        <div class="form-group">
-                            <label asp-for="Local" class="control-label"></label>
-                            <input asp-for="Local" readonly class="form-control" />
-                        </div>
-                    </div>
+                <div class="form-group col-xl">
+                    <label asp-for="Tipo" class="control-label"></label>
+                    <input asp-for="Tipo" readonly class="form-control" />
                 </div>
-
-                <div class="container">
-                    <div class="form-group">
-                        <table class="table">
-                            <thead>
-                                <tr class="bg-danger bg-opacity-75 text-white">
-                                    <th class="border-0">
-                                        <span class="text-white">CPF</span>
-                                    </th>
-                                    <th class="border-0">
-                                        <span class="text-white">Associado</span>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @{
-                                    if (Model.AssociadosDTO != null)
-                                    {
-                                        for (int i = 0; i < Model.AssociadosDTO.Count; i++)
-                                        {
-                                            <tr class="border-bottom border-danger border-opacity-75 p-3 align-middle">
-                                                <td class="p-3">
-                                                    @Html.DisplayFor(model => Model.AssociadosDTO[i].Cpf)
-                                                </td>
-
-                                                <td class="p-3">
-                                                    @Html.DisplayFor(model => Model.AssociadosDTO[i].Nome)
-                                                </td>
-                                            </tr>
-                                        }
-                                    }
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <br />
-                <br />
-                <div class="container">
-                    <div class="row d-flex flex-column-reverse d-grig gap-2 mx-auto d-flex flex-sm-column-reverse flex-xl-row">
-                        <div class="col-5 d-none d-sm-block"></div>
-                        <a class="btn btn-light text-secondary border border-secondary d-grid gap-2 col-sm" asp-controller="Ensaio" asp-action="Index"> Voltar </a>
-                        <input type="submit" value="Salvar" class="btn btn-secondary d-grid gap-2 col-sm " />
-                    </div>
-                </div>
-            </form>
+            </div>
         </div>
-    </div>
+        <div class="row">
+            <div class="form-group col-xl">
+                <label asp-for="Regentes" class="control-label"></label>
+                <input asp-for="Regentes" readonly class="form-control" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <label asp-for="Figurino" class="control-label"></label>
+                <input asp-for="Figurino" readonly class="form-control" />
+            </div>
+        </div>
+        <div class="mb-5">
+            <div class="row">
+                <div class="form-group">
+                    <label asp-for="Local" class="control-label"></label>
+                    <input asp-for="Local" readonly class="form-control" />
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <table class="table">
+                <thead>
+                    <tr class="bg-danger bg-opacity-75 text-white">
+                        <th class="border-0">
+                            <span class="text-white">CPF</span>
+                        </th>
+                        <th class="border-0">
+                            <span class="text-white">Associado</span>
+                        </th>
+                        <th class="border-0">
+                            <span class="text-white">Justificativa Ausência</span>
+                        </th>
+                        <th class="border-0">
+                            <span class="text-white">Presente</span>
+                        </th>
+                        <th class="border-0">
+                            <span class="text-white">Justificativa Aceita</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        if (Model.AssociadosDTO != null)
+                        {
+                            for (int i = 0; i < Model.AssociadosDTO.Count; i++)
+                            {
+                                <tr class="border-bottom border-danger border-opacity-75 p-3 align-middle">
+                                    <td class="p-3">
+                                        @Html.DisplayFor(model => Model.AssociadosDTO[i].Cpf)
+                                    </td>
+                                    <input type="hidden" name="AssociadosDTO[@i].Id" value="@Model.AssociadosDTO[i].Id" />
+
+                                    <td class="p-3">
+                                        @Html.DisplayFor(model => Model.AssociadosDTO[i].Nome)
+                                    </td>
+
+                                    <td class="p-3">
+                                        @Html.DisplayFor(model => Model.AssociadosDTO[i].JustificativaFalta)
+                                    </td>
+
+                                    <td class="p-3">
+                                        <input type="checkbox" name="AssociadosDTO[@i].Presente" value="1" @(Model.AssociadosDTO[i].Presente == 1 ? "checked" : "") />
+                                        <input type="hidden" name="AssociadosDTO[@i].Presente" value="0" />
+                                    </td>
+
+                                    <td class="p-3 text-center">
+                                        <input type="checkbox" name="AssociadosDTO[@i].JustificativaAceita" value="1" @(Model.AssociadosDTO[i].JustificativaAceita == 1 ? "checked" : "") />
+                                        <input type="hidden" name="AssociadosDTO[@i].JustificativaAceita" value="0" />
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        <br />
+        <br />
+        <div class="row d-flex flex-column-reverse d-grig gap-2 mx-auto d-flex flex-sm-column-reverse flex-xl-row">
+            <div class="col-5 d-none d-sm-block"></div>
+            <a class="btn btn-light text-secondary border border-secondary d-grid gap-2 col-sm" asp-controller="Ensaio" asp-action="Index"> Voltar </a>
+            <input type="submit" value="Salvar" class="btn btn-secondary d-grid gap-2 col-sm " />
+        </div>
+    </form>
 
 
     @section Scripts {
