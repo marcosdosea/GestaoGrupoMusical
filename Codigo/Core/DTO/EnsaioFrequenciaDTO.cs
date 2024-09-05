@@ -2,20 +2,30 @@
 
 namespace Core.DTO
 {
-    public class EnsaioFrequenciaDTO
+    public class FrequenciaEnsaioDTO
     {
-        [Display(Name = "Início")]
-        public DateTime Inicio { get; set; }
+        public int Id { get; set; }
+        public int IdGrupoMusical { get; set; }
 
-        public DateTime Fim { get; set; }
+        public DateTime? DataHoraInicio { get; set; }
 
-        public string Tipo { get; set; } = string.Empty;
+        public DateTime? DataHoraFim { get; set; }
 
-        public IEnumerable<string>? Regentes { get; set; }
+        public Tipo Tipo { get; set; }
+
+        public string Regentes { get; set; } = string.Empty;
+
+        public string? Figurino { get; set; }
+
+        public List<AssociadoDTO>? AssociadosDTO { get; set; }
 
         public string? Local { get; set; }
-        public IEnumerable<EnsaioListaFrequenciaDTO>? Frequencias { get; set; }
-        public string? JsonLista { get; set; }
+    }
+
+    public enum Tipo
+    {
+        FIXO,
+        EXTRA
     }
 
     public class EnsaioListaFrequenciaDTO

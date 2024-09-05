@@ -282,81 +282,14 @@ namespace Service
             return query.First();
         }
 
-        public async Task<EnsaioFrequenciaDTO?> GetFrequenciaAsync(int idEnsaio, int idGrupoMusical)
-        {
-            var regentes = await _context.Ensaiopessoas
-                .Where(ep => ep.IdEnsaio == idEnsaio)
-                .OrderBy(ep => ep.IdPessoaNavigation.Nome)
-                .Select(ep => ep.IdPessoaNavigation.Nome)
-                .ToListAsync();
-
-            var frequencias = await _context.Ensaiopessoas
-                .Where(ensaioPessoa => ensaioPessoa.IdEnsaio == idEnsaio)
-                .OrderBy(ensaioPessoa => ensaioPessoa.IdPessoaNavigation.Nome)
-                .Select(ensaioPessoa => new EnsaioListaFrequenciaDTO
-                {
-                    IdEnsaio = ensaioPessoa.IdEnsaio,
-                    IdPessoa = ensaioPessoa.IdPessoa,
-                    Cpf = ensaioPessoa.IdPessoaNavigation.Cpf,
-                    NomeAssociado = ensaioPessoa.IdPessoaNavigation.Nome,
-                    Justificativa = ensaioPessoa.JustificativaFalta,
-                    Presente = Convert.ToBoolean(ensaioPessoa.Presente),
-                    JustificativaAceita = Convert.ToBoolean(ensaioPessoa.JustificativaAceita),
-                }).ToListAsync();
-
-            var query = from ensaio in _context.Ensaios
-                        where ensaio.Id == idEnsaio && ensaio.IdGrupoMusical == idGrupoMusical
-                        select new EnsaioFrequenciaDTO
-                        {
-                            Inicio = ensaio.DataHoraInicio,
-                            Fim = ensaio.DataHoraFim,
-                            Regentes = regentes,
-                            Tipo = ensaio.Tipo,
-                            Local = ensaio.Local,
-                            Frequencias = frequencias
-                        };
-
-            return await query.AsNoTracking().SingleOrDefaultAsync();
-        }
-
-        public async Task<HttpStatusCode> RegistrarFrequenciaAsync(List<EnsaioListaFrequenciaDTO> frequencias)
+        public HttpStatusCode RegistrarFrequencia(FrequenciaEnsaioDTO frequencia)
         {
             try
             {
-                if (!frequencias.Any())
-                {
-                    return HttpStatusCode.BadRequest;
-                }
-                int idEnsaio = frequencias.First().IdEnsaio;
-
-                var dbFrequencias = _context.Ensaiopessoas
-                                    .Where(ep => ep.IdEnsaio == frequencias.First().IdEnsaio)
-                                    .OrderBy(ep => ep.IdPessoaNavigation.Nome);
-
-                if (dbFrequencias == null)
-                {
-                    return HttpStatusCode.NotFound;
-                }
-
-                if (dbFrequencias.Count() != frequencias.Count)
-                {
-                    return HttpStatusCode.Conflict;
-                }
-
-                int pos = 0;
-                await dbFrequencias.ForEachAsync(dbFrequencia =>
-                {
-                    if (dbFrequencia.IdEnsaio == frequencias[0].IdEnsaio && dbFrequencia.IdPessoa == frequencias[pos].IdPessoa)
-                    {
-                        dbFrequencia.JustificativaAceita = Convert.ToSByte(frequencias[pos].JustificativaAceita);
-                        dbFrequencia.Presente = Convert.ToSByte(frequencias[pos].Presente);
-
-                        _context.Update(dbFrequencia);
-                    }
-                    pos++;
-                });
-
-                await _context.SaveChangesAsync();
+                Console.WriteLine("IdEnsaio: " + frequencia.Id);
+                Console.WriteLine("IdAssociado: " + frequencia.AssociadosDTO.FirstOrDefault().Id);
+                Console.WriteLine("Presente: " + frequencia.AssociadosDTO.FirstOrDefault().Presente);
+                Console.WriteLine("Justificativa Aceita: " + frequencia.AssociadosDTO.FirstOrDefault().JustificativaAceita);
 
                 return HttpStatusCode.OK;
             }
@@ -424,17 +357,7 @@ namespace Service
         {
             var query = _context.Ensaiopessoas
                 .Where(p => p.IdEnsaio == idEnsaio && p.IdPessoaNavigation.Ativo == 1 && p.IdPapelGrupo == 1)
-                .Select(p => new AssociadoDTO { Id = p.IdEnsaio, Nome = p.IdPessoaNavigation.Nome, Cpf = p.IdPessoaNavigation.Cpf, IdPapelGrupo = p.IdPapelGrupo }).AsNoTracking().ToList();
-
-            Console.WriteLine("-----------------------------------------");
-            Console.WriteLine(query.Count());
-            Console.WriteLine(idEnsaio);
-            Console.WriteLine("-----------------------------------------");
-
-            foreach (var item in query)
-            {
-                Console.WriteLine(item.IdPapelGrupo);
-            }
+                .Select(p => new AssociadoDTO { Id = p.IdEnsaio, Nome = p.IdPessoaNavigation.Nome, Cpf = p.IdPessoaNavigation.Cpf, IdPapelGrupo = p.IdPapelGrupo, JustificativaFalta = p.JustificativaFalta, Presente = p.Presente, JustificativaAceita = p.JustificativaAceita }).AsNoTracking().ToList();
 
             return query;
         }
