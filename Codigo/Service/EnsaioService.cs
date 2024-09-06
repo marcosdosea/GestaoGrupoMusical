@@ -303,7 +303,7 @@ namespace Service
                     });
                 }
 
-                _context.Ensaiopessoas.AddRange(p);
+                _context.Ensaiopessoas.UpdateRange(p);
                 _context.SaveChanges();
 
                 return HttpStatusCode.OK;
