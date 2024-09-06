@@ -24,13 +24,15 @@
             <input asp-for="Id" readonly class="form-control" />
         </div>
         <div class="row mb-4">
-            <div class="form-group col-xxl-2">
-                <label asp-for="DataHoraInicio" class="control-label"></label>
-                <input asp-for="DataHoraInicio" style="width:170px;" readonly class="form-control" />
+            <div class="form-group " style="width: 250px;">
+                <label asp-for="DataHoraInicio" style="width: 150px;" class="control-label"></label>
+                <input asp-for="DataHoraInicio" class="form-control" />
+                <span asp-validation-for="DataHoraInicio" class="text-danger"></span>
             </div>
-            <div class="form-group col-xxl-2">
+            <div class="form-group " style="width: 250px;">
                 <label asp-for="DataHoraFim" class="control-label"></label>
-                <input asp-for="DataHoraFim" style="width:170px;" readonly class="form-control" />
+                <input asp-for="DataHoraFim" class="form-control" />
+                <span asp-validation-for="DataHoraFim" class="text-danger"></span>
             </div>
         </div>
         <label asp-for="NomesRegentes" class="control-label"></label>

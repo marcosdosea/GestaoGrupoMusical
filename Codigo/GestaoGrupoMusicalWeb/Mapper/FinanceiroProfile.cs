@@ -10,7 +10,7 @@ namespace GestaoGrupoMusicalWeb.Mapper
     {
         public FinanceiroProfile()
         {
-            //Ainda nao tem, mas ja deixei pronto
+            CreateMap<Receitafinanceira, FinanceiroViewModel>().ReverseMap();
         }
     }
 }
