@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Core;
 using Core.Datatables;
+using Core.DTO;
 using Core.Service;
 using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -54,20 +55,21 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: Pagamento/Create
         public ActionResult Create()
         {
-            return View(new FinanceiroViewModel());
+            return View(new FinanceiroCreateViewModel());
         }
 
         // POST: Pagamento/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(FinanceiroViewModel model)
+        public async Task<ActionResult> Create(FinanceiroCreateViewModel model)
         {
 
             if (ModelState.IsValid)
             {
                 int idGrupoMusical = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
                 model.IdGrupoMusical = idGrupoMusical;
-                Receitafinanceira rf = _mapper.Map<Receitafinanceira>(model);
+                FinanceiroCreateDTO rf = _mapper.Map<FinanceiroCreateDTO>(model);
+
                 switch (_financeiroService.Create(rf))
                 {
                     case FinanceiroStatus.Success:

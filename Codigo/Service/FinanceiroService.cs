@@ -14,7 +14,7 @@ namespace Service
             _context = context;
         }
 
-        public FinanceiroStatus Create (Receitafinanceira rf)
+        public FinanceiroStatus Create (FinanceiroCreateDTO rf)
         {
             var transaction = _context.Database.BeginTransaction();
             try

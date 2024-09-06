@@ -5,7 +5,7 @@ namespace Core.Service
 {
     public interface IFinanceiroService
     {
-        FinanceiroStatus Create(Receitafinanceira rf);
+        FinanceiroStatus Create(FinanceiroCreateDTO rf);
         IEnumerable<FinanceiroIndexDataPage> GetAllFinanceiroPorIdGrupo(int idGrupoMusical);
         DatatableResponse<FinanceiroIndexDataPage> GetDataPage(DatatableRequest request, IEnumerable<FinanceiroIndexDataPage> materialEstudoIndexDTO);
     }

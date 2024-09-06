@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace GestaoGrupoMusicalWeb.Models
 {
-    public class FinanceiroViewModel
+    public class FinanceiroCreateViewModel
     {
         [Key]
         public int Id { get; set; }
