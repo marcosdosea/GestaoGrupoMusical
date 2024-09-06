@@ -35,7 +35,7 @@ namespace Service
                         await _context.SaveChangesAsync();
 
                         List<Ensaiopessoa> p = new();
-                        foreach(int id in idRegentes)
+                        foreach (int id in idRegentes)
                         {
                             p.Add(new Ensaiopessoa
                             {
@@ -97,7 +97,8 @@ namespace Service
                     })
                     .FirstOrDefault();
 
-                if (ensaio == null) {
+                if (ensaio == null)
+                {
                     transaction.Rollback();
                     return HttpStatusCode.NotFound;
                 }
@@ -132,7 +133,8 @@ namespace Service
                 transaction.Commit();
                 return HttpStatusCode.OK;
 
-            }catch
+            }
+            catch
             {
                 transaction.Rollback();
                 return HttpStatusCode.InternalServerError;
@@ -282,14 +284,27 @@ namespace Service
             return query.First();
         }
 
-        public HttpStatusCode RegistrarFrequencia(FrequenciaEnsaioDTO frequencia)
+        public HttpStatusCode RegistrarFrequencia(FrequenciaEnsaioDTO frequencia, int quantidadeAssociados)
         {
             try
             {
-                Console.WriteLine("IdEnsaio: " + frequencia.Id);
-                Console.WriteLine("IdAssociado: " + frequencia.AssociadosDTO.FirstOrDefault().Id);
-                Console.WriteLine("Presente: " + frequencia.AssociadosDTO.FirstOrDefault().Presente);
-                Console.WriteLine("Justificativa Aceita: " + frequencia.AssociadosDTO.FirstOrDefault().JustificativaAceita);
+                List<Ensaiopessoa> p = new List<Ensaiopessoa>();
+
+                for (int i = 0; i < quantidadeAssociados; i++)
+                {
+                    Console.WriteLine("Presente: " + frequencia.AssociadosDTO[i].Presente);
+                    Console.WriteLine("Justifica Aceita: " + frequencia.AssociadosDTO[i].JustificativaAceita);
+                    p.Add(new Ensaiopessoa
+                    {
+                        Presente = frequencia.AssociadosDTO[i].Presente,
+                        JustificativaAceita = frequencia.AssociadosDTO[i].JustificativaAceita,
+                        IdPessoa = frequencia.AssociadosDTO[i].Id,
+                        IdEnsaio = frequencia.Id
+                    });
+                }
+
+                _context.Ensaiopessoas.AddRange(p);
+                _context.SaveChanges();
 
                 return HttpStatusCode.OK;
             }
@@ -298,6 +313,7 @@ namespace Service
                 return HttpStatusCode.InternalServerError;
             }
         }
+
 
         public async Task<IEnumerable<EnsaioAssociadoDTO>> GetEnsaiosByIdPesoaAsync(int idPessoa)
         {
