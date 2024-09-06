@@ -300,7 +300,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             var frequencia = _mapper.Map<FrequenciaEnsaioDTO>(frequenciaEnsaio);
 
-            switch (_ensaio.RegistrarFrequencia(frequencia))
+            switch (_ensaio.RegistrarFrequencia(frequencia, frequenciaEnsaio.AssociadosDTO.Count()))
             {
                 case HttpStatusCode.OK:
                     Notificar("Lista de <b>Frequência</b> salva com <b>Sucesso</b>", Notifica.Sucesso);
