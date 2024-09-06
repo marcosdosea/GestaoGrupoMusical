@@ -292,8 +292,6 @@ namespace Service
 
                 for (int i = 0; i < quantidadeAssociados; i++)
                 {
-                    Console.WriteLine("Presente: " + frequencia.AssociadosDTO[i].Presente);
-                    Console.WriteLine("Justifica Aceita: " + frequencia.AssociadosDTO[i].JustificativaAceita);
                     p.Add(new Ensaiopessoa
                     {
                         Presente = frequencia.AssociadosDTO[i].Presente,
