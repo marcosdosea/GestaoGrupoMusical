@@ -16,8 +16,11 @@ namespace Service
 
         public FinanceiroStatus Create (Receitafinanceira rf)
         {
+            var transaction = _context.Database.BeginTransaction();
             try
             {
+                _context.Add(rf);
+                _context.SaveChanges();
 
                 return FinanceiroStatus.Success;
             }

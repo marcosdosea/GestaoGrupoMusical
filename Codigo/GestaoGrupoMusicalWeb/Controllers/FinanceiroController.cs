@@ -16,7 +16,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IPessoaService _pessoaService;
 
 
-        public FinanceiroController(IFinanceiroService financeiroService,IMapper mapper, IGrupoMusicalService grupoMusical,
+        public FinanceiroController(IFinanceiroService financeiroService, IMapper mapper, IGrupoMusicalService grupoMusical,
             IPessoaService pessoaService)
         {
             _financeiroService = financeiroService;
@@ -41,7 +41,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             var listaReceitaFinanceira = _financeiroService.GetAllFinanceiroPorIdGrupo(idGrupoMusical);
 
             var response = _financeiroService.GetDataPage(request, listaReceitaFinanceira);
-            
+
             return Json(response);
         }
 
@@ -52,7 +52,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: Pagamento/Create
-        public  ActionResult Create()
+        public ActionResult Create()
         {
             return View(new FinanceiroViewModel());
         }
@@ -62,14 +62,24 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(FinanceiroViewModel model)
         {
-           
-            if(ModelState.IsValid)
+
+            if (ModelState.IsValid)
             {
                 int idGrupoMusical = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
                 model.IdGrupoMusical = idGrupoMusical;
-                Receitafinanceira receitaFinanceiraDTO = _mapper.Map<Receitafinanceira>(model);
+                Receitafinanceira rf = _mapper.Map<Receitafinanceira>(model);
+                switch (_financeiroService.Create(rf))
+                {
+                    case FinanceiroStatus.Success:
+                        Notificar("<b>Sucesso</b>! Pagamento criado com sucesso!", Notifica.Sucesso);
+                        RedirectToAction(nameof(Index));
+                        break;
+                    case FinanceiroStatus.Error:
+                        Notificar("<b>Erro</b>! Algo deu errado na criação do pagamento!", Notifica.Erro);
+                        RedirectToAction(nameof(Create));
+                        break;
+                }
             }
-            Notificar("<b>Erro</b>! Algo deu errado na validação dos dados!", Notifica.Erro);
             return RedirectToAction(nameof(Index));
         }
 
