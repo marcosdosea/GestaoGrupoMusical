@@ -123,6 +123,7 @@ namespace GestaoGrupoMusicalWeb.Models
         
         public List<GerenciarInstrumentoEventoDTO> InstrumentosPlanejadoEventoDTO { get; set; }
 
+        
         public int Planejados { get; set; }
         public int Solicitados { get; set; }
         public int Confirmados { get; set; }

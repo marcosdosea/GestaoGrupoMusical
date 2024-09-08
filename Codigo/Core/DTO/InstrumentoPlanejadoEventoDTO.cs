@@ -14,5 +14,6 @@ namespace Core.DTO
         public int Planejados { get; set; }
         public int Solicitdos { get; set; }
         public int Confirmados { get; set; }
+        public string GetNomeInstrumento { get; set; }
     }
 }

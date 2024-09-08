@@ -315,7 +315,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 Local = eventoView.Local,
                 ListaInstrumentos = instrumentoMusicalViewModel.ListaInstrumentos,                
             };
-            
+            Console.WriteLine("Verificando instrumentos" + listaInstrumentos);
+
             ViewData["exemploRegente"] = listaPessoasAutoComplete.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
             gerenciarInstrumentoEvento.JsonLista = listaPessoasAutoComplete.ToJson();
             return View(gerenciarInstrumentoEvento);
