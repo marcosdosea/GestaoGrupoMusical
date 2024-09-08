@@ -12,8 +12,10 @@ namespace Core.DTO
         public int Id { get; set; }
         public int IdInstrumento { get; set; }
         public int Planejados { get; set; }
-        public int Solicitdos { get; set; }
+        public int Solicitados { get; set; }
         public int Confirmados { get; set; }
-        public string GetNomeInstrumento { get; set; }
+
+        [Display(Name = "Instrumentos")]
+        public string ListaInstrumentos { get; set; } = string.Empty;
     }
 }

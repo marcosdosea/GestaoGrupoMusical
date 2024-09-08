@@ -1,4 +1,4 @@
-﻿@model GestaoGrupoMusicalWeb.Models.GerenciarInstrumentoEventoViewModel
+﻿@model IEnumerable<Core.DTO.InstrumentoPlanejadoEventoDTO>
 
 <div class="table-responsive">
     <table class="table mt-3">
@@ -19,17 +19,15 @@
                 <th>Ações</th>
             </tr>
         </thead>
-        <tbody>
-            @if (Model.InstrumentosPlanejadoEventoDTO != null)
-            {
-                @foreach (var item in Model.InstrumentosPlanejadoEventoDTO)
+        <tbody>           
+            @foreach (var item in Model.InstrumentoEventoPlanejadoDTO)
             {
                 <tr class="border-bottom border-danger border-opacity-75 align-middle">
                     <td>
-                        @item.IdInstrumento
+                        @item.ListaInstrumentos
                     </td>               
                     <td>
-                        @item.Planejado
+                        @item.Planejados
                     </td>
                     <td>
                         @item.Solicitados
@@ -56,13 +54,13 @@
                         </form>
                     </td>
                 </tr>                    
-            }
-            }
+            }            
         </tbody>
     </table>
-  
-        <p class="text-center mt-4 mb-0">Desculpe, nenhuma movimentação encontrada :(</p>
-    
+    @if (!Model.InstrumentosPlanejadoEventoDTO.Any())
+    {
+        <p class="text-center mt-4 mb-0">Desculpe, nenhum instrumento planejado :(</p>
+    }        
 </div>
 
 <div class="modal fade" id="excluirMovimentacaoModal" tabindex="-1" aria-labelledby="excluirMovimentacaoLabel" aria-hidden="true">

@@ -619,6 +619,22 @@ namespace Service
             }
         }
 
+        public async Task<IEnumerable<InstrumentoPlanejadoEventoDTO>> GetAllByIdInstrumentoPlanejadosEvento(int idApresentacao)
+        {
+            var query = await (from movimentacao in _context.Apresentacaotipoinstrumentos
+                               where movimentacao.IdApresentacao == idApresentacao
+                               
+                               select new InstrumentoPlanejadoEventoDTO
+                               {
+                                   Id = movimentacao.IdApresentacao,
+                                   IdInstrumento = movimentacao.IdTipoInstrumento,
+                                   Planejados = movimentacao.QuantidadePlanejada,
+                                   Solicitados = movimentacao.QuantidadeSolicitada,
+                                   Confirmados = movimentacao.QuantidadeConfirmada,                                   
+                               }).AsNoTracking().ToListAsync();
 
+            Console.WriteLine("Instrumentos" + query.ToString());
+            return query;
+        }
     }
 }

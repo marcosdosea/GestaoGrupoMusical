@@ -122,11 +122,7 @@ namespace GestaoGrupoMusicalWeb.Models
         public IEnumerable<GerenciarInstrumentoEventoDTO>? GerenciarInstrumentos { get; set; }     
         
         public List<GerenciarInstrumentoEventoDTO> InstrumentosPlanejadoEventoDTO { get; set; }
-
-        
-        public int Planejados { get; set; }
-        public int Solicitados { get; set; }
-        public int Confirmados { get; set; }
+               
     }
 
     public class PlanejarInstrumentoEventoViewModel
