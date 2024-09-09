@@ -16,8 +16,8 @@ namespace Core.Service
         Error,
         Success,
         DataInicioMaiorQueDataFim,
-        DataInicioMenorQueDataDeHoje,
-        DataFimMenorQueDataDeHoje
+        DataFimMenorQueDataDeHoje,
+        ValorZeroOuNegativo
     }
 
     public enum TipoPagamento

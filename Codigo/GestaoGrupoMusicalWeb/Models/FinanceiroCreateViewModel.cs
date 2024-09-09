@@ -8,7 +8,6 @@ namespace GestaoGrupoMusicalWeb.Models
         [Key]
         public int Id { get; set; }
 
-
         [Display(Name = "Descrição")]
         [Required(ErrorMessage = "Descrição obrigatória")]
         [StringLength(100, MinimumLength = 3, ErrorMessage = "A descrição precisa ter entre 3 a 100 caracteres")]

@@ -11,6 +11,7 @@ namespace GestaoGrupoMusicalWeb.Mapper
         public FinanceiroProfile()
         {
             CreateMap<FinanceiroCreateDTO, FinanceiroCreateViewModel>().ReverseMap();
+            CreateMap<FinanceiroCreateDTO, Receitafinanceira>().ReverseMap();
         }
     }
 }

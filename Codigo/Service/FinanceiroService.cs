@@ -19,17 +19,54 @@ namespace Service
             var transaction = _context.Database.BeginTransaction();
             try
             {
-                _context.Add(rf);
+                if(rf.DataInicio > rf.DataFim)
+                {
+                    return FinanceiroStatus.DataInicioMaiorQueDataFim;
+                }
+                if(rf.DataFim < DateTime.Now)
+                {
+                    return FinanceiroStatus.DataFimMenorQueDataDeHoje;
+                }
+                if(rf.Valor <= 0)
+                {
+                    return FinanceiroStatus.ValorZeroOuNegativo;
+                }
+                
+                Receitafinanceira f = new Receitafinanceira
+                {
+                    DataInicio = rf.DataInicio ?? DateTime.Now,
+                    DataFim = rf.DataFim ?? DateTime.Now,
+                    Valor = rf.Valor ?? 0,
+                    Descricao = rf.Descricao,
+                    IdGrupoMusical = rf.IdGrupoMusical
+                };
+                _context.Add(f);
                 _context.SaveChanges();
+                rf.IdAssociados = _context.Pessoas.Where(p => p.IdGrupoMusical == rf.IdGrupoMusical && p.IdPapelGrupo == 1).Select(p => p.Id);
 
+                if(rf.IdAssociados != null)
+                {
+                    List<Receitafinanceirapessoa> p = new List<Receitafinanceirapessoa>();
+                    foreach(int idAssociado in  rf.IdAssociados)
+                    {
+                        p.Add(new Receitafinanceirapessoa()
+                        {
+                            IdReceitaFinanceira = f.Id,
+                            IdPessoa = idAssociado,
+                            Valor = rf.Valor ?? 0,
+                            DataPagamento = DateTime.Now,
+                        });
+                    }
+                    _context.AddRange(p);
+                    _context.SaveChanges();
+                }
+                transaction.Commit();
                 return FinanceiroStatus.Success;
             }
             catch
             {
                 return FinanceiroStatus.Error;
             }
-
-           
         }
 
         public IEnumerable<FinanceiroIndexDataPage> GetAllFinanceiroPorIdGrupo(int idGrupoMusical)
