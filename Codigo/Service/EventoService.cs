@@ -619,7 +619,7 @@ namespace Service
             }
         }
 
-        public async Task<IEnumerable<InstrumentoPlanejadoEventoDTO>> GetAllByIdInstrumentoPlanejadosEvento(int idApresentacao)
+        public async Task<IEnumerable<InstrumentoPlanejadoEventoDTO>> GetInstrumentosPlanejadosEvento(int idApresentacao)
         {
             var query = await (from movimentacao in _context.Apresentacaotipoinstrumentos
                                where movimentacao.IdApresentacao == idApresentacao

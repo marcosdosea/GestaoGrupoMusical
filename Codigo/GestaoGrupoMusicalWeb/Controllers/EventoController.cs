@@ -24,7 +24,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IPessoaService _pessoaService;
         private readonly IFigurinoService _figurinoService;
         private readonly IInstrumentoMusicalService _tipoIntrumentoMusicalService;
-        private readonly IMovimentacaoInstrumentoService _movimentacaoInstrumento;
+        private readonly IMovimentacaoInstrumentoService _movimentacaoInstrumento;        
 
         private int FaltasPessoasEmEnsaioMeses { get; }
 
@@ -42,6 +42,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             _tipoIntrumentoMusicalService = tipoInstrumentoMusical;
             FaltasPessoasEmEnsaioMeses = configuration.GetValue<int>("Aplication:FaltasPessoasEmEnsaioEmMeses");
             _movimentacaoInstrumento = movimentacaoInstrumento;
+            
         }
 
         // GET: EventoController
@@ -386,6 +387,19 @@ namespace GestaoGrupoMusicalWeb.Controllers
             
             return RedirectToAction(nameof(GerenciarSolicitacaoEvento), new { id = model.Id });
         }
+
+        public ActionResult GerenciarInstrumentos(int idApresentacao)
+        {
+            
+            var instrumentos =  _eventoService.GetInstrumentosPlanejadosEvento(idApresentacao);
+            
+            //InstrumentoPlanejadoEventoDTO? g = _eventoService.GetInstrumentosPlanejadosEvento(idApresentacao);
+            InstrumentoPlanejadoEventoDTO? model = _mapper.Map<InstrumentoPlanejadoEventoDTO>(instrumentos);
+
+            Console.WriteLine("Teste instrumentos: " + model.Planejados);            
+            return View(model);
+        }
+
 
     }
 }

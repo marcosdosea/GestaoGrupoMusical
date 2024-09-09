@@ -42,7 +42,7 @@ namespace Core.Service
         Task<HttpStatusCode> Delete(int id);
         Task<Instrumentomusical?> Get(int id);
         Task<IEnumerable<Instrumentomusical>> GetAll();
-        Task<IEnumerable<InstrumentoMusicalDTO>> GetAllDTO(int idGrupo);
+        Task<IEnumerable<InstrumentoMusicalDTO>> GetAllDTO(int idGrupo);        
         Task<string> GetNomeInstrumento(int id);
         Task<IEnumerable<Tipoinstrumento>> GetAllTipoInstrumento();
         Task<InstrumentoMusicalDeleteDTO> GetInstrumentoMusicalDeleteDTO(int id);

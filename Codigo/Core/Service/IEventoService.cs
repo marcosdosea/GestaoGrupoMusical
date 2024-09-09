@@ -20,7 +20,7 @@ namespace Core.Service
         HttpStatusCode NotificarEventoViaEmail(IEnumerable<PessoaEnviarEmailDTO> pessoas, int idEvento);
         Task<string> GetNomeInstrumento(int id);
         Task<IEnumerable<FigurinoDropdownDTO>> GetAllFigurinoDropdown(int idGrupo);
-        Task<IEnumerable<Eventopessoa>> GetPessoas(int idGrupo);
+        Task<IEnumerable<Eventopessoa>> GetPessoas(int idGrupo);        
         Task<HttpStatusCode> CreateApresentacaoInstrumento(Apresentacaotipoinstrumento apresentacaotipoinstrumento);
         GerenciarSolicitacaoEventoDTO? GetSolicitacoesEventoDTO(int idEvento, int pegarFaltasEmMesesAtras);
         IEnumerable<SolicitacaoEventoPessoasDTO> GetSolicitacaoEventoPessoas(int idEvento, int pegarFaltasEmMesesAtras);
@@ -43,5 +43,7 @@ namespace Core.Service
             QuantidadeConfirmadaNegativa,
             QuantidadeSolicitadaNegativa
         }
+
+        Task<IEnumerable<InstrumentoPlanejadoEventoDTO>> GetInstrumentosPlanejadosEvento(int idApressentacao);
     }
 }

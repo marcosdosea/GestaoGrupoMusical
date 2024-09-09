@@ -120,11 +120,10 @@ namespace GestaoGrupoMusicalWeb.Models
         public SelectList? ListaInstrumentos { get; set; }
         public int Quantidade { get; set; }
         public IEnumerable<GerenciarInstrumentoEventoDTO>? GerenciarInstrumentos { get; set; }     
-        
-        public List<GerenciarInstrumentoEventoDTO> InstrumentosPlanejadoEventoDTO { get; set; }
-               
-    }
+                
+        public IEnumerable<InstrumentoPlanejadoEventoDTO>? InstrumentoEventoPlanejado { get; set; }
 
+    }
     public class PlanejarInstrumentoEventoViewModel
     {
         public int Id { get; set; }
@@ -133,17 +132,10 @@ namespace GestaoGrupoMusicalWeb.Models
 
         [Display(Name = "Instrumento")]
         public SelectList? ListaInstrumentos { get; set; }
-        public int Quantidade { get; set; }       
-
-        public int Planejados { get; set; }
-        public int Solicitados { get; set; }
-        
-        public int Confirmados { get; set; }
-
-        public IEnumerable<InstrumentoPlanejadoEventoDTO>? InstrumentoEventoPlanejado { get; set; }
+        public int Quantidade { get; set; }        
     }
 
-        public class GerenciarSolicitacaoEventoViewModel
+    public class GerenciarSolicitacaoEventoViewModel
     {
         //esse ID é do evento
         public int Id { get; set; }
