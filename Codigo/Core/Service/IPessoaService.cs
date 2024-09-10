@@ -10,6 +10,15 @@ using System.Threading.Tasks;
 
 namespace Core.Service
 {
+    public enum PapelGrupo
+    {
+        ASSOCIADO,
+        COLABORADOR,
+        ADMINISTRADOR_DO_GRUPO_MUSICAL,
+        ADMINISTRADOR_DO_SISTEMA,
+        REGENTE
+    }
+
     public interface IPessoaService
     {
         /// <summary>

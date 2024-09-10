@@ -1,0 +1,75 @@
+﻿@model GestaoGrupoMusicalWeb.Models.FinanceiroCreateViewModel
+
+@{
+    ViewData["Title"] = "Create";
+    ViewData["Financeiro"] = "Financeiro";
+    ViewData["Create"] = "Novo";
+}
+
+
+<partial name="_Notificar">
+    <div class="container">
+        <h1 class="p-3 bg-danger bg-opacity-75 text-white fs-5">Novo Pagamento</h1>
+        <nav>
+            <ol class="breadcrumb px-3">
+                <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Financeiro"]</a>
+                <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Create"]</spn>
+            </ol>
+        </nav>
+        <hr />
+    </div>
+ 
+    <form id="formCreate" asp-action="Create" class="container">
+        <div class="form-group mb-4">
+            <label asp-for="Descricao" class="control-label"></label>
+            <textarea asp-for="Descricao" style="height: 100px;" class="form-control" maxlength="100" id="descricaoTextArea" oninput="updateCharacterDescricao()"></textarea>
+            <span asp-validation-for="Descricao" class="text-danger"></span>
+            <small id="descricaoCount">0/100</small>
+        </div>
+        <div class="row mb-4">
+            <div class="form-group " style="width: 250px;">
+                <label asp-for="DataInicio" style="width: 150px;" class="control-label"></label>
+                <input asp-for="DataInicio" class="form-control" readonly />
+                <span asp-validation-for="DataInicio" class="text-danger"></span>
+            </div>
+            <div class="form-group " style="width: 250px;">
+                <label asp-for="DataFim" class="control-label"></label>
+                <input asp-for="DataFim" class="form-control" />
+                <span asp-validation-for="DataFim" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group mb-5" style="width: 200px;">
+            <label asp-for="Valor" class="control-label"></label>
+            <input asp-for="Valor" type="number" inputmode="decimal" class="form-control" />
+            <span asp-validation-for="Valor" class="text-danger"></span>
+        </div>
+        <div class="container">
+            <div class="row d-flex flex-column-reverse d-grig gap-2 mx-auto d-flex flex-sm-column-reverse flex-xl-row">
+                <div class="col-5 d-none d-sm-block"></div>
+                <a class="btn btn-light text-secondary border border-secondary d-grid gap-2 col-sm" asp-controller="Financeiro" asp-action="Index"> Voltar </a>
+                <input type="submit" value="Adicionar" class="btn btn-secondary d-grid gap-2 col-sm " />
+            </div>
+        </div>
+    </form>
+
+
+    <script>
+        function updateCharacterDescricao() {
+            var textArea = document.getElementById('descricaoTextArea');
+            var charCount = textArea.value.length;
+            var charLimitFromGrupoMusical = textArea.maxLength;
+            document.getElementById('descricaoCount').innerText = charCount + '/' + charLimitFromGrupoMusical;
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            updateCharacterDescricao();
+        });
+
+    </script>
+
+
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+    }

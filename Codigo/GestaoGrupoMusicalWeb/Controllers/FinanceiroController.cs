@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
+using Core;
 using Core.Datatables;
+using Core.DTO;
 using Core.Service;
+using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,7 +17,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IPessoaService _pessoaService;
 
 
-        public FinanceiroController(IFinanceiroService financeiroService,IMapper mapper, IGrupoMusicalService grupoMusical,
+        public FinanceiroController(IFinanceiroService financeiroService, IMapper mapper, IGrupoMusicalService grupoMusical,
             IPessoaService pessoaService)
         {
             _financeiroService = financeiroService;
@@ -39,7 +42,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             var listaReceitaFinanceira = _financeiroService.GetAllFinanceiroPorIdGrupo(idGrupoMusical);
 
             var response = _financeiroService.GetDataPage(request, listaReceitaFinanceira);
-            
+
             return Json(response);
         }
 
@@ -50,24 +53,49 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: Pagamento/Create
-        public async Task<ActionResult> Create()
+        public ActionResult Create()
         {
-            return View();
+            return View(new FinanceiroCreateViewModel() { DataInicio = DateTime.Now.Date });
         }
 
         // POST: Pagamento/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> Create(FinanceiroCreateViewModel model)
         {
-            try
+
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                int idGrupoMusical = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
+                model.IdGrupoMusical = idGrupoMusical;
+                FinanceiroCreateDTO rf = _mapper.Map<FinanceiroCreateDTO>(model);
+
+
+                switch (_financeiroService.Create(rf))
+                {
+                    case FinanceiroStatus.Success:
+                        Notificar("<b>Sucesso</b>! Pagamento criado com sucesso!", Notifica.Sucesso);
+                        RedirectToAction(nameof(Index));
+                        break;
+                    case FinanceiroStatus.DataInicioMaiorQueDataFim:
+                        Notificar("<b>Erro</b>! A data de <b>inicio</b> deve ser maior que a data <b>fim</b>!!", Notifica.Alerta);
+                        RedirectToAction(nameof(Create));
+                        break;
+                    case FinanceiroStatus.DataFimMenorQueDataDeHoje:
+                        Notificar("<b>Erro</b>! A data <b>fim</b> deve ser maior que a data de <b>hoje</b>!!", Notifica.Alerta);
+                        RedirectToAction(nameof(Create));
+                        break;
+                    case FinanceiroStatus.ValorZeroOuNegativo:
+                        Notificar("<b>Erro</b>! O <b>valor</b> deve ser <b>positivo</b>!!", Notifica.Alerta);
+                        RedirectToAction(nameof(Create));
+                        break;
+                    default:
+                        Notificar("<b>Erro</b>! Algo deu errado na criação do pagamento!", Notifica.Erro);
+                        RedirectToAction(nameof(Create));
+                        break;
+                }
             }
-            catch
-            {
-                return View();
-            }
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Pagamento/Edit/5

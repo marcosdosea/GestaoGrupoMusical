@@ -8,40 +8,96 @@ namespace Service
     public class FinanceiroService : IFinanceiroService
     {
         private readonly GrupoMusicalContext _context;
+
         public FinanceiroService(GrupoMusicalContext context)
         {
             _context = context;
         }
 
-        public  IEnumerable<FinanceiroIndexDataPage> GetAllFinanceiroPorIdGrupo(int idGrupoMusical)
+        public FinanceiroStatus Create (FinanceiroCreateDTO rf)
+        {
+            var transaction = _context.Database.BeginTransaction();
+            try
+            {
+                if(rf.DataInicio > rf.DataFim)
+                {
+                    return FinanceiroStatus.DataInicioMaiorQueDataFim;
+                }
+                if(rf.DataFim < DateTime.Now)
+                {
+                    return FinanceiroStatus.DataFimMenorQueDataDeHoje;
+                }
+                if(rf.Valor <= 0)
+                {
+                    return FinanceiroStatus.ValorZeroOuNegativo;
+                }
+                
+                Receitafinanceira f = new Receitafinanceira
+                {
+                    DataInicio = rf.DataInicio ?? DateTime.Now,
+                    DataFim = rf.DataFim ?? DateTime.Now,
+                    Valor = rf.Valor ?? 0,
+                    Descricao = rf.Descricao,
+                    IdGrupoMusical = rf.IdGrupoMusical
+                };
+                _context.Add(f);
+                _context.SaveChanges();
+                rf.IdAssociados = _context.Pessoas.Where(p => p.IdGrupoMusical == rf.IdGrupoMusical && p.IdPapelGrupo == 1).Select(p => p.Id);
+
+                if(rf.IdAssociados != null)
+                {
+                    List<Receitafinanceirapessoa> p = new List<Receitafinanceirapessoa>();
+                    foreach(int idAssociado in  rf.IdAssociados)
+                    {
+                        p.Add(new Receitafinanceirapessoa()
+                        {
+                            IdReceitaFinanceira = f.Id,
+                            IdPessoa = idAssociado,
+                            Valor = rf.Valor ?? 0,
+                            DataPagamento = DateTime.Now,
+                        });
+                    }
+                    _context.AddRange(p);
+                    _context.SaveChanges();
+                }
+                transaction.Commit();
+                return FinanceiroStatus.Success;
+            }
+            catch
+            {
+                return FinanceiroStatus.Error;
+            }
+        }
+
+        public IEnumerable<FinanceiroIndexDataPage> GetAllFinanceiroPorIdGrupo(int idGrupoMusical)
         {
             DateTime dataMesesAtrasados = DateTime.Now.Date;
             var query = (from financeiro in _context.Receitafinanceiras
-                               where financeiro.IdGrupoMusical == idGrupoMusical
-                               select new FinanceiroIndexDataPage
-                               {
-                                   Id = financeiro.Id,
-                                   Descricao = financeiro.Descricao,
-                                   DataInicio = financeiro.DataInicio,
-                                   DataFim = financeiro.DataFim,
-                                   Pagos = financeiro.Receitafinanceirapessoas.
-                                   Where(rfp => rfp.IdReceitaFinanceira == financeiro.Id
-                                    && rfp.Status == "PAGO").Count(),
-                                   Isentos = financeiro.Receitafinanceirapessoas.
-                                   Where(rfp => rfp.IdReceitaFinanceira == financeiro.Id
-                                    && rfp.Status == "ISENTO").Count(),
-                                   Atrasos = financeiro.Receitafinanceirapessoas.
-                                   Where(rfp => rfp.IdReceitaFinanceira == financeiro.Id
-                                    && rfp.Status == "ABERTO"
-                                    && financeiro.DataFim < dataMesesAtrasados).Count(),
-                                   Recebido = financeiro.Receitafinanceirapessoas.Where(rfp => rfp.Status == "PAGO").
-                                   Sum(rfp => rfp.ValorPago),
-                               }).ToList();
+                         where financeiro.IdGrupoMusical == idGrupoMusical
+                         select new FinanceiroIndexDataPage
+                         {
+                             Id = financeiro.Id,
+                             Descricao = financeiro.Descricao,
+                             DataInicio = financeiro.DataInicio,
+                             DataFim = financeiro.DataFim,
+                             Pagos = financeiro.Receitafinanceirapessoas.
+                             Where(rfp => rfp.IdReceitaFinanceira == financeiro.Id
+                              && rfp.Status == TipoPagamento.PAGO.ToString()).Count(),
+                             Isentos = financeiro.Receitafinanceirapessoas.
+                             Where(rfp => rfp.IdReceitaFinanceira == financeiro.Id
+                              && rfp.Status == TipoPagamento.ISENTO.ToString()).Count(),
+                             Atrasos = financeiro.Receitafinanceirapessoas.
+                             Where(rfp => rfp.IdReceitaFinanceira == financeiro.Id
+                              && rfp.Status == TipoPagamento.ABERTO.ToString()
+                              && financeiro.DataFim < dataMesesAtrasados).Count(),
+                             Recebido = financeiro.Receitafinanceirapessoas.Where(rfp => rfp.Status == "PAGO").
+                             Sum(rfp => rfp.ValorPago),
+                         }).ToList();
             if (query.Count() > 0)
             {
                 foreach (var item in query)
                 {
-                    if(item.Descricao.Length > 15)
+                    if (item.Descricao.Length > 15)
                     {
                         item.Descricao = item.Descricao.Substring(0, 15) + "...";
                     }
@@ -83,7 +139,7 @@ namespace Service
             }
 
             int countRecordsFiltered = financeiroIndexDTO.Count();
-            //financeiroIndexDTO = financeiroIndexDTO.Skip(request.Start).Take(request.Length);
+            financeiroIndexDTO = financeiroIndexDTO.Skip(request.Start).Take(request.Length);
             return new DatatableResponse<FinanceiroIndexDataPage>
             {
                 Data = financeiroIndexDTO.ToList(),

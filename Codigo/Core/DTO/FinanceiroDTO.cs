@@ -30,4 +30,20 @@ namespace Core.DTO
         public decimal Recebido { get; set; }
 
     }
+
+    public class FinanceiroCreateDTO
+    {
+        [Key]
+        public int Id { get; set; }
+
+        public string Descricao { get; set; } = string.Empty;
+
+        public DateTime? DataInicio { get; set; }
+
+        public DateTime? DataFim { get; set; }
+
+        public decimal? Valor { get; set; }
+        public int IdGrupoMusical { get; set; }
+        public IEnumerable<int>? IdAssociados { get; set; }
+    }
 }
