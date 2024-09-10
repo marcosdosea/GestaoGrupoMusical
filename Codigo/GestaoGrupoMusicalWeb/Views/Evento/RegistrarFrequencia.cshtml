@@ -84,12 +84,15 @@
                                             <td class="p-3">
                                                 @Html.DisplayFor(model => Model.AssociadosDTO[i].JustificativaFalta)
                                             </td>
-                                            <td class="p-3 text-center">
-                                                <input type="radio" name="Presente_@i" value="Presente" />
-                                            </td>
-                                            <td class="p-3 text-center">
-                                                <input type="radio" name="Presente_@i" value="JustificativaAceita" />
-                                            </td>
+                                            <td class="p-3">
+    <input type="checkbox" name="AssociadosDTO[@i].Presente" value="1" @(Model.AssociadosDTO[i].Presente == 1 ? "checked" : "") />
+    <input type="hidden" name="AssociadosDTO[@i].Presente" value="0" />
+</td>
+
+<td class="p-3 text-center">
+    <input type="checkbox" name="AssociadosDTO[@i].JustificativaAceita" value="1" @(Model.AssociadosDTO[i].JustificativaAceita == 1 ? "checked" : "") />
+    <input type="hidden" name="AssociadosDTO[@i].JustificativaAceita" value="0" />
+</td>
                                         </tr>
                                     }
                                 }
@@ -97,14 +100,11 @@
                         </table>
                     </div>
                 </div>
-                <div class="container">
-                    <div class="row justify-content-end">
-                        <div class="col-md-3 d-flex justify-content-between">
-                            <input type="submit" value="Salvar" class="btn btn-secondary btn-lg ms-2" />
-                            <a class="btn btn-light text-secondary border border-secondary btn-lg" asp-controller="Ensaio" asp-action="Index">Voltar</a>
-                        </div>
-                    </div>
-                </div>
+                <div class="row d-flex flex-column-reverse d-grig gap-2 mx-auto d-flex flex-sm-column-reverse flex-xl-row">
+    <div class="col-5 d-none d-sm-block"></div>
+    <a class="btn btn-light text-secondary border border-secondary d-grid gap-2 col-sm" asp-controller="Evento" asp-action="Index"> Voltar </a>
+    <input type="submit" value="Salvar" class="btn btn-secondary d-grid gap-2 col-sm " />
+</div>
             </form>
         </div>
     </div>
