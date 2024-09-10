@@ -304,7 +304,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             InstrumentoMusicalViewModel instrumentoMusicalViewModel = new InstrumentoMusicalViewModel();
 
             IEnumerable<Tipoinstrumento> listaInstrumentos = await _tipoIntrumentoMusicalService.GetAllTipoInstrumento();
-            instrumentoMusicalViewModel.ListaInstrumentos = new SelectList(listaInstrumentos, "Id", "Nome", null);
+            instrumentoMusicalViewModel.ListaInstrumentos = new SelectList(listaInstrumentos, "Id", "Nome", null);          
 
             GerenciarInstrumentoEventoViewModel gerenciarInstrumentoEvento = new GerenciarInstrumentoEventoViewModel
             {
@@ -315,11 +315,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 FigurinoList = new SelectList(figurinosDropdown, "Id", "Nome"),
                 Local = eventoView.Local,
                 ListaInstrumentos = instrumentoMusicalViewModel.ListaInstrumentos,                
-            };
-            Console.WriteLine("Verificando instrumentos" + listaInstrumentos);
+            };            
 
             ViewData["exemploRegente"] = listaPessoasAutoComplete.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
             gerenciarInstrumentoEvento.JsonLista = listaPessoasAutoComplete.ToJson();
+           
             return View(gerenciarInstrumentoEvento);
         }
 
@@ -347,8 +347,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     Notificar("<b>Erro!</b> Desculpe, ocorreu um erro durante o <b>Cadastro</b> do instrumento.", Notifica.Erro);
                     break;
             }
-
-
 
             return RedirectToAction(nameof(GerenciarInstrumentoEvento), new { id = apresentacaotipoinstrumento.IdApresentacao });
         }
@@ -388,10 +386,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return RedirectToAction(nameof(GerenciarSolicitacaoEvento), new { id = model.Id });
         }
 
-        public ActionResult GerenciarInstrumentos(int idApresentacao)
+        public async Task<ActionResult> GerenciarInstrumentos(int idApresentacao)
         {
             
-            var instrumentos =  _eventoService.GetInstrumentosPlanejadosEvento(idApresentacao);
+            var instrumentos = await _eventoService.GetInstrumentosPlanejadosEvento(idApresentacao);
             
             //InstrumentoPlanejadoEventoDTO? g = _eventoService.GetInstrumentosPlanejadosEvento(idApresentacao);
             InstrumentoPlanejadoEventoDTO? model = _mapper.Map<InstrumentoPlanejadoEventoDTO>(instrumentos);

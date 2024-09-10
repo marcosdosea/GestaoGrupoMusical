@@ -621,19 +621,19 @@ namespace Service
 
         public async Task<IEnumerable<InstrumentoPlanejadoEventoDTO>> GetInstrumentosPlanejadosEvento(int idApresentacao)
         {
-            var query = await (from movimentacao in _context.Apresentacaotipoinstrumentos
-                               where movimentacao.IdApresentacao == idApresentacao
+            var query = await (from Tipoinstrumento in _context.Apresentacaotipoinstrumentos
+                               where Tipoinstrumento.IdApresentacao == idApresentacao
                                
                                select new InstrumentoPlanejadoEventoDTO
                                {
-                                   Id = movimentacao.IdApresentacao,
-                                   IdInstrumento = movimentacao.IdTipoInstrumento,
-                                   Planejados = movimentacao.QuantidadePlanejada,
-                                   Solicitados = movimentacao.QuantidadeSolicitada,
-                                   Confirmados = movimentacao.QuantidadeConfirmada,                                   
+                                   Id = Tipoinstrumento.IdApresentacao,
+                                   IdInstrumento = Tipoinstrumento.IdTipoInstrumento,
+                                   Planejados = Tipoinstrumento.QuantidadePlanejada,
+                                   Solicitados = Tipoinstrumento.QuantidadeSolicitada,
+                                   Confirmados = Tipoinstrumento.QuantidadeConfirmada,                                   
                                }).AsNoTracking().ToListAsync();
 
-            Console.WriteLine("Instrumentos" + query.ToString());
+            Console.WriteLine("Teste Instrumentos" + query.ToString());
             return query;
         }
     }
