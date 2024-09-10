@@ -287,21 +287,20 @@ namespace Service
         public HttpStatusCode RegistrarFrequencia(FrequenciaEnsaioDTO frequencia, int quantidadeAssociados)
         {
             try
-            {
-                List<Ensaiopessoa> p = new List<Ensaiopessoa>();
-
+            {              
                 for (int i = 0; i < quantidadeAssociados; i++)
                 {
-                    p.Add(new Ensaiopessoa
+                    var ensaioPessoa = new Ensaiopessoa
                     {
                         Presente = frequencia.AssociadosDTO[i].Presente,
                         JustificativaAceita = frequencia.AssociadosDTO[i].JustificativaAceita,
                         IdPessoa = frequencia.AssociadosDTO[i].Id,
-                        IdEnsaio = frequencia.Id
-                    });
+                        IdEnsaio = frequencia.Id,
+                        IdPapelGrupo = frequencia.AssociadosDTO[i].IdPapelGrupo
+                    };
+                    _context.Update(ensaioPessoa);
                 }
 
-                _context.Ensaiopessoas.UpdateRange(p);
                 _context.SaveChanges();
 
                 return HttpStatusCode.OK;
@@ -371,7 +370,7 @@ namespace Service
         {
             var query = _context.Ensaiopessoas
                 .Where(p => p.IdEnsaio == idEnsaio && p.IdPessoaNavigation.Ativo == 1 && p.IdPapelGrupo == 1)
-                .Select(p => new AssociadoDTO { Id = p.IdEnsaio, Nome = p.IdPessoaNavigation.Nome, Cpf = p.IdPessoaNavigation.Cpf, IdPapelGrupo = p.IdPapelGrupo, JustificativaFalta = p.JustificativaFalta, Presente = p.Presente, JustificativaAceita = p.JustificativaAceita }).AsNoTracking().ToList();
+                .Select(p => new AssociadoDTO { Id = p.IdPessoaNavigation.Id, Nome = p.IdPessoaNavigation.Nome, Cpf = p.IdPessoaNavigation.Cpf, IdPapelGrupo = p.IdPapelGrupo, JustificativaFalta = p.JustificativaFalta, Presente = p.Presente, JustificativaAceita = p.JustificativaAceita }).AsNoTracking().ToList();
 
             return query;
         }
