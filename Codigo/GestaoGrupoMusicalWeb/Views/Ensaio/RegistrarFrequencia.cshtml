@@ -89,9 +89,6 @@
                             for (int i = 0; i < Model.AssociadosDTO.Count; i++)
                             {
                                 <tr class="border-bottom border-danger border-opacity-75 p-3 align-middle">
-                                    <td class="p-3">
-                                        @Html.DisplayFor(model => Model.AssociadosDTO[i].Id)
-                                    </td>
                                     <input type="hidden" name="AssociadosDTO[@i].Id" value="@Model.AssociadosDTO[i].Id" />
 
                                     <input type="hidden" name="AssociadosDTO[@i].IdPapelGrupo" value="@Model.AssociadosDTO[i].Id" />
