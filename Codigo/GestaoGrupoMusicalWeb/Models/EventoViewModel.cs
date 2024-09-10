@@ -45,6 +45,7 @@ namespace GestaoGrupoMusicalWeb.Models
         public SelectList? ListaFigurino { get; set; }
         public List<AssociadoDTO>? AssociadosDTO { get; set; }
 
+        [Display(Name = "Figurino")]
         public int IdFigurinoSelecionado { get; set; }
 
     }
