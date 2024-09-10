@@ -319,7 +319,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     break;
             }
 
-            return RedirectToAction(nameof(RegistrarFrequencia), new { id = 1 });
+            return RedirectToAction(nameof(Index));
         }
 
 
