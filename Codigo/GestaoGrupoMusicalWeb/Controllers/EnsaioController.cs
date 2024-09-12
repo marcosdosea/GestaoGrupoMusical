@@ -62,9 +62,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: EnsaioController/Create
         public async Task<ActionResult> Create()
         {
-            var lista = await _pessoa.GetRegentesForAutoCompleteAsync(Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
+            var listaRegentes = await _pessoa.GetRegentesForAutoCompleteAsync(Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
 
-            if(lista == null || !lista.Any())
+            if(listaRegentes == null || !listaRegentes.Any())
             {
                 Notificar("É necessário cadastrar um Regente para então cadastrar um Ensaio.", Notifica.Informativo);
                 return RedirectToAction(nameof(Index));
@@ -80,12 +80,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             EnsaioViewModel ensaioModel = new()
             {
-                ListaPessoa = new SelectList(lista, "Id", "Nome"),
+                ListaPessoa = new SelectList(listaRegentes, "Id", "Nome"),
                 ListaFigurino = new SelectList(figurino, "Id", "Nome")
             };
 
-            ViewData["exemploRegente"] = lista.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
-            ensaioModel.JsonLista = lista.ToJson();
+            ViewData["exemploRegente"] = listaRegentes.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
+            ensaioModel.JsonLista = listaRegentes.ToJson();
             return View(ensaioModel);
         }
 
@@ -93,16 +93,16 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: EnsaioController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(EnsaioViewModel ensaioViewModel)
+        public ActionResult Create(EnsaioViewModel ensaioViewModel)
         {
             if (ModelState.IsValid && ensaioViewModel.IdRegentes != null)
             {
-                String mensagem = String.Empty;
+                string mensagem = string.Empty;
                 var ensaio = _mapper.Map<Ensaio>(ensaioViewModel);
               
                 ensaio.IdGrupoMusical = Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value);
                 ensaio.IdColaboradorResponsavel = Convert.ToInt32(User.FindFirst("Id")?.Value);
-                switch (await _ensaio.Create(ensaio, ensaioViewModel.IdRegentes, ensaioViewModel.IdFigurinoSelecionado))
+                switch (_ensaio.Create(ensaio, ensaioViewModel.IdRegentes, ensaioViewModel.IdFigurinoSelecionado))
                 {
                     case HttpStatusCode.OK:
                         mensagem = "Ensaio <b>Cadastrado</b> com <b>Sucesso</b>";
@@ -122,11 +122,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         break;
                 }
             }
-            var lista = await _pessoa.GetRegentesForAutoCompleteAsync(Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
-            ensaioViewModel.ListaPessoa = new SelectList(lista, "Id", "Nome");
-
-            ensaioViewModel.JsonLista = lista.ToJson();
-            return View(ensaioViewModel);
+            return RedirectToAction(nameof(Create), new {id = ensaioViewModel.Id});
         }
 
         [Authorize(Roles = "ADMINISTRADOR GRUPO,COLABORADOR,REGENTE")]
@@ -149,6 +145,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             ViewData["exemploRegente"] = listaRegentes.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
             ViewData["jsonIdRegentes"] = (await _ensaio.GetIdRegentesEnsaioAsync(id)).ToJson();
+
             ensaioModel.JsonLista = listaRegentes.ToJson();
             return View(ensaioModel);
         }
@@ -161,7 +158,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             if (ModelState.IsValid && ensaioViewModel.IdRegentes != null)
             {
-                String mensagem = String.Empty;
+                string mensagem = string.Empty;
                 switch (await _ensaio.Edit(_mapper.Map<Ensaio>(ensaioViewModel), ensaioViewModel.IdRegentes))
                 {
                     case HttpStatusCode.OK:
@@ -184,18 +181,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro durante o <b>Editar</b> de ensaio.";
                         Notificar(mensagem, Notifica.Erro);
                         break;
+                    default:
+                        mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro ESTRANHO durante o <b>Editar</b> de ensaio.";
+                        Notificar(mensagem, Notifica.Erro);
+                        break;
                 }
             }
-            var lista = await _pessoa.GetRegentesForAutoCompleteAsync(Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
-            var listaFigurinos = await _figurino.GetAllFigurinoDropdown(Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
-
-            ensaioViewModel.ListaPessoa = new SelectList(lista, "Id", "Nome");
-            ensaioViewModel.ListaFigurino = new SelectList(listaFigurinos, "Id", "Nome");
-
-            ViewData["exemploRegente"] = lista.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
-            ViewData["jsonIdRegentes"] = (await _ensaio.GetIdRegentesEnsaioAsync(ensaioViewModel.Id)).ToJson();
-            ensaioViewModel.JsonLista = lista.ToJson();
-            return View(ensaioViewModel);
+            return RedirectToAction(nameof(Edit),new {id = ensaioViewModel.Id});
         }
 
         [Authorize(Roles = "ADMINISTRADOR GRUPO,COLABORADOR,REGENTE")]

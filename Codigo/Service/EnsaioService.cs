@@ -21,9 +21,9 @@ namespace Service
         /// </summary>
         /// <param name="ensaio"></param>
         /// <returns>Verdadeiro(<see langword="true" />) se cadastrou com sucesso ou Falso(<see langword="false" />) se houve algum erro.</returns>
-        public async Task<HttpStatusCode> Create(Ensaio ensaio, IEnumerable<int> idRegentes, int idFigurino)
+        public HttpStatusCode Create(Ensaio ensaio, IEnumerable<int> idRegentes, int idFigurino)
         {
-            using var transaction = _context.Database.BeginTransaction();
+            var transaction = _context.Database.BeginTransaction();
 
             try
             {
@@ -31,8 +31,8 @@ namespace Service
                 {
                     if (ensaio.DataHoraInicio >= DateTime.Now)
                     {
-                        await _context.Ensaios.AddAsync(ensaio);
-                        await _context.SaveChangesAsync();
+                        _context.Ensaios.Add(ensaio);
+                        _context.SaveChanges();
 
                         List<Ensaiopessoa> p = new();
                         foreach (int id in idRegentes)
@@ -52,27 +52,44 @@ namespace Service
                             {"IdEnsaio", ensaio.Id }
                         });
                         _context.SaveChanges();
-                        await transaction.CommitAsync();
 
+                        IEnumerable<int> idAssociados = _context.Pessoas.Where
+                            (p => p.IdGrupoMusical == ensaio.IdGrupoMusical && p.IdPapelGrupo == (int)PapelGrupo.ASSOCIADO).Select(p => p.Id);
+                        if (idAssociados.Any())
+                        {
+                            List<Ensaiopessoa> ep = new();
+                            foreach (int id in idAssociados)
+                            {
+                                ep.Add(new Ensaiopessoa()
+                                {
+                                    IdPessoa = id,
+                                    IdEnsaio = ensaio.Id,
+                                    IdPapelGrupo = (int)PapelGrupo.ASSOCIADO
+                                });
+                            }
+                            _context.AddRange(ep);
+                            _context.SaveChanges();
+                        }
+                        transaction.Commit();
                         return HttpStatusCode.OK;
                     }
                     else
                     {
-                        await transaction.RollbackAsync();
+                        transaction.Rollback();
                         return HttpStatusCode.BadRequest;
                     }
 
                 }
                 else
                 {
-                    await transaction.RollbackAsync();
+                    transaction.Rollback();
                     return HttpStatusCode.PreconditionFailed;
                 }
 
             }
             catch
             {
-                await transaction.RollbackAsync();
+                transaction.Rollback();
                 return HttpStatusCode.InternalServerError;
             }
         }
@@ -152,36 +169,26 @@ namespace Service
 
             try
             {
-                var ensaioDb = await _context.Ensaios.Where(e => e.Id == ensaio.Id).AsNoTracking().SingleOrDefaultAsync();
-                if (ensaioDb == null)
-                {
-                    await transaction.RollbackAsync();
-                    return HttpStatusCode.NotFound;
-                }
-
-                ensaio.IdColaboradorResponsavel = ensaioDb.IdColaboradorResponsavel;
-                ensaio.IdGrupoMusical = ensaioDb.IdGrupoMusical;
 
                 if (ensaio.DataHoraFim > ensaio.DataHoraInicio)
                 {
                     if (ensaio.DataHoraInicio >= DateTime.Now)
                     {
                         var idEnsaioRegentes = _context.Ensaiopessoas
-                                            .Where(ep => ep.IdEnsaio == ensaioDb.Id)
-                                            .Select(ep => ep.IdPessoa).AsEnumerable();
+                                            .Where(ep => ep.IdEnsaio == ensaio.Id && ep.IdPapelGrupo == 5).AsNoTracking().ToList();
 
-                        if ((idRegentes.Count() != idEnsaioRegentes.Count()) || (idRegentes.Except(idEnsaioRegentes).Any()))
+                        if ((idRegentes.Count() != idEnsaioRegentes.Count))
                         {
-                            var ensaioPessoaRegente = _context.Ensaiopessoas
-                                                      .Where(ep => ep.IdEnsaio == ensaioDb.Id);
-                            _context.Ensaiopessoas.RemoveRange(ensaioPessoaRegente);
+
+                            _context.Ensaiopessoas.RemoveRange(idEnsaioRegentes);
+
+                            _context.SaveChanges();
                             foreach (int idRegente in idRegentes)
                             {
                                 Ensaiopessoa ensaioPessoa = new()
                                 {
                                     IdEnsaio = ensaio.Id,
                                     IdPessoa = idRegente,
-                                    Presente = 1,
                                 };
                                 await _context.Ensaiopessoas.AddAsync(ensaioPessoa);
                             }
@@ -287,7 +294,7 @@ namespace Service
         public HttpStatusCode RegistrarFrequencia(FrequenciaEnsaioDTO frequencia, int quantidadeAssociados)
         {
             try
-            {              
+            {
                 for (int i = 0; i < quantidadeAssociados; i++)
                 {
                     var ensaioPessoa = new Ensaiopessoa

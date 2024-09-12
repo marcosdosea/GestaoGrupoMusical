@@ -12,11 +12,11 @@ namespace Core.Service
 {
     public enum PapelGrupo
     {
-        ASSOCIADO,
-        COLABORADOR,
-        ADMINISTRADOR_DO_GRUPO_MUSICAL,
-        ADMINISTRADOR_DO_SISTEMA,
-        REGENTE
+        ASSOCIADO = 1,
+        COLABORADOR = 2,
+        ADMINISTRADOR_DO_GRUPO_MUSICAL = 3,
+        ADMINISTRADOR_DO_SISTEMA = 4,
+        REGENTE = 5
     }
 
     public interface IPessoaService

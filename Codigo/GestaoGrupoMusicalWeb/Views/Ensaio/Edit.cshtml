@@ -6,7 +6,7 @@
     ViewData["Edit"] = "Editar";
 }
 <partial name="_Notificar">
-<div class=container>
+    <div class=container>
         <div class="row">
             <div class="col-md-8">
                 <h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">Editar Ensaio</h1>
@@ -42,9 +42,9 @@
                                     </select>
                                     <span asp-validation-for="Tipo" class="text-danger"></span>
                                 </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="container">
+                        <div class="container">
                             <div class="row">
                                 <div class="form-group col-xl">
                                     <label asp-for="IdRegentes" class="control-label"></label>
@@ -115,22 +115,22 @@
                 </form>
             </div>
         </div>
-</div>
-<script>
-    window.addEventListener("load", () => {
-        fillAutocomplete('@(Html.Raw(Model.JsonLista))', "regentes", "IdRegentes", "formCreate", "O campo Regentes é obrigatório", '@(Html.Raw(ViewData["jsonIdRegentes"]))');
-    });
-</script>
+    </div>
+    <script>
+        window.addEventListener("load", () => {
+            fillAutocomplete('@(Html.Raw(Model.JsonLista))', "regentes", "IdRegentes", "formCreate", "O campo Regentes é obrigatório", '@(Html.Raw(ViewData["jsonIdRegentes"]))');
+        });
+    </script>
 
-@section Header {
-    @{
-        await Html.RenderPartialAsync("_AutoCompleteCssPartial");
+    @section Header {
+        @{
+            await Html.RenderPartialAsync("_AutoCompleteCssPartial");
+        }
     }
-}
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-        await Html.RenderPartialAsync("_EnablePopoversPartial");
-        await Html.RenderPartialAsync("_AutoCompletePartial");
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+            await Html.RenderPartialAsync("_EnablePopoversPartial");
+            await Html.RenderPartialAsync("_AutoCompletePartial");
+        }
     }
-}
