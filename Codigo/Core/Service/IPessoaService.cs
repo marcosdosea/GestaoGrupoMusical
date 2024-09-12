@@ -167,9 +167,9 @@ namespace Core.Service
         /// </returns>
         Task<HttpStatusCode> AtivarAssociado(string cpf);
 
-        Task<IEnumerable<AutoCompleteRegenteDTO>> GetRegentesForAutoCompleteAsync(int idGrupoMusical);
+        IEnumerable<AutoCompleteRegenteDTO> GetRegentesForAutoComplete(int idGrupoMusical);
 
-        Task<List<AssociadoDTO>> GetAssociadoAtivos(int idGrupoMusical);
+        List<AssociadoDTO> GetAssociadoAtivos(int idGrupoMusical);
 
         IEnumerable<AutoCompleteRegenteDTO> GetNomesRegentes(int idEnsaio);
 

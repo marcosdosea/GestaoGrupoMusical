@@ -801,21 +801,21 @@ namespace Service
             }
         }
 
-        public async Task<IEnumerable<AutoCompleteRegenteDTO>> GetRegentesForAutoCompleteAsync(int idGrupoMusical)
+        public IEnumerable <AutoCompleteRegenteDTO> GetRegentesForAutoComplete(int idGrupoMusical)
         {
             var query = _context.Pessoas
-                        .Where(p => p.IdGrupoMusical == idGrupoMusical && p.IdPapelGrupo == 5)
+                        .Where(p => p.IdGrupoMusical == idGrupoMusical && p.IdPapelGrupo == 5 && p.Ativo == 1)
                         .Select(p => new AutoCompleteRegenteDTO { Id = p.Id, Nome = p.Nome });
 
-            return await query.AsNoTracking().ToListAsync();
+            return query.AsNoTracking().ToList();
         }
 
-       public async Task<List<AssociadoDTO>> GetAssociadoAtivos(int idGrupoMusical) { 
+       public List<AssociadoDTO> GetAssociadoAtivos(int idGrupoMusical) { 
             var query = _context.Pessoas
                 .Where(p => p.IdGrupoMusical == idGrupoMusical && p.Ativo == 1 && p.IdPapelGrupo == 1)
                 .Select(p => new AssociadoDTO { Id = p.Id, Nome = p.Nome, Cpf = p.Cpf });
 
-            return await query.AsNoTracking().ToListAsync();
+            return query.AsNoTracking().ToList();
         } 
 
         public IEnumerable<AutoCompleteRegenteDTO> GetNomesRegentes(int idEnsaio)

@@ -62,7 +62,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: EnsaioController/Create
         public async Task<ActionResult> Create()
         {
-            var listaRegentes = await _pessoa.GetRegentesForAutoCompleteAsync(Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
+            var listaRegentes = _pessoa.GetRegentesForAutoComplete(Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
 
             if(listaRegentes == null || !listaRegentes.Any())
             {
@@ -135,7 +135,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 Notificar("<b>Ensaio não encontrado!</b>", Notifica.Alerta);
                 return RedirectToAction(nameof(Index));
             }
-            var listaRegentes = await _pessoa.GetRegentesForAutoCompleteAsync(Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
+            var listaRegentes = _pessoa.GetRegentesForAutoComplete(Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
             var listaFigurinos = await _figurino.GetAllFigurinoDropdown(Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
 
             EnsaioViewModel ensaioModel = _mapper.Map<EnsaioViewModel>(ensaio);
