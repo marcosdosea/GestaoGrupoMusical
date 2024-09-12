@@ -42,7 +42,7 @@ CREATE TABLE `apresentacaotipoinstrumento` (
 
 LOCK TABLES `apresentacaotipoinstrumento` WRITE;
 /*!40000 ALTER TABLE `apresentacaotipoinstrumento` DISABLE KEYS */;
-INSERT INTO `apresentacaotipoinstrumento` VALUES (1,3,5,0,1);
+INSERT INTO `apresentacaotipoinstrumento` VALUES (1,3,5,0,1),(2,1,4,0,0),(2,2,0,0,0),(2,4,0,0,0);
 /*!40000 ALTER TABLE `apresentacaotipoinstrumento` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -268,7 +268,7 @@ CREATE TABLE `ensaio` (
   KEY `fk_Ensaio_GrupoMusical1_idx` (`idGrupoMusical`),
   CONSTRAINT `fk_Ensaio_GrupoMusical1` FOREIGN KEY (`idGrupoMusical`) REFERENCES `grupomusical` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_Ensaio_Pessoa1` FOREIGN KEY (`idColaboradorResponsavel`) REFERENCES `pessoa` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -277,7 +277,7 @@ CREATE TABLE `ensaio` (
 
 LOCK TABLES `ensaio` WRITE;
 /*!40000 ALTER TABLE `ensaio` DISABLE KEYS */;
-INSERT INTO `ensaio` VALUES (1,1,'FIXO','2024-08-10 00:00:00','2024-08-11 00:00:00',1,'Local A','Repertório A',2),(2,1,'FIXO','2024-08-29 20:59:00','2024-08-30 20:59:00',1,'Local B','Repertório B',2);
+INSERT INTO `ensaio` VALUES (1,1,'FIXO','2024-08-10 00:00:00','2024-08-11 00:00:00',1,'Local A','Repertório A',2),(2,1,'FIXO','2024-08-29 20:59:00','2024-08-30 20:59:00',1,'Local B','Repertório B',2),(3,1,'FIXO','2024-09-13 16:10:00','2024-09-24 16:10:00',1,'Local C','Rep C',2),(4,1,'FIXO','2024-09-13 16:12:00','2024-09-13 22:18:00',1,'Local D','Rep D',2);
 /*!40000 ALTER TABLE `ensaio` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -311,7 +311,7 @@ CREATE TABLE `ensaiopessoa` (
 
 LOCK TABLES `ensaiopessoa` WRITE;
 /*!40000 ALTER TABLE `ensaiopessoa` DISABLE KEYS */;
-INSERT INTO `ensaiopessoa` VALUES (3,1,0,NULL,0,5),(4,2,0,NULL,0,5),(5,1,0,NULL,0,1);
+INSERT INTO `ensaiopessoa` VALUES (3,1,0,NULL,0,5),(3,3,0,NULL,0,5),(3,4,0,NULL,0,5),(4,2,0,NULL,0,5),(5,1,0,'Estou doente',0,1),(5,3,0,NULL,0,1),(5,4,0,NULL,0,1),(6,3,0,NULL,0,1),(6,4,0,NULL,0,1),(7,3,0,NULL,0,1),(7,4,0,NULL,0,1),(8,3,0,NULL,0,1),(8,4,0,NULL,0,1);
 /*!40000 ALTER TABLE `ensaiopessoa` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -402,7 +402,7 @@ CREATE TABLE `figurino` (
   UNIQUE KEY `id_UNIQUE` (`id`),
   KEY `fk_Figurino_GrupoMusical1_idx` (`idGrupoMusical`),
   CONSTRAINT `fk_Figurino_GrupoMusical1` FOREIGN KEY (`idGrupoMusical`) REFERENCES `grupomusical` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -411,7 +411,7 @@ CREATE TABLE `figurino` (
 
 LOCK TABLES `figurino` WRITE;
 /*!40000 ALTER TABLE `figurino` DISABLE KEYS */;
-INSERT INTO `figurino` VALUES (1,'Sao joão 2020','2024-08-21',1),(2,'Maria Jiquinha 1999','1999-10-10',1),(3,'Arrastão','2000-10-10',1);
+INSERT INTO `figurino` VALUES (1,'Sao joão 2020','2024-08-21',1),(2,'Maria Jiquinha 1999','1999-10-10',1),(3,'Arrastão','2000-10-10',1),(4,'Thriller',NULL,1);
 /*!40000 ALTER TABLE `figurino` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -467,7 +467,7 @@ CREATE TABLE `figurinoensaio` (
 
 LOCK TABLES `figurinoensaio` WRITE;
 /*!40000 ALTER TABLE `figurinoensaio` DISABLE KEYS */;
-INSERT INTO `figurinoensaio` VALUES (3,1),(1,2);
+INSERT INTO `figurinoensaio` VALUES (3,1),(1,2),(4,3),(3,4);
 /*!40000 ALTER TABLE `figurinoensaio` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -799,7 +799,7 @@ CREATE TABLE `pessoa` (
   CONSTRAINT `fk_Pessoa_GrupoMusical1` FOREIGN KEY (`idGrupoMusical`) REFERENCES `grupomusical` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_Pessoa_Manequim1` FOREIGN KEY (`idManequim`) REFERENCES `manequim` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_Pessoa_PapelGrupoMusical1` FOREIGN KEY (`idPapelGrupo`) REFERENCES `papelgrupo` (`idPapelGrupo`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -808,7 +808,7 @@ CREATE TABLE `pessoa` (
 
 LOCK TABLES `pessoa` WRITE;
 /*!40000 ALTER TABLE `pessoa` DISABLE KEYS */;
-INSERT INTO `pessoa` VALUES (2,'53649984016','Verynice ADM','M','',NULL,NULL,NULL,'',NULL,'',NULL,'vereverynice.tester1@gmail.com',NULL,NULL,NULL,1,1,1,3,1),(3,'99437057010','Karina Key','F','49509146','Rua José Vicente de Oliveira','Mamede Paes Mendonça','Itabaiana','SE','2000-08-21','(79)99629-1292',NULL,'karinaqueijo.g@gmail.com','2024-08-20',NULL,NULL,1,0,1,5,2),(4,'01405380039','Kah Ales','M','49509146','Rua José Vicente de Oliveira','Mamede Paes Mendonça','Itabaiana','SE','2001-08-21','(79)99629-1292',NULL,'kah24.ales@gmail.com','2024-08-20',NULL,NULL,1,0,1,5,3),(5,'57776907006','Caio Figueredo Amorim','M','49509146','Rua José Vicente de Oliveira','Mamede Paes Mendonça','Itabaiana','SE','1992-10-10','(79)99629-1292',NULL,'caioteste949@gmail.com','2024-08-15',NULL,NULL,1,0,1,1,3);
+INSERT INTO `pessoa` VALUES (2,'53649984016','Verynice ADM','M','',NULL,NULL,NULL,'',NULL,'',NULL,'vereverynice.tester1@gmail.com',NULL,NULL,NULL,1,1,1,3,1),(3,'99437057010','Karina Key','F','49509146','Rua José Vicente de Oliveira','Mamede Paes Mendonça','Itabaiana','SE','2000-08-21','(79)99999-9999',NULL,'karinaqueijo.g@gmail.com','2024-08-20',NULL,NULL,1,0,1,5,2),(4,'01405380039','Kah Ales','M','49509146','Rua José Vicente de Oliveira','Mamede Paes Mendonça','Itabaiana','SE','2001-08-21','(79)99999-9999',NULL,'kah24.ales@gmail.com','2024-08-20',NULL,NULL,1,0,1,5,3),(5,'57776907006','Caio Figueredo Amorim','M','49509146','Rua José Vicente de Oliveira','Mamede Paes Mendonça','Itabaiana','SE','1992-10-10','(79)99999-9999',NULL,'caioteste949@gmail.com','2024-08-15',NULL,NULL,1,0,1,1,3),(6,'47511719090','Miranda Mirandinha','F','49509146','Rua José Vicente de Oliveira','Mamede Paes Mendonça','Itabaiana','SE','1992-10-10','(79)99999-9999',NULL,'teste@gmail.com','2024-08-15',NULL,NULL,1,0,1,1,3),(7,'87464839005','Fernanda Fernandinha','F','49509146','Rua José Vicente de Oliveira','Mamede Paes Mendonça','Itabaiana','SE','1992-10-10','(79)99999-9999',NULL,'teste@gmail.com','2024-08-15',NULL,NULL,1,0,1,1,1),(8,'36968272075','Borges Boris','M','49509146','Rua José Vicente de Oliveira','Mamede Paes Mendonça','Itabaiana','SE','1992-10-10','(79)99999-9999',NULL,'teste@gmail.com','2024-08-15',NULL,NULL,1,0,1,1,2);
 /*!40000 ALTER TABLE `pessoa` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -856,7 +856,7 @@ CREATE TABLE `receitafinanceira` (
   PRIMARY KEY (`id`),
   KEY `fk_ReceitaFinanceira_GrupoMusical1_idx` (`idGrupoMusical`),
   CONSTRAINT `fk_ReceitaFinanceira_GrupoMusical1` FOREIGN KEY (`idGrupoMusical`) REFERENCES `grupomusical` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -865,7 +865,7 @@ CREATE TABLE `receitafinanceira` (
 
 LOCK TABLES `receitafinanceira` WRITE;
 /*!40000 ALTER TABLE `receitafinanceira` DISABLE KEYS */;
-INSERT INTO `receitafinanceira` VALUES (1,'Paguem 1','2024-05-10','2024-08-19',500.00,1),(2,'Paguem 2','2024-05-10','2025-08-11',500.00,1);
+INSERT INTO `receitafinanceira` VALUES (1,'Paguem 1','2024-05-10','2024-06-10',20.00,1),(2,'Paguem 2','2024-06-10','2025-07-10',15.00,1),(3,'Paguem 3','2024-07-10','2024-08-28',20.00,1),(10,'Paguem 4','2024-09-09','2024-09-24',50.00,1);
 /*!40000 ALTER TABLE `receitafinanceira` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -898,7 +898,7 @@ CREATE TABLE `receitafinanceirapessoa` (
 
 LOCK TABLES `receitafinanceirapessoa` WRITE;
 /*!40000 ALTER TABLE `receitafinanceirapessoa` DISABLE KEYS */;
-INSERT INTO `receitafinanceirapessoa` VALUES (1,5,500.00,0.00,'2024-05-10 00:00:00',NULL,'ABERTO'),(2,5,500.00,0.00,'2024-05-10 00:00:00',NULL,'ABERTO');
+INSERT INTO `receitafinanceirapessoa` VALUES (1,5,20.00,20.00,'2024-05-10 00:00:00','NENHUMA 1','PAGO'),(2,5,15.00,0.00,'2024-05-10 00:00:00','NENHUMA 2','ABERTO'),(3,5,20.00,0.00,'2024-05-10 00:00:00','NENHUMA 3','ISENTO'),(10,5,50.00,0.00,'2024-09-09 17:12:18',NULL,'ABERTO');
 /*!40000 ALTER TABLE `receitafinanceirapessoa` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -935,4 +935,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-08-26 21:52:57
+-- Dump completed on 2024-09-12 16:37:33
