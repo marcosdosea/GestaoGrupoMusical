@@ -9,10 +9,13 @@ namespace Core.DTO
 {
     public class InstrumentoPlanejadoEventoDTO
     {
-        public int Id { get; set; }
+        public int IdApresentacao { get; set; }
         public int IdInstrumento { get; set; }
+        [Display(Name = "Planejados")]
         public int Planejados { get; set; }
+        [Display(Name = "Solicitados")]
         public int Solicitados { get; set; }
+        [Display(Name = "Confirmados")]
         public int Confirmados { get; set; }
 
         [Display(Name = "Instrumentos")]

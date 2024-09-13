@@ -1,14 +1,14 @@
-﻿@model IEnumerable<Core.DTO.GerenciarInstrumentoEventoDTO>
+﻿@model IEnumerable<Core.DTO.InstrumentoPlanejadoEventoDTO>
 
 <div class="table-responsive">
     <table class="table mt-3">
         <thead>
             <tr class="bg-danger bg-opacity-75 text-white">
                 <th>
-                    @Html.DisplayNameFor(model => model.Instrumentos)
+                    @Html.DisplayNameFor(model => model.ListaInstrumentos)
                 </th>      
                 <th>
-                    @Html.DisplayNameFor(model => model.Planejado)
+                    @Html.DisplayNameFor(model => model.Planejados)
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.Solicitados)
@@ -26,10 +26,10 @@
             {
                 <tr class="border-bottom border-danger border-opacity-75 align-middle">
                     <td>
-                        @item.Instrumentos
+                        @item.ListaInstrumentos
                     </td>               
                     <td>
-                        @item.Planejado
+                        @item.Planejados
                     </td>
                     <td>
                         @item.Solicitados
@@ -38,18 +38,18 @@
                         @item.Confirmados
                     </td>                   
                     <td class="py-3 border-0 d-flex flex-column flex-lg-row gap-3">
-                        <form id="@(item.Id + "_notificar")" asp-controller="InstrumentoMusical" asp-action="NotificarViaEmail" asp-route-Id="@item.Id" asp-route-IdInstrumento="@item.IdInstrumento" method="post">
+                            <form id="@(item.IdApresentacao + "_notificar")" asp-controller="InstrumentoMusical" asp-action="NotificarViaEmail" asp-route-Id="@item.IdApresentacao" asp-route-IdInstrumento="@item.IdInstrumento" method="post">
                             <a role="button" class="btn btn-sm btn-secondary"
                                data-bs-toggle="modal" data-bs-target="#notificarMovimentacaoModal"
-                               onclick="showModal('@(item.Id + "_notificar")', 'notificarMovimentacaoModal')">
+                                   onclick="showModal('@(item.IdApresentacao + "_notificar")', 'notificarMovimentacaoModal')">
                                 <i class="fa-solid fa-envelope"></i>
                                 Notificar
                             </a>
                         </form>
-                        <form id="@(item.Id + "_delete")" asp-controller="InstrumentoMusical" asp-action="DeleteMovimentacao" asp-route-Id="@item.Id" asp-route-IdInstrumento="@item.IdInstrumento" method="post">
+                            <form id="@(item.IdApresentacao + "_delete")" asp-controller="InstrumentoMusical" asp-action="DeleteMovimentacao" asp-route-Id="@item.IdApresentacao" asp-route-IdInstrumento="@item.IdInstrumento" method="post">
                             <a role="button" class="btn btn-sm btn-secondary"
                                data-bs-toggle="modal" data-bs-target="#excluirMovimentacaoModal"
-                               onclick="showModal('@(item.Id + "_delete")', 'excluirMovimentacaoModal')">
+                                   onclick="showModal('@(item.IdApresentacao + "_delete")', 'excluirMovimentacaoModal')">
                                 <i class="fa-solid fa-xmark"> </i>
                                 Excluir
                             </a>

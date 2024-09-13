@@ -732,22 +732,20 @@ namespace Service
                                  .Where(ep => ep.IdEnsaio == idEnsaio)
                                  .Select(ep => ep.IdPessoa).ToListAsync();
         }
-        public async Task<IEnumerable<InstrumentoPlanejadoEventoDTO>> GetInstrumentosPlanejadosEvento(int idApresentacao)
+        public IEnumerable<InstrumentoPlanejadoEventoDTO> GetInstrumentosPlanejadosEvento(int idApresentacao)
         {
-            var query = await (from Tipoinstrumento in _context.Apresentacaotipoinstrumentos
-                               where Tipoinstrumento.IdApresentacao == idApresentacao
-
+            var query =  from a in _context.Apresentacaotipoinstrumentos
+                               join tp in _context.Tipoinstrumentos
+                               on a.IdTipoInstrumento equals tp.Id
+                               where a.IdApresentacao == idApresentacao
                                select new InstrumentoPlanejadoEventoDTO
                                {
-                                   Id = Tipoinstrumento.IdApresentacao,
-                                   IdInstrumento = Tipoinstrumento.IdTipoInstrumento,
-                                   Planejados = Tipoinstrumento.QuantidadePlanejada,
-                                   Solicitados = Tipoinstrumento.QuantidadeSolicitada,
-                                   Confirmados = Tipoinstrumento.QuantidadeConfirmada,
-                               }).AsNoTracking().ToListAsync();
-
-            Console.WriteLine("Teste Instrumentos" + query.ToString());
-            return query;
+                                   IdApresentacao = a.IdApresentacao,
+                                   IdInstrumento = a.IdTipoInstrumento,
+                                   ListaInstrumentos = tp.Nome,
+                                   Planejados = a.QuantidadePlanejada
+                               };            
+            return query.ToList();
         }    
 
     }
