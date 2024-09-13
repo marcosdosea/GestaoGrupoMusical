@@ -493,5 +493,17 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             return View(eventoJustificativa);
         }
+        public async Task<ActionResult> GerenciarInstrumentos(int idApresentacao)
+        {
+
+            var instrumentos = await _eventoService.GetInstrumentosPlanejadosEvento(idApresentacao);
+
+            //InstrumentoPlanejadoEventoDTO? g = _eventoService.GetInstrumentosPlanejadosEvento(idApresentacao);
+            InstrumentoPlanejadoEventoDTO? model = _mapper.Map<InstrumentoPlanejadoEventoDTO>(instrumentos);
+
+            Console.WriteLine("Teste instrumentos: " + model.Planejados);
+
+            return View(model);
+        }
     }
 }

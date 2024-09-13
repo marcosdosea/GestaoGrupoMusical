@@ -46,5 +46,6 @@ namespace Core.Service
             QuantidadeConfirmadaNegativa,
             QuantidadeSolicitadaNegativa
         }
+        Task<IEnumerable<InstrumentoPlanejadoEventoDTO>> GetInstrumentosPlanejadosEvento(int idEvento);
     }
 }
