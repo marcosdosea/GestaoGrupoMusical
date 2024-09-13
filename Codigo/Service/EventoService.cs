@@ -732,5 +732,21 @@ namespace Service
                                  .Where(ep => ep.IdEnsaio == idEnsaio)
                                  .Select(ep => ep.IdPessoa).ToListAsync();
         }
+        public IEnumerable<InstrumentoPlanejadoEventoDTO> GetInstrumentosPlanejadosEvento(int idApresentacao)
+        {
+            var query =  from a in _context.Apresentacaotipoinstrumentos
+                               join tp in _context.Tipoinstrumentos
+                               on a.IdTipoInstrumento equals tp.Id
+                               where a.IdApresentacao == idApresentacao
+                               select new InstrumentoPlanejadoEventoDTO
+                               {
+                                   IdApresentacao = a.IdApresentacao,
+                                   IdInstrumento = a.IdTipoInstrumento,
+                                   ListaInstrumentos = tp.Nome,
+                                   Planejados = a.QuantidadePlanejada
+                               };            
+            return query.ToList();
+        }    
+
     }
 }

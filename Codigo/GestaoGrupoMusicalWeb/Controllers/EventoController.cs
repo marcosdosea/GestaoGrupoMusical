@@ -33,7 +33,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             IFigurinoService figurino, IInstrumentoMusicalService tipoInstrumentoMusical,
             IConfiguration configuration)
         {
-            _eventoService = evento;
+            _eventoService = evento ?? throw new ArgumentNullException(nameof(evento));
             _mapper = mapper;
             _grupoMusicalService = grupoMusical;
             _pessoaService = pessoaService;
@@ -492,6 +492,19 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
 
             return View(eventoJustificativa);
+        }
+        public IActionResult GerenciarInstrumentos(int idApresentacao)
+        {
+
+            //var instrumentos = await _eventoService.GetInstrumentosPlanejadosEvento(idApresentacao);
+
+            //            InstrumentoPlanejadoEventoDTO? g = _eventoService.GetInstrumentosPlanejadosEvento(idApresentacao);
+            IEnumerable<InstrumentoPlanejadoEventoDTO> instrumentos = _eventoService.GetInstrumentosPlanejadosEvento(idApresentacao);
+            
+
+            Console.WriteLine("Teste instrumentos: " + instrumentos);
+
+            return View(instrumentos);
         }
     }
 }
