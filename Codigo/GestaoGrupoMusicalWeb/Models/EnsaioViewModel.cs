@@ -41,6 +41,7 @@ namespace GestaoGrupoMusicalWeb.Models
         public IEnumerable<int>? IdRegentes { get; set; }
 
         public string? JsonLista { get; set; }
+        public int IdColaboradorResponsavel { get; set; }
 
         public Dictionary<string, bool> Obrigatorio { get; } = new()
         {

@@ -154,12 +154,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: EnsaioController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(EnsaioViewModel ensaioViewModel)
+        public  ActionResult Edit(EnsaioViewModel ensaioViewModel)
         {
             if (ModelState.IsValid && ensaioViewModel.IdRegentes != null)
             {
                 string mensagem = string.Empty;
-                switch (await _ensaio.Edit(_mapper.Map<Ensaio>(ensaioViewModel), ensaioViewModel.IdRegentes))
+                
+                switch (_ensaio.Edit(_mapper.Map<Ensaio>(ensaioViewModel), ensaioViewModel.IdRegentes))
                 {
                     case HttpStatusCode.OK:
                         mensagem = "Ensaio <b>Editado</b> com <b>Sucesso</b>";
@@ -182,7 +183,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         Notificar(mensagem, Notifica.Erro);
                         break;
                     default:
-                        mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro ESTRANHO durante o <b>Editar</b> de ensaio.";
+                        mensagem = "<b>Erro</b> ! Desculpe, ocorreu um erro critico durante o <b>Editar</b> de ensaio.";
                         Notificar(mensagem, Notifica.Erro);
                         break;
                 }

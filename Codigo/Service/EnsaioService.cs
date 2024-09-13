@@ -163,7 +163,7 @@ namespace Service
         /// </summary>
         /// <param name="ensaio"></param>
         /// <returns>retorna um inteiro.</returns>
-        public async Task<HttpStatusCode> Edit(Ensaio ensaio, IEnumerable<int> idRegentes)
+        public HttpStatusCode Edit(Ensaio ensaio, IEnumerable<int> idRegentes)
         {
             using var transaction = _context.Database.BeginTransaction();
 
@@ -176,12 +176,10 @@ namespace Service
                     {
                         var idEnsaioRegentes = _context.Ensaiopessoas
                                             .Where(ep => ep.IdEnsaio == ensaio.Id && ep.IdPapelGrupo == 5).AsNoTracking().ToList();
-
                         if ((idRegentes.Count() != idEnsaioRegentes.Count))
                         {
 
                             _context.Ensaiopessoas.RemoveRange(idEnsaioRegentes);
-
                             _context.SaveChanges();
                             foreach (int idRegente in idRegentes)
                             {
@@ -189,32 +187,33 @@ namespace Service
                                 {
                                     IdEnsaio = ensaio.Id,
                                     IdPessoa = idRegente,
+                                    IdPapelGrupo = 5,
                                 };
-                                await _context.Ensaiopessoas.AddAsync(ensaioPessoa);
+                                _context.Ensaiopessoas.Add(ensaioPessoa);
+                                _context.SaveChanges();
                             }
                         }
                         _context.Ensaios.Update(ensaio);
 
-                        await _context.SaveChangesAsync();
-                        await transaction.CommitAsync();
-
+                        _context.SaveChanges();
+                        transaction.Commit();
                         return HttpStatusCode.OK;
                     }
                     else
                     {
-                        await transaction.RollbackAsync();
+                        transaction.Rollback();
                         return HttpStatusCode.BadRequest;
                     }
                 }
                 else
                 {
-                    await transaction.RollbackAsync();
+                    transaction.Rollback();
                     return HttpStatusCode.PreconditionFailed;
                 }
             }
             catch
             {
-                await transaction.RollbackAsync();
+                transaction.Rollback();
                 return HttpStatusCode.InternalServerError;
             }
         }

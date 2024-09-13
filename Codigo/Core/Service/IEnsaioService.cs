@@ -30,7 +30,7 @@ namespace Core.Service
         /// NotFound - Ensaio não encontrado <para/> 
         /// InternalServerError - Erro interno
         /// </returns>
-        Task<HttpStatusCode> Edit(Ensaio ensaio, IEnumerable<int> idRegentes);
+        HttpStatusCode Edit(Ensaio ensaio, IEnumerable<int> idRegentes);
 
         /// <summary>
         /// Excluir uma ensaio no banco de dados
