@@ -6,7 +6,7 @@
     ViewData["Edit"] = "Editar";
 }
 <partial name="_Notificar">
-<div class=container>
+    <div class=container>
         <div class="row">
             <div class="col-md-8">
                 <h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">Editar Ensaio</h1>
@@ -23,6 +23,19 @@
                 <hr />
                 <br />
                 <form id="formCreate" asp-action="Edit">
+                    <div class="form-group" hidden>
+                        <label asp-for="Id" class="control-label"></label>
+                        <input asp-for="Id" readonly class="form-control" />
+                    </div>
+                    <div class="form-group" hidden>
+                        <label asp-for="IdColaboradorResponsavel" class="control-label"></label>
+                        <input asp-for="IdColaboradorResponsavel" readonly class="form-control" />
+                    </div>
+                    <div class="form-group" hidden>
+                        <label asp-for="IdGrupoMusical" class="control-label"></label>
+                        <input asp-for="IdGrupoMusical" readonly class="form-control" />
+                    </div>
+
                     <div class="container">
                         <div class="row">
                             <div class="row">
@@ -42,22 +55,22 @@
                                     </select>
                                     <span asp-validation-for="Tipo" class="text-danger"></span>
                                 </div>
+                            </div>
                         </div>
                     </div>
                     <div class="container">
-                            <div class="row">
-                                <div class="form-group col-xl">
-                                    <label asp-for="IdRegentes" class="control-label"></label>
-                                    <span class="d-inline-block my-2" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Escreva o nome do Regente. Ex: @ViewData["exemploRegente"]">
-                                        <button class="btn btn-outline-secondary btn-sm fw-bold" type="button">?</button>
-                                    </span>
-                                    <select multiple asp-for="IdRegentes" class="d-none" asp-items="Model.ListaPessoa">
-                                    </select>
-                                    <input class="form-control" id="regentes" placeholder="Informe o Regente." />
-                                    <div id="blockNames" class="d-flex flex-column gap-2">
-                                    </div>
-                                    <span for="regentes" class="text-danger"></span>
+                        <div class="row">
+                            <div class="form-group col-xl">
+                                <label asp-for="IdRegentes" class="control-label"></label>
+                                <span class="d-inline-block my-2" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Escreva o nome do Regente. Ex: @ViewData["exemploRegente"]">
+                                    <button class="btn btn-outline-secondary btn-sm fw-bold" type="button">?</button>
+                                </span>
+                                <select multiple asp-for="IdRegentes" class="d-none" asp-items="Model.ListaPessoa">
+                                </select>
+                                <input class="form-control" id="regentes" placeholder="Informe o Regente." />
+                                <div id="blockNames" class="d-flex flex-column gap-2">
                                 </div>
+                                <span for="regentes" class="text-danger"></span>
                             </div>
                         </div>
                     </div>
@@ -115,22 +128,22 @@
                 </form>
             </div>
         </div>
-</div>
-<script>
-    window.addEventListener("load", () => {
-        fillAutocomplete('@(Html.Raw(Model.JsonLista))', "regentes", "IdRegentes", "formCreate", "O campo Regentes é obrigatório", '@(Html.Raw(ViewData["jsonIdRegentes"]))');
-    });
-</script>
+    </div>
+    <script>
+        window.addEventListener("load", () => {
+            fillAutocomplete('@(Html.Raw(Model.JsonLista))', "regentes", "IdRegentes", "formCreate", "O campo Regentes é obrigatório", '@(Html.Raw(ViewData["jsonIdRegentes"]))');
+        });
+    </script>
 
-@section Header {
-    @{
-        await Html.RenderPartialAsync("_AutoCompleteCssPartial");
+    @section Header {
+        @{
+            await Html.RenderPartialAsync("_AutoCompleteCssPartial");
+        }
     }
-}
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-        await Html.RenderPartialAsync("_EnablePopoversPartial");
-        await Html.RenderPartialAsync("_AutoCompletePartial");
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+            await Html.RenderPartialAsync("_EnablePopoversPartial");
+            await Html.RenderPartialAsync("_AutoCompletePartial");
+        }
     }
-}

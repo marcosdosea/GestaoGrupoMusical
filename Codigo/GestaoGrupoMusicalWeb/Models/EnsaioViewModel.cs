@@ -41,6 +41,7 @@ namespace GestaoGrupoMusicalWeb.Models
         public IEnumerable<int>? IdRegentes { get; set; }
 
         public string? JsonLista { get; set; }
+        public int IdColaboradorResponsavel { get; set; }
 
         public Dictionary<string, bool> Obrigatorio { get; } = new()
         {
@@ -50,7 +51,7 @@ namespace GestaoGrupoMusicalWeb.Models
 
         public SelectList? ListaPessoa { get; set; }
         public SelectList? ListaFigurino { get; set; }
-        public List<AssociadoDTO> AssociadosDTO { get; set; }
+        public List<AssociadoDTO>? AssociadosDTO { get; set; }
     }
 
     public class FrequenciaEnsaioViewModel
