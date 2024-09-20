@@ -19,6 +19,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
     public class EventoController : BaseController
     {
         private readonly IEventoService _eventoService;
+        private readonly IEnsaioService _ensaioService;
         private readonly IMapper _mapper;
         private readonly IGrupoMusicalService _grupoMusicalService;
         private readonly IPessoaService _pessoaService;
@@ -27,20 +28,19 @@ namespace GestaoGrupoMusicalWeb.Controllers
         
         private int FaltasPessoasEmEnsaioMeses { get; }
 
-
-        public EventoController(IEventoService evento, IMapper mapper, 
+        public EventoController(IEventoService evento, IEnsaioService ensaioService, IMapper mapper, 
             IGrupoMusicalService grupoMusical, IPessoaService pessoaService, 
             IFigurinoService figurino, IInstrumentoMusicalService tipoInstrumentoMusical,
             IConfiguration configuration)
         {
             _eventoService = evento ?? throw new ArgumentNullException(nameof(evento));
+            _ensaioService = ensaioService;
             _mapper = mapper;
             _grupoMusicalService = grupoMusical;
             _pessoaService = pessoaService;
             _figurinoService = figurino;
             _tipoIntrumentoMusicalService = tipoInstrumentoMusical;
-            FaltasPessoasEmEnsaioMeses = configuration.GetValue<int>("Aplication:FaltasPessoasEmEnsaioEmMeses");
-        }
+            FaltasPessoasEmEnsaioMeses = configuration.GetValue<int>("Aplication:FaltasPessoasEmEnsaioEmMeses");        }
 
         // GET: EventoController
         public ActionResult Index()

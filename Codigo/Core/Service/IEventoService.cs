@@ -29,8 +29,10 @@ namespace Core.Service
         IEnumerable<SolicitacaoEventoPessoasDTO> GetSolicitacaoEventoPessoas(int idEvento, int pegarFaltasEmMesesAtras);
         public EventoStatus EditSolicitacoesEvento(GerenciarSolicitacaoEventoDTO g);        
 
-        public static InscricaoEventoPessoa ConvertAprovadoParaEnum(string aprovado)
+        public static InscricaoEventoPessoa ConvertAprovadoParaEnum(string? aprovado)
         {
+            if (aprovado == null)
+                return InscricaoEventoPessoa.NAO_SOLICITADO;
             if (aprovado.ToLower().Contains("indeferido"))
                 return InscricaoEventoPessoa.INDEFERIDO;
             if (aprovado.ToLower().Contains("deferido"))
@@ -47,5 +49,6 @@ namespace Core.Service
             QuantidadeSolicitadaNegativa
         }
         IEnumerable<InstrumentoPlanejadoEventoDTO> GetInstrumentosPlanejadosEvento(int idEvento);
+        public IEnumerable<EventoAssociadoDTO>? GetEventosDeAssociado(int idPessoa, int idEvento, int PegarUltimosEventoDeAssociado);
     }
 }

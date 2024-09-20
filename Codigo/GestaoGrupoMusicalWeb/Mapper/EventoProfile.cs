@@ -12,6 +12,7 @@ namespace GestaoGrupoMusicalWeb.Mapper
             CreateMap<EventoViewModel, Evento>().ReverseMap();
             CreateMap<EventoCreateViewlModel, Evento>().ReverseMap();
             CreateMap<GerenciarSolicitacaoEventoViewModel, GerenciarSolicitacaoEventoDTO>().ReverseMap();
+            CreateMap<EventosEnsaiosAssociadoViewlModel, EventosEnsaiosAssociadoDTO>().ReverseMap();
         }
     }
 }

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NuGet.Protocol;
+using Service;
 using System.Net;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
@@ -16,20 +17,32 @@ namespace GestaoGrupoMusicalWeb.Controllers
     public class EnsaioController : BaseController
     {
         private readonly IEnsaioService _ensaio;
+        private readonly IEventoService _eventoService;
         private readonly IMapper _mapper;
         private readonly IPessoaService _pessoa;
         private readonly IFigurinoService _figurino;
         private readonly IGrupoMusicalService _grupoMusical;
 
-        public EnsaioController(IMapper mapper, IEnsaioService ensaio, IPessoaService pessoa, IFigurinoService figurino, IGrupoMusicalService grupoMusical)
+        private int PegarUltimosEventosDeAssociado { get; }
+        private int PegarUltimosEnsaiosDeAssociado { get; }
+
+        public EnsaioController(IMapper mapper, IEnsaioService ensaio,IEventoService eventoService,
+            IPessoaService pessoa, IFigurinoService figurino,
+            IGrupoMusicalService grupoMusical,
+            IConfiguration configuration)
         {
             _ensaio = ensaio;
+            _eventoService = eventoService;
             _mapper = mapper;
             _pessoa = pessoa;
             _figurino = figurino;
             _grupoMusical = grupoMusical;
+            PegarUltimosEventosDeAssociado = configuration.GetValue<int>("Aplication:PegarUltimosEventosDeAssociado");
+            PegarUltimosEnsaiosDeAssociado = configuration.GetValue<int>("Aplication:PegarUltimosEnsaiosDeAssociado");
         }
-        [HttpPost]
+
+
+    [HttpPost]
         public async Task<IActionResult> GetDataPage(DatatableRequest request)
         {
             var ensaios = await _ensaio.GetDataPage(request, await _grupoMusical.GetIdGrupo(User.Identity.Name));
@@ -323,11 +336,25 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
 
-        [Authorize(Roles = "ASSOCIADO")]
-        public async Task<ActionResult> EnsaiosAssociado ()
+/*        [Authorize(Roles = "ASSOCIADO")]
+        public ActionResult EnsaiosAssociado ()
         {
-            var model = await _ensaio.GetEnsaiosByIdPesoaAsync(Convert.ToInt32(User.FindFirst("Id")?.Value));
+            var model =  _ensaio.GetEnsaiosEventosByIdPessoa(Convert.ToInt32(User.FindFirst("Id")?.Value));
 
+            return View(model);
+        }*/
+
+        [Authorize(Roles = "ASSOCIADO")]
+        public async Task<ActionResult> EnsaiosAssociado()
+        {
+            //var model = await _ensaio.GetEnsaiosEventosByIdPessoa(Convert.ToInt32(User.FindFirst("Id")?.Value));
+            EventosEnsaiosAssociadoDTO a = new EventosEnsaiosAssociadoDTO();
+            int idPessoa = Convert.ToInt32(User.FindFirst("Id")?.Value);
+            int idGrupoMusical = await _grupoMusical.GetIdGrupo(User.Identity.Name);
+
+            a.Eventos = _eventoService.GetEventosDeAssociado(idPessoa, idGrupoMusical, PegarUltimosEventosDeAssociado);
+            a.Ensaios = _ensaio.GetEnsaiosEventosByIdPessoa(idPessoa);
+            EventosEnsaiosAssociadoViewlModel model = _mapper.Map<EventosEnsaiosAssociadoViewlModel>(a);
             return View(model);
         }
 

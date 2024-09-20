@@ -4,9 +4,6 @@ using Core.DTO;
 using Core.Service;
 using Email;
 using Microsoft.EntityFrameworkCore;
-using MySql.Data.MySqlClient;
-using MySqlX.XDevAPI.Common;
-using Org.BouncyCastle.Crypto;
 using System.Net;
 using static Core.Service.IEventoService;
 
@@ -15,13 +12,12 @@ namespace Service
 {
     public class EventoService : IEventoService
     {
-        private readonly GrupoMusicalContext _context;        
+        private readonly GrupoMusicalContext _context;
 
 
         public EventoService(GrupoMusicalContext context)
         {
-            _context = context;            
-
+            _context = context;
         }
 
         /// <summary>
@@ -392,7 +388,7 @@ namespace Service
                     Nome = g.Nome
                 }).AsNoTracking().ToListAsync();
             return query;
-        }       
+        }
 
         public async Task<IEnumerable<Eventopessoa>> GetPessoas(int idGrupo)
         {
@@ -407,27 +403,27 @@ namespace Service
         }
 
         public async Task<HttpStatusCode> CreateApresentacaoInstrumento(Apresentacaotipoinstrumento apresentacaotipoinstrumento)
-        {           
+        {
             try
-            {                
+            {
                 bool exists = await _context.Apresentacaotipoinstrumentos
                     .AnyAsync(a => a.IdTipoInstrumento == apresentacaotipoinstrumento.IdTipoInstrumento && a.IdApresentacao == apresentacaotipoinstrumento.IdApresentacao);
 
                 if (exists)
                 {
-                    
+
                     return HttpStatusCode.Conflict;
                 }
-                
+
                 await _context.Apresentacaotipoinstrumentos.AddAsync(apresentacaotipoinstrumento);
                 await _context.SaveChangesAsync();
 
                 return HttpStatusCode.OK;
-            }         
+            }
             catch (Exception ex)
             {
-                               
-                return HttpStatusCode.InternalServerError; 
+
+                return HttpStatusCode.InternalServerError;
             }
         }
 
@@ -555,7 +551,7 @@ namespace Service
                 if (g.EventoSolicitacaoPessoasDTO.Count() > 0)
                 {
                     auxSolicitacaoEvento = g.EventoSolicitacaoPessoasDTO.Where(
-                        ep => ep.Aprovado == InscricaoEventoPessoa.DEFERIDO || 
+                        ep => ep.Aprovado == InscricaoEventoPessoa.DEFERIDO ||
                         ep.AprovadoModel == InscricaoEventoPessoa.DEFERIDO
                         ).ToList();
                     if (auxSolicitacaoEvento.Count != 0)
@@ -575,7 +571,7 @@ namespace Service
                                 {
                                     auxAt.QuantidadeConfirmada--;
                                 }
-                                else if(auxSolicitacaoEvento[i].Aprovado == InscricaoEventoPessoa.INDEFERIDO || auxSolicitacaoEvento[i].Aprovado == InscricaoEventoPessoa.INSCRITO)
+                                else if (auxSolicitacaoEvento[i].Aprovado == InscricaoEventoPessoa.INDEFERIDO || auxSolicitacaoEvento[i].Aprovado == InscricaoEventoPessoa.INSCRITO)
                                 {
                                     auxAt.QuantidadeConfirmada++;
                                 }
@@ -584,17 +580,17 @@ namespace Service
                                     transaction.Rollback();
                                     return EventoStatus.ErroGenerico;
                                 }
-                                if(auxAt.QuantidadeConfirmada < 0)
+                                if (auxAt.QuantidadeConfirmada < 0)
                                 {
                                     transaction.Rollback();
                                     return EventoStatus.QuantidadeConfirmadaNegativa;
                                 }
-                                if(auxAt.QuantidadeConfirmada > auxAt.QuantidadePlanejada)
+                                if (auxAt.QuantidadeConfirmada > auxAt.QuantidadePlanejada)
                                 {
                                     transaction.Rollback();
                                     return EventoStatus.UltrapassouLimiteQuantidadePlanejada;
                                 }
-                                
+
                                 e.Status = auxSolicitacaoEvento[i].AprovadoModel.ToString();
                                 _context.Update(e);
                                 _context.SaveChanges();
@@ -734,19 +730,39 @@ namespace Service
         }
         public IEnumerable<InstrumentoPlanejadoEventoDTO> GetInstrumentosPlanejadosEvento(int idApresentacao)
         {
-            var query =  from a in _context.Apresentacaotipoinstrumentos
-                               join tp in _context.Tipoinstrumentos
-                               on a.IdTipoInstrumento equals tp.Id
-                               where a.IdApresentacao == idApresentacao
-                               select new InstrumentoPlanejadoEventoDTO
-                               {
-                                   IdApresentacao = a.IdApresentacao,
-                                   IdInstrumento = a.IdTipoInstrumento,
-                                   ListaInstrumentos = tp.Nome,
-                                   Planejados = a.QuantidadePlanejada
-                               };            
+            var query = from a in _context.Apresentacaotipoinstrumentos
+                        join tp in _context.Tipoinstrumentos
+                        on a.IdTipoInstrumento equals tp.Id
+                        where a.IdApresentacao == idApresentacao
+                        select new InstrumentoPlanejadoEventoDTO
+                        {
+                            IdApresentacao = a.IdApresentacao,
+                            IdInstrumento = a.IdTipoInstrumento,
+                            ListaInstrumentos = tp.Nome,
+                            Planejados = a.QuantidadePlanejada
+                        };
             return query.ToList();
-        }    
+        }
+
+        public IEnumerable<EventoAssociadoDTO>? GetEventosDeAssociado(int idPessoa, int idGrupoMusical, int PegarUltimosEventoDeAssociado)
+        {
+            DateTime pegarUltimosMeses = DateTime.Now.AddMonths(PegarUltimosEventoDeAssociado);
+            var query = (from evento in _context.Eventos
+                         where idGrupoMusical == evento.IdGrupoMusical && evento.DataHoraInicio.Date >= pegarUltimosMeses.Date
+                         select new EventoAssociadoDTO
+                         {
+                             Id = evento.Id,
+                             IdGrupoMusical = idGrupoMusical,
+                             Local = evento.Local,
+                             Inicio = evento.DataHoraInicio,
+                             Fim = evento.DataHoraFim,
+                             AprovadoModel = ConvertAprovadoParaEnum(
+                                 _context.Eventopessoas.
+                                 Where(ep => ep.IdEvento == evento.Id && ep.IdPessoa == idPessoa)
+                                 .Select(ep => ep.Status).AsNoTracking().FirstOrDefault()),
+                         }).AsNoTracking().ToList();
+            return query;
+        }
 
     }
 }

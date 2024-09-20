@@ -186,4 +186,28 @@ namespace GestaoGrupoMusicalWeb.Models
 
         public string? JsonLista { get; set; }
     }
+
+    public class EventoPessoaAssociadoDTO
+    {
+        public int Id { get; set; }
+        public int IdGrupoMusical { get; set; }
+
+        [Display(Name = "Local")]
+        public string? Local { get; set; }
+
+        [Display(Name = "Início")]
+        public DateTime Inicio { get; set; }
+
+        [Display(Name = "Fim")]
+        public DateTime Fim { get; set; }
+
+        [Display(Name = "Aprovado")]
+        public InscricaoEventoPessoa AprovadoModel { get; set; }
+    }
+
+    public class EventosEnsaiosAssociadoViewlModel
+    {
+        public IEnumerable<EnsaioAssociadoDTO>? Ensaios { get; set; }
+        public IEnumerable<EventoAssociadoDTO>? Eventos { get; set; }
+    }
 }

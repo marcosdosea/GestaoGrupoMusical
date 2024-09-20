@@ -53,6 +53,13 @@ namespace GestaoGrupoMusicalWeb.Models
         public List<AssociadoDTO> AssociadosDTO { get; set; }
     }
 
+    public class EnsaioViewModelDTO
+    {
+        public int Id { get; set; }
+        public string? Local { get; set; }
+        public DateTime? DataHoraInicio { get; set; }
+    }
+
     public class FrequenciaEnsaioViewModel
     {
         public int Id { get; set; }
