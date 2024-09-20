@@ -26,7 +26,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private int PegarUltimosEventosDeAssociado { get; }
         private int PegarUltimosEnsaiosDeAssociado { get; }
 
-        public EnsaioController(IMapper mapper, IEnsaioService ensaio,IEventoService eventoService,
+        public EnsaioController(IMapper mapper, IEnsaioService ensaio, IEventoService eventoService,
             IPessoaService pessoa, IFigurinoService figurino,
             IGrupoMusicalService grupoMusical,
             IConfiguration configuration)
@@ -42,7 +42,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
 
-    [HttpPost]
+        [HttpPost]
         public async Task<IActionResult> GetDataPage(DatatableRequest request)
         {
             var ensaios = await _ensaio.GetDataPage(request, await _grupoMusical.GetIdGrupo(User.Identity.Name));
@@ -77,7 +77,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             var lista = await _pessoa.GetRegentesForAutoCompleteAsync(Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value));
 
-            if(lista == null || !lista.Any())
+            if (lista == null || !lista.Any())
             {
                 Notificar("É necessário cadastrar um Regente para então cadastrar um Ensaio.", Notifica.Informativo);
                 return RedirectToAction(nameof(Index));
@@ -112,7 +112,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 String mensagem = String.Empty;
                 var ensaio = _mapper.Map<Ensaio>(ensaioViewModel);
-              
+
                 ensaio.IdGrupoMusical = Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value);
                 ensaio.IdColaboradorResponsavel = Convert.ToInt32(User.FindFirst("Id")?.Value);
                 switch (await _ensaio.Create(ensaio, ensaioViewModel.IdRegentes, ensaioViewModel.IdFigurinoSelecionado))
@@ -273,7 +273,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             var listaAssociadosAtivos = _ensaio.GetAssociadoAtivos(id);
 
-            if(listaAssociadosAtivos == null || !listaAssociadosAtivos.Any())
+            if (listaAssociadosAtivos == null || !listaAssociadosAtivos.Any())
             {
                 Notificar("É necessário pelo menos um Associado Ativo para então registrar uma frequência.", Notifica.Informativo);
                 return RedirectToAction(nameof(Index));
@@ -296,10 +296,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             foreach (AutoCompleteRegenteDTO s in listaRegentes)
             {
-                    if (ensaioView.Regentes.Length > 0)
-                        ensaioView.Regentes += "; " + s.Nome;
-                    else
-                        ensaioView.Regentes = s.Nome;
+                if (ensaioView.Regentes.Length > 0)
+                    ensaioView.Regentes += "; " + s.Nome;
+                else
+                    ensaioView.Regentes = s.Nome;
             }
 
             ensaioView.AssociadosDTO = listaAssociadosAtivos;
@@ -336,13 +336,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
 
-/*        [Authorize(Roles = "ASSOCIADO")]
-        public ActionResult EnsaiosAssociado ()
-        {
-            var model =  _ensaio.GetEnsaiosEventosByIdPessoa(Convert.ToInt32(User.FindFirst("Id")?.Value));
+        /*        [Authorize(Roles = "ASSOCIADO")]
+                public ActionResult EnsaiosAssociado ()
+                {
+                    var model =  _ensaio.GetEnsaiosEventosByIdPessoa(Convert.ToInt32(User.FindFirst("Id")?.Value));
 
-            return View(model);
-        }*/
+                    return View(model);
+                }*/
 
         [Authorize(Roles = "ASSOCIADO")]
         public async Task<ActionResult> EnsaiosAssociado()
@@ -362,7 +362,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> JustificarAusencia(int idEnsaio)
         {
             var model = await _ensaio.GetEnsaioPessoaAsync(idEnsaio, Convert.ToInt32(User.FindFirst("Id")?.Value));
-            if(model == null)
+            if (model == null)
             {
                 return RedirectToAction(nameof(EnsaiosAssociado));
             }
@@ -397,7 +397,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         break;
                 }
             }
-            
+
             return View(ensaioJustificativa);
         }
     }
