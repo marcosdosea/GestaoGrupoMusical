@@ -12,11 +12,11 @@ namespace Core.Service
 {
     public enum PapelGrupo
     {
-        ASSOCIADO,
-        COLABORADOR,
-        ADMINISTRADOR_DO_GRUPO_MUSICAL,
-        ADMINISTRADOR_DO_SISTEMA,
-        REGENTE
+        ASSOCIADO = 1,
+        COLABORADOR = 2,
+        ADMINISTRADOR_DO_GRUPO_MUSICAL = 3,
+        ADMINISTRADOR_DO_SISTEMA = 4,
+        REGENTE = 5
     }
 
     public interface IPessoaService
@@ -167,9 +167,9 @@ namespace Core.Service
         /// </returns>
         Task<HttpStatusCode> AtivarAssociado(string cpf);
 
-        Task<IEnumerable<AutoCompleteRegenteDTO>> GetRegentesForAutoCompleteAsync(int idGrupoMusical);
+        IEnumerable<AutoCompleteRegenteDTO> GetRegentesForAutoComplete(int idGrupoMusical);
 
-        Task<List<AssociadoDTO>> GetAssociadoAtivos(int idGrupoMusical);
+        List<AssociadoDTO> GetAssociadoAtivos(int idGrupoMusical);
 
         IEnumerable<AutoCompleteRegenteDTO> GetNomesRegentes(int idEnsaio);
 

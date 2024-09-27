@@ -70,7 +70,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             int idGrupoMusical = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
 
-            var listaPessoasAutoComplete = await _pessoaService.GetRegentesForAutoCompleteAsync(idGrupoMusical);
+            var listaPessoasAutoComplete = _pessoaService.GetRegentesForAutoComplete(idGrupoMusical);
             if (listaPessoasAutoComplete == null || !listaPessoasAutoComplete.Any())
             {
                 Notificar("É necessário cadastrar pelo menos um Regente para então cadastrar um Evento Musical.", Notifica.Informativo);
@@ -147,7 +147,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 Notificar("Evento <b>não</b> encontrado.", Notifica.Alerta);
                 return RedirectToAction(nameof(Index));
             }
-            var listaPessoasAutoComplete = await _pessoaService.GetRegentesForAutoCompleteAsync(evento.IdGrupoMusical);
+            var listaPessoasAutoComplete = _pessoaService.GetRegentesForAutoComplete(evento.IdGrupoMusical);
             if (listaPessoasAutoComplete == null || !listaPessoasAutoComplete.Any())
             {
                 Notificar("É necessário cadastrar pelo menos um Regente para então cadastrar um Evento Musical.", Notifica.Informativo);
@@ -279,7 +279,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             int idGrupoMusical = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
 
-            var listaPessoasAutoComplete = await _pessoaService.GetRegentesForAutoCompleteAsync(idGrupoMusical);
+            var listaPessoasAutoComplete = _pessoaService.GetRegentesForAutoComplete(idGrupoMusical);
             if (listaPessoasAutoComplete == null || !listaPessoasAutoComplete.Any())
             {
                 Notificar("É necessário cadastrar pelo menos um Regente para então cadastrar um Evento Musical.", Notifica.Informativo);
@@ -389,7 +389,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             int idGrupoMusical = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
 
-            var listaRegentes = await _pessoaService.GetRegentesForAutoCompleteAsync(idGrupoMusical);
+            var listaRegentes = _pessoaService.GetRegentesForAutoComplete(idGrupoMusical);
 
             if (listaRegentes == null || !listaRegentes.Any())
             {
@@ -405,7 +405,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            var listaAssociadosAtivos = await _pessoaService.GetAssociadoAtivos(idGrupoMusical);
+            var listaAssociadosAtivos = _pessoaService.GetAssociadoAtivos(idGrupoMusical);
 
             if (listaAssociadosAtivos == null || !listaAssociadosAtivos.Any())
             {
