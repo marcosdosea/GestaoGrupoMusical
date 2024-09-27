@@ -318,13 +318,13 @@ namespace Service
         }
 
 
-        public async Task<IEnumerable<EnsaioAssociadoDTO>> GetEnsaiosByIdPesoaAsync(int idPessoa)
+        public IEnumerable<EnsaioAssociadoDTO>? GetEnsaiosEventosByIdPessoa(int idPessoa)
         {
             var query = from ensaioPessoa in _context.Ensaiopessoas
                         where ensaioPessoa.IdPessoa == idPessoa
                         select new EnsaioAssociadoDTO
                         {
-                            IdEnsaio = ensaioPessoa.IdEnsaio,
+                            Id = ensaioPessoa.IdEnsaio,
                             Inicio = ensaioPessoa.IdEnsaioNavigation.DataHoraInicio,
                             Fim = ensaioPessoa.IdEnsaioNavigation.DataHoraFim,
                             Presente = Convert.ToBoolean(ensaioPessoa.Presente),
@@ -334,7 +334,7 @@ namespace Service
                             Repertorio = ensaioPessoa.IdEnsaioNavigation.Repertorio
                         };
 
-            return await query.AsNoTracking().ToListAsync();
+            return query.AsNoTracking().ToList();
         }
 
         public async Task<Ensaiopessoa?> GetEnsaioPessoaAsync(int idEnsaio, int idPessoa)

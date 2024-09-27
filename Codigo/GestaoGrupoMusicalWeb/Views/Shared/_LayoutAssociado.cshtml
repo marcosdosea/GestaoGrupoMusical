@@ -25,10 +25,9 @@
             </div>
 
             <div class="list-group list-group-flush">
-                <a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" asp-controller="Home" asp-action="Index"> Início</a>
+                <a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" asp-controller="Ensaio" asp-action="EnsaiosAssociado">Eventos e<br />Ensaios</a>
                 <a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" asp-controller="InstrumentoMusical" asp-action="Movimentacoes">Instrumentos</a>
                 <a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" asp-controller="Figurino" asp-action="Movimentacoes">Figurino</a>
-                <a class="list-group-item list-group-item-action p-3 border-bottom border-danger border-opacity-75" asp-controller="Ensaio" asp-action="EnsaiosAssociado">Ensaios</a>
             </div>
         </div>
         <!-- Page content wrapper-->
@@ -54,11 +53,6 @@
                                         <i class="fa-solid fa-address-card"></i>
                                         Meus Dados
                                     </a>
-                                    @*<a class="dropdown-item" href="#!">
-                                        <i class="fa-solid fa-gear"></i>
-                                        Configurações
-                                    </a>
-                                    <div class="dropdown-divider"></div>*@
                                     <form asp-controller="Identity" asp-action="Sair">
                                         <button class="dropdown-item">
                                             <i class="fa-solid fa-right-from-bracket"></i>

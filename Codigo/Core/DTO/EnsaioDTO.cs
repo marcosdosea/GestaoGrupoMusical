@@ -46,4 +46,29 @@ namespace Core.DTO
 
         public string Nome { get; set; } = string.Empty;
     }
+
+    public class EnsaioAssociadoDTO
+    {
+        public int Id { get; set; }
+
+        [Display(Name = "Local")]
+        public string? Local { get; set; }
+
+        [Display(Name = "Repertório")]
+        public string? Repertorio { get; set; }
+
+        [Display(Name = "Início")]
+        public DateTime Inicio { get; set; }
+
+        [Display(Name = "Fim")]
+        public DateTime Fim { get; set; }
+
+        [Display(Name = "Justificativa Ausência")]
+        public string? Justificativa { get; set; }
+
+        public bool Presente { get; set; }
+
+        [Display(Name = "Justificativa Aceita")]
+        public bool JustificativaAceita { get; set; }
+    }
 }

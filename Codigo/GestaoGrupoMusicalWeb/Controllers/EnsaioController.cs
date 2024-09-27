@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NuGet.Protocol;
+using Service;
 using System.Net;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
@@ -16,19 +17,31 @@ namespace GestaoGrupoMusicalWeb.Controllers
     public class EnsaioController : BaseController
     {
         private readonly IEnsaioService _ensaio;
+        private readonly IEventoService _eventoService;
         private readonly IMapper _mapper;
         private readonly IPessoaService _pessoa;
         private readonly IFigurinoService _figurino;
         private readonly IGrupoMusicalService _grupoMusical;
 
-        public EnsaioController(IMapper mapper, IEnsaioService ensaio, IPessoaService pessoa, IFigurinoService figurino, IGrupoMusicalService grupoMusical)
+        private int PegarUltimosEventosDeAssociado { get; }
+        private int PegarUltimosEnsaiosDeAssociado { get; }
+
+        public EnsaioController(IMapper mapper, IEnsaioService ensaio, IEventoService eventoService,
+            IPessoaService pessoa, IFigurinoService figurino,
+            IGrupoMusicalService grupoMusical,
+            IConfiguration configuration)
         {
             _ensaio = ensaio;
+            _eventoService = eventoService;
             _mapper = mapper;
             _pessoa = pessoa;
             _figurino = figurino;
             _grupoMusical = grupoMusical;
+            PegarUltimosEventosDeAssociado = configuration.GetValue<int>("Aplication:PegarUltimosEventosDeAssociado");
+            PegarUltimosEnsaiosDeAssociado = configuration.GetValue<int>("Aplication:PegarUltimosEnsaiosDeAssociado");
         }
+
+
         [HttpPost]
         public async Task<IActionResult> GetDataPage(DatatableRequest request)
         {
@@ -99,7 +112,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 string mensagem = string.Empty;
                 var ensaio = _mapper.Map<Ensaio>(ensaioViewModel);
-              
+
                 ensaio.IdGrupoMusical = Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value);
                 ensaio.IdColaboradorResponsavel = Convert.ToInt32(User.FindFirst("Id")?.Value);
                 switch (_ensaio.Create(ensaio, ensaioViewModel.IdRegentes, ensaioViewModel.IdFigurinoSelecionado))
@@ -253,7 +266,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             var listaAssociadosAtivos = _ensaio.GetAssociadoAtivos(id);
 
-            if(listaAssociadosAtivos == null || !listaAssociadosAtivos.Any())
+            if (listaAssociadosAtivos == null || !listaAssociadosAtivos.Any())
             {
                 Notificar("É necessário pelo menos um Associado Ativo para então registrar uma frequência.", Notifica.Informativo);
                 return RedirectToAction(nameof(Index));
@@ -276,10 +289,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             foreach (AutoCompleteRegenteDTO s in listaRegentes)
             {
-                    if (ensaioView.Regentes.Length > 0)
-                        ensaioView.Regentes += "; " + s.Nome;
-                    else
-                        ensaioView.Regentes = s.Nome;
+                if (ensaioView.Regentes.Length > 0)
+                    ensaioView.Regentes += "; " + s.Nome;
+                else
+                    ensaioView.Regentes = s.Nome;
             }
 
             ensaioView.AssociadosDTO = listaAssociadosAtivos;
@@ -315,12 +328,16 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-
         [Authorize(Roles = "ASSOCIADO")]
-        public async Task<ActionResult> EnsaiosAssociado ()
+        public async Task<ActionResult> EnsaiosAssociado()
         {
-            var model = await _ensaio.GetEnsaiosByIdPesoaAsync(Convert.ToInt32(User.FindFirst("Id")?.Value));
+            EventosEnsaiosAssociadoDTO a = new EventosEnsaiosAssociadoDTO();
+            int idPessoa = Convert.ToInt32(User.FindFirst("Id")?.Value);
+            int idGrupoMusical = await _grupoMusical.GetIdGrupo(User.Identity.Name);
 
+            a.Eventos = _eventoService.GetEventosDeAssociado(idPessoa, idGrupoMusical, PegarUltimosEventosDeAssociado);
+            a.Ensaios = _ensaio.GetEnsaiosEventosByIdPessoa(idPessoa);
+            EventosEnsaiosAssociadoViewlModel model = _mapper.Map<EventosEnsaiosAssociadoViewlModel>(a);
             return View(model);
         }
 
@@ -328,7 +345,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> JustificarAusencia(int idEnsaio)
         {
             var model = await _ensaio.GetEnsaioPessoaAsync(idEnsaio, Convert.ToInt32(User.FindFirst("Id")?.Value));
-            if(model == null)
+            if (model == null)
             {
                 return RedirectToAction(nameof(EnsaiosAssociado));
             }
@@ -363,7 +380,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         break;
                 }
             }
-            
+
             return View(ensaioJustificativa);
         }
     }
