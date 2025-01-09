@@ -290,18 +290,28 @@ namespace Service
             return query.First();
         }
 
-        public HttpStatusCode RegistrarFrequencia(FrequenciaEnsaioDTO frequencia, int quantidadeAssociados)
+        public HttpStatusCode RegistrarFrequencia(FrequenciaEnsaioDTO frequencia)
         {
             try
             {
-                for (int i = 0; i < quantidadeAssociados; i++)
+                frequencia.AssociadosDTO = frequencia.AssociadosDTO?.Where
+                    (e => e.JustificativaAceitaModel != e.JustificativaAceita
+                    || e.PresenteModel != e.Presente).ToList();
+
+                if(frequencia.AssociadosDTO == null || !frequencia.AssociadosDTO.Any())
+                {
+                    return HttpStatusCode.BadRequest;
+                }
+
+                for (int i = 0; i < frequencia.AssociadosDTO?.Count; i++)
                 {
                     var ensaioPessoa = new Ensaiopessoa
                     {
-                        Presente = frequencia.AssociadosDTO[i].Presente,
-                        JustificativaAceita = frequencia.AssociadosDTO[i].JustificativaAceita,
                         IdPessoa = frequencia.AssociadosDTO[i].Id,
                         IdEnsaio = frequencia.Id,
+                        Presente = frequencia.AssociadosDTO[i].Presente,
+                        JustificativaFalta = frequencia.AssociadosDTO[i].JustificativaFalta,
+                        JustificativaAceita = frequencia.AssociadosDTO[i].JustificativaAceita,
                         IdPapelGrupo = frequencia.AssociadosDTO[i].IdPapelGrupo
                     };
                     _context.Update(ensaioPessoa);
