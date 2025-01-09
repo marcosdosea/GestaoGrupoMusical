@@ -63,9 +63,6 @@
                 <thead>
                     <tr class="bg-danger bg-opacity-75 text-white">
                         <th class="border-0">
-                            <span class="text-white">ID</span>
-                        </th>
-                        <th class="border-0">
                             <span class="text-white">CPF</span>
                         </th>
                         <th class="border-0">
@@ -91,29 +88,30 @@
                                 <tr class="border-bottom border-danger border-opacity-75 p-3 align-middle">
                                     <input type="hidden" name="AssociadosDTO[@i].Id" value="@Model.AssociadosDTO[i].Id" />
 
-                                    <input type="hidden" name="AssociadosDTO[@i].IdPapelGrupo" value="@Model.AssociadosDTO[i].Id" />
+                                    <input type="hidden" name="AssociadosDTO[@i].IdPapelGrupo" value="@Model.AssociadosDTO[i].IdPapelGrupo"/>
 
                                     <td class="p-3">
                                         @Html.DisplayFor(model => Model.AssociadosDTO[i].Cpf)
                                     </td>
-                                    
-
                                     <td class="p-3">
                                         @Html.DisplayFor(model => Model.AssociadosDTO[i].Nome)
                                     </td>
 
                                     <td class="p-3">
                                         @Html.DisplayFor(model => Model.AssociadosDTO[i].JustificativaFalta)
+                                        <input type="hidden" name="AssociadosDTO[@i].JustificativaFalta" value="@Model.AssociadosDTO[i].JustificativaFalta" />
                                     </td>
 
                                     <td class="p-3">
                                         <input type="checkbox" name="AssociadosDTO[@i].Presente" value="1" @(Model.AssociadosDTO[i].Presente == 1 ? "checked" : "") />
                                         <input type="hidden" name="AssociadosDTO[@i].Presente" value="0" />
+                                        <input type="hidden" name="AssociadosDTO[@i].PresenteModel" value="@Model.AssociadosDTO[i].PresenteModel" />
                                     </td>
 
                                     <td class="p-3 text-center">
                                         <input type="checkbox" name="AssociadosDTO[@i].JustificativaAceita" value="1" @(Model.AssociadosDTO[i].JustificativaAceita == 1 ? "checked" : "") />
                                         <input type="hidden" name="AssociadosDTO[@i].JustificativaAceita" value="0" />
+                                        <input type="hidden" name="AssociadosDTO[@i].JustificativaAceitaModel" value="@Model.AssociadosDTO[i].JustificativaAceitaModel" />
                                     </td>
                                 </tr>
                             }

@@ -15,7 +15,9 @@ namespace Core.DTO
         public sbyte Ativo { get; set; }
         public string? JustificativaFalta { get; set; }
         public sbyte Presente { get; set; }
+        public sbyte PresenteModel { get; set; }
         public sbyte JustificativaAceita { get; set; }
+        public sbyte JustificativaAceitaModel { get; set; }
     }
 
     public class ColaboradoresDTO

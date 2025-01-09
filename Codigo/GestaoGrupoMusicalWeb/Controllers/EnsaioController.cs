@@ -16,7 +16,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 {
     public class EnsaioController : BaseController
     {
-        private readonly IEnsaioService _ensaio;
+        private readonly IEnsaioService _ensaioService;
         private readonly IEventoService _eventoService;
         private readonly IMapper _mapper;
         private readonly IPessoaService _pessoa;
@@ -31,7 +31,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             IGrupoMusicalService grupoMusical,
             IConfiguration configuration)
         {
-            _ensaio = ensaio;
+            _ensaioService = ensaio;
             _eventoService = eventoService;
             _mapper = mapper;
             _pessoa = pessoa;
@@ -45,7 +45,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [HttpPost]
         public async Task<IActionResult> GetDataPage(DatatableRequest request)
         {
-            var ensaios = await _ensaio.GetDataPage(request, await _grupoMusical.GetIdGrupo(User.Identity.Name));
+            var ensaios = await _ensaioService.GetDataPage(request, await _grupoMusical.GetIdGrupo(User.Identity.Name));
             return Json(ensaios);
         }
 
@@ -54,7 +54,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> Index()
         {
             int idGrupo = Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value);
-            var ensaios = await _ensaio.GetAllIndexDTO(idGrupo);
+            var ensaios = await _ensaioService.GetAllIndexDTO(idGrupo);
             return View(ensaios);
         }
 
@@ -62,7 +62,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: EnsaioController/Details/5
         public async Task<ActionResult> Details(int id)
         {
-            var ensaio = _ensaio.GetDetailsDTO(id);
+            var ensaio = _ensaioService.GetDetailsDTO(id);
             if (Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value) != ensaio.IdGrupoMusical)
             {
                 Notificar("<b>Ensaio não encontrado!</b>", Notifica.Alerta);
@@ -115,7 +115,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
                 ensaio.IdGrupoMusical = Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value);
                 ensaio.IdColaboradorResponsavel = Convert.ToInt32(User.FindFirst("Id")?.Value);
-                switch (_ensaio.Create(ensaio, ensaioViewModel.IdRegentes, ensaioViewModel.IdFigurinoSelecionado))
+                switch (_ensaioService.Create(ensaio, ensaioViewModel.IdRegentes, ensaioViewModel.IdFigurinoSelecionado))
                 {
                     case HttpStatusCode.OK:
                         mensagem = "Ensaio <b>Cadastrado</b> com <b>Sucesso</b>";
@@ -142,7 +142,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: EnsaioController/Edit/5
         public async Task<ActionResult> Edit(int id)
         {
-            var ensaio = _ensaio.Get(id);
+            var ensaio = _ensaioService.Get(id);
             if (Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value) != ensaio.IdGrupoMusical)
             {
                 Notificar("<b>Ensaio não encontrado!</b>", Notifica.Alerta);
@@ -157,7 +157,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             ensaioModel.ListaFigurino = new SelectList(listaFigurinos, "Id", "Nome");
 
             ViewData["exemploRegente"] = listaRegentes.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
-            ViewData["jsonIdRegentes"] = (await _ensaio.GetIdRegentesEnsaioAsync(id)).ToJson();
+            ViewData["jsonIdRegentes"] = (await _ensaioService.GetIdRegentesEnsaioAsync(id)).ToJson();
 
             ensaioModel.JsonLista = listaRegentes.ToJson();
             return View(ensaioModel);
@@ -173,7 +173,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 string mensagem = string.Empty;
                 
-                switch (_ensaio.Edit(_mapper.Map<Ensaio>(ensaioViewModel), ensaioViewModel.IdRegentes))
+                switch (_ensaioService.Edit(_mapper.Map<Ensaio>(ensaioViewModel), ensaioViewModel.IdRegentes))
                 {
                     case HttpStatusCode.OK:
                         mensagem = "Ensaio <b>Editado</b> com <b>Sucesso</b>";
@@ -208,7 +208,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: EnsaioController/Delete/5
         public async Task<ActionResult> Delete(int id)
         {
-            var ensaio = _ensaio.Get(id);
+            var ensaio = _ensaioService.Get(id);
             return View(_mapper.Map<EnsaioViewModel>(ensaio));
         }
 
@@ -219,7 +219,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> Delete(EnsaioViewModel ensaioModel)
         {
             String mensagem = String.Empty;
-            switch (_ensaio.Delete(ensaioModel.Id))
+            switch (_ensaioService.Delete(ensaioModel.Id))
             {
                 case HttpStatusCode.OK:
                     mensagem = "Ensaio <b>Deletado</b> com <b>Sucesso</b>";
@@ -237,7 +237,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public async Task<ActionResult> NotificarEnsaioViaEmail(int id)
         {
             var pessoas = await _grupoMusical.GetAllPeopleFromGrupoMusical(await _grupoMusical.GetIdGrupo(User.Identity.Name));
-            switch (await _ensaio.NotificarEnsaioViaEmail(pessoas, id))
+            switch (await _ensaioService.NotificarEnsaioViaEmail(pessoas, id))
             {
                 case HttpStatusCode.OK:
                     Notificar("Notificação de Ensaio foi <b>Enviada</b> com <b>Sucesso</b>.", Notifica.Sucesso);
@@ -264,7 +264,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             int idGrupoMusical = await _grupoMusical.GetIdGrupo(User.Identity.Name);
 
-            var listaAssociadosAtivos = _ensaio.GetAssociadoAtivos(id);
+            var listaAssociadosAtivos = _ensaioService.GetAssociadoAtivos(id);
+            foreach(AssociadoDTO la in listaAssociadosAtivos)
+            {
+                la.PresenteModel = la.Presente;
+                la.JustificativaAceitaModel = la.JustificativaAceita;
+            }
 
             if (listaAssociadosAtivos == null || !listaAssociadosAtivos.Any())
             {
@@ -274,7 +279,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             var listaRegentes = _pessoa.GetNomesRegentes(id);
 
-            var ensaio = _ensaio.Get(id);
+            var ensaio = _ensaioService.Get(id);
 
             FrequenciaEnsaioViewModel ensaioView = new()
             {
@@ -305,21 +310,14 @@ namespace GestaoGrupoMusicalWeb.Controllers
         public ActionResult PostRegistrarFrequencia(FrequenciaEnsaioViewModel frequenciaEnsaio)
         {
             var frequencia = _mapper.Map<FrequenciaEnsaioDTO>(frequenciaEnsaio);
-
-            switch (_ensaio.RegistrarFrequencia(frequencia, frequenciaEnsaio.AssociadosDTO.Count()))
+            switch (_ensaioService.RegistrarFrequencia(frequencia))
             {
                 case HttpStatusCode.OK:
                     Notificar("Lista de <b>Frequência</b> salva com <b>Sucesso</b>", Notifica.Sucesso);
                     break;
                 case HttpStatusCode.BadRequest:
-                    Notificar("A <b>Lista</b> enviada <b>Não</b> possui registros", Notifica.Alerta);
+                    Notificar("<b>Nenhuma</b> alteração foi feita!", Notifica.Informativo);
                     return RedirectToAction(nameof(Index));
-                case HttpStatusCode.Conflict:
-                    Notificar("A <b>Lista</b> enviada é <b>Inválida</b>", Notifica.Erro);
-                    break;
-                case HttpStatusCode.NotFound:
-                    Notificar("A <b>Lista</b> enviada não foi <b>Encontrada</b>", Notifica.Erro);
-                    break;
                 case HttpStatusCode.InternalServerError:
                     Notificar("Desculpe, ocorreu um <b>Erro</b> ao registrar a Lista de <b>Frequência</b>.", Notifica.Erro);
                     break;
@@ -336,7 +334,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             int idGrupoMusical = await _grupoMusical.GetIdGrupo(User.Identity.Name);
 
             a.Eventos = _eventoService.GetEventosDeAssociado(idPessoa, idGrupoMusical, PegarUltimosEventosDeAssociado);
-            a.Ensaios = _ensaio.GetEnsaiosEventosByIdPessoa(idPessoa);
+            a.Ensaios = _ensaioService.GetEnsaiosEventosByIdPessoa(idPessoa);
             EventosEnsaiosAssociadoViewlModel model = _mapper.Map<EventosEnsaiosAssociadoViewlModel>(a);
             return View(model);
         }
@@ -344,7 +342,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [Authorize(Roles = "ASSOCIADO")]
         public async Task<ActionResult> JustificarAusencia(int idEnsaio)
         {
-            var model = await _ensaio.GetEnsaioPessoaAsync(idEnsaio, Convert.ToInt32(User.FindFirst("Id")?.Value));
+            var model = await _ensaioService.GetEnsaioPessoaAsync(idEnsaio, Convert.ToInt32(User.FindFirst("Id")?.Value));
             if (model == null)
             {
                 return RedirectToAction(nameof(EnsaiosAssociado));
@@ -364,7 +362,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                switch (await _ensaio.RegistrarJustificativaAsync(ensaioJustificativa.IdEnsaio, Convert.ToInt32(User.FindFirst("Id")?.Value), ensaioJustificativa.Justificativa))
+                switch (await _ensaioService.RegistrarJustificativaAsync(ensaioJustificativa.IdEnsaio, Convert.ToInt32(User.FindFirst("Id")?.Value), ensaioJustificativa.Justificativa))
                 {
                     case HttpStatusCode.OK:
                         Notificar("<b>Justificativa</b> registrada com <b>Sucesso</b>", Notifica.Sucesso);

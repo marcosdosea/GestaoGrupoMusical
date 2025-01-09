@@ -56,7 +56,7 @@ namespace Core.Service
         /// NotFound - Lista não encontrada <para />
         /// InternalServerError - Erro interno
         /// </returns>
-        HttpStatusCode RegistrarFrequencia(FrequenciaEnsaioDTO frequencia, int quantidadeAssociados);
+        HttpStatusCode RegistrarFrequencia(FrequenciaEnsaioDTO frequencia);
         Task<IEnumerable<EnsaioIndexDTO>> GetAllIndexDTO(int idGrupo);
         EnsaioDetailsDTO GetDetailsDTO(int idEnsaio);
         Task<IEnumerable<int>> GetIdRegentesEnsaioAsync(int idEnsaio);
