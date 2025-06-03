@@ -1,0 +1,141 @@
+@model GestaoGrupoMusicalWeb.Models.PessoaViewModel
+
+@{
+    ViewData["Title"] = "Detalhes do Associado";
+    ViewData["Pessoa"] = "Associado";
+    ViewData["Details"] = "Detalhes";
+}
+<partial name="_Notificar">
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">Detalhes do Associado</h1>
+        <nav>
+            <ol class="breadcrumb px-3">
+                <strong>
+                    <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Pessoa"]</a>
+                    <span class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Details"]</span>
+                </strong>
+            </ol>
+        </nav>
+        <hr />
+        <br />
+
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                <h6 class="m-0 font-weight-bold text-danger">Dados do Associado</h6>
+                <a class="btn btn-outline-secondary btn-sm" asp-action="Index"><i class="fa-solid fa-arrow-left"></i> Voltar</a>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-4">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fa-solid fa-address-card fs-4 text-danger me-2"></i>
+                                <h6 class="m-0 font-weight-bold text-danger">Dados Pessoais</h6>
+                            </div>
+                            <hr class="text-danger mt-1 mb-3" style="width: 50px;">
+
+                            <div class="mb-2">
+                                <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Nome)</label>
+                                <p class="form-control-plaintext fw-bold">@Html.DisplayFor(model => model.Nome)</p>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Cpf)</label>
+                                <p class="form-control-plaintext fw-bold">@Html.DisplayFor(model => model.Cpf)</p>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label text-muted">@Html.DisplayNameFor(model => model.DataNascimento)</label>
+                                <p class="form-control-plaintext fw-bold">@Html.DisplayFor(model => model.DataNascimento)</p>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Sexo)</label>
+                                <p class="form-control-plaintext fw-bold">@Html.DisplayFor(model => model.Sexo)</p>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label text-muted">@Html.DisplayNameFor(model => model.IdManequim)</label>
+                                <p class="form-control-plaintext fw-bold">@Html.DisplayFor(model => model.IdManequim)</p>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fa-solid fa-phone fs-4 text-danger me-2"></i>
+                                <h6 class="m-0 font-weight-bold text-danger">Contato</h6>
+                            </div>
+                            <hr class="text-danger mt-1 mb-3" style="width: 50px;">
+
+                            <div class="mb-2">
+                                <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Email)</label>
+                                <p class="form-control-plaintext fw-bold">@Html.DisplayFor(model => model.Email)</p>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Telefone1)</label>
+                                <p class="form-control-plaintext fw-bold">@Html.DisplayFor(model => model.Telefone1)</p>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Telefone2)</label>
+                                <p class="form-control-plaintext fw-bold">@Html.DisplayFor(model => model.Telefone2)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="mb-4">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fa-solid fa-location-dot fs-4 text-danger me-2"></i>
+                                <h6 class="m-0 font-weight-bold text-danger">Endereço</h6>
+                            </div>
+                            <hr class="text-danger mt-1 mb-3" style="width: 50px;">
+
+                            <div class="mb-2">
+                                <label class="form-label text-muted">Logradouro</label>
+                                <p class="form-control-plaintext fw-bold">@Html.DisplayFor(model => model.Rua)</p>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Bairro)</label>
+                                <p class="form-control-plaintext fw-bold">@Html.DisplayFor(model => model.Bairro)</p>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Cidade) / @Html.DisplayNameFor(model => model.Estado)</label>
+                                <p class="form-control-plaintext fw-bold">@Html.DisplayFor(model => model.Cidade) - @Html.DisplayFor(model => model.Estado)</p>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Cep)</label>
+                                <p class="form-control-plaintext fw-bold">@Html.DisplayFor(model => model.Cep)</p>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fa-solid fa-circle-info fs-4 text-danger me-2"></i>
+                                <h6 class="m-0 font-weight-bold text-danger">Outras Informações</h6>
+                            </div>
+                            <hr class="text-danger mt-1 mb-3" style="width: 50px;">
+
+                            <div class="mb-2">
+                                <label class="form-label text-muted">@Html.DisplayNameFor(model => model.DataEntrada)</label>
+                                <p class="form-control-plaintext fw-bold">@Html.DisplayFor(model => model.DataEntrada)</p>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label text-muted">@Html.DisplayNameFor(model => model.DataSaida)</label>
+                                <p class="form-control-plaintext fw-bold">@Html.DisplayFor(model => model.DataSaida)</p>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label text-muted">@Html.DisplayNameFor(model => model.MotivoSaida)</label>
+                                <p class="form-control-plaintext fw-bold">@Html.DisplayFor(model => model.MotivoSaida)</p>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Ativo)</label>
+                                <p class="form-control-plaintext fw-bold">@Html.DisplayFor(model => model.Ativo)</p>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label text-muted">@Html.DisplayNameFor(model => model.IsentoPagamento)</label>
+                                <p class="form-control-plaintext fw-bold">@Html.DisplayFor(model => model.IsentoPagamento)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

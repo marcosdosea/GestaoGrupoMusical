@@ -56,6 +56,15 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return View(pessoaModel);
         }
 
+        // GET: PessoaController/DetailsAssociado/5
+        public ActionResult DetailsAssociado(int id)
+        {
+            var pessoa = _pessoaService.Get(id);
+            PessoaViewModel pessoaModel = _mapper.Map<PessoaViewModel>(pessoa);
+
+            return View("DetailsAssociado", pessoaModel);
+        }
+
         // GET: PessoaController/Create
         public ActionResult Create()
         {
