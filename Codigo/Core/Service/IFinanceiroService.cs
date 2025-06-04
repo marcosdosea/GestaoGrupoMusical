@@ -1,5 +1,6 @@
 ﻿using Core.Datatables;
 using Core.DTO;
+using System.Net;
 
 namespace Core.Service
 {
@@ -8,6 +9,7 @@ namespace Core.Service
         FinanceiroStatus Create(FinanceiroCreateDTO rf);
         IEnumerable<FinanceiroIndexDataPage> GetAllFinanceiroPorIdGrupo(int idGrupoMusical);
         DatatableResponse<FinanceiroIndexDataPage> GetDataPage(DatatableRequest request, IEnumerable<FinanceiroIndexDataPage> materialEstudoIndexDTO);
+        HttpStatusCode NotificarFinanceiroViaEmail(IEnumerable<PessoaEnviarEmailDTO> pessoas, int idFinanceiro);
     }
 
 
