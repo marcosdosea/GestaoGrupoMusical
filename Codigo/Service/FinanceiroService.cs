@@ -2,6 +2,8 @@
 using Core.Datatables;
 using Core.DTO;
 using Core.Service;
+using Email;
+using System.Net;
 
 namespace Service
 {
@@ -148,5 +150,50 @@ namespace Service
                 RecordsTotal = totalRecords
             };
         }
+
+        public Receitafinanceira? Get(int id)
+        {
+            return _context.Receitafinanceiras.Find(id);
+        }
+
+        public HttpStatusCode NotificarFinanceiroViaEmail(IEnumerable<PessoaEnviarEmailDTO> pessoas, int idFinanceiro)
+        {
+            try
+            {
+                var financeiro = Get(idFinanceiro);
+                if (financeiro != null)
+                {
+                    List<EmailModel> emailsBody = new List<EmailModel>();
+                    foreach (PessoaEnviarEmailDTO p in pessoas)
+                    {
+                        emailsBody.Add(new EmailModel()
+                        {
+                            Assunto = $"Batalá - Notificação de Pagamento: {financeiro.Valor} foram pagos",
+                            AddresseeName = p.Nome,
+                            Body = "<div style=\"text-align: center;\">\r\n    " +
+                                $"<h3>O pagamento foi aprovado!</h3>\r\n</div>",
+                            To = new List<string> { p.Email }
+
+                        });
+                    }
+
+                    List<Task> emailTask = new List<Task>();
+                    foreach (EmailModel email in emailsBody)
+                    {
+                        emailTask.Add(EmailService.Enviar(email));
+                    }
+
+                    return HttpStatusCode.OK;
+                }
+
+                return HttpStatusCode.NotFound;
+            }
+
+            catch
+            {
+                return HttpStatusCode.InternalServerError;
+            }
+        }
     }
 }
+
