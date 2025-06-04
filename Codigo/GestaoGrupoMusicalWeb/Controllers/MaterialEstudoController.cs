@@ -29,12 +29,17 @@ namespace GestaoGrupoMusicalWeb.Controllers
             _pessoa = pessoa;
         }
         // GET: MaterialEstudoController
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR, ASSOCIADO")]
         public ActionResult Index()
         {
-            return View();
+            if(User.IsInRole("ASSOCIADO"))
+            {
+                return View("IndexAssociado");
+            }
+            return View("Index");
         }
 
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR, ASSOCIADO")]
         public async Task<IActionResult> GetDataPage(DatatableRequest request)
         {
             int idGrupoMusical = await _grupoMusical.GetIdGrupo(User.Identity.Name);
@@ -46,6 +51,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR, ASSOCIADO")]
         public async Task<ActionResult> Details(int id)
         {
             var listaMaterialEstudo = await _materialEstudo.Get(id);
@@ -59,6 +65,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: MaterialEstudoController/Create
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         public ActionResult Create()
         {
             return View();
@@ -68,6 +75,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: MaterialEstudoController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         public async Task<ActionResult> Create(MaterialEstudoViewModel materialEstudoViewModel)
         {
             if (ModelState.IsValid)
