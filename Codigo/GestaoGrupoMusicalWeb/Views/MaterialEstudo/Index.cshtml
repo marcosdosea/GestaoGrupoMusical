@@ -8,7 +8,10 @@
 <partial name="_Notificar">
     <div class="d-flex justify-content-between align-items-center">
         <h5>@ViewData["Title"]</h5>
-        <a role="button" class="btn btn-secondary m-3" asp-controller="MaterialEstudo" asp-action="Create">Novo Material de Estudo</a>
+        @if (!User.IsInRole("ASSOCIADO"))
+        {
+            <a role="button" class="btn btn-secondary m-3" asp-controller="MaterialEstudo" asp-action="Create">Novo Material de Estudo</a>
+        }
     </div>
     <table id="tableMaterialEstudo" class="table table-striped table-bordered dt-responsive nowrap ">
         <thead>
