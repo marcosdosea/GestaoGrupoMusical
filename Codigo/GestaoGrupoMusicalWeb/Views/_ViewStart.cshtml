@@ -1,3 +1,10 @@
 ﻿@{
-    Layout = "_LayoutColaborador";
+    if (User.IsInRole("ASSOCIADO"))
+    {
+        Layout = "_LayoutAssociado";
+    }
+    else{
+        Layout = "_LayoutColaborador";
+    }
+
 }
