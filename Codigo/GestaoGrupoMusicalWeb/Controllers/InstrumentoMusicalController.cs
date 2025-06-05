@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NuGet.Protocol;
+using Service;
 using System.Net;
 using System.Text.Json;
 
@@ -210,20 +211,22 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         public async Task<ActionResult> Delete(int id, InstrumentoMusicalViewModel instrumentoMusicalViewModel)
         {
-            switch(await _instrumentoMusical.Delete(id))
+            HttpStatusCode result = await _instrumentoMusical.Delete(id);
+
+            switch (result)
             {
                 case HttpStatusCode.OK:
                     Notificar("Instrumento Musical <b>Excluído</b> com <b>Sucesso</b>.", Notifica.Sucesso);
                     break;
                 case HttpStatusCode.PreconditionFailed:
                     Notificar($"Desculpe, não é possível <b>Excluir</b> esse <b>Instrumento Musical</b> pois ele está associado a <b>Empréstimos ou Devoluções</b>", Notifica.Erro);
-                    return RedirectToAction(nameof(Delete), id);
+                    break;
                 case HttpStatusCode.NotFound:
                     Notificar($"Nenhum <b>Instrumento Musical</b> corresponde ao id <b>{id}</b>.", Notifica.Erro);
                     break;
                 case HttpStatusCode.InternalServerError:
                     Notificar("Desculpe, ocorreu um <b>Erro</b> durante a <b>Exclusão</b>.", Notifica.Erro);
-                    return RedirectToAction(nameof(Delete), id);
+                    return View(instrumentoMusicalViewModel);
             }
             
             return RedirectToAction(nameof(Index));
