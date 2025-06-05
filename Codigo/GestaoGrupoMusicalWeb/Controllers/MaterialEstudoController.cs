@@ -32,8 +32,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR, ASSOCIADO")]
         public ActionResult Index()
         {
-            if(User.IsInRole("ASSOCIADO"))
+            if (User.IsInRole("ASSOCIADO"))
             {
+                ViewData["Layout"] = "~/Views/Shared/_LayoutAssociado.cshtml";
                 return View("IndexAssociado");
             }
             return View("Index");
