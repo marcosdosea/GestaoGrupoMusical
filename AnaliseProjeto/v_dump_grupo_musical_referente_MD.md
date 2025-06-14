@@ -7,7 +7,7 @@
 - **Senha:** VeryNice@Z123
 - **CPF:** 536.499.840-16
 
-## Regente do Grupo
+## ADMINISTRADO DO SISTEMA
 - **Nome** Karina Key 
 - **Email:** karinaqueijo.g@gmail.com
 - **CPF:** 994.370.570-10
@@ -33,3 +33,6 @@
 
 - **Nome** Borges Boris
 - **CPF:** 369.682.720-75
+
+
+## Regente do Grupo
