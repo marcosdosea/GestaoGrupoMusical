@@ -4,7 +4,11 @@ using GestaoGrupoMusicalWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using static GestaoGrupoMusicalWeb.Controllers.BaseController;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
+using System;
+using System.Security.Claims;
 
 namespace GestaoGrupoMusicalWeb.Controllers
 {
@@ -17,9 +21,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IInformativoService _informativoService;
         private readonly IMapper _mapper;
 
-        public HomeController(ILogger<HomeController> logger, 
-                              IEventoService evento, 
-                              IEnsaioService ensaioService, 
+        public HomeController(ILogger<HomeController> logger,
+                              IEventoService evento,
+                              IEnsaioService ensaioService,
                               IInformativoService informativoService,
                               IMapper mapper)
         {
@@ -32,15 +36,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         public async Task<IActionResult> Index()
         {
-
-            if (User.IsInRole("ADMINISTRADOR SISTEMA"))
-            {
-                return RedirectToAction(nameof(Index), "GrupoMusical");
-            }
             if (!Convert.ToBoolean(User.FindFirst("Ativo")?.Value))
             {
-                Notificar("<span class=\"fw-bold fs-5 mt-3\">Erro ! Houve um erro no login, Associado não está Ativo",
-       Notifica.Erro);
+                Notificar("Erro! Houve um erro no login, Associado não está Ativo.", Notifica.Erro);
                 return RedirectToAction("Autenticar", "Identity");
             }
 
@@ -48,12 +46,30 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 return RedirectToAction("Movimentacoes", "InstrumentoMusical");
             }
-            else if(User.IsInRole("ADMINISTRADOR SISTEMA"))
+
+            
+            var todosEventos = _evento.GetAll();                      
+            var todosEnsaios = await _ensaioService.GetAll();         
+            var todosInformativos = await _informativoService.GetAll(); 
+
+            
+            var eventosDoGrupo = todosEventos.Where(e => e.IdGrupoMusical == IdGrupoMusical);
+            var ensaiosDoGrupo = todosEnsaios.Where(e => e.IdGrupoMusical == IdGrupoMusical);
+            var informativosDoGrupo = todosInformativos.Where(i => i.IdGrupoMusical == IdGrupoMusical);
+
+            
+            var eventosViewModel = _mapper.Map<IEnumerable<EventoViewModel>>(eventosDoGrupo);
+            var ensaiosViewModel = _mapper.Map<IEnumerable<EnsaioViewModel>>(ensaiosDoGrupo);
+            var informativosViewModel = _mapper.Map<IEnumerable<InformativoViewModel>>(informativosDoGrupo);
+
+            var viewModel = new HomeViewModel
             {
-                return RedirectToAction(nameof(Index), "GrupoMusical");
-            }  
-             
-            return RedirectToAction("Index", "Ensaio");
+                Evento = eventosViewModel.Where(e => e.DataHoraInicio >= DateTime.Now).OrderBy(e => e.DataHoraInicio).Take(5),
+                Ensaio = ensaiosViewModel.Where(e => e.DataHoraInicio >= DateTime.Now).OrderBy(e => e.DataHoraInicio).Take(5),
+                Informativo = informativosViewModel.OrderByDescending(i => i.Data).Take(5)
+            };
+
+            return View(viewModel);
         }
 
         public IActionResult Privacy()

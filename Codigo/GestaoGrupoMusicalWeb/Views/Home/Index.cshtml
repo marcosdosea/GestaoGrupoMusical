@@ -1,121 +1,120 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@using System.Linq
+@model GestaoGrupoMusicalWeb.Models.HomeViewModel
+
+@{
+    ViewData["Title"] = "Página Inicial";
 }
 
-<div class="d-flex justify-content-between align-items-center">
-    <h5>Próximos Evento</h5>
-    <a role="button" class="btn btn-secondary m-3" asp-controller="Evento" asp-action="Create">Novo Evento</a>
-</div>
-<table class="table">
-    <thead>
-        <tr class="bg-danger opacity-75">
-            <th class="px-3 border-0 w-25">
-                <span class="text-white">Data</span>
-            </th>
-            <th class="border-0 px-3 w-25">
-                <span class="text-white">Local</span>
-            </th>
-            <th class="border-0 px-3 w-25">
-                <span class="text-white">Açoes</span>
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Evento)
-        {
-            <tr class="border-bottom border-danger border-opacity-75 p-3 align-middle">
-                <td class="p-3">
-                    @item.DataHoraInicio
-                </td>
-                <td class="p-3">
-                    @item.Local
-                </td>
-                <td class="d-flex justify-content-between border-0 p-3">
-                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="" asp-action=""><i class="fa-solid fa-list-check"> </i> Frequência </a>
-                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="Evento" asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-file"> </i> Detalhes </a>
-                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="Evento" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"> </i> Editar </a>
-                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="Evento" asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-xmark"> </i> Excluir </a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-<div class="d-flex justify-content-between align-items-center">
-    <h5>Próximos Ensaio</h5>
-    <a role="button" class="btn btn-secondary m-3" asp-controller="Ensaio" asp-action="Create">Novo Ensaio</a>
+<div class="d-flex justify-content-between align-items-center mt-3">
+    <h5>Próximos Eventos</h5>
+    <a role="button" class="btn btn-secondary" asp-controller="Evento" asp-action="Create">Novo Evento</a>
 </div>
 
-<table class="table">
-    <thead>
-        <tr class="bg-danger opacity-75">
-            <th class="px-3 border-0 w-25">
-                <span class="text-white">Data</span>
-            </th>
-            <th class="px-3 border-0 w-25">
-                <span class="text-white">Local</span>
-            </th>
-            <th class="px-3 border-0 w-25">
-                <span class="text-white">Açoes</span>
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Ensaio)
-        {
-            <tr class="border-bottom border-danger border-opacity-75 p-3 align-middle">
-                <td class="p-3">
-                    @item.DataHoraInicio
-                </td>
-                <td class="p-3">
-                    @item.Local
-                </td>
-                <td class="d-flex justify-content-between border-0 p-3">
-                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="" asp-action=""><i class="fa-solid fa-envelope"> </i> Reenviar </a>
-                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="Ensaio" asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-file"> </i> Detalhes </a>
-                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="Ensaio" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"> </i> Editar </a>
-                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="Ensaio" asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"> </i> Excluir </a>
-                </td>
+@if (Model.Evento.Any())
+{
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr class="bg-danger opacity-75 text-white">
+                <th class="px-3" style="width: 25%;">Data</th>
+                <th class="px-3" style="width: 50%;">Local</th>
+                <th class="px-3 text-center" style="width: 25%;">Ações</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Evento)
+            {
+                <tr class="align-middle">
+                    <td class="p-3">@(item.DataHoraInicio.ToString("g"))</td>
+                    <td class="p-3">@item.Local</td>
+                    <td class="p-3 d-flex justify-content-center">
+                        <a role="button" class="btn btn-secondary btn-sm" title="Registrar Frequência" asp-controller="Evento" asp-action="RegistrarFrequencia" asp-route-id="@item.Id">
+                            <i class="fa-solid fa-right-left"></i> Frequência
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-info mt-3" role="alert">
+        Nenhum próximo evento agendado.
+    </div>
+}
 
-<div class="d-flex justify-content-between align-items-center">
-    <h5>Próximos Informativos</h5>
-    <a role="button" class="btn btn-secondary m-3" asp-controller="Informativo" asp-action="Create">Novo Informativo</a>
+<div class="d-flex justify-content-between align-items-center mt-5">
+    <h5>Próximos Ensaios</h5>
+    <a role="button" class="btn btn-secondary" asp-controller="Ensaio" asp-action="Create">Novo Ensaio</a>
 </div>
-<table class="table">
-    <thead>
-        <tr class="bg-danger opacity-75">
-            <th class="px-3 border-0 w-25">
-                <span class="text-white">Data</span>
-            </th>
-            <th class="border-0 px-3 w-25">
-                <span class="text-white">Informativo</span>
-            </th>
-            <th class="border-0 px-3 w-25">
-                <span class="text-white">Açoes</span>
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Informativo)
-        {
-            <tr class="border-bottom border-danger border-opacity-75 p-3 align-middle">
-                <td class="p-3">
-                    @item.Data
-                </td>
-                <td class="p-3">
-                    @item.Mensagem
-                </td>
-                <td class="d-flex justify-content-between border-0 p-3">
-                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="" asp-action=""><i class="fa-solid fa-envelope"> </i> Reenviar </a>
-                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="Informativo" asp-action="Details" asp-route-IdGrupoMusical="@item.IdGrupoMusical" asp-route-IdPessoa="@item.IdPessoa"><i class="fa-solid fa-file"> </i> Detalhes </a>
-                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="Informativo" asp-action="Edit" asp-route-IdGrupoMusical="@item.IdGrupoMusical" asp-route-IdPessoa="@item.IdPessoa"><i class="fa-solid fa-pen-to-square"> </i> Editar </a>
-                    <a role="button" class="btn btn-secondary btn-sm" asp-controller="Informativo" asp-action="Delete" asp-route-IdGrupoMusical="@item.IdGrupoMusical" asp-route-IdPessoa="@item.IdPessoa"><i class="fa-solid fa-xmark"> </i> Excluir </a>
-                </td>
+
+@if (Model.Ensaio.Any())
+{
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr class="bg-danger opacity-75 text-white">
+                <th class="px-3" style="width: 25%;">Data</th>
+                <th class="px-3" style="width: 50%;">Local</th>
+                <th class="px-3 text-center" style="width: 25%;">Ações</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Ensaio)
+            {
+                <tr class="align-middle">
+                    <td class="p-3">@(item.DataHoraInicio?.ToString("g"))</td>
+                    <td class="p-3">@item.Local</td>
+                    <td class="p-3 d-flex justify-content-center">
+                        <a role="button" class="btn btn-secondary btn-sm" title="Registrar Frequência" asp-controller="Ensaio" asp-action="RegistrarFrequencia" asp-route-id="@item.Id">
+                            <i class="fa-solid fa-right-left"></i> Frequência
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-info mt-3" role="alert">
+        Nenhum próximo ensaio agendado.
+    </div>
+}
+
+<div class="d-flex justify-content-between align-items-center mt-5">
+    <h5>Últimos Informativos</h5>
+    <a role="button" class="btn btn-secondary" asp-controller="Informativo" asp-action="Create">Novo Informativo</a>
+</div>
+
+@if (Model.Informativo.Any())
+{
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr class="bg-danger opacity-75 text-white">
+                <th class="px-3" style="width: 25%;">Data</th>
+                <th class="px-3" style="width: 50%;">Mensagem</th>
+                <th class="px-3 text-center" style="width: 25%;">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Informativo)
+            {
+                <tr class="align-middle">
+                    <td class="p-3">@(item.Data.ToString("d"))</td>
+                    <td class="p-3">@item.Mensagem</td>
+                    <td class="p-3 d-flex justify-content-center">
+                        <a role="button" class="btn btn-secondary btn-sm" title="Notificar Associados" asp-controller="Informativo" asp-action="Notificar" asp-route-id="@item.Id">
+                            <i class="fa-regular fa-envelope"></i> Notificar
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-info mt-3" role="alert">
+        Nenhum informativo recente para exibir.
+    </div>
+}
