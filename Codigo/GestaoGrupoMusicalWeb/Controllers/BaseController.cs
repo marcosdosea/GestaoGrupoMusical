@@ -37,6 +37,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
             TempData["alertText"] = mensagem;
         }
+
+        public int IdGrupoMusical { get => Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value); }
+        public int IdPessoa { get => Convert.ToInt32(User.FindFirst("IdPessoa")?.Value); }
+        public string NomeAssociado { get => User.FindFirst("NomeAssociado")?.Value ?? string.Empty; }
         /// <summary>
         /// Este método tem o tralho de gerar um token para
         /// redefinição de senha do usuário identity, gera
