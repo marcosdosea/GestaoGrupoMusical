@@ -103,8 +103,8 @@ else
                     <td class="p-3">@(item.Data.ToString("d"))</td>
                     <td class="p-3">@item.Mensagem</td>
                     <td class="p-3 d-flex justify-content-center">
-                        <a role="button" class="btn btn-secondary btn-sm" title="Notificar Associados" asp-controller="Informativo" asp-action="Notificar" asp-route-id="@item.Id">
-                            <i class="fa-regular fa-envelope"></i> Notificar
+                        <a role="button" class="btn btn-secondary btn-sm" title="Notificar Associados" onclick="showConfirmationModalNotificar(@item.Id)">
+                            <i class="fa-regular fa-envelope"></i> Reenviar
                         </a>
                     </td>
                 </tr>
@@ -118,3 +118,33 @@ else
         Nenhum informativo recente para exibir.
     </div>
 }
+
+<div class="modal fade" id="InformativoModalNotificar" tabindex="-1" aria-labelledby="InformativoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="admLabel">Confirmar Notificação do Informativo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Deseja <b>Notificar</b> o <b>Informativo</b>?
+            </div>
+            <form method="post" class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary col-3 me-4" data-bs-dismiss="modal">Não</button>
+                <button type="submit" class="btn btn-secondary col-3">Sim</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showConfirmationModalNotificar(formId) {
+        var modal = document.getElementById('InformativoModalNotificar');
+        var modalForm = modal.querySelector('form');
+        modalForm.action = '/Informativo/NotificarInformativoViaEmail/' + formId;
+        var modalBody = modal.querySelector('.modal-body');
+        modalBody.innerHTML = 'Deseja <b>Notificar</b> o <b>Informativo</b>?';
+        var modal = new bootstrap.Modal(modal);
+        modal.show();
+    }
+</script>
