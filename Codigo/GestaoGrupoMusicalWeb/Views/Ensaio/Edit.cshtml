@@ -12,12 +12,10 @@
                 <h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">Editar Ensaio</h1>
                 <nav>
                     <ol class="breadcrumb px-3">
-                        <li>
-                            <strong>
-                                <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Ensaio"]</a>
-                                <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Edit"]</spn>
-                            </strong>
-                        </li>
+                        <strong>
+                            <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Ensaio"]</a>
+                            <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Edit"]</spn>
+                        </strong>
                     </ol>
                 </nav>
                 <hr />
@@ -51,7 +49,7 @@
                                 </div>
                                 <div class="form-group col-xl">
                                     <label asp-for="Tipo" class="control-label"></label>
-                                    <select asp-for="Tipo" class="form-select" asp-items="Html.GetEnumSelectList<Tipo>()">
+                                    <select asp-for="Tipo" class="form-select" asp-items="Html.GetEnumSelectList<Tipo>()" onchange="handleTipoChange()">
                                     </select>
                                     <span asp-validation-for="Tipo" class="text-danger"></span>
                                 </div>
@@ -62,15 +60,34 @@
                         <div class="row">
                             <div class="form-group col-xl">
                                 <label asp-for="IdRegentes" class="control-label"></label>
-                                <span class="d-inline-block my-2" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Escreva o nome do Regente. Ex: @ViewData["exemploRegente"]">
-                                    <button class="btn btn-outline-secondary btn-sm fw-bold" type="button">?</button>
-                                </span>
-                                <select multiple asp-for="IdRegentes" class="d-none" asp-items="Model.ListaPessoa">
-                                </select>
-                                <input class="form-control" id="regentes" placeholder="Informe o Regente." />
-                                <div id="blockNames" class="d-flex flex-column gap-2">
+                                <div class="border rounded p-3" style="max-height: 200px; overflow-y: auto;">
+                                    @if(Model.ListaPessoa != null && Model.ListaPessoa.Any())
+                                    {
+                                        @foreach (var regente in Model.ListaPessoa)
+                                        {
+                                            <div class="form-check">
+                                                <input class="form-check-input regente-checkbox" 
+                                                       type="checkbox"
+                                                       value="@regente.Value"
+                                                       id="regente_@regente.Value"
+                                                       onchange="updateRegenteSelection()">
+                                                <label class="form-check-label" for="regente_@regente.Value">
+                                                    @regente.Text
+                                                </label>
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <p class="text-muted">Nenhum regente cadastrado</p>
+                                    }
                                 </div>
-                                <span for="regentes" class="text-danger"></span>
+                                <select multiple asp-for="IdRegentes" class="d-none" id="hiddenRegenteSelect">
+                                </select>
+                                <span asp-validation-for="IdRegentes" class="text-danger"></span>
+                                <small class="form-text text-muted">
+                                    <span id="regenteCount">0</span> regente(s) selecionado(s)
+                                </small>
                             </div>
                         </div>
                     </div>
@@ -103,13 +120,13 @@
                     </div>
                     <div class="form-group col-xl">
                         <label asp-for="PresencaObrigatoria" class="control-label"></label>
-                        <div class="d-flex justify-content-around">
+                        <div class="d-flex justify-content-around" id="presencaObrigatoriaContainer">
                             @{
                                 foreach (var item in Model.Obrigatorio)
                                 {
                                     <div>
                                         <label for="@item.Key">@item.Key</label>
-                                        <input class="form-check-input" type="radio" value="@item.Value" asp-for="PresencaObrigatoria" id="@item.Key" />
+                                        <input class="form-check-input presenca-radio" type="radio" value="@item.Value" asp-for="PresencaObrigatoria" id="@item.Key" />
                                     </div>
                                 }
                             }
@@ -130,8 +147,63 @@
         </div>
     </div>
     <script>
-        window.addEventListener("load", () => {
-            fillAutocomplete('@(Html.Raw(Model.JsonLista))', "regentes", "IdRegentes", "formCreate", "O campo Regentes é obrigatório", '@(Html.Raw(ViewData["jsonIdRegentes"]))');
+        function updateRegenteSelection() {
+            const checkboxes = document.querySelectorAll('.regente-checkbox:checked');
+            const hiddenSelect = document.getElementById('hiddenRegenteSelect');
+            const countSpan = document.getElementById('regenteCount');
+
+            hiddenSelect.innerHTML = '';
+            // Adicionar options para cada checkbox marcado
+            checkboxes.forEach(checkbox => {
+                const option = document.createElement('option');
+                option.value = checkbox.value;
+                option.selected = true;
+                hiddenSelect.appendChild(option);
+            });
+            // Atualizar contador
+            countSpan.textContent = checkboxes.length;
+        }
+        function handleTipoChange() {
+            const tipoSelect = document.querySelector('select[name="Tipo"]');
+            const presencaContainer = document.getElementById('presencaObrigatoriaContainer');
+            const presencaRadios = document.querySelectorAll('.presenca-radio');
+            const presencaSimRadio = document.querySelector('input[value="True"]');
+
+            if (tipoSelect && tipoSelect.value === '0') { 
+                if (presencaSimRadio) {
+                    presencaSimRadio.checked = true;
+                }
+                presencaContainer.style.pointerEvents = 'none';
+                presencaContainer.style.opacity = '0.6';
+                // Desabilitar todos os radio buttons
+                presencaRadios.forEach(radio => {
+                    radio.setAttribute('tabindex', '-1');
+                });
+            } else {
+                // Habilita a interação novamente
+                presencaContainer.style.pointerEvents = 'auto';
+                presencaContainer.style.opacity = '1';
+
+                presencaRadios.forEach(radio => {
+                    radio.removeAttribute('tabindex');
+                });
+            }
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            // Inicializa a seleção de regentes que veio do servidor
+            const hiddenSelect = document.getElementById('hiddenRegenteSelect');
+            const selectedOptions = hiddenSelect.querySelectorAll('option');
+
+            selectedOptions.forEach(option => {
+                const checkbox = document.querySelector(`.regente-checkbox[value="${option.value}"]`);
+                if (checkbox) {
+                    checkbox.checked = true;
+                }
+            });
+
+            // Chama as funções para configurar o estado inicial da interface
+            updateRegenteSelection();
+            handleTipoChange();
         });
     </script>
 
