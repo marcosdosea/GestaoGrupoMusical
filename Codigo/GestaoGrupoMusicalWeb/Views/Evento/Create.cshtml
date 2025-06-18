@@ -38,15 +38,35 @@
                     <div class="row">
                         <div class="form-group col-xl">
                             <label asp-for="IdRegentes" class="control-label"></label>
-                            <span class="d-inline-block my-2" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Escreva o nome do Regente. Ex: @ViewData["exemploRegente"]">
-                                <button class="btn btn-outline-secondary btn-sm fw-bold" type="button">?</button>
-                            </span>
-                            <select multiple asp-for="IdRegentes" class="d-none" asp-items="Model.ListaPessoa">
-                            </select>
-                            <input class="form-control" id="regentes" placeholder="Informe o Regente." />
-                            <div id="blockNames" class="d-flex flex-column gap-2">
+                            <div class="border rounded p-3" style="max-height: 200px; overflow-y: auto;">
+                                @if (Model.ListaPessoa != null && Model.ListaPessoa.Any())
+                                {
+                                    @foreach (var regente in Model.ListaPessoa)
+                                    {
+                                        <div class="form-check">
+                                            <input class="form-check-input regente-checkbox"
+                                                   type="checkbox"
+                                                   value="@regente.Value"
+                                                   id="regente_@regente.Value"
+                                                   onchange="updateRegenteSelection()">
+                                            <label class="form-check-label" for="regente_@regente.Value">
+                                                @regente.Text
+                                            </label>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <p class="text-muted">Nenhum regente cadastrado</p>
+                                }
                             </div>
-                            <span for="regentes" class="text-danger"></span>
+                            <!-- Hidden field para enviar os valores selecionados -->
+                            <select multiple asp-for="IdRegentes" class="d-none" id="hiddenRegenteSelect">
+                            </select>
+                            <span asp-validation-for="IdRegentes" class="text-danger"></span>
+                            <small class="form-text text-muted">
+                                <span id="regenteCount">0</span> regente(s) selecionado(s)
+                            </small>
                         </div>
                     </div>
                 </div>
@@ -88,8 +108,6 @@
     </div>
 
     <script>
-
-
         function updateCharacterCountLocal() {
             var textArea = document.getElementById('linkTextAreaLocal');
             var charCount = textArea.value.length;
@@ -104,15 +122,29 @@
             document.getElementById('characterCountRepertorio').innerText = charCount + '/' + charLimitFromGrupoMusical;
         }
 
+        function updateRegenteSelection() {
+            const checkboxes = document.querySelectorAll('.regente-checkbox:checked');
+            const hiddenSelect = document.getElementById('hiddenRegenteSelect');
+            const countSpan = document.getElementById('regenteCount');
+
+            // Limpar options existentes
+            hiddenSelect.innerHTML = '';
+
+            // Adicionar options para cada checkbox marcado
+            checkboxes.forEach(checkbox => {
+                const option = document.createElement('option');
+                option.value = checkbox.value;
+                option.selected = true;
+                hiddenSelect.appendChild(option);
+            });
+
+            // Atualizar contador
+            countSpan.textContent = checkboxes.length;
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
             updateCharacterCountLocal();
             updateCharacterCountRepertorio();
-        });
-    </script>
-
-    <script>
-        window.addEventListener("load", () => {
-            fillAutocomplete('@(Html.Raw(Model.JsonLista))', "regentes", "IdRegentes", "formCreate", "O campo Regentes é obrigatório");
         });
     </script>
 
