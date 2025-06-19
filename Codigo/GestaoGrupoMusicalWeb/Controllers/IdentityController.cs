@@ -255,6 +255,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
            
            var userModel = _mapper.Map<UserViewModel>(user);
+
+            var manequim = _manequim.Get(user.IdManequim);
+            userModel.TamanhoManequim = manequim?.Tamanho ?? "Não informado";
+
            userModel.ListaManequim = new SelectList(_manequim.GetAll(), "Id", "Tamanho", userModel.IdManequim);
             return View(userModel);
         }
