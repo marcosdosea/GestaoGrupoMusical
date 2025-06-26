@@ -5,6 +5,8 @@ namespace GestaoGrupoMusicalWeb.Models
 {
     public class UserViewModel
     {
+        public int Id { get; set; }
+
         [Display(Name = "Nome", Prompt = "Meu Nome")]
         [Required(ErrorMessage = "O campo Nome é obrigatótio.")]
         [StringLength(70, MinimumLength = 5, ErrorMessage = "O nome do associado deve ter entre 5 e 70 caracteres")]
@@ -15,7 +17,7 @@ namespace GestaoGrupoMusicalWeb.Models
         public string? Sexo { get; set; }
 
         [Required(ErrorMessage = "O campo CEP é obrigatório.")]
-        [RegularExpression(@"^\d{5}-\d{3}$", ErrorMessage = "O CEP deve estar no formato 00000-000.")]
+        [RegularExpression(@"^(\d{5}-\d{3}|\d{8})$", ErrorMessage = "O CEP informado não é válido.")]
         [StringLength(10)]
         [Display(Name = "CEP", Prompt = "00000-000")]
         public string? Cep { get; set; }
@@ -61,6 +63,9 @@ namespace GestaoGrupoMusicalWeb.Models
         [Display(Name = "Tamanho da roupa")]
         public int IdManequim { get; set; }
         public SelectList? ListaManequim { get; set; }
+
+        [Display(Name = "Tamanho da roupa")]
+        public string? TamanhoManequim { get; set; }
         public Dictionary<string, char> sexoPessoa { get; } = new()
         {
             { "Masculino", 'M' },

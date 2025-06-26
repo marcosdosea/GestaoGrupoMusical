@@ -182,7 +182,7 @@ namespace Core.Service
         /// HttpStatusCode.OK: Sucesso na operação
         /// HttpStatusCode.BadRequest: Formulário inválido
         /// </returns>
-        Task<HttpStatusCode> UpdateUserInfos(Pessoa userInfos, string? currentPassword ,string? newPassword);
+        Task<HttpStatusCode> UpdateUserInfos(Pessoa userInfos, string? currentPassword, string? newPassword);
 
         /// <summary>
         /// Atualiza as informações do adm sistema
@@ -193,7 +193,7 @@ namespace Core.Service
         /// HttpStatusCode.OK: Sucesso na operação
         /// HttpStatusCode.BadRequest: Formulário inválido
         /// </returns>
-        Task<HttpStatusCode> UpdateUAdmSistema(string? login, string? currentPassword ,string? newPassword);
+        Task<HttpStatusCode> UpdateUAdmSistema(string? login, string? currentPassword, string? newPassword);
 
         Task<DatatableResponse<AssociadoDTO>> GetDataPage(DatatableRequest request, string cpf);
     }
