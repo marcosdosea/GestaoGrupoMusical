@@ -3,6 +3,7 @@ using Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Service;
+using System.Globalization;
 
 namespace Service.Tests
 {
@@ -29,7 +30,7 @@ namespace Service.Tests
                 {
                     Id = 1,
                     Patrimonio = "1",
-                    DataAquisicao = DateTime.Parse("24/02/2013"),
+                    DataAquisicao = DateTime.ParseExact("24/02/2013", "dd/MM/yyyy", CultureInfo.InvariantCulture),
                     Status = "DISPONIVEL",
                     IdTipoInstrumento = 0 ,
                     IdGrupoMusical = 0
@@ -38,7 +39,7 @@ namespace Service.Tests
                 {
                     Id = 2,
                     Patrimonio = "2",
-                    DataAquisicao = DateTime.Parse("24/02/2013"),
+                    DataAquisicao = DateTime.ParseExact("24/02/2013", "dd/MM/yyyy", CultureInfo.InvariantCulture),
                     Status = "EMPRESTADO",
                     IdTipoInstrumento = 1 ,
                     IdGrupoMusical = 0
@@ -47,7 +48,7 @@ namespace Service.Tests
                 {
                     Id = 3,
                     Patrimonio = "3",
-                    DataAquisicao = DateTime.Parse("24/02/2013"),
+                    DataAquisicao = DateTime.ParseExact("24/02/2013", "dd/MM/yyyy", CultureInfo.InvariantCulture),
                     Status = "DANIFICADO",
                     IdTipoInstrumento = 2 ,
                     IdGrupoMusical = 0
@@ -69,7 +70,7 @@ namespace Service.Tests
                 {
                     Id = 4,
                     Patrimonio = "4",
-                    DataAquisicao = DateTime.Parse("18/12/2018"),
+                    DataAquisicao = DateTime.ParseExact("18/12/2018", "dd/MM/yyyy", CultureInfo.InvariantCulture),
                     Status = "EMPRESTADO",
                     IdTipoInstrumento = 9,
                     IdGrupoMusical = 7
@@ -110,7 +111,7 @@ namespace Service.Tests
             var instrumentoMusical = _instrumentoMusical.Get(3).GetAwaiter().GetResult();
             instrumentoMusical.Id = 7;
             instrumentoMusical.Patrimonio = "7";
-            instrumentoMusical.DataAquisicao = DateTime.Parse("24/02/2020");
+            instrumentoMusical.DataAquisicao = DateTime.ParseExact("24/02/2020", "dd/MM/yyyy", CultureInfo.InvariantCulture); 
             instrumentoMusical.Status = "DISPONIVEL";
             instrumentoMusical.IdTipoInstrumento = 7;
             instrumentoMusical.IdGrupoMusical = 0;
