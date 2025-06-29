@@ -50,30 +50,24 @@ namespace GestaoGrupoMusicalWeb.Controllers
         /// <param name="_userManager">UserManager do identity</param>
         /// <param name="userEmail">Email do usuario</param>
         /// <returns>200: Sucesso; 400: usuario não encontrado; 500: problema na geração do token</returns>
+        /// 
+
+        [FromServices]
+        public ILogger<BaseController> Logger { get; protected set; }
+
         public async Task<HttpStatusCode> RequestPasswordReset(UserManager<UsuarioIdentity> _userManager, string userEmail, string userName)
         {
             var user = await _userManager.FindByEmailAsync(userEmail);
 
             //a segunda condição é para caso seja necessario
             //confirmar o email do usuario para alterar a senha
-            if (user == null /*|| !(await _userManager.IsEmailConfirmedAsync(user))*/)
+            if (user == null)
             {
-                //usuario não encontrado
+                Logger.LogWarning("Tentativa de reset de senha para email não cadastrado: {Email}", userEmail);
                 return HttpStatusCode.NotFound;
             }
 
-            string code = "";
-
-            try
-            {
-                //gera o token para redefinir senha
-                code = await _userManager.GeneratePasswordResetTokenAsync(user);
-            }
-            catch(Exception ex)
-            {
-                //erro na geração do token
-                return HttpStatusCode.InternalServerError;
-            }
+            string code = await _userManager.GeneratePasswordResetTokenAsync(user);
 
             //gera link para a view da controladora ja passando codigo e id do usuario
             var callbackUrl = Url.Action("ResetPassword", "Identity", new { userId = user.Id, token = code }, /*protocol:*/ Request.Scheme);
@@ -89,9 +83,19 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             email.To.Add(userEmail);
 
-            await EmailService.Enviar(email);
+            try
+            {
+                await EmailService.Enviar(email);
 
-            return HttpStatusCode.OK;
+                Logger.LogInformation("Email de redefinição de senha enviado com sucesso para {Email}", userEmail);
+                return HttpStatusCode.OK;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Erro ao enviar email de reset de senha para {Email}", userEmail);
+                return HttpStatusCode.InternalServerError;
+            }
+
         }
     }
 }

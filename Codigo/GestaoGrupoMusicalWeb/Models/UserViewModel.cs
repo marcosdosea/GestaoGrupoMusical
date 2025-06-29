@@ -64,8 +64,19 @@ namespace GestaoGrupoMusicalWeb.Models
         public int IdManequim { get; set; }
         public SelectList? ListaManequim { get; set; }
 
+
+
+        [Display(Name = "Data de Entrada")]
+        [DataType(DataType.Date)]
+        public DateTime? DataEntrada { get; set; }
+
+        [Display(Name = "Data de Saída")]
+        [DataType(DataType.Date)]
+        public DateTime? DataSaida { get; set; }
+
         [Display(Name = "Tamanho da roupa")]
         public string? TamanhoManequim { get; set; }
+      
         public Dictionary<string, char> sexoPessoa { get; } = new()
         {
             { "Masculino", 'M' },

@@ -260,6 +260,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             userModel.TamanhoManequim = manequim?.Tamanho ?? "Não Informado";
             userModel.ListaManequim = new SelectList(_manequim.GetAll(), "Id", "Tamanho", userModel.IdManequim);
+
             return View(userModel);
         }
 
