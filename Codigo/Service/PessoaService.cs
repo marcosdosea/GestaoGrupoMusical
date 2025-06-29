@@ -859,55 +859,61 @@ namespace Service
             return HttpStatusCode.OK;
         }
 
-        public async Task<HttpStatusCode> UpdateUserInfos(Pessoa userInfos, string? currentPassword,string? newPassword)
+        public async Task<HttpStatusCode> UpdateUserInfos(Pessoa userInfos, string? currentPassword, string? newPassword)
         {
             using var transaction = _context.Database.BeginTransaction();
 
             try
             {
-                userInfos.Cep = userInfos.Cep.Replace("-","");
+                var pessoaParaAtualizar = await _context.Pessoas.FindAsync(userInfos.Id);
 
-                var pessoaDb = await _context.Pessoas.Where(p => p.Cpf == userInfos.Cpf)
-                                    .AsNoTracking()
-                                    .FirstOrDefaultAsync();
-                                    
-                if(pessoaDb == null)
+                if (pessoaParaAtualizar == null)
                 {
                     await transaction.RollbackAsync();
                     return HttpStatusCode.NotFound;
                 }
-                userInfos.Ativo = pessoaDb.Ativo;
-                userInfos.Id = pessoaDb.Id;
 
-                _context.Pessoas.Update(userInfos);
+                pessoaParaAtualizar.Nome = userInfos.Nome;
+                pessoaParaAtualizar.Email = userInfos.Email;
+                pessoaParaAtualizar.DataNascimento = userInfos.DataNascimento;
+                pessoaParaAtualizar.Sexo = userInfos.Sexo;
+                pessoaParaAtualizar.Telefone1 = userInfos.Telefone1;
+                pessoaParaAtualizar.Telefone2 = userInfos.Telefone2;
+                pessoaParaAtualizar.IdManequim = userInfos.IdManequim;
+                pessoaParaAtualizar.Cep = userInfos.Cep.Replace("-", "");
+                pessoaParaAtualizar.Rua = userInfos.Rua;
+                pessoaParaAtualizar.Bairro = userInfos.Bairro;
+                pessoaParaAtualizar.Cidade = userInfos.Cidade;
+                pessoaParaAtualizar.Estado = userInfos.Estado;
+
                 await _context.SaveChangesAsync();
 
-                if(newPassword != null)
+                // Atualizar senha
+                if (!string.IsNullOrEmpty(newPassword) && !string.IsNullOrEmpty(currentPassword))
                 {
-                    var user = await _userManager.FindByNameAsync(userInfos.Cpf);
-                    
-                    if((await _userManager.ChangePasswordAsync(user, currentPassword, newPassword)).Succeeded)
+                    var user = await _userManager.FindByNameAsync(pessoaParaAtualizar.Cpf);
+                    if (user == null)
                     {
-                        await transaction.CommitAsync();
-                        return HttpStatusCode.OK;
+                        await transaction.RollbackAsync();
+                        return HttpStatusCode.NotFound;
                     }
-                    else
+
+                    var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+                    if (!result.Succeeded)
                     {
                         await transaction.RollbackAsync();
                         return HttpStatusCode.BadRequest;
                     }
                 }
-                else
-                {
-                    await transaction.CommitAsync();
-                    return HttpStatusCode.OK;
-                }
-            }
-            catch
+                //Confirmação de alteração
+                await transaction.CommitAsync();
+                return HttpStatusCode.OK;
+            } 
+            catch (Exception)
             {
                 await transaction.RollbackAsync();
                 return HttpStatusCode.InternalServerError;
-            }
+            }   
         }
 
         public async Task<HttpStatusCode> UpdateUAdmSistema(string? login, string? currentPassword, string? newPassword)
@@ -915,16 +921,16 @@ namespace Service
             try
             {
                 var user = await _userManager.FindByNameAsync(login);
-                
-                if(user == null)
+
+                if (user == null)
                 {
                     return HttpStatusCode.NotFound;
                 }
-                if(newPassword != null && (await _userManager.ChangePasswordAsync(user, currentPassword, newPassword)).Succeeded)
+                if (newPassword != null && (await _userManager.ChangePasswordAsync(user, currentPassword, newPassword)).Succeeded)
                 {
                     return HttpStatusCode.OK;
                 }
-                
+
                 return HttpStatusCode.BadRequest;
             }
             catch

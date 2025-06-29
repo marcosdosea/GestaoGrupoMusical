@@ -254,12 +254,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 return RedirectToAction(nameof(Autenticar), "Identity");
             }
            
-           var userModel = _mapper.Map<UserViewModel>(user);
+            var userModel = _mapper.Map<UserViewModel>(user);
 
             var manequim = _manequim.Get(user.IdManequim);
-            userModel.TamanhoManequim = manequim?.Tamanho ?? "Não informado";
 
-           userModel.ListaManequim = new SelectList(_manequim.GetAll(), "Id", "Tamanho", userModel.IdManequim);
+            userModel.TamanhoManequim = manequim?.Tamanho ?? "Não Informado";
+            userModel.ListaManequim = new SelectList(_manequim.GetAll(), "Id", "Tamanho", userModel.IdManequim);
+
             return View(userModel);
         }
 
@@ -270,6 +271,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             if(ModelState.IsValid)
             {
+                if (!string.IsNullOrEmpty(userInfos.Cep))
+                {
+                    userInfos.Cep = userInfos.Cep.Replace("-", "");
+                }
                 var pessoaModel = _mapper.Map<Pessoa>(userInfos);
                 pessoaModel.IdGrupoMusical = Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value);
                 pessoaModel.IdPapelGrupo = Convert.ToInt32(User.FindFirst("IdPapelGrupo")?.Value);
@@ -280,16 +285,16 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     case HttpStatusCode.OK:
                         Notificar("Informações <b>Salvas</b> com <b>Sucesso</b>.", Notifica.Sucesso);
                         await UpdateClaims("UserName", userInfos.Nome?.Split(" ")[0]);
-                    break;
+                        return RedirectToAction(nameof(Perfil));
                     case HttpStatusCode.BadRequest:
                         Notificar("Ocorreu um <b>Erro</b> durante a <b>Atualização</b> das <b>Informações</b>", Notifica.Erro);
-                    break;
+                        break;
                     case HttpStatusCode.NotFound:
                         Notificar("Ocorreu um <b>Erro</b> durante o <b>Acesso</b> as <b>Informações</b>", Notifica.Erro);
-                    break;
+                        break;
                     case HttpStatusCode.InternalServerError:
                         Notificar("Ocorreu um <b>Erro Interno</b> durante a atualização das <b>Informações</b>", Notifica.Erro);
-                    break;
+                        break;
                 }
             }
 
@@ -321,7 +326,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             if(ModelState.IsValid)
             {
-                switch(await _pessoaService.UpdateUAdmSistema(User.Identity?.Name, userInfos.CurrentPassword, userInfos.Password))
+                switch (await _pessoaService.UpdateUAdmSistema(User.Identity?.Name, userInfos.CurrentPassword, userInfos.Password))
                 {
                     case HttpStatusCode.OK:
                         Notificar("Informações <b>Salvas</b> com <b>Sucesso</b>", Notifica.Sucesso);
