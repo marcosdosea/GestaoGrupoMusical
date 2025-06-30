@@ -88,7 +88,7 @@ jobs:
       with:
         files: '${{env.work-directory}}/appsettings.json'
       env:
-        ConnectionStrings.MySqlConnection: ${{secrets.CONNECTION_STRING}}
+        ConnectionStrings.GrupoMusicalDatabase: ${{secrets.CONNECTION_STRING}}
     
     - name: Restore dependencies
       run: |
