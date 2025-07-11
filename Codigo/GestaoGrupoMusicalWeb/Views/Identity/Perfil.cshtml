@@ -20,51 +20,51 @@
 
 <partial name="_Notificar">
 
-<div class="row">
-    <div class="col-md-10 offset-md-1">
-        <h1 class="p-3 bg-danger bg-opacity-75 text-white fs-5">@ViewData["Title"]</h1>
-        <hr />
-        <br />
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <h1 class="p-3 bg-danger bg-opacity-75 text-white fs-5">@ViewData["Title"]</h1>
+            <hr />
+            <br />
 
-        <form asp-controller="Identity" asp-action="Perfil" method="post">
-            <input asp-for="Id" type="hidden" />
-            <div class="card shadow mb-4">
-                <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                    <h6 class="m-0 font-weight-bold text-danger">Dados do Perfil</h6>
-                    <a class="btn btn-outline-secondary btn-sm" asp-controller="Home" asp-action="Index"><i class="fa-solid fa-arrow-left"></i> Voltar</a>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-4">
-                                <div class="d-flex align-items-center mb-2">
-                                    <i class="fa-solid fa-address-card fs-4 text-danger me-2"></i>
-                                    <h6 class="m-0 font-weight-bold text-danger">Dados Pessoais</h6>
-                                </div>
-                                <hr class="text-danger mt-1 mb-3" style="width: 50px;">
+            <form asp-controller="Identity" asp-action="Perfil" method="post">
+                <input asp-for="Id" type="hidden" />
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="m-0 font-weight-bold text-danger">Dados do Perfil</h6>
+                        <a class="btn btn-outline-secondary btn-sm" asp-controller="Home" asp-action="Index">
+                            <i class="fa-solid fa-arrow-left"></i> Voltar
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fa-solid fa-address-card fs-4 text-danger me-2"></i>
+                                        <h6 class="m-0 font-weight-bold text-danger">Dados Pessoais</h6>
+                                    </div>
+                                    <hr class="text-danger mt-1 mb-3" style="width: 50px;">
 
-                                <div class="mb-2">
-                                    <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Nome)</label>
-                                    <p class="form-control-plaintext fw-bold view-mode">@Html.DisplayFor(model => model.Nome)</p>
-                                    <input asp-for="Nome" class="form-control edit-mode" />
-                                </div>
-                                <div class="mb-2">
-                                    <label class="form-label text-muted">@Html.DisplayNameFor(model => model.DataNascimento)</label>
-                                    <p class="form-control-plaintext fw-bold view-mode">@Model.DataNascimento?.ToString("dd/MM/yyyy")</p>
-                                    <input asp-for="DataNascimento" type="date" class="form-control edit-mode" />
-                                </div>
-                                <div class="mb-2">
-                                    <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Sexo)</label>
-                                    <p class="form-control-plaintext fw-bold view-mode">@(Model.Sexo == "M" ? "Masculino" : "Feminino")</p>
-                                    <select asp-for="Sexo" asp-items="@(new SelectList(Model.sexoPessoa, "Value", "Key"))" class="form-select edit-mode"></select>
-                                </div>
-                                <div class="mb-2">
-                                    <label class="form-label text-muted">@Html.DisplayNameFor(model => model.TamanhoManequim)</label>
-
-                                    <p class="form-control-plaintext fw-bold view-mode">@Model.TamanhoManequim</p>
-                                    <select asp-for="IdManequim" asp-items="Model.ListaManequim" class="form-select edit-mode"></select>
-                                </div>
-                            </div>
+                                    <div class="mb-2">
+                                        <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Nome)</label>
+                                        <p class="form-control-plaintext fw-bold view-mode">@Html.DisplayFor(model => model.Nome)</p>
+                                        <input asp-for="Nome" class="form-control edit-mode" />
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label text-muted">@Html.DisplayNameFor(model => model.DataNascimento)</label>
+                                        <p class="form-control-plaintext fw-bold view-mode">@Model.DataNascimento?.ToString("dd/MM/yyyy")</p>
+                                        <input asp-for="DataNascimento" type="date" class="form-control edit-mode" />
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Sexo)</label>
+                                        <p class="form-control-plaintext fw-bold view-mode">@(Model.Sexo == "M" ? "Masculino" : "Feminino")</p>
+                                        <select asp-for="Sexo" asp-items="@(new SelectList(Model.sexoPessoa, "Value", "Key"))" class="form-select edit-mode"></select>
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label text-muted">@Html.DisplayNameFor(model => model.TamanhoManequim)</label>
+                                        <p class="form-control-plaintext fw-bold view-mode">@Model.TamanhoManequim</p>
+                                        <select asp-for="IdManequim" asp-items="Model.ListaManequim" class="form-select edit-mode"></select>
+                                    </div>
                                 </div>
                                 <div class="mb-2">
                                     <label class="form-label text-muted">@Html.DisplayNameFor(model => model.DataEntrada)</label>
@@ -74,83 +74,82 @@
                                     <label class="form-label text-muted">@Html.DisplayNameFor(model => model.DataSaida)</label>
                                     <p class="form-control-plaintext fw-bold">@Html.DisplayFor(model => model.DataSaida)</p>
                                 </div>
-                        </div>
 
-                            <div class="mb-4">
-                                <div class="d-flex align-items-center mb-2">
-                                    <i class="fa-solid fa-phone fs-4 text-danger me-2"></i>
-                                    <h6 class="m-0 font-weight-bold text-danger">Contato</h6>
-                                </div>
-                                <hr class="text-danger mt-1 mb-3" style="width: 50px;">
+                                <div class="mb-4">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fa-solid fa-phone fs-4 text-danger me-2"></i>
+                                        <h6 class="m-0 font-weight-bold text-danger">Contato</h6>
+                                    </div>
+                                    <hr class="text-danger mt-1 mb-3" style="width: 50px;">
 
-                                <div class="mb-2">
-                                    <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Email)</label>
-                                    <p class="form-control-plaintext fw-bold view-mode">@Html.DisplayFor(model => model.Email)</p>
-                                    <input asp-for="Email" class="form-control edit-mode" />
-                                </div>
-                                <div class="mb-2">
-                                    <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Telefone1)</label>
-                                    <p class="form-control-plaintext fw-bold view-mode">@Html.DisplayFor(model => model.Telefone1)</p>
-                                    <input asp-for="Telefone1" class="form-control edit-mode" />
-                                </div>
-                                <div class="mb-2">
-                                    <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Telefone2)</label>
-                                    <p class="form-control-plaintext fw-bold view-mode">@Html.DisplayFor(model => model.Telefone2)</p>
-                                    <input asp-for="Telefone2" class="form-control edit-mode" />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div class="mb-4">
-                                <div class="d-flex align-items-center mb-2">
-                                    <i class="fa-solid fa-location-dot fs-4 text-danger me-2"></i>
-                                    <h6 class="m-0 font-weight-bold text-danger">Endereço</h6>
-                                </div>
-                                <hr class="text-danger mt-1 mb-3" style="width: 50px;">
-
-                                <div class="mb-2">
-                                    <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Rua)</label>
-                                    <p class="form-control-plaintext fw-bold view-mode">@Html.DisplayFor(model => model.Rua)</p>
-                                    <input asp-for="Rua" class="form-control edit-mode" />
-                                </div>
-                                <div class="mb-2">
-                                    <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Bairro)</label>
-                                    <p class="form-control-plaintext fw-bold view-mode">@Html.DisplayFor(model => model.Bairro)</p>
-                                    <input asp-for="Bairro" class="form-control edit-mode" />
-                                </div>
-                                <div class="mb-2">
-                                    <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Cidade) / @Html.DisplayNameFor(model => model.Estado)</label>
-                                    <p class="form-control-plaintext fw-bold view-mode">@Model.Cidade - @Model.Estado</p>
-                                    <div class="d-flex gap-2 edit-mode">
-                                        <input asp-for="Cidade" class="form-control" placeholder="Cidade" />
-                                        <input asp-for="Estado" class="form-control" placeholder="UF" style="max-width: 80px;" />
+                                    <div class="mb-2">
+                                        <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Email)</label>
+                                        <p class="form-control-plaintext fw-bold view-mode">@Html.DisplayFor(model => model.Email)</p>
+                                        <input asp-for="Email" class="form-control edit-mode" />
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Telefone1)</label>
+                                        <p class="form-control-plaintext fw-bold view-mode">@Html.DisplayFor(model => model.Telefone1)</p>
+                                        <input asp-for="Telefone1" class="form-control edit-mode" />
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Telefone2)</label>
+                                        <p class="form-control-plaintext fw-bold view-mode">@Html.DisplayFor(model => model.Telefone2)</p>
+                                        <input asp-for="Telefone2" class="form-control edit-mode" />
                                     </div>
                                 </div>
-                                <div class="mb-2">
-                                    <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Cep)</label>
-                                    <p class="form-control-plaintext fw-bold view-mode">@Html.DisplayFor(model => model.Cep)</p>
-                                    <input asp-for="Cep" class="form-control edit-mode" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fa-solid fa-location-dot fs-4 text-danger me-2"></i>
+                                        <h6 class="m-0 font-weight-bold text-danger">Endereço</h6>
+                                    </div>
+                                    <hr class="text-danger mt-1 mb-3" style="width: 50px;">
+
+                                    <div class="mb-2">
+                                        <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Rua)</label>
+                                        <p class="form-control-plaintext fw-bold view-mode">@Html.DisplayFor(model => model.Rua)</p>
+                                        <input asp-for="Rua" class="form-control edit-mode" />
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Bairro)</label>
+                                        <p class="form-control-plaintext fw-bold view-mode">@Html.DisplayFor(model => model.Bairro)</p>
+                                        <input asp-for="Bairro" class="form-control edit-mode" />
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Cidade) / @Html.DisplayNameFor(model => model.Estado)</label>
+                                        <p class="form-control-plaintext fw-bold view-mode">@Model.Cidade - @Model.Estado</p>
+                                        <div class="d-flex gap-2 edit-mode">
+                                            <input asp-for="Cidade" class="form-control" placeholder="Cidade" />
+                                            <input asp-for="Estado" class="form-control" placeholder="UF" style="max-width: 80px;" />
+                                        </div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Cep)</label>
+                                        <p class="form-control-plaintext fw-bold view-mode">@Html.DisplayFor(model => model.Cep)</p>
+                                        <input asp-for="Cep" class="form-control edit-mode" />
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="card-footer d-flex justify-content-end gap-2">
-                    <button id="editButton" type="button" class="btn btn-secondary btn-sm  m-2 view-mode">
-                        <i class="fa-solid fa-pen-to-square"></i> Editar
-                    </button>
+                    <div class="card-footer d-flex justify-content-end gap-2">
+                        <button id="editButton" type="button" class="btn btn-secondary btn-sm m-2 view-mode">
+                            <i class="fa-solid fa-pen-to-square"></i> Editar
+                        </button>
                         <button id="cancelButton" type="button" class="btn btn-outline-secondary edit-mode">
-                        Cancelar
-                    </button>
+                            Cancelar
+                        </button>
                         <button id="saveButton" type="submit" class="btn btn-secondary edit-mode">
-                        <i class="fa-solid fa-check"></i> Salvar
-                    </button>
+                            <i class="fa-solid fa-check"></i> Salvar
+                        </button>
+                    </div>
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
-</div>
 
 
 @section Scripts 
