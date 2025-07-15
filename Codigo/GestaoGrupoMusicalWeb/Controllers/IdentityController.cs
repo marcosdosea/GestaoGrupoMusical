@@ -33,8 +33,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
             RoleManager<IdentityRole> roleManager,
             IPessoaService pessoaService,
             IManequimService manequim,
-            IMapper mapper
-            )
+            IMapper mapper,
+            ILogger<BaseController> logger)
+                : base(logger)
         {
             _signInManager = signInManager;
             _userManager = userManager;
@@ -164,7 +165,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             if (ModelState.IsValid)
             { 
-                RequestPasswordReset(_userManager, model.Email, await _pessoaService.GetNomeAssociadoByEmail(model.Email));
+                await RequestPasswordReset(_userManager, model.Email, await _pessoaService.GetNomeAssociadoByEmail(model.Email));
             }
             
             return View();

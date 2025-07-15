@@ -21,11 +21,14 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IInformativoService _informativoService;
         private readonly IMapper _mapper;
 
-        public HomeController(ILogger<HomeController> logger,
-                              IEventoService evento,
-                              IEnsaioService ensaioService,
-                              IInformativoService informativoService,
-                              IMapper mapper)
+        public HomeController(
+            ILogger<HomeController> logger,
+            IEventoService evento,
+            IEnsaioService ensaioService,
+            IInformativoService informativoService,
+            IMapper mapper,
+            ILogger<BaseController> baselogger)
+                : base(baselogger)
         {
             _logger = logger;
             _evento = evento;

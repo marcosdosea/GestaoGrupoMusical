@@ -24,8 +24,16 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IMovimentacaoFigurinoService _movimentacaoService;
         private readonly UserManager<UsuarioIdentity> _userManager;
 
-        public FigurinoController(IMapper mapper, IGrupoMusicalService grupoMusical,
-            IManequimService manequim, IFigurinoService figurino, UserManager<UsuarioIdentity> userManager, IPessoaService pessoa, IMovimentacaoFigurinoService movimentacaoService)
+        public FigurinoController(
+            IMapper mapper, 
+            IGrupoMusicalService grupoMusical,
+            IManequimService manequim, 
+            IFigurinoService figurino, 
+            UserManager<UsuarioIdentity> userManager, 
+            IPessoaService pessoa, 
+            IMovimentacaoFigurinoService movimentacaoService,
+            ILogger<BaseController> logger)
+                : base(logger)
         {
             _mapper = mapper;
             _grupoMusicalService = grupoMusical;

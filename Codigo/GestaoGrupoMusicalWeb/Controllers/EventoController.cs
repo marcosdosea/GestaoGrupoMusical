@@ -28,10 +28,17 @@ namespace GestaoGrupoMusicalWeb.Controllers
         
         private int FaltasPessoasEmEnsaioMeses { get; }
 
-        public EventoController(IEventoService evento, IEnsaioService ensaioService, IMapper mapper, 
-            IGrupoMusicalService grupoMusical, IPessoaService pessoaService, 
-            IFigurinoService figurino, IInstrumentoMusicalService tipoInstrumentoMusical,
-            IConfiguration configuration)
+        public EventoController(
+            IEventoService evento, 
+            IEnsaioService ensaioService, 
+            IMapper mapper, 
+            IGrupoMusicalService grupoMusical, 
+            IPessoaService pessoaService, 
+            IFigurinoService figurino, 
+            IInstrumentoMusicalService tipoInstrumentoMusical,
+            IConfiguration configuration,
+            ILogger<BaseController> logger)
+                : base(logger)
         {
             _eventoService = evento ?? throw new ArgumentNullException(nameof(evento));
             _ensaioService = ensaioService;

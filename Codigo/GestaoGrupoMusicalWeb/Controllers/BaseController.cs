@@ -1,6 +1,7 @@
 ﻿using Core;
 using Email;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -8,6 +9,14 @@ namespace GestaoGrupoMusicalWeb.Controllers
 {
     public abstract class BaseController : Controller
     {
+
+        protected readonly ILogger<BaseController> _logger;
+
+        public BaseController(ILogger<BaseController> logger)
+        {
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
         public enum Notifica
         {
             Sucesso,
@@ -52,9 +61,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
         /// <returns>200: Sucesso; 400: usuario não encontrado; 500: problema na geração do token</returns>
         /// 
 
-        [FromServices]
-        public ILogger<BaseController> Logger { get; protected set; }
-
         public async Task<HttpStatusCode> RequestPasswordReset(UserManager<UsuarioIdentity> _userManager, string userEmail, string userName)
         {
             var user = await _userManager.FindByEmailAsync(userEmail);
@@ -63,7 +69,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             //confirmar o email do usuario para alterar a senha
             if (user == null)
             {
-                Logger.LogWarning("Tentativa de reset de senha para email não cadastrado: {Email}", userEmail);
+                _logger.LogWarning("Tentativa de reset de senha para email não cadastrado: {Email}", userEmail);
                 return HttpStatusCode.NotFound;
             }
 
@@ -87,12 +93,12 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 await EmailService.Enviar(email);
 
-                Logger.LogInformation("Email de redefinição de senha enviado com sucesso para {Email}", userEmail);
+                _logger.LogInformation("Email de redefinição de senha enviado com sucesso para {Email}", userEmail);
                 return HttpStatusCode.OK;
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, "Erro ao enviar email de reset de senha para {Email}", userEmail);
+                _logger.LogError(ex, "Erro ao enviar email de reset de senha para {Email}", userEmail);
                 return HttpStatusCode.InternalServerError;
             }
 

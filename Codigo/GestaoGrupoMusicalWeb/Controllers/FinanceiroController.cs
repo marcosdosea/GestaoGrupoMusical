@@ -20,8 +20,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IPessoaService _pessoaService;
 
 
-        public FinanceiroController(IFinanceiroService financeiroService, IMapper mapper, IGrupoMusicalService grupoMusical,
-            IPessoaService pessoaService)
+        public FinanceiroController(
+            IFinanceiroService financeiroService, 
+            IMapper mapper, 
+            IGrupoMusicalService grupoMusical,
+            IPessoaService pessoaService,
+            ILogger<BaseController> logger)
+                : base(logger)
         {
             _financeiroService = financeiroService;
             _mapper = mapper;

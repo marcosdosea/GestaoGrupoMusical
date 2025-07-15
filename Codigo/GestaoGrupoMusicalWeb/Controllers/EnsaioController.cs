@@ -26,10 +26,16 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private int PegarUltimosEventosDeAssociado { get; }
         private int PegarUltimosEnsaiosDeAssociado { get; }
 
-        public EnsaioController(IMapper mapper, IEnsaioService ensaio, IEventoService eventoService,
-            IPessoaService pessoa, IFigurinoService figurino,
+        public EnsaioController(
+            IMapper mapper, 
+            IEnsaioService ensaio, 
+            IEventoService eventoService,
+            IPessoaService pessoa, 
+            IFigurinoService figurino,
             IGrupoMusicalService grupoMusical,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            ILogger<BaseController> logger)
+                : base(logger)
         {
             _ensaioService = ensaio;
             _eventoService = eventoService;

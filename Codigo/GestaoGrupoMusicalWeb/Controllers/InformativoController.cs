@@ -20,7 +20,14 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IGrupoMusicalService _grupoMusicalService;
         private readonly IMapper _mapper;
 
-        public InformativoController(IInformativoService informativoService, IPessoaService pessoaService, IGrupoMusicalService grupoMusicalService, IMapper mapper)
+        public InformativoController(
+            IInformativoService informativoService, 
+            IPessoaService pessoaService, 
+            IGrupoMusicalService grupoMusicalService, 
+            IMapper mapper,
+            ILogger<BaseController> logger)
+                : base(logger)
+
         {
             _informativoService = informativoService;
             _pessoaService = pessoaService;

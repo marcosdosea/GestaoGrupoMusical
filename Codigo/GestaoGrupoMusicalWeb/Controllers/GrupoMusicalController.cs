@@ -18,7 +18,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IMapper _mapper;
         private readonly UserManager<UsuarioIdentity> _userManager;
 
-        public GrupoMusicalController(IGrupoMusicalService grupoMusical, IMapper mapper, UserManager<UsuarioIdentity> userManager, IPessoaService pessoaService)
+        public GrupoMusicalController(
+            IGrupoMusicalService grupoMusical,
+            IMapper mapper, 
+            UserManager<UsuarioIdentity> userManager, 
+            IPessoaService pessoaService,
+            ILogger<BaseController> logger)
+                : base(logger)
         {
             _grupoMusical = grupoMusical;
             _mapper = mapper;

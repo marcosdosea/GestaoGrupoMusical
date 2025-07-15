@@ -744,7 +744,7 @@ namespace Service
                          where pessoa.Email == email
                          select pessoa).FirstOrDefaultAsync();
 
-            return pessoaF.Nome;
+            return pessoaF?.Nome;
         }
 
         public async Task<bool> AssociadoExist(string email)
