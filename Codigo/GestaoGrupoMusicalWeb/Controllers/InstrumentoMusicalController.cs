@@ -26,7 +26,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
             IPessoaService pessoa,
             IMovimentacaoInstrumentoService movimentacaoInstrumento,
             IGrupoMusicalService grupoMusical,
-            IMapper mapper)
+            IMapper mapper,
+            ILogger<BaseController> logger)
+                : base(logger)
         {
             _instrumentoMusical = instrumentoMusical;
             _pessoa = pessoa;

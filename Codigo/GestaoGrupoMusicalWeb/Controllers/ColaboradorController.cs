@@ -14,7 +14,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IPessoaService _pessoaService;
         private readonly IMapper _mapper;
 
-        public ColaboradorController(IPessoaService pessoaService, IMapper mapper)
+        public ColaboradorController(
+            IPessoaService pessoaService, 
+            IMapper mapper,
+            ILogger<BaseController> logger)
+                : base(logger)
         {
             _pessoaService = pessoaService;
             _mapper = mapper;

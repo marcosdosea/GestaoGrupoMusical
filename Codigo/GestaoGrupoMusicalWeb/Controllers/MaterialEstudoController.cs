@@ -20,7 +20,14 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IMaterialEstudoService _materialEstudoService;
 
         // Injeção de dependência através do construtor
-        public MaterialEstudoController(IMaterialEstudoService materialEstudoService, IPessoaService pessoa, IMaterialEstudoService materialEstudo, IGrupoMusicalService grupoMusical, IMapper mapper)
+        public MaterialEstudoController(
+            IMaterialEstudoService materialEstudoService, 
+            IPessoaService pessoa, 
+            IMaterialEstudoService materialEstudo, 
+            IGrupoMusicalService grupoMusical, 
+            IMapper mapper,
+            ILogger<BaseController> logger)
+                : base(logger)
         {
             _materialEstudoService = materialEstudoService;
             _materialEstudo = materialEstudo;
