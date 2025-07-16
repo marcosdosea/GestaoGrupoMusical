@@ -10,11 +10,11 @@
     }
 
     body.editing .edit-mode {
-        display: block !important; 
+        display: block !important;
     }
 
     body.editing .view-mode {
-        display: none !important; 
+        display: none !important;
     }
 </style>
 
@@ -65,14 +65,14 @@
                                         <p class="form-control-plaintext fw-bold view-mode">@Model.TamanhoManequim</p>
                                         <select asp-for="IdManequim" asp-items="Model.ListaManequim" class="form-select edit-mode"></select>
                                     </div>
-                                </div>
-                                <div class="mb-2">
-                                    <label class="form-label text-muted">@Html.DisplayNameFor(model => model.DataEntrada)</label>
-                                    <p class="form-control-plaintext fw-bold">@Html.DisplayFor(model => model.DataEntrada)</p>
-                                </div>
-                                <div class="mb-2">
-                                    <label class="form-label text-muted">@Html.DisplayNameFor(model => model.DataSaida)</label>
-                                    <p class="form-control-plaintext fw-bold">@Html.DisplayFor(model => model.DataSaida)</p>
+                                    <div class="mb-2">
+                                        <label class="form-label text-muted">@Html.DisplayNameFor(model => model.DataEntrada)</label>
+                                        <p class="form-control-plaintext fw-bold">@Model.DataEntrada?.ToString("dd/MM/yyyy")</p>
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label text-muted">@Html.DisplayNameFor(model => model.DataSaida)</label>
+                                        <p class="form-control-plaintext fw-bold">@Model.DataSaida?.ToString("dd/MM/yyyy")</p>
+                                    </div>
                                 </div>
 
                                 <div class="mb-4">
@@ -145,28 +145,67 @@
                         <button id="saveButton" type="submit" class="btn btn-secondary edit-mode">
                             <i class="fa-solid fa-check"></i> Salvar
                         </button>
+                        <button type="button" class="btn btn-outline-danger btn-sm view-mode" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                            <i class="fa-solid fa-key"></i> Alterar Senha
+                        </button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
 
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content shadow border-danger border-opacity-75">
+                <div class="modal-header border-bottom border-dark">
+                    <h1 class="modal-title fs-5" id="changePasswordModalLabel">Alterar Senha</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="fs-6 mb-3 text-justify">
+                        Para alterar sua senha, confirme seu endereço de e-mail. Enviaremos um link para você criar uma nova.
+                    </p>
 
-@section Scripts 
+                    <form asp-controller="Identity" asp-action="ForgotPassword" method="post">
+                        <div class="form-group d-flex flex-column mb-2">
+                            <div class="d-flex justify-content-between">
+                                <label asp-for="Email" class="control-label fs-6"></label>
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                            <div class="input-group align-items-center overflow-hidden bg-white border rounded">
+                                <div class="input-group-icon p-2">
+                                    <i class="fa-regular fa-envelope fs-5 text-muted"></i>
+                                </div>
+                                <input asp-for="Email" class="form-control fs-6 ps-1 border-0" readonly />
+                            </div>
+                        </div>
+                        <button class="w-100 btn btn-lg btn-danger my-2" type="submit">Enviar Link</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+@section Scripts
 {
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const editButton = document.getElementById('editButton');
-            const cancelButton = document.getElementById('cancelButton');
-        
-            editButton.addEventListener('click', function () {
-                document.body.classList.add('editing');
-            });
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const editButton = document.getElementById('editButton');
+                const cancelButton = document.getElementById('cancelButton');
 
-            cancelButton.addEventListener('click', function () {
-                document.body.classList.remove('editing');
-                document.querySelector('form').reset();
+                editButton.addEventListener('click', function () {
+                    document.body.classList.add('editing');
+                });
+
+                cancelButton.addEventListener('click', function () {
+                    document.body.classList.remove('editing');
+                    // Reseta o formulário principal, não o do modal
+                    document.querySelector('form[asp-action="Perfil"]').reset();
+                });
             });
-        });
-    </script>
+        </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
