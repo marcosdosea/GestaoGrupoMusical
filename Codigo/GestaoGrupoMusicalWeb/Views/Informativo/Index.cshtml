@@ -6,7 +6,10 @@
     <partial name="_Notificar">
         <div class="d-flex justify-content-between align-items-center">
             <h5>@ViewData["Title"]</h5>
-            <a role="button" class="btn btn-secondary m-3" asp-controller="Informativo" asp-action="Create">Novo Informativo</a>
+            @if (!User.IsInRole("ASSOCIADO"))
+            {
+                <a role="button" class="btn btn-secondary m-3" asp-controller="Informativo" asp-action="Create">Novo Informativo</a>
+            }
         </div>
         <table id="tableInformativo" class="table table-striped table-bordered dt-responsive nowrap ">
             <thead>
@@ -71,13 +74,25 @@
                                     return day + '/' + month + '/' + year + "  " + hours + ":" + minutes + ":" + seconds;
                                 }
                             },
-                            { "data": "mensagem", "name": "Mensagem", "autoWidth": true },
+                            {"data": "mensagem", "name": "Mensagem", "autoWidth": true },
                             {
                                 "render": function (data, type, full, meta) {
-
-                                    return '<a class="btn btn btn-secondary btn-sm  m-2" href="/Informativo/Edit/' + full.id + '"><i class="fa-solid fa-pen-to-square"> </i> Editar</a> ' +
-                                        '<a onclick="showConfirmationModalDelete(' + full.id + ')" class="btn btn-sm btn-secondary" role="button"><i class="fa-solid fa-xmark"></i> Excluir</a>' +
-                                        '<a onclick="showConfirmationModalNotificar(' + full.id + ')" class="btn btn btn-secondary btn-sm  m-2" "><i class="fa-solid fa-envelope"> </i> Notificar</a> ';
+                                    @if (!User.IsInRole("ASSOCIADO"))
+                                    {
+                                            // Se o usuário NÃO FOR "ASSOCIADO", renderiza os botões.
+                                            <text>
+                                            return '<a class="btn btn btn-secondary btn-sm  m-2" href="/Informativo/Edit/' + full.id + '"><i class="fa-solid fa-pen-to-square"> </i> Editar</a> ' +
+                                                   '<a onclick="showConfirmationModalDelete(' + full.id + ')" class="btn btn-sm btn-secondary" role="button"><i class="fa-solid fa-xmark"></i> Excluir</a>' +
+                                                   '<a onclick="showConfirmationModalNotificar(' + full.id + ')" class="btn btn btn-secondary btn-sm  m-2"><i class="fa-solid fa-envelope"> </i> Notificar</a>';
+                                            </text>
+                                    }
+                                    else
+                                    {
+                                            // Se o usuário FOR "ASSOCIADO", não retorna nada (ou uma string vazia).
+                                            <text>
+                                            return '';
+                                            </text>
+                                    }
                                 }
                             },
                         ],
