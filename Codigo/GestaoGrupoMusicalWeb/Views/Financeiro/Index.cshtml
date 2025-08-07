@@ -251,16 +251,16 @@
                         {
 
                 "render": function (data, type, full, meta) {
-                // Define a classe base para todos os botões, garantindo a mesma cor e tamanho
+                
                 const baseClass = "btn btn-secondary btn-sm m-1";
 
-                // Cria cada botão individualmente para clareza, usando a classe base
+                
                 let editBtn = `<a class="${baseClass}" href="/Financeiro/Edit/${full.id}"><i class="fa-solid fa-pen-to-square"></i> Editar</a>`;
                 let detailsBtn = `<a class="${baseClass}" href="/Financeiro/Details/${full.id}"><i class="fa-solid fa-circle-info"></i> Detalhes</a>`;
                 let deleteBtn = `<button type="button" onclick="showConfirmationModalDelete(${full.id})" class="${baseClass}"><i class="fa-solid fa-xmark"></i> Excluir</button>`;
                 let notifyBtn = `<button type="button" onclick="showConfirmationModalNotificar(${full.id})" class="${baseClass}"><i class="fa-solid fa-envelope"></i> Notificar</button>`;
 
-                // Retorna todos os botões juntos, sem quebra de linha, dentro de um grupo
+                
                 return `<div class="btn-group">${editBtn}${detailsBtn}${deleteBtn}${notifyBtn}</div>`;
             }
 

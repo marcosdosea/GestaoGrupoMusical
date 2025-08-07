@@ -66,12 +66,18 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         [Authorize(Roles = "ADMINISTRADOR GRUPO,COLABORADOR,REGENTE")]
         // GET: EnsaioController/Details/5
-        public async Task<ActionResult> Details(int id)
+        public ActionResult Details(int id)
         {
-            var ensaio = _ensaioService.GetDetailsDTO(id);
-            if (Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value) != ensaio.IdGrupoMusical)
+            if (id <= 0)
             {
-                Notificar("<b>Ensaio não encontrado!</b>", Notifica.Alerta);
+                Notificar("ID de ensaio inválido!", Notifica.Erro);
+                return RedirectToAction(nameof(Index));
+            }
+
+            var ensaio = _ensaioService.GetDetails(id);
+            if (ensaio == null)
+            {
+                Notificar("Ensaio não encontrado!", Notifica.Alerta);
                 return RedirectToAction(nameof(Index));
             }
             return View(ensaio);

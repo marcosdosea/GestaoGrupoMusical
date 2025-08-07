@@ -267,28 +267,29 @@ namespace Service
             return await query;
         }
 
-        public EnsaioDetailsDTO GetDetailsDTO(int idEnsaio)
+        public EnsaioDetailsDTO? GetDetails(int idEnsaio)
         {
-            var query = _context.Ensaios
-                .Select(g => new EnsaioDetailsDTO
-                {
-                    Id = g.Id,
-                    DataHoraInicio = g.DataHoraInicio,
-                    DataHoraFim = g.DataHoraFim,
-                    Tipo = g.Tipo,
-                    Local = g.Local,
-                    PresencaObrigatoria = g.PresencaObrigatoria == 1 ? "Sim" : "Não",
-                    Repertorio = g.Repertorio,
-                    Regentes = _context.Ensaiopessoas
-                                       .Where(ep => ep.IdEnsaio == idEnsaio)
-                                       .OrderBy(ep => ep.IdPessoaNavigation.Nome)
-                                       .Select(ep => ep.IdPessoaNavigation.Nome).AsEnumerable(),
-                    IdGrupoMusical = g.IdGrupoMusical
+            var query = from ensaio in _context.Ensaios
+                        where ensaio.Id == idEnsaio
+                        select new EnsaioDetailsDTO
+                        {
+                            Id = ensaio.Id,
+                            Tipo = ensaio.Tipo,
+                            DataHoraInicio = ensaio.DataHoraInicio,
+                            DataHoraFim = ensaio.DataHoraFim,
+                            PresencaObrigatoria = ensaio.PresencaObrigatoria == 1 ? "Sim" : "Não",
+                            Local = ensaio.Local,
+                            Repertorio = ensaio.Repertorio,
+                            // CORREÇÃO: Filtrando pelo papel de regente (5) na tabela Ensaiopessoa
+                            Regentes = (from ensaiopessoa in _context.Ensaiopessoas
+                                        join pessoa in _context.Pessoas on ensaiopessoa.IdPessoa equals pessoa.Id
+                                        where ensaiopessoa.IdEnsaio == idEnsaio && ensaiopessoa.IdPapelGrupo == 5 // Papel de Regente no Ensaio
+                                        select pessoa.Nome).ToList()
+                        };
 
-                }).Where(g => g.Id == idEnsaio);
-
-            return query.First();
+            return query.FirstOrDefault();
         }
+
 
         public HttpStatusCode RegistrarFrequencia(FrequenciaEnsaioDTO frequencia)
         {

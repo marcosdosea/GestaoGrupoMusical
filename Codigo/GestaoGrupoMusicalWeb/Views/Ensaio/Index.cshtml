@@ -82,12 +82,20 @@
                         { "data": "local", "name": "Local", "autoWidth": true },
                         { "data": "presencaObrigatoria", "name": "Presença Obrigatória", "autoWidth": true },
                         {
-                            "render": function (data, type, full, meta) {
-                                return '<a class="btn btn btn-secondary btn-sm  m-2" href="/Ensaio/Edit/' + full.id + '"><i class="fa-solid fa-pen-to-square"> </i> Editar</a>' +
-                                    '<a onclick="showConfirmationModal(' + full.id + ')" class="btn btn-sm btn-secondary" role="button"><i class="fa-solid fa-xmark"> </i> Excluir</a>' +
-                                    '<a class="btn btn btn-secondary btn-sm  m-2" href="/Ensaio/RegistrarFrequencia/' + full.id + '"><i class="fa-solid fa-arrow-right-arrow-left"> </i> Frequência</a>' +
-                                    '<a onclick="showConfirmationModalNotificar(' + full.id + ')" class="btn btn btn-secondary btn-sm  m-2" "><i class="fa-solid fa-envelope"> </i> Notificar</a>';
-                            }
+                "render": function (data, type, full, meta) {
+                // Define uma classe base para padronizar todos os botões
+                const baseClass = "btn btn-secondary btn-sm m-1";
+
+                // Cria cada botão individualmente
+                let editBtn = `<a class="${baseClass}" href="/Ensaio/Edit/${full.id}"><i class="fa-solid fa-pen-to-square"></i> Editar</a>`;
+                let detailsBtn = `<a class="${baseClass}" href="/Ensaio/Details/${full.id}"><i class="fa-solid fa-circle-info"></i> Detalhes</a>`;
+                let deleteBtn = `<button type="button" onclick="showConfirmationModal(${full.id})" class="${baseClass}"><i class="fa-solid fa-xmark"></i> Excluir</button>`;
+                let frequencyBtn = `<a class="${baseClass}" href="/Ensaio/RegistrarFrequencia/${full.id}"><i class="fa-solid fa-arrow-right-arrow-left"></i> Frequência</a>`;
+                let notifyBtn = `<button type="button" onclick="showConfirmationModalNotificar(${full.id})" class="${baseClass}"><i class="fa-solid fa-envelope"></i> Notificar</button>`;
+
+                // Retorna todos os botões na mesma linha, dentro de um grupo para melhor alinhamento
+                return `<div class="btn-group">${editBtn}${detailsBtn}${deleteBtn}${frequencyBtn}${notifyBtn}</div>`;
+            }
                         },
                     ],
                     language: {

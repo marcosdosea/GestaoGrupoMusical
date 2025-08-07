@@ -1,91 +1,88 @@
 ﻿@model Core.DTO.EnsaioDetailsDTO
 
 @{
-    ViewData["Title"] = $"Ensaio";
-    ViewData["Details"] = $"Detalhes";
+    ViewData["Title"] = "Detalhes do Ensaio";
+    ViewData["Ensaios"] = "Ensaios";
+    Layout = "_LayoutColaborador";
 }
-<div class="container">
-    <div class="row">
-        <div class="col-md-8">
-            <h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">Detalhes do Ensaio</h1>
-            <nav>
-                <ol class="breadcrumb px-3">
-                    <li>
-                        <strong>
-                            <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Title"]</a>
-                            <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Details"]</spn>
-                        </strong>
-                    </li>
-                </ol>
-            </nav>
-            <hr />
-            <br />
-            <div class="container">
-                <div class="row">
-                    <div class="form-group col-xl">
-                        <label asp-for="Tipo" class="control-label"></label>
-                        <input asp-for="Tipo" class="form-control" disabled />
-                    </div>
-                </div>
-            </div>
+<partial name="_Notificar" />
 
-            <div class="container">
-                <div class="row">
-                    <div class="form-group col-xxl-4">
-                        <label asp-for="DataHoraInicio" class="control-label"></label>
-                        <input asp-for="DataHoraInicio" class="form-control" disabled />
-                    </div>
-                    <div class="form-group col-xxl-4">
-                        <label asp-for="DataHoraFim" class="control-label"></label>
-                        <input asp-for="DataHoraFim" class="form-control" disabled />
-                    </div>
-                    <div class="form-group col-xxl-4">
-                        <label asp-for="PresencaObrigatoria" class="control-label"></label>
-                        <input asp-for="PresencaObrigatoria" class="form-control" disabled />
-                    </div>
-                </div>
-            </div>
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <h1 class="p-3 bg-danger bg-opacity-75 text-white fs-5">@ViewData["Title"]</h1>
+        <nav>
+            <ol class="breadcrumb px-3">
+                <strong>
+                    <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Ensaios"]</a>
+                    <span class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> Detalhes</span>
+                </strong>
+            </ol>
+        </nav>
+        <hr />
+        <br />
 
-            <div class="container">
-                <div class="row">
-                    <div class="form-group">
-                        <label asp-for="Local" class="control-label"></label>
-                        <input asp-for="Local" class="form-control" disabled />
-                    </div>
-                </div>
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                <h6 class="m-0 font-weight-bold text-danger">Dados do Ensaio</h6>
+                <a class="btn btn-outline-secondary btn-sm" asp-action="Index"><i class="fa-solid fa-arrow-left"></i> Voltar</a>
             </div>
-            <div class="container">
-                <div class="row">
-                    <div class="form-group col-xl">
-                        <label asp-for="Regentes" class="control-label"></label>
-                        @{
-                            if (Model.Regentes != null)
-                            {
-                                foreach (var regente in Model.Regentes)
-                                {
-                                    <input class="form-control" value="@regente" disabled />
+            <div class="card-body">
+                <div class="mb-4">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fa-solid fa-music fs-4 text-danger me-2"></i>
+                        <h6 class="m-0 font-weight-bold text-danger">Informações do Ensaio</h6>
+                    </div>
+                    <hr class="text-danger mt-1 mb-3" style="width: 50px;">
+
+                    <div class="row">
+                        <!-- Coluna da Esquerda -->
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Tipo)</label>
+                                <p class="form-control-plaintext fw-bold">@Html.DisplayFor(model => model.Tipo)</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-muted">@Html.DisplayNameFor(model => model.DataHoraInicio)</label>
+                                <p class="form-control-plaintext fw-bold">@Model.DataHoraInicio?.ToString("dd/MM/yyyy HH:mm")</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-muted">@Html.DisplayNameFor(model => model.DataHoraFim)</label>
+                                <p class="form-control-plaintext fw-bold">@Model.DataHoraFim?.ToString("dd/MM/yyyy HH:mm")</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-muted">@Html.DisplayNameFor(model => model.PresencaObrigatoria)</label>
+                                <p class="form-control-plaintext fw-bold">@Html.DisplayFor(model => model.PresencaObrigatoria)</p>
+                            </div>
+                        </div>
+
+                        <!-- Coluna da Direita -->
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Local)</label>
+                                <p class="form-control-plaintext fw-bold">@Html.DisplayFor(model => model.Local)</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Regentes)</label>
+                                @{
+                                    if (Model.Regentes != null && Model.Regentes.Any())
+                                    {
+                                        <p class="form-control-plaintext fw-bold">@string.Join(", ", Model.Regentes)</p>
+                                    }
+                                    else
+                                    {
+                                        <p class="form-control-plaintext fw-bold fst-italic">Nenhum regente alocado.</p>
+                                    }
                                 }
-                            }
-                        }
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Repertorio)</label>
+                                <p class="form-control-plaintext fw-bold">@Html.DisplayFor(model => model.Repertorio)</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="container">
-                <div class="row">
-                    <div class="form-group">
-                        <label asp-for="Repertorio" class="control-label"></label>
-                        <textarea asp-for="Repertorio" class="form-control" disabled></textarea>
-                    </div>
-                </div>
-            </div>
-            <br />
-            <br />
-            <div class="container">
-                <div class="row d-flex flex-column-reverse d-grid gap-2 mx-auto d-flex flex-sm-column-reverse flex-xl-row">
-                    <div class="col-5 d-none d-sm-block"></div>
-                    <a class="btn btn-light text-secondary border border-secondary d-grid gap-2 col-sm" role="button" asp-controller="Ensaio" asp-action="Index">Voltar</a>
-                    <a class="btn btn-secondary d-grid gap-2 col-sm" role="button" asp-controller="Ensaio" asp-action="Edit" asp-route-id="@Model.Id">Editar</a>
-                </div>
+            <div class="card-footer d-flex justify-content-end">
             </div>
         </div>
     </div>
