@@ -1,1 +1,67 @@
-﻿
+﻿@model GestaoGrupoMusicalWeb.Models.FinanceiroCreateViewModel
+
+@{
+    ViewData["Title"] = "Editar Lançamento";
+    ViewData["Pagamentos"] = "Pagamentos";
+    Layout = "_LayoutColaborador";
+}
+<partial name="_Notificar" />
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <h1 class="p-3 bg-danger bg-opacity-75 text-white fs-5">@ViewData["Title"]</h1>
+        <nav>
+            <ol class="breadcrumb px-3">
+                <strong>
+                    <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Pagamentos"]</a>
+                    <span class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> Editar</span>
+                </strong>
+            </ol>
+        </nav>
+        <hr />
+        <br />
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+
+            <div class="form-group mb-3">
+                <label asp-for="Descricao" class="control-label"></label>
+                <input asp-for="Descricao" class="form-control" />
+                <span asp-validation-for="Descricao" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-4 mb-3">
+                    <label asp-for="DataInicio" class="control-label"></label>
+                    <input asp-for="DataInicio" type="date" class="form-control" value="@Model.DataInicio?.ToString("yyyy-MM-dd")" />
+                    <span asp-validation-for="DataInicio" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-md-4 mb-3">
+                    <label asp-for="DataFim" class="control-label"></label>
+                    <input asp-for="DataFim" type="date" class="form-control" value="@Model.DataFim?.ToString("yyyy-MM-dd")" />
+                    <span asp-validation-for="DataFim" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-md-4 mb-3">
+                    <label asp-for="Valor" class="control-label"></label>
+                    <input asp-for="Valor" class="form-control" />
+                    <span asp-validation-for="Valor" class="text-danger"></span>
+                </div>
+            </div>
+
+            <br />
+            <div class="row d-flex flex-column-reverse d-grid gap-2 mx-auto d-flex flex-sm-column-reverse flex-xl-row">
+                <div class="col-xl-8 col-sm-12 d-none d-sm-block"></div>
+                <a class="btn btn-light text-secondary border border-secondary d-grid gap-2 col-sm" asp-action="Index">Voltar</a>
+                <input type="submit" value="Salvar" class="btn btn-secondary d-grid gap-2 col-sm" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

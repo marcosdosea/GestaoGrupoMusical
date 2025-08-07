@@ -55,10 +55,10 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: Pagamento/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
+        //public ActionResult Details(int id)
+        //{
+           // return View();
+        //}
 
         // GET: Pagamento/Create
         public ActionResult Create()
@@ -106,47 +106,90 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Pagamento/Edit/5
+        // FinanceiroController.cs
+
+        // GET: Financeiro/Edit/5
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         public ActionResult Edit(int id)
         {
-            return View();
+            var financeiro = _financeiroService.Get(id);
+            var financeiroModel = _mapper.Map<FinanceiroCreateViewModel>(financeiro);
+            return View(financeiroModel);
         }
 
         // POST: Pagamento/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
+        public async Task<ActionResult> Edit(int id, FinanceiroCreateViewModel model)
         {
-            try
+            if (id != model.Id)
             {
+                Notificar("<b>Erro</b>! ID do pagamento não corresponde.", Notifica.Erro);
                 return RedirectToAction(nameof(Index));
             }
-            catch
-            {
-                return View();
-            }
-        }
 
-        // GET: Pagamento/Delete/5
-        [HttpPost]
+            if (ModelState.IsValid)
+            {
+                int idGrupoMusical = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
+                model.IdGrupoMusical = idGrupoMusical;
+
+                // Ajuste principal: Mapear para a entidade correta "Receitafinanceira"
+                var financeiro = _mapper.Map<Receitafinanceira>(model);
+
+                switch (_financeiroService.Edit(financeiro))
+                {
+                    case FinanceiroStatus.Success:
+                        Notificar("<b>Sucesso</b>! Pagamento atualizado com sucesso!", Notifica.Sucesso);
+                        return RedirectToAction(nameof(Index));
+                    case FinanceiroStatus.DataInicioMaiorQueDataFim:
+                        Notificar("<b>Erro</b>! A data de <b>início</b> não pode ser maior que a data <b>fim</b>!", Notifica.Alerta);
+                        break;
+                    case FinanceiroStatus.DataFimMenorQueDataDeHoje:
+                        Notificar("<b>Erro</b>! A data <b>fim</b> não pode ser menor que a data de <b>hoje</b>!", Notifica.Alerta);
+                        break;
+                    case FinanceiroStatus.ValorZeroOuNegativo:
+                        Notificar("<b>Erro</b>! O <b>valor</b> deve ser <b>positivo</b>!", Notifica.Alerta);
+                        break;
+                    default:
+                        Notificar("<b>Erro</b>! Algo deu errado na atualização do pagamento!", Notifica.Erro);
+                        break;
+                }
+            }
+
+            // Se o modelo não for válido ou a edição falhar, retorna para a mesma view com os dados preenchidos
+            return View(model);
+        }
+        // GET: Financeiro/Details/5
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
+        public ActionResult Details(int id)
+        {
+            var financeiro = _financeiroService.Get(id);
+            if (financeiro == null)
+            {
+                return NotFound();
+            }
+            var financeiroModel = _mapper.Map<FinanceiroCreateViewModel>(financeiro);
+            return View(financeiroModel);
+        }
+        // GET: Financeiro/Delete/5
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         public ActionResult Delete(int id)
         {
-            return View();
+            var financeiro = _financeiroService.Get(id);
+            var financeiroModel = _mapper.Map<FinanceiroCreateViewModel>(financeiro);
+            return View(financeiroModel);
         }
 
-        // POST: Pagamento/Delete/5
-        [HttpPost]
+        // POST: Financeiro/Delete/5
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
+        public ActionResult DeleteConfirmed(int id)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            _financeiroService.Delete(id);
+            Notificar("Pagamento <b>removido</b> com sucesso!", Notifica.Sucesso);
+            return RedirectToAction(nameof(Index));
         }
         public async Task<ActionResult> NotificarFinanceiroViaEmail(int id)
         {

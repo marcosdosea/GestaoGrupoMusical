@@ -1,196 +1,393 @@
 ﻿@model IEnumerable<Core.DTO.FinanceiroIndexDataPage>
 
+
+
 <link href="~/lib/datatable/css/datatables.min.css" rel="stylesheet" />
+
 @{
+
     ViewData["Title"] = "Pagamentos";
+
 }
 
+
+
 <partial name="_Notificar">
+
     <div class="d-flex justify-content-between align-items-center">
+
         <h5>@ViewData["Title"]</h5>
+
         <a role="button" class="btn btn-secondary m-3" asp-controller="Financeiro" asp-action="Create">Novo Pagamento</a>
+
     </div>
+
     <table id="tableFinanceiro" class="table table-striped table-bordered dt-responsive nowrap ">
+
         <thead>
+
             <tr class="bg-danger bg-opacity-75 text-white">
+
                 <th class="px-3">
+
                     @Html.DisplayNameFor(model => model.Descricao)
+
                 </th>
+
                 <th class="px-3">
+
                     @Html.DisplayNameFor(model => model.DataInicio)
+
                 </th>
+
                 <th class="px-3">
+
                     @Html.DisplayNameFor(model => model.DataFim)
+
                 </th>
+
                 <th class="px-3">
+
                     @Html.DisplayNameFor(model => model.Pagos)
+
                 </th>
+
                 <th class="px-3">
+
                     @Html.DisplayNameFor(model => model.Isentos)
+
                 </th>
+
                 <th class="px-3">
+
                     @Html.DisplayNameFor(model => model.Atrasos)
+
                 </th>
+
                 <th class="px-3">
+
                     @Html.DisplayNameFor(model => model.Recebido)
+
                 </th>
+
                 <th class="px-3">
+
                     <span>Ações</span>
+
                 </th>
+
             </tr>
+
         </thead>
+
     </table>
-    @*    </div>*@
-    @section Scripts {
+
+@*    </div>*@
+
+@section Scripts {
+
         <script src="~/lib/datatable/js/datatables.min.js"></script>
+
         <script>
+
             $(document).ready(function () {
+
                 $('#tableFinanceiro').DataTable({
+
                     "processing": true, // for show progress bar
+
                     "serverSide": true, // for process server side
+
                     "filter": true, // this is for disable filter (search box)
+
                     "orderMulti": false, // for disable multiple column at once
+
                     "pageLength": 5,
+
                     "lengthMenu": [
+
                         [5, 10, 20, -1],
+
                         [5, 10, 20, "Todos"]
+
                     ],
+
                     "ajax": {
+
                         "url": "/Financeiro/GetDataPage",
+
                         "type": "POST",
+
                         "datatype": "json"
+
                     },
+
                     "columnDefs": [{
+
                         "targets": [0],
+
                         "visible": true,
+
                         "searchable": false
+
                     },
+
                     {
+
                         "targets": [3],
+
                         "visible": true,
+
                         "searchable": false,
+
                         "orderable": false
 
+
+
                     }],
+
                     "order": [[1, 'desc'],[2, 'desc'], [0, 'asc']],
+
                     "columns": [
+
                         {
+
                             "data": "descricao",
+
                             "autoWidth": true,
+
                         },
+
                         {
+
                             "data": "dataInicio",
+
                             "name": "Inicio",
+
                             "autoWidth": true,
-                            "render": function (data, type, full, meta) {
-                                var date = new Date(data);
-                                var day = String(date.getDate()).padStart(2, '0');
-                                var month = String(date.getMonth() + 1).padStart(2, '0');
-                                var year = date.getFullYear();
-                                return day + '/' + month + '/' + year;
-                            }
-                        },
-                        {
-                            "data": "dataFim",
-                            "autoWidth": true,
-                            "render": function (data, type, full, meta) {
-                                var date = new Date(data);
-                                var day = String(date.getDate()).padStart(2, '0');
-                                var month = String(date.getMonth() + 1).padStart(2, '0');
-                                var year = date.getFullYear();
-                                return day + '/' + month + '/' + year;
-                            }
-                        },
-                        {
-                            "data": "pagos",
-                            "autoWidth": true,
-                        },
-                        {
-                            "data": "isentos",
-                            "autoWidth": true,
-                        },
-                        {
-                            "data": "atrasos",
-                            "autoWidth": true,
-                        },
-                        {
-                            "data": "recebido",
-                            "autoWidth": true,
-                            "render": function (data, type, full, meta) {
-                                if (!isNaN(data)) {
-                                    return parseFloat(data).toFixed(2).replace('.', ',');
-                                }
-                                return data;
-                            }
-                        },
-                        {
+
                             "render": function (data, type, full, meta) {
 
-                                return '<a class="btn btn btn-secondary btn-sm  m-2" href="/Financeiro/Edit/' + full.id + '"><i class="fa-solid fa-pen-to-square"> </i> Editar</a> ' +
-                                    '<a onclick="showConfirmationModalDelete(' + full.id + ')" class="btn btn-sm btn-secondary" role="button"><i class="fa-solid fa-xmark"></i> Excluir</a>' +
-                                    '</br><a onclick="showConfirmationModalNotificar(' + full.id + ')" class="btn btn btn-secondary btn-sm  m-2" "><i class="fa-solid fa-envelope"> </i> Notificar Associados</a> ';
+                                var date = new Date(data);
+
+                                var day = String(date.getDate()).padStart(2, '0');
+
+                                var month = String(date.getMonth() + 1).padStart(2, '0');
+
+                                var year = date.getFullYear();
+
+                                return day + '/' + month + '/' + year;
+
                             }
+
                         },
+
+                        {
+
+                            "data": "dataFim",
+
+                            "autoWidth": true,
+
+                            "render": function (data, type, full, meta) {
+
+                                var date = new Date(data);
+
+                                var day = String(date.getDate()).padStart(2, '0');
+
+                                var month = String(date.getMonth() + 1).padStart(2, '0');
+
+                                var year = date.getFullYear();
+
+                                return day + '/' + month + '/' + year;
+
+                            }
+
+                        },
+
+                        {
+
+                            "data": "pagos",
+
+                            "autoWidth": true,
+
+                        },
+
+                        {
+
+                            "data": "isentos",
+
+                            "autoWidth": true,
+
+                        },
+
+                        {
+
+                            "data": "atrasos",
+
+                            "autoWidth": true,
+
+                        },
+
+                        {
+
+                            "data": "recebido",
+
+                            "autoWidth": true,
+
+                            "render": function (data, type, full, meta) {
+
+                                if (!isNaN(data)) {
+
+                                    return parseFloat(data).toFixed(2).replace('.', ',');
+
+                                }
+
+                                return data;
+
+                            }
+
+                        },
+
+                        {
+
+                "render": function (data, type, full, meta) {
+                // Define a classe base para todos os botões, garantindo a mesma cor e tamanho
+                const baseClass = "btn btn-secondary btn-sm m-1";
+
+                // Cria cada botão individualmente para clareza, usando a classe base
+                let editBtn = `<a class="${baseClass}" href="/Financeiro/Edit/${full.id}"><i class="fa-solid fa-pen-to-square"></i> Editar</a>`;
+                let detailsBtn = `<a class="${baseClass}" href="/Financeiro/Details/${full.id}"><i class="fa-solid fa-circle-info"></i> Detalhes</a>`;
+                let deleteBtn = `<button type="button" onclick="showConfirmationModalDelete(${full.id})" class="${baseClass}"><i class="fa-solid fa-xmark"></i> Excluir</button>`;
+                let notifyBtn = `<button type="button" onclick="showConfirmationModalNotificar(${full.id})" class="${baseClass}"><i class="fa-solid fa-envelope"></i> Notificar</button>`;
+
+                // Retorna todos os botões juntos, sem quebra de linha, dentro de um grupo
+                return `<div class="btn-group">${editBtn}${detailsBtn}${deleteBtn}${notifyBtn}</div>`;
+            }
+
+                        },
+
                     ],
+
                     language: {
+
                         url: "lib/datatable/js/pt-br.json",
+
                     }
+
                 });
+
             });
+
         </script>
-    }
+
+}
+
     <div class="modal fade" id="financeiroModalDelete" tabindex="-1" aria-labelledby="financeiroLabel" aria-hidden="true">
+
         <div class="modal-dialog">
+
             <div class="modal-content">
+
                 <div class="modal-header">
+
                     <h5 class="modal-title" id="admLabel1">Confirmar Exclusão do pagamento</h5>
+
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
                 </div>
+
                 <div class="modal-body1">
+
                     Deseja <b>Excluir</b> o <b>pagamento</b>?
+
                 </div>
+
                 <form method="post" class="modal-footer">
+
                     <button type="button" class="btn btn-outline-secondary col-3 me-4" data-bs-dismiss="modal">Não</button>
+
                     <button type="submit" class="btn btn-secondary col-3">Sim</button>
+
                 </form>
+
             </div>
+
         </div>
+
     </div>
+
     <div class="modal fade" id="financeiroModalNotificar" tabindex="-1" aria-labelledby="financeiroLabel" aria-hidden="true">
+
         <div class="modal-dialog">
+
             <div class="modal-content">
+
                 <div class="modal-header">
+
                     <h5 class="modal-title" id="admLabel2">Confirmar Notificação do pagamento?</h5>
+
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
                 </div>
+
                 <div class="modal-body2">
+
                     Deseja <b>Notificar</b> o <b>Pagamento</b>?
+
                 </div>
+
                 <form method="post" class="modal-footer">
+
                     <button type="button" class="btn btn-outline-secondary col-3 me-4" data-bs-dismiss="modal">Não</button>
+
                     <button type="submit" class="btn btn-secondary col-3">Sim</button>
+
                 </form>
+
             </div>
+
         </div>
+
     </div>
+
     <script>
+
         function showConfirmationModalDelete(formId) {
+
             var modal = document.getElementById('financeiroModalDelete');
+
             var modalForm = modal.querySelector('form');
+
             modalForm.action = '/Financeiro/Delete/' + formId;
+
             var modalBody = modal.querySelector('.modal-body1');
+
             modalBody.innerHTML = 'Deseja <b>Excluir</b> o <b>Pagamento</b>?';
+
             var modal = new bootstrap.Modal(modal);
+
             modal.show();
+
         }
+
+
 
         function showConfirmationModalNotificar(formId) {
+
             var modal = document.getElementById('financeiroModalNotificar');
+
             var modalForm = modal.querySelector('form');
+
             modalForm.action = '/Financeiro/NotificarFinanceiroViaEmail/' + formId;
+
             var modalBody = modal.querySelector('.modal-body2');
+
             modalBody.innerHTML = 'Deseja <b>Notificar</b> o <b>Pagamento</b> para todos os associados??';
+
             var modal = new bootstrap.Modal(modal);
+
             modal.show();
+
         }
+
     </script>

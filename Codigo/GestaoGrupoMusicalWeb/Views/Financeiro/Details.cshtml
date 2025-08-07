@@ -1,0 +1,63 @@
+﻿@model GestaoGrupoMusicalWeb.Models.FinanceiroCreateViewModel
+
+@{
+    ViewData["Title"] = "Detalhes do Lançamento";
+    ViewData["Pagamentos"] = "Pagamentos";
+    Layout = "_LayoutColaborador";
+}
+<partial name="_Notificar" />
+
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <h1 class="p-3 bg-danger bg-opacity-75 text-white fs-5">@ViewData["Title"]</h1>
+        <nav>
+            <ol class="breadcrumb px-3">
+                <strong>
+                    <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Pagamentos"]</a>
+                    <span class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> Detalhes</span>
+                </strong>
+            </ol>
+        </nav>
+        <hr />
+        <br />
+
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                <h6 class="m-0 font-weight-bold text-danger">Dados do Lançamento</h6>
+                <a class="btn btn-outline-secondary btn-sm" asp-action="Index"><i class="fa-solid fa-arrow-left"></i> Voltar</a>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="mb-4">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fa-solid fa-file-invoice-dollar fs-4 text-danger me-2"></i>
+                                <h6 class="m-0 font-weight-bold text-danger">Informações Financeiras</h6>
+                            </div>
+                            <hr class="text-danger mt-1 mb-3" style="width: 50px;">
+
+                            <div class="row">
+                                <div class="col-md-6 mb-2">
+                                    <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Descricao)</label>
+                                    <p class="form-control-plaintext fw-bold">@Html.DisplayFor(model => model.Descricao)</p>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Valor)</label>
+                                    <p class="form-control-plaintext fw-bold">@Model.Valor?.ToString("C", new System.Globalization.CultureInfo("pt-BR"))</p>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <label class="form-label text-muted">@Html.DisplayNameFor(model => model.DataInicio)</label>
+                                    <p class="form-control-plaintext fw-bold">@Model.DataInicio?.ToString("dd/MM/yyyy")</p>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <label class="form-label text-muted">@Html.DisplayNameFor(model => model.DataFim)</label>
+                                    <p class="form-control-plaintext fw-bold">@Model.DataFim?.ToString("dd/MM/yyyy")</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

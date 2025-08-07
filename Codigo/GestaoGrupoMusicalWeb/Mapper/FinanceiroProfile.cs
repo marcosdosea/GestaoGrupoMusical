@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
-using Core.DTO;
 using Core;
+using Core.DTO;
 using GestaoGrupoMusicalWeb.Models;
-using System.Runtime.ConstrainedExecution;
 
 namespace GestaoGrupoMusicalWeb.Mapper
 {
@@ -10,8 +9,14 @@ namespace GestaoGrupoMusicalWeb.Mapper
     {
         public FinanceiroProfile()
         {
-            CreateMap<FinanceiroCreateDTO, FinanceiroCreateViewModel>().ReverseMap();
-            CreateMap<FinanceiroCreateDTO, Receitafinanceira>().ReverseMap();
+            // Mapeamento para a camada de serviço (DTO)
+            CreateMap<FinanceiroCreateViewModel, FinanceiroCreateDTO>();
+
+            // Mapeamento para a Entidade do Banco (usado no Edit POST)
+            CreateMap<FinanceiroCreateViewModel, Receitafinanceira>();
+
+            // Mapeamento da Entidade do Banco para o ViewModel (usado no Edit GET)
+            CreateMap<Receitafinanceira, FinanceiroCreateViewModel>();
         }
     }
 }
