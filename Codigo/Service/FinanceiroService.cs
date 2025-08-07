@@ -3,6 +3,7 @@ using Core.Datatables;
 using Core.DTO;
 using Core.Service;
 using Email;
+using Microsoft.EntityFrameworkCore; // Adicione este using para o BeginTransaction
 using System.Net;
 
 namespace Service
@@ -16,24 +17,24 @@ namespace Service
             _context = context;
         }
 
-        public FinanceiroStatus Create (FinanceiroCreateDTO rf)
+        public FinanceiroStatus Create(FinanceiroCreateDTO rf)
         {
             var transaction = _context.Database.BeginTransaction();
             try
             {
-                if(rf.DataInicio > rf.DataFim)
+                if (rf.DataInicio > rf.DataFim)
                 {
                     return FinanceiroStatus.DataInicioMaiorQueDataFim;
                 }
-                if(rf.DataFim < DateTime.Now)
+                if (rf.DataFim < DateTime.Now.Date) // Use .Date para comparar apenas a data
                 {
                     return FinanceiroStatus.DataFimMenorQueDataDeHoje;
                 }
-                if(rf.Valor <= 0)
+                if (rf.Valor <= 0)
                 {
                     return FinanceiroStatus.ValorZeroOuNegativo;
                 }
-                
+
                 Receitafinanceira f = new Receitafinanceira
                 {
                     DataInicio = rf.DataInicio ?? DateTime.Now,
@@ -46,10 +47,10 @@ namespace Service
                 _context.SaveChanges();
                 rf.IdAssociados = _context.Pessoas.Where(p => p.IdGrupoMusical == rf.IdGrupoMusical && p.IdPapelGrupo == 1).Select(p => p.Id);
 
-                if(rf.IdAssociados != null)
+                if (rf.IdAssociados != null)
                 {
                     List<Receitafinanceirapessoa> p = new List<Receitafinanceirapessoa>();
-                    foreach(int idAssociado in  rf.IdAssociados)
+                    foreach (int idAssociado in rf.IdAssociados)
                     {
                         p.Add(new Receitafinanceirapessoa()
                         {
@@ -67,7 +68,50 @@ namespace Service
             }
             catch
             {
+                transaction.Rollback(); // Importante desfazer a transação em caso de erro
                 return FinanceiroStatus.Error;
+            }
+        }
+
+        // MÉTODO EDIT ADICIONADO AQUI
+        public FinanceiroStatus Edit(Receitafinanceira financeiro)
+        {
+            if (financeiro.DataInicio > financeiro.DataFim)
+            {
+                return FinanceiroStatus.DataInicioMaiorQueDataFim;
+            }
+            if (financeiro.DataFim < DateTime.Now.Date) // Use .Date para comparar apenas a data
+            {
+                return FinanceiroStatus.DataFimMenorQueDataDeHoje;
+            }
+            if (financeiro.Valor <= 0)
+            {
+                return FinanceiroStatus.ValorZeroOuNegativo;
+            }
+
+            try
+            {
+                _context.Update(financeiro);
+                _context.SaveChanges();
+                return FinanceiroStatus.Success;
+            }
+            catch
+            {
+                return FinanceiroStatus.Error;
+            }
+        }
+
+        // MÉTODO DELETE ADICIONADO AQUI
+        public void Delete(int id)
+        {
+            var financeiro = _context.Receitafinanceiras.Find(id);
+            if (financeiro != null)
+            {
+                var pagamentosAssociados = _context.Receitafinanceirapessoas.Where(p => p.IdReceitaFinanceira == id);
+                _context.Receitafinanceirapessoas.RemoveRange(pagamentosAssociados);
+
+                _context.Receitafinanceiras.Remove(financeiro);
+                _context.SaveChanges();
             }
         }
 
@@ -84,14 +128,14 @@ namespace Service
                              DataFim = financeiro.DataFim,
                              Pagos = financeiro.Receitafinanceirapessoas.
                              Where(rfp => rfp.IdReceitaFinanceira == financeiro.Id
-                              && rfp.Status == TipoPagamento.PAGO.ToString()).Count(),
+                               && rfp.Status == TipoPagamento.PAGO.ToString()).Count(),
                              Isentos = financeiro.Receitafinanceirapessoas.
                              Where(rfp => rfp.IdReceitaFinanceira == financeiro.Id
-                              && rfp.Status == TipoPagamento.ISENTO.ToString()).Count(),
+                               && rfp.Status == TipoPagamento.ISENTO.ToString()).Count(),
                              Atrasos = financeiro.Receitafinanceirapessoas.
                              Where(rfp => rfp.IdReceitaFinanceira == financeiro.Id
-                              && rfp.Status == TipoPagamento.ABERTO.ToString()
-                              && financeiro.DataFim < dataMesesAtrasados).Count(),
+                               && rfp.Status == TipoPagamento.ABERTO.ToString()
+                               && financeiro.DataFim < dataMesesAtrasados).Count(),
                              Recebido = financeiro.Receitafinanceirapessoas.Where(rfp => rfp.Status == "PAGO").
                              Sum(rfp => rfp.ValorPago),
                          }).ToList();
@@ -115,7 +159,7 @@ namespace Service
             if (request.Search != null && request.Search.GetValueOrDefault("value") != null)
             {
                 financeiroIndexDTO = financeiroIndexDTO.Where
-                    (g => g.Descricao.ToString().Contains(request.Search.GetValueOrDefault("value")!));
+                    (g => g.Descricao.ToString().ToLower().Contains(request.Search.GetValueOrDefault("value")!.ToLower()));
             }
 
             if (request.Order != null && request.Order[0].GetValueOrDefault("column")!.Equals("0"))
@@ -170,8 +214,8 @@ namespace Service
                         {
                             Assunto = $"Batalá - Notificação de Pagamento: {financeiro.Valor} foram pagos",
                             AddresseeName = p.Nome,
-                            Body = "<div style=\"text-align: center;\">\r\n    " +
-                                $"<h3>O pagamento foi aprovado!</h3>\r\n</div>",
+                            Body = "<div style=\"text-align: center;\">\r\n   " +
+                                   $"<h3>O pagamento foi aprovado!</h3>\r\n</div>",
                             To = new List<string> { p.Email }
 
                         });
@@ -196,4 +240,3 @@ namespace Service
         }
     }
 }
-
