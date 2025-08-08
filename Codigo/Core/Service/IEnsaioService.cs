@@ -58,7 +58,7 @@ namespace Core.Service
         /// </returns>
         HttpStatusCode RegistrarFrequencia(FrequenciaEnsaioDTO frequencia);
         Task<IEnumerable<EnsaioIndexDTO>> GetAllIndexDTO(int idGrupo);
-        EnsaioDetailsDTO GetDetailsDTO(int idEnsaio);
+        EnsaioDetailsDTO? GetDetails(int idEnsaio);
         Task<IEnumerable<int>> GetIdRegentesEnsaioAsync(int idEnsaio);
         IEnumerable<EnsaioAssociadoDTO>? GetEnsaiosEventosByIdPessoa(int idPessoa);
         Task<Ensaiopessoa?> GetEnsaioPessoaAsync(int idEnsaio, int idPessoa);

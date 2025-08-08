@@ -3,7 +3,7 @@ using Core.Datatables;
 using Core.DTO;
 using Core.Service;
 using Email;
-using Microsoft.EntityFrameworkCore; // Adicione este using para o BeginTransaction
+using Microsoft.EntityFrameworkCore; 
 using System.Net;
 
 namespace Service
@@ -26,7 +26,7 @@ namespace Service
                 {
                     return FinanceiroStatus.DataInicioMaiorQueDataFim;
                 }
-                if (rf.DataFim < DateTime.Now.Date) // Use .Date para comparar apenas a data
+                if (rf.DataFim < DateTime.Now.Date) 
                 {
                     return FinanceiroStatus.DataFimMenorQueDataDeHoje;
                 }
@@ -68,7 +68,7 @@ namespace Service
             }
             catch
             {
-                transaction.Rollback(); // Importante desfazer a transação em caso de erro
+                transaction.Rollback(); 
                 return FinanceiroStatus.Error;
             }
         }
@@ -80,7 +80,7 @@ namespace Service
             {
                 return FinanceiroStatus.DataInicioMaiorQueDataFim;
             }
-            if (financeiro.DataFim < DateTime.Now.Date) // Use .Date para comparar apenas a data
+            if (financeiro.DataFim < DateTime.Now.Date) 
             {
                 return FinanceiroStatus.DataFimMenorQueDataDeHoje;
             }

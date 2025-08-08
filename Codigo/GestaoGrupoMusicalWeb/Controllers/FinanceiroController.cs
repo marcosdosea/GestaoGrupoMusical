@@ -134,7 +134,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 int idGrupoMusical = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
                 model.IdGrupoMusical = idGrupoMusical;
 
-                // Ajuste principal: Mapear para a entidade correta "Receitafinanceira"
+                
                 var financeiro = _mapper.Map<Receitafinanceira>(model);
 
                 switch (_financeiroService.Edit(financeiro))
