@@ -209,7 +209,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
                             IdPessoa = idPessoa,
                             IdEvento = evento.Id,
                             IdPapelGrupoPapelGrupo = 5,
-                            IdTipoInstrumento = 0
                         });
                     }
                     evento.IdFigurinos.Add(new Figurino() { Id = eventoModel.IdFigurinoSelecionado });

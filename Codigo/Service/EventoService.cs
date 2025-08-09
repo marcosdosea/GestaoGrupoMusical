@@ -28,15 +28,17 @@ namespace Service
         /// 
         public async Task<HttpStatusCode> Create(Evento evento, IEnumerable<int> idRegentes, int idFigurino)
         {
-            using var transaction = _context.Database.BeginTransaction();
+            var transaction = _context.Database.BeginTransaction();
+
             try
             {
                 if (evento.DataHoraFim > evento.DataHoraInicio)
                 {
-                    if (evento.DataHoraInicio.Date >= DateTime.Today)
+                    if (evento.DataHoraInicio >= DateTime.Now)
                     {
                         _context.Eventos.Add(evento);
                         _context.SaveChanges();
+
                         List<Eventopessoa> p = new();
                         foreach (int id in idRegentes)
                         {
@@ -44,38 +46,61 @@ namespace Service
                             {
                                 IdEvento = evento.Id,
                                 IdPessoa = id,
-                                IdTipoInstrumento = 0,//por Default, o primeiro instrumento tem que ser o "nenhum". Foi gambiarra de dosea
-                                IdPapelGrupoPapelGrupo = 5 //5 = Regente
+                                IdPapelGrupoPapelGrupo = 5,
+                                Status = "INSCRITO",
+                                Presente = 0,
+                                JustificativaAceita = 0
                             });
                         }
                         _context.Eventopessoas.AddRange(p);
                         _context.SaveChanges();
                         _context.Set<Dictionary<string, object>>("Figurinoapresentacao").Add(new Dictionary<string, object>
                         {
-                            { "IdFigurino", idFigurino },
-                            { "IdApresentacao", evento.Id }
+                            {"IdFigurino", idFigurino },
+                            {"IdApresentacao", evento.Id }
                         });
                         _context.SaveChanges();
+
+                        IEnumerable<int> idAssociados = _context.Pessoas.Where
+                            (p => p.IdGrupoMusical == evento.IdGrupoMusical && p.IdPapelGrupo == (int)PapelGrupo.ASSOCIADO).Select(p => p.Id);
+                        if (idAssociados.Any())
+                        {
+                            List<Eventopessoa> ep = new();
+                            foreach (int id in idAssociados)
+                            {
+                                ep.Add(new Eventopessoa()
+                                {
+                                    IdEvento = evento.Id,
+                                    IdPessoa = id,
+                                    IdPapelGrupoPapelGrupo = 5,
+                                    Status = "INSCRITO",  
+                                    Presente = 0,
+                                    JustificativaAceita = 0
+                                });
+                            }
+                            _context.AddRange(ep);
+                            _context.SaveChanges();
+                        }
                         transaction.Commit();
                         return HttpStatusCode.OK;
                     }
                     else
                     {
-                        await transaction.RollbackAsync();
+                        transaction.Rollback();
                         return HttpStatusCode.BadRequest;
                     }
                 }
                 else
                 {
-                    await transaction.RollbackAsync();
+                    transaction.Rollback();
                     return HttpStatusCode.PreconditionFailed;
                 }
 
             }
-            catch
+            catch (Exception ex)
             {
-                await transaction.RollbackAsync();
-                return HttpStatusCode.InternalServerError;
+                transaction.Rollback();
+                throw;
             }
         }
         /// <summary>
