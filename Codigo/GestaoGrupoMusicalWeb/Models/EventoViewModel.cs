@@ -2,12 +2,14 @@
 using Core.DTO;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GestaoGrupoMusicalWeb.Models
 {
     public class EventoViewModel
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         [Display(Name = "Grupo Musical")]
         [Required(ErrorMessage = "O campo {0} é obrigatório")]

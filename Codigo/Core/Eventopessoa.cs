@@ -9,7 +9,7 @@ public partial class Eventopessoa
 
     public int IdPessoa { get; set; }
 
-    public int IdTipoInstrumento { get; set; }
+    public int? IdTipoInstrumento { get; set; } = null;
 
     public sbyte Presente { get; set; }
 
