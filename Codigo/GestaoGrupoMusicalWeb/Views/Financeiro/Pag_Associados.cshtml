@@ -47,6 +47,7 @@
                             <th>CPF</th>
                             <th style="width: 170px;">Data Pagamento</th>
                             <th style="width: 160px;">Valor Pago (R$)</th>
+                            <th>Observações</th>
                             <th style="width: 260px;">Status</th>
                         </tr>
                     </thead>
@@ -75,6 +76,9 @@
                                         <input type="number" step="0.01" asp-for="Associados[i].ValorPago" class="form-control" placeholder="0,00" />
                                     </td>
                                     <td>
+                                        <textarea asp-for="Associados[i].Observacoes" class="form-control" rows="1"></textarea>
+                                    </td>
+                                    <td>
                                         <select asp-for="Associados[i].Status" asp-items="@(new SelectList(statusList, "Value", "Text", Model.Associados[i].Status))" class="form-select"></select>
                                     </td>
                                 </tr>
@@ -83,7 +87,7 @@
                         else
                         {
                             <tr>
-                                <td colspan="5" class="text-center">Nenhum associado ativo encontrado.</td>
+                                <td colspan="6" class="text-center">Nenhum associado ativo encontrado.</td>
                             </tr>
                         }
                     </tbody>
