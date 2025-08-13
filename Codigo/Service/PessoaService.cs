@@ -54,7 +54,7 @@ namespace Service
                         int idade = Math.Abs(pessoa.DataNascimento.Value.Year - DateTime.Now.Year);
                         if (pessoa.DataNascimento <= DateTime.Today && idade < 120)
                         {
-                            if (pessoa.DataEntrada == null || pessoa.DataEntrada < DateTime.Today)
+                            if (pessoa.DataEntrada != null)
                             {//mensagem de sucesso
                                
                                 await _context.SaveChangesAsync();
@@ -72,7 +72,7 @@ namespace Service
                             return HttpStatusCode.NotAcceptable;
                         }
                     }
-                    else if (pessoa.DataEntrada == null || pessoa.DataEntrada < DateTime.Now)
+                    else if (pessoa.DataEntrada != null)
                     {
                         await _context.SaveChangesAsync();
                         return HttpStatusCode.Created;
