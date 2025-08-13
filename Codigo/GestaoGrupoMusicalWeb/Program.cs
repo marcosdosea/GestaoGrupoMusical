@@ -49,6 +49,7 @@ namespace GestaoGrupoMusicalWeb
             }).AddEntityFrameworkStores<IdentityContext>()
               .AddDefaultTokenProviders();
 
+
             //Configure tokens life
             builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
                 //sets a 2 hour lifetime of the generated token to reset password/email/phone number
