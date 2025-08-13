@@ -214,7 +214,52 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, ADM_SISTEMA, COLABORADOR")]
+        public async Task<IActionResult> Pag_Associados(int id)
+        {
+            var receita = _financeiroService.Get(id);
+            if (receita == null)
+            {
+                return NotFound();
+            }
 
+            var model = new PagamentoAssociadoViewModel
+            {
+                Financeiro = _mapper.Map<FinanceiroCreateViewModel>(receita),
+                Associados = (await _financeiroService.GetAssociadosPagamento(id)).ToList(),
+                IdReceita = id
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, ADM_SISTEMA, COLABORADOR")]
+        public async Task<IActionResult> Pag_Associados(PagamentoAssociadoViewModel model)
+        {
+            if (ModelState.IsValid && model.Associados != null)
+            {
+                try
+                {
+                    await _financeiroService.SalvarPagamentos(model.IdReceita, model.Associados);
+                    Notificar("Pagamentos dos associados foram salvos com sucesso!", Notifica.Sucesso);
+                }
+                catch (Exception)
+                {
+                    Notificar("Ocorreu um erro ao tentar salvar os pagamentos. Tente novamente.", Notifica.Erro);
+                    var receitaErro = _financeiroService.Get(model.IdReceita);
+                    model.Financeiro = _mapper.Map<FinanceiroCreateViewModel>(receitaErro);
+                    return View(model);
+                }
+                return RedirectToAction(nameof(Index));
+            }
+
+            var receitaPost = _financeiroService.Get(model.IdReceita);
+            model.Financeiro = _mapper.Map<FinanceiroCreateViewModel>(receitaPost);
+            Notificar("Ocorreu um erro. Verifique os dados.", Notifica.Erro);
+            return View(model);
+        }
     }
 }
 

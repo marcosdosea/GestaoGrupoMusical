@@ -16,6 +16,9 @@ namespace Core.Service
         IEnumerable<FinanceiroIndexDataPage> GetAllFinanceiroPorIdGrupo(int idGrupoMusical);
         DatatableResponse<FinanceiroIndexDataPage> GetDataPage(DatatableRequest request, IEnumerable<FinanceiroIndexDataPage> materialEstudoIndexDTO);
         HttpStatusCode NotificarFinanceiroViaEmail(IEnumerable<PessoaEnviarEmailDTO> pessoas, int idFinanceiro);
+
+        Task<IEnumerable<AssociadoPagamentoDTO>> GetAssociadosPagamento(int idReceita);
+        Task SalvarPagamentos(int idReceita, IEnumerable<AssociadoPagamentoDTO> associados);
     }
 
 

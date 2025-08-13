@@ -73,7 +73,7 @@ namespace Service
             }
         }
 
-        // MÉTODO EDIT ADICIONADO AQUI
+        
         public FinanceiroStatus Edit(Receitafinanceira financeiro)
         {
             if (financeiro.DataInicio > financeiro.DataFim)
@@ -101,7 +101,7 @@ namespace Service
             }
         }
 
-        // MÉTODO DELETE ADICIONADO AQUI
+        
         public void Delete(int id)
         {
             var financeiro = _context.Receitafinanceiras.Find(id);
@@ -152,6 +152,78 @@ namespace Service
             return query;
         }
 
+        public async Task<IEnumerable<AssociadoPagamentoDTO>> GetAssociadosPagamento(int idReceita)
+        {
+            var associados = await _context.Pessoas
+                .Where(p => p.IdPapelGrupo == 3 && p.Ativo == 1) // IdPapelGrupo 3 = ASSOCIADO
+                .OrderBy(p => p.Nome)
+                .Select(p => new { p.Id, p.Nome, p.Cpf })
+                .ToListAsync();
+
+            var pagamentos = await _context.Receitafinanceirapessoas
+                .Where(p => p.IdReceitaFinanceira == idReceita)
+                .ToDictionaryAsync(p => p.IdPessoa);
+
+            var result = new List<AssociadoPagamentoDTO>();
+            foreach (var associado in associados)
+            {
+                var dto = new AssociadoPagamentoDTO
+                {
+                    IdAssociado = associado.Id,
+                    NomeAssociado = associado.Nome,
+                    Cpf = associado.Cpf
+                };
+
+                if (pagamentos.TryGetValue(associado.Id, out var pagamento))
+                {
+                    dto.DataPagamento = pagamento.DataPagamento;
+                    dto.ValorPago = pagamento.Valor;
+                    dto.Status = pagamento.Status;
+                }
+
+                result.Add(dto);
+            }
+
+            return result;
+        }
+
+
+        public async Task SalvarPagamentos(int idReceita, IEnumerable<AssociadoPagamentoDTO> associados)
+        {
+            var pagamentosExistentes = await _context.Receitafinanceirapessoas
+                .Where(p => p.IdReceitaFinanceira == idReceita)
+                .ToListAsync();
+
+            foreach (var associadoPagamento in associados)
+            {
+                var pagamento = pagamentosExistentes.FirstOrDefault(p => p.IdPessoa == associadoPagamento.IdAssociado);
+
+                if (associadoPagamento.Status == "NAO_PAGOU")
+                {
+                    if (pagamento != null)
+                    {
+                        _context.Receitafinanceirapessoas.Remove(pagamento);
+                    }
+                    continue;
+                }
+
+                if (pagamento == null)
+                {
+                    pagamento = new Receitafinanceirapessoa
+                    {
+                        IdPessoa = associadoPagamento.IdAssociado,
+                        IdReceitaFinanceira = idReceita
+                    };
+                    _context.Receitafinanceirapessoas.Add(pagamento);
+                }
+
+                pagamento.DataPagamento = associadoPagamento.DataPagamento;
+                pagamento.Valor = associadoPagamento.ValorPago;
+                pagamento.Status = associadoPagamento.Status;
+            }
+
+            await _context.SaveChangesAsync();
+        }
 
         public DatatableResponse<FinanceiroIndexDataPage> GetDataPage(DatatableRequest request, IEnumerable<FinanceiroIndexDataPage> financeiroIndexDTO)
         {

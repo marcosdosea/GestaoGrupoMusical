@@ -257,11 +257,12 @@
                 
                 let editBtn = `<a class="${baseClass}" href="/Financeiro/Edit/${full.id}"><i class="fa-solid fa-pen-to-square"></i> Editar</a>`;
                 let detailsBtn = `<a class="${baseClass}" href="/Financeiro/Details/${full.id}"><i class="fa-solid fa-circle-info"></i> Detalhes</a>`;
+                let pagAssociadosBtn = `<a class="${baseClass}" href="/Financeiro/Pag_Associados/${full.id}"><i class="fa-solid fa-users"></i> Pag. Associados</a>`;
                 let deleteBtn = `<button type="button" onclick="showConfirmationModalDelete(${full.id})" class="${baseClass}"><i class="fa-solid fa-xmark"></i> Excluir</button>`;
                 let notifyBtn = `<button type="button" onclick="showConfirmationModalNotificar(${full.id})" class="${baseClass}"><i class="fa-solid fa-envelope"></i> Notificar</button>`;
 
-                
-                return `<div class="btn-group">${editBtn}${detailsBtn}${deleteBtn}${notifyBtn}</div>`;
+
+                return `<div class="btn-group">${editBtn}${detailsBtn}${pagAssociadosBtn}${deleteBtn}${notifyBtn}</div>`;
             }
 
                         },
