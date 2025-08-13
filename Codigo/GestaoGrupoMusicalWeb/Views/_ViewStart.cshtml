@@ -3,7 +3,12 @@
     {
         Layout = "_LayoutAssociado";
     }
-    else{
+    else if (User.IsInRole("ADMINISTRADOR SISTEMA"))
+    {
+        Layout = "_LayoutAdmSistema";    
+    }
+    else
+    {
         Layout = "_LayoutColaborador";
     }
 
