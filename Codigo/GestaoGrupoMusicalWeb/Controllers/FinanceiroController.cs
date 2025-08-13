@@ -215,19 +215,25 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return RedirectToAction(nameof(Index));
         }
         [Authorize(Roles = "ADMINISTRADOR GRUPO, ADM_SISTEMA, COLABORADOR")]
-        public async Task<IActionResult> Pag_Associados(int id)
+        // GET: FinanceiroController/Pag_Associados/5
+        public async Task<ActionResult> Pag_Associados(int id)
         {
-            var receita = _financeiroService.Get(id);
-            if (receita == null)
+            var financeiro = _financeiroService.Get(id);
+            if (financeiro == null)
             {
-                return NotFound();
+                Notificar($"Receita com ID {id} não encontrada.", Notifica.Erro);
+                return RedirectToAction(nameof(Index));
             }
 
-            var model = new PagamentoAssociadoViewModel
+            
+            var associados = await _financeiroService.GetAssociadosPagamento(id);
+
+            // Monta o ViewModel que a View espera
+            PagamentoAssociadoViewModel model = new()
             {
-                Financeiro = _mapper.Map<FinanceiroCreateViewModel>(receita),
-                Associados = (await _financeiroService.GetAssociadosPagamento(id)).ToList(),
-                IdReceita = id
+                IdReceita = financeiro.Id,
+                Financeiro = _mapper.Map<FinanceiroCreateViewModel>(financeiro),
+                Associados = associados.ToList()
             };
 
             return View(model);

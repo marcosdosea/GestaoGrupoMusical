@@ -154,30 +154,45 @@ namespace Service
 
         public async Task<IEnumerable<AssociadoPagamentoDTO>> GetAssociadosPagamento(int idReceita)
         {
-            var associados = await _context.Pessoas
-                .Where(p => p.IdPapelGrupo == 3 && p.Ativo == 1) // IdPapelGrupo 3 = ASSOCIADO
+            // Busca a receita para obter o Id do Grupo Musical
+            var receita = await _context.Receitafinanceiras.FindAsync(idReceita);
+            if (receita == null)
+            {
+                // Retorna uma lista vazia se a receita não for encontrada
+                return new List<AssociadoPagamentoDTO>();
+            }
+            var idGrupoMusical = receita.IdGrupoMusical;
+
+            // Busca todos os associados ATIVOS do grupo musical correto
+            
+            var associadosDoGrupo = await _context.Pessoas
+                .Where(p => p.IdGrupoMusical == idGrupoMusical && p.IdPapelGrupo == 1 && p.Ativo == 1)
                 .OrderBy(p => p.Nome)
                 .Select(p => new { p.Id, p.Nome, p.Cpf })
                 .ToListAsync();
 
+            // Busca os pagamentos já existentes para esta receita
             var pagamentos = await _context.Receitafinanceirapessoas
                 .Where(p => p.IdReceitaFinanceira == idReceita)
                 .ToDictionaryAsync(p => p.IdPessoa);
 
             var result = new List<AssociadoPagamentoDTO>();
-            foreach (var associado in associados)
+            // Monta a lista final de DTOs
+            foreach (var associado in associadosDoGrupo)
             {
                 var dto = new AssociadoPagamentoDTO
                 {
                     IdAssociado = associado.Id,
                     NomeAssociado = associado.Nome,
-                    Cpf = associado.Cpf
+                    Cpf = associado.Cpf,
+                    Status = "NAO_PAGOU" // Define um status padrão
                 };
 
+                // Se um pagamento para este associado for encontrado, atualiza os dados
                 if (pagamentos.TryGetValue(associado.Id, out var pagamento))
                 {
                     dto.DataPagamento = pagamento.DataPagamento;
-                    dto.ValorPago = pagamento.Valor;
+                    dto.ValorPago = pagamento.Valor; // Ajustado para Valor
                     dto.Observacoes = pagamento.Observacoes;
                     dto.Status = pagamento.Status;
                 }
