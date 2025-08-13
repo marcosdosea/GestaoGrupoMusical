@@ -178,6 +178,7 @@ namespace Service
                 {
                     dto.DataPagamento = pagamento.DataPagamento;
                     dto.ValorPago = pagamento.Valor;
+                    dto.Observacoes = pagamento.Observacoes;
                     dto.Status = pagamento.Status;
                 }
 
@@ -219,6 +220,7 @@ namespace Service
 
                 pagamento.DataPagamento = associadoPagamento.DataPagamento;
                 pagamento.Valor = associadoPagamento.ValorPago;
+                pagamento.Observacoes = associadoPagamento.Observacoes;
                 pagamento.Status = associadoPagamento.Status;
             }
 

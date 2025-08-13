@@ -13,6 +13,7 @@ namespace Core.DTO
         public string? Cpf { get; set; }
         public DateTime DataPagamento { get; set; }
         public decimal ValorPago { get; set; }
+        public string? Observacoes { get; set; }
         public string Status { get; set; } = "NAO_PAGOU"; // Valor Padrão
     }
 }
