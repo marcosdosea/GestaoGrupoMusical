@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Core;
 
+[Table("ApresentacaoTipoInstrumento")]
 public partial class Apresentacaotipoinstrumento
 {
     public int IdApresentacao { get; set; }

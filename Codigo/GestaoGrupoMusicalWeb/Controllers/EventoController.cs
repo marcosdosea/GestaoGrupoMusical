@@ -282,7 +282,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         public async Task<ActionResult> GerenciarInstrumentoEvento(int id)
         {
-
             int idGrupoMusical = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
 
             var listaPessoasAutoComplete = _pessoaService.GetRegentesForAutoComplete(idGrupoMusical);
@@ -290,68 +289,80 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 Notificar("É necessário cadastrar pelo menos um Regente para então cadastrar um Evento Musical.", Notifica.Informativo);
                 return RedirectToAction(nameof(Index));
-            }         
+            }
 
             var figurinosDropdown = await _figurinoService.GetAllFigurinoDropdown(idGrupoMusical);
-
             if (figurinosDropdown == null || !figurinosDropdown.Any())
             {
-
                 Notificar("É necessário cadastrar um Figurino para então cadastrar um Evento Musical.", Notifica.Informativo);
                 return RedirectToAction(nameof(Index));
             }
+
             var evento = _eventoService.Get(id);
-            EventoViewModel eventoView = _mapper.Map<EventoViewModel>(evento);                       
-
-            InstrumentoMusicalViewModel instrumentoMusicalViewModel = new InstrumentoMusicalViewModel();
-
-            IEnumerable<Tipoinstrumento> listaInstrumentos = await _tipoIntrumentoMusicalService.GetAllTipoInstrumento();
-            instrumentoMusicalViewModel.ListaInstrumentos = new SelectList(listaInstrumentos, "Id", "Nome", null);
-
-            GerenciarInstrumentoEventoViewModel gerenciarInstrumentoEvento = new GerenciarInstrumentoEventoViewModel
+            if (evento == null)
             {
+                Notificar("Evento não encontrado.", Notifica.Erro);
+                return RedirectToAction(nameof(Index));
+            }
+
+            var eventoView = _mapper.Map<EventoViewModel>(evento);
+            var listaInstrumentosDropdown = await _tipoIntrumentoMusicalService.GetAllTipoInstrumento();
+
+            // Buscar os instrumentos planejados
+            var instrumentosPlanejados = _eventoService.GetInstrumentosPlanejadosEvento(id);
+
+            var gerenciarInstrumentoEventoViewModel = new GerenciarInstrumentoEventoViewModel
+            {
+                Id = evento.Id,
                 IdGrupoMusical = idGrupoMusical,
                 DataHoraInicio = eventoView.DataHoraInicio,
                 DataHoraFim = eventoView.DataHoraFim,
-                ListaPessoa = new SelectList(listaPessoasAutoComplete, "Id", "Nome"),
-                FigurinoList = new SelectList(figurinosDropdown, "Id", "Nome"),                              
                 Local = eventoView.Local,
-                ListaInstrumentos = instrumentoMusicalViewModel.ListaInstrumentos,
+                FigurinoList = new SelectList(figurinosDropdown, "Id", "Nome"),
+                ListaPessoa = new SelectList(listaPessoasAutoComplete, "Id", "Nome"),
+                ListaInstrumentos = new SelectList(listaInstrumentosDropdown, "Id", "Nome"),
+                InstrumentosPlanejados = instrumentosPlanejados,
+                GerenciarInstrumentos = instrumentosPlanejados
             };
-            
+
             ViewData["exemploRegente"] = listaPessoasAutoComplete.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
-            gerenciarInstrumentoEvento.JsonLista = listaPessoasAutoComplete.ToJson();
-            return View(gerenciarInstrumentoEvento);
+            gerenciarInstrumentoEventoViewModel.JsonLista = listaPessoasAutoComplete.ToJson();
+
+            return View(gerenciarInstrumentoEventoViewModel);
         }
 
         [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> CreateInstrumento(GerenciarInstrumentoEventoViewModel gerenciarInstrumentoEventoViewModel)
-        {           
+        {
+            if (gerenciarInstrumentoEventoViewModel.Id <= 0)
+            {
+                Notificar("<b>Erro!</b> ID do Evento não foi encontrado no formulário.", Notifica.Erro);
+                return RedirectToAction(nameof(Index));
+            }
+
             Apresentacaotipoinstrumento apresentacaotipoinstrumento = new Apresentacaotipoinstrumento
             {
                 IdApresentacao = gerenciarInstrumentoEventoViewModel.Id,
                 IdTipoInstrumento = gerenciarInstrumentoEventoViewModel.IdTipoInstrumento,
-                QuantidadePlanejada = gerenciarInstrumentoEventoViewModel.Quantidade                             
+                QuantidadePlanejada = gerenciarInstrumentoEventoViewModel.Quantidade
             };
-           
+
             switch (await _eventoService.CreateApresentacaoInstrumento(apresentacaotipoinstrumento))
             {
                 case HttpStatusCode.OK:
-                    Notificar("Instrumento(s) Planejado(os) <b>Cadastrado(s)</b> com <b>Sucesso!</b>", Notifica.Sucesso);
+                    Notificar("Instrumento(s) Planejado(s) <b>Cadastrado(s)</b> com <b>Sucesso!</b>", Notifica.Sucesso);
                     break;
                 case HttpStatusCode.Conflict:
-                    Notificar("<b>Erro!</b> já existe um instrumento planejado, clique no botão editar para adicionar atualizar a quantidade.", Notifica.Alerta);
+                    Notificar("<b>Alerta!</b> Este instrumento já foi adicionado.", Notifica.Alerta);
                     break;
                 default:
                     Notificar("<b>Erro!</b> Desculpe, ocorreu um erro durante o <b>Cadastro</b> do instrumento.", Notifica.Erro);
                     break;
             }
 
-
-
-            return RedirectToAction(nameof(GerenciarInstrumentoEvento), new { id = apresentacaotipoinstrumento.IdApresentacao });
+            return RedirectToAction(nameof(GerenciarInstrumentoEvento), new { id = gerenciarInstrumentoEventoViewModel.Id });
         }
 
 

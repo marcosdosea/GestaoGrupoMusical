@@ -755,18 +755,44 @@ namespace Service
         }
         public IEnumerable<InstrumentoPlanejadoEventoDTO> GetInstrumentosPlanejadosEvento(int idApresentacao)
         {
-            var query = from a in _context.Apresentacaotipoinstrumentos
-                        join tp in _context.Tipoinstrumentos
-                        on a.IdTipoInstrumento equals tp.Id
-                        where a.IdApresentacao == idApresentacao
-                        select new InstrumentoPlanejadoEventoDTO
-                        {
-                            IdApresentacao = a.IdApresentacao,
-                            IdInstrumento = a.IdTipoInstrumento,
-                            ListaInstrumentos = tp.Nome,
-                            Planejados = a.QuantidadePlanejada
-                        };
-            return query.ToList();
+            try
+            {
+                var query = from a in _context.Apresentacaotipoinstrumentos
+                            join tp in _context.Tipoinstrumentos on a.IdTipoInstrumento equals tp.Id
+                            where a.IdApresentacao == idApresentacao
+                            select new InstrumentoPlanejadoEventoDTO
+                            {
+                                IdApresentacao = a.IdApresentacao,
+                                IdInstrumento = a.IdTipoInstrumento,
+                                ListaInstrumentos = tp.Nome ?? "INSTRUMENTO INVÁLIDO/REMOVIDO",
+                                Planejados = a.QuantidadePlanejada,
+                                Solicitados = a.QuantidadeSolicitada,
+                                Confirmados = a.QuantidadeConfirmada
+                            };
+
+                return query.ToList();
+            }
+            catch (Exception ex)
+            {
+                // Em caso de erro, retorna lista vazia
+                return new List<InstrumentoPlanejadoEventoDTO>();
+            }
+        }
+
+        // MÉTODO ADICIONAL: Para verificar se existem registros na tabela ApresentacaoTipoInstrumento
+        public bool VerificarInstrumentosPlanejados(int idApresentacao)
+        {
+            try
+            {
+                var count = _context.Apresentacaotipoinstrumentos.Count(a => a.IdApresentacao == idApresentacao);
+                Console.WriteLine($"Total de registros na ApresentacaoTipoInstrumento para evento {idApresentacao}: {count}");
+                return count > 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro ao verificar instrumentos: {ex.Message}");
+                return false;
+            }
         }
 
         public IEnumerable<EventoAssociadoDTO>? GetEventosDeAssociado(int idPessoa, int idGrupoMusical, int PegarUltimosEventoDeAssociado)

@@ -6,7 +6,7 @@
             <tr class="bg-danger bg-opacity-75 text-white">
                 <th>
                     @Html.DisplayNameFor(model => model.ListaInstrumentos)
-                </th>      
+                </th>
                 <th>
                     @Html.DisplayNameFor(model => model.Planejados)
                 </th>
@@ -15,54 +15,57 @@
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.Confirmados)
-                </th>              
+                </th>
                 <th>Ações</th>
             </tr>
         </thead>
         <tbody>
-            @if(Model!=null)
+            @if (Model != null && Model.Any())
             {
-            @foreach (var item in Model)
-            {
-                <tr class="border-bottom border-danger border-opacity-75 align-middle">
-                    <td>
-                        @item.ListaInstrumentos
-                    </td>               
-                    <td>
-                        @item.Planejados
-                    </td>
-                    <td>
-                        @item.Solicitados
-                    </td>
-                    <td>
-                        @item.Confirmados
-                    </td>                   
-                    <td class="py-3 border-0 d-flex flex-column flex-lg-row gap-3">
+                @foreach (var item in Model)
+                {
+                    <tr class="border-bottom border-danger border-opacity-75 align-middle">
+                        <td>
+                            @item.ListaInstrumentos
+                        </td>
+                        <td>
+                            @item.Planejados
+                        </td>
+                        <td>
+                            @item.Solicitados
+                        </td>
+                        <td>
+                            @item.Confirmados
+                        </td>
+                        <td class="py-3 border-0 d-flex flex-column flex-lg-row gap-3">
                             <form id="@(item.IdApresentacao + "_notificar")" asp-controller="InstrumentoMusical" asp-action="NotificarViaEmail" asp-route-Id="@item.IdApresentacao" asp-route-IdInstrumento="@item.IdInstrumento" method="post">
-                            <a role="button" class="btn btn-sm btn-secondary"
-                               data-bs-toggle="modal" data-bs-target="#notificarMovimentacaoModal"
+                                <a role="button" class="btn btn-sm btn-secondary"
+                                   data-bs-toggle="modal" data-bs-target="#notificarMovimentacaoModal"
                                    onclick="showModal('@(item.IdApresentacao + "_notificar")', 'notificarMovimentacaoModal')">
-                                <i class="fa-solid fa-envelope"></i>
-                                Notificar
-                            </a>
-                        </form>
+                                    <i class="fa-solid fa-envelope"></i>
+                                    Notificar
+                                </a>
+                            </form>
                             <form id="@(item.IdApresentacao + "_delete")" asp-controller="InstrumentoMusical" asp-action="DeleteMovimentacao" asp-route-Id="@item.IdApresentacao" asp-route-IdInstrumento="@item.IdInstrumento" method="post">
-                            <a role="button" class="btn btn-sm btn-secondary"
-                               data-bs-toggle="modal" data-bs-target="#excluirMovimentacaoModal"
+                                <a role="button" class="btn btn-sm btn-secondary"
+                                   data-bs-toggle="modal" data-bs-target="#excluirMovimentacaoModal"
                                    onclick="showModal('@(item.IdApresentacao + "_delete")', 'excluirMovimentacaoModal')">
-                                <i class="fa-solid fa-xmark"> </i>
-                                Excluir
-                            </a>
-                        </form>
-                    </td>
-                </tr>
+                                    <i class="fa-solid fa-xmark"> </i>
+                                    Excluir
+                                </a>
+                            </form>
+                        </td>
+                    </tr>
+                }
             }
+            else
+            {
+                <tr>
+                    <td colspan="5" class="text-center">Nenhum instrumento encontrado.</td>
+                </tr>
             }
         </tbody>
     </table>
-  
-        <p class="text-center mt-4 mb-0">Desculpe, nenhuma movimentação encontrada :(</p>
-    
 </div>
 
 <div class="modal fade" id="excluirMovimentacaoModal" tabindex="-1" aria-labelledby="excluirMovimentacaoLabel" aria-hidden="true">

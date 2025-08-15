@@ -1,75 +1,73 @@
 ﻿@model GestaoGrupoMusicalWeb.Models.GerenciarInstrumentoEventoViewModel
 
+@{
+    ViewData["Title"] = "Gerenciar Instrumento do Evento Musical";
+}
 
-<partial name="_Notificar">
-    <div class="row">
-        <div class="col-md-8">
-            <h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">Gerenciar Instrumento do Evento Musical</h1>
-            <nav>
-                <ol class="breadcrumb px-3">
-                    <strong>
-                        <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Evento"]</a>
-                        <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["GerenciarInstrumentoEvento"]</spn>
-                    </strong>
-                </ol>
-            </nav>
-            <hr />
-            <br />            
-                <div class="container">
-                    <div class="row">
-                        <div class="form-group col-xxl-4">
-                            <label asp-for="DataHoraInicio" class="control-label"></label>
-                        <input asp-for="DataHoraInicio" class="form-control" readonly />
-                            <span asp-validation-for="DataHoraInicio" class="text-danger"></span>
-                        </div>
-                        <div class="form-group col-xxl-4">
-                            <label asp-for="DataHoraFim" class="control-label"></label>
-                        <input asp-for="DataHoraFim" class="form-control" readonly />
-                            <span asp-validation-for="DataHoraFim" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="container">                  
-                    <div class="row col-xl">
-                        <div class="form-group">
-                            <label asp-for="IdRegentes" class="control-label"></label>
-                        <select asp-for="IdRegentes" asp-items="@Model.ListaPessoa" class="form-select" readonly>
-                                <option value=""></option>
-                            </select>
-                            <span asp-validation-for="IdRegentes" class="text-danger"></span>
-                        </div>                    
-                        <div>
-                            <input type="hidden" asp-for="IdGrupoMusical" />
-                            <input type="hidden" asp-for="Id" />
-                        </div>
-                    </div>
-               </div>
-            <div class="container">
-                <div class="form-group">
-                    <label asp-for="IdFigurinoSelecionado" class="control-label"></label>
-                    <select asp-items="@Model.FigurinoList" asp-for="IdFigurinoSelecionado" class="form-select" readonly></select>
-                    <span asp-validation-for="IdFigurinoSelecionado" class="text-danger"></span>
-                </div>
+<hr />
+
+    <h4>Adicionar Instrumento ao Planejamento</h4>
+
+    <form asp-action="CreateInstrumento" asp-controller="Evento">
+
+        <input type="hidden" asp-for="Id" />
+
+        <div class="row col-md-12">
+            <div class="form-group col-md-4">
+                <label asp-for="IdTipoInstrumento" class="control-label">Instrumento</label>
+                <select asp-for="IdTipoInstrumento" asp-items="Model.ListaInstrumentos" class="form-select"></select>
             </div>
-            <div class="container">
-                <div class="form-group">
-                    <label asp-for="Local" class="control-label"></label>                    
-                    <input asp-for="Local" class="form-control" readonly />
-                    <span asp-validation-for="Local" class="text-danger"></span>
-                </div>                         
-            </div>   
-            
+            <div class="form-group col-md-4">
+                <label asp-for="Quantidade" class="control-label"></label>
+                <input asp-for="Quantidade" class="form-control" />
+                <span asp-validation-for="Quantidade" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-4 align-self-end">
+                <input class="btn btn-secondary w-100" type="submit" value="Adicionar" />
+            </div>
+        </div>
+    </form>
+
+    <hr />
+
+    <h4>Instrumentos Planejados</h4>
+    <div class="table-responsive">
+        <table class="table mt-3">
+            <thead>
+                <tr class="bg-danger bg-opacity-75 text-white">
+                    <th>Instrumentos</th>
+                    <th>Planejados</th>
+                    <th>Solicitados</th>
+                    <th>Confirmados</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.InstrumentosPlanejados != null && Model.InstrumentosPlanejados.Any())
+                {
+                    // O loop usa a propriedade InstrumentosPlanejados do ViewModel
+                    @foreach (var item in Model.InstrumentosPlanejados)
+                    {
+                        <tr class="border-bottom border-danger border-opacity-75 align-middle">
+                            <td>@item.ListaInstrumentos</td>
+                            <td>@item.Planejados</td>
+                            <td>@item.Solicitados</td>
+                            <td>@item.Confirmados</td>
+                            <td>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5" class="text-center">Nenhum instrumento planejado para este evento ainda.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
-</div>
-    @section Header {
-        @{
-            await Html.RenderPartialAsync("_AutoCompleteCssPartial");
-        }
-    }
-    @section Scripts {
-        @{
-            await Html.RenderPartialAsync("_ValidationScriptsPartial");
-            await Html.RenderPartialAsync("_EnablePopoversPartial");
-            await Html.RenderPartialAsync("_AutoCompletePartial");
-        }
-    }
+
+    <div class="mt-4">
+        <a asp-action="Index" class="btn btn-outline-secondary">Voltar</a>
+    </div>
