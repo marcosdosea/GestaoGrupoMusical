@@ -13,6 +13,7 @@ using System.Security.Claims;
 using Core.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.Extensions.Logging;
 
 namespace GestaoGrupoMusicalWeb.Controllers.Tests
 {
@@ -26,6 +27,7 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
         private static Mock<IFigurinoService> _mockFigurinoService;
         private static Mock<IPessoaService> _mockPessoaService;
         private static Mock<IMovimentacaoFigurinoService> _mockMovimentacaoService;
+        private readonly Mock<ILogger<FigurinoController>> _mockLogger = new Mock<ILogger<FigurinoController>>();
         private static Mock<UserManager<UsuarioIdentity>> _mockUserManager;
 
         [TestInitialize]
@@ -58,7 +60,8 @@ namespace GestaoGrupoMusicalWeb.Controllers.Tests
                 _mockFigurinoService.Object,
                 _mockUserManager.Object,
                 _mockPessoaService.Object,
-                _mockMovimentacaoService.Object
+                _mockMovimentacaoService.Object,
+                _mockLogger.Object
             )
             {
                 ControllerContext = new ControllerContext()
