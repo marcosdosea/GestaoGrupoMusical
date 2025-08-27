@@ -244,7 +244,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [Authorize(Roles = "ADMINISTRADOR GRUPO, ADM_SISTEMA, COLABORADOR")]
         public async Task<IActionResult> Pag_Associados(PagamentoAssociadoViewModel model)
         {
-            if (ModelState.IsValid && model.Associados != null)
+            
+            // if (ModelState.IsValid && model.Associados != null)
+            if (model.Associados != null)
             {
                 try
                 {
