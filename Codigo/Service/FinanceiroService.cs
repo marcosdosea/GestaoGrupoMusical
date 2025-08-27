@@ -26,7 +26,7 @@ namespace Service
                 {
                     return FinanceiroStatus.DataInicioMaiorQueDataFim;
                 }
-                if (rf.DataFim < DateTime.Now.Date) 
+                if (rf.DataFim < DateTime.Now.Date)
                 {
                     return FinanceiroStatus.DataFimMenorQueDataDeHoje;
                 }
@@ -45,35 +45,44 @@ namespace Service
                 };
                 _context.Add(f);
                 _context.SaveChanges();
-                rf.IdAssociados = _context.Pessoas.Where(p => p.IdGrupoMusical == rf.IdGrupoMusical && p.IdPapelGrupo == 1).Select(p => p.Id);
 
-                if (rf.IdAssociados != null)
+                // 1. Busca todos os associados ATIVOS, já trazendo a informação de isenção
+                var associados = _context.Pessoas
+                    .Where(p => p.IdGrupoMusical == rf.IdGrupoMusical && p.IdPapelGrupo == 1 && p.Ativo == 1)
+                    .Select(p => new { p.Id, p.IsentoPagamento })
+                    .ToList();
+
+                if (associados.Any())
                 {
-                    List<Receitafinanceirapessoa> p = new List<Receitafinanceirapessoa>();
-                    foreach (int idAssociado in rf.IdAssociados)
+                    var pagamentos = new List<Receitafinanceirapessoa>();
+                    foreach (var associado in associados)
                     {
-                        p.Add(new Receitafinanceirapessoa()
+                        pagamentos.Add(new Receitafinanceirapessoa
                         {
                             IdReceitaFinanceira = f.Id,
-                            IdPessoa = idAssociado,
+                            IdPessoa = associado.Id,
                             Valor = rf.Valor ?? 0,
-                            DataPagamento = DateTime.Now,
+                            // 2. Define o status como ISENTO ou NAO_PAGOU no momento da criação
+                            Status = (associado.IsentoPagamento == 1) ? StatusPagamento.ISENTO : StatusPagamento.NAO_PAGOU,
+                            
                         });
                     }
-                    _context.AddRange(p);
+                    _context.AddRange(pagamentos);
                     _context.SaveChanges();
                 }
+
+
                 transaction.Commit();
                 return FinanceiroStatus.Success;
             }
             catch
             {
-                transaction.Rollback(); 
+                transaction.Rollback();
                 return FinanceiroStatus.Error;
             }
         }
 
-        
+
         public FinanceiroStatus Edit(Receitafinanceira financeiro)
         {
             if (financeiro.DataInicio > financeiro.DataFim)
@@ -127,19 +136,24 @@ namespace Service
                              DataInicio = financeiro.DataInicio,
                              DataFim = financeiro.DataFim,
                              Pagos = financeiro.Receitafinanceirapessoas.
-                             Where(rfp => rfp.IdReceitaFinanceira == financeiro.Id
-                               && rfp.Status == TipoPagamento.PAGO.ToString()).Count(),
+                                 Where(rfp => rfp.IdReceitaFinanceira == financeiro.Id
+                                     && (rfp.Status == StatusPagamento.PAGO || rfp.Status == StatusPagamento.PAGO_COMPROVANTE)).Count(),
                              Isentos = financeiro.Receitafinanceirapessoas.
-                             Where(rfp => rfp.IdReceitaFinanceira == financeiro.Id
-                               && rfp.Status == TipoPagamento.ISENTO.ToString()).Count(),
+                                 Where(rfp => rfp.IdReceitaFinanceira == financeiro.Id
+                                     && rfp.Status == TipoPagamento.ISENTO.ToString()).Count(),
                              Atrasos = financeiro.Receitafinanceirapessoas.
-                             Where(rfp => rfp.IdReceitaFinanceira == financeiro.Id
-                               && rfp.Status == TipoPagamento.ABERTO.ToString()
-                               && financeiro.DataFim < dataMesesAtrasados).Count(),
-                             Recebido = financeiro.Receitafinanceirapessoas.Where(rfp => rfp.Status == "PAGO").
-                             Sum(rfp => rfp.ValorPago),
+                                 Where(rfp => rfp.IdReceitaFinanceira == financeiro.Id &&
+                                             ((rfp.Status == StatusPagamento.PAGO || rfp.Status == StatusPagamento.PAGO_COMPROVANTE) && rfp.DataPagamento > financeiro.DataFim) ||
+                                             (rfp.Status == StatusPagamento.NAO_PAGOU && financeiro.DataFim < DateTime.Now.Date)
+                                 ).Count(),
+                             // --- INÍCIO DA CORREÇÃO ---
+                             Recebido = financeiro.Receitafinanceirapessoas
+                                 .Where(rfp => rfp.Status == StatusPagamento.PAGO || rfp.Status == StatusPagamento.PAGO_COMPROVANTE)
+                                 .Sum(rfp => rfp.Valor), 
+                                                         
                          }).ToList();
-            if (query.Count() > 0)
+
+            if (query.Any())
             {
                 foreach (var item in query)
                 {
@@ -152,6 +166,7 @@ namespace Service
             return query;
         }
 
+
         public async Task<IEnumerable<AssociadoPagamentoDTO>> GetAssociadosPagamento(int idReceita)
         {
             // Busca a receita para obter o Id do Grupo Musical
@@ -163,12 +178,12 @@ namespace Service
             }
             var idGrupoMusical = receita.IdGrupoMusical;
 
-            // Busca todos os associados ATIVOS do grupo musical correto
-            
+            // Busca todos os associados ATIVOS do grupo musical correto,
+            // incluindo a informação se ele é ISENTO
             var associadosDoGrupo = await _context.Pessoas
                 .Where(p => p.IdGrupoMusical == idGrupoMusical && p.IdPapelGrupo == 1 && p.Ativo == 1)
                 .OrderBy(p => p.Nome)
-                .Select(p => new { p.Id, p.Nome, p.Cpf })
+                .Select(p => new { p.Id, p.Nome, p.Cpf, p.IsentoPagamento }) // ALTERAÇÃO: Adicionado o campo "Isento"
                 .ToListAsync();
 
             // Busca os pagamentos já existentes para esta receita
@@ -184,17 +199,27 @@ namespace Service
                 {
                     IdAssociado = associado.Id,
                     NomeAssociado = associado.Nome,
-                    Cpf = associado.Cpf,
-                    Status = "NAO_PAGOU" // Define um status padrão
+                    Cpf = associado.Cpf
                 };
 
-                // Se um pagamento para este associado for encontrado, atualiza os dados
+                // Lógica para definir o status do pagamento
+                // 1. Se um pagamento para este associado for encontrado, atualiza os dados
                 if (pagamentos.TryGetValue(associado.Id, out var pagamento))
                 {
                     dto.DataPagamento = pagamento.DataPagamento;
-                    dto.ValorPago = pagamento.Valor; // Ajustado para Valor
+                    dto.ValorPago = pagamento.Valor;
                     dto.Observacoes = pagamento.Observacoes;
                     dto.Status = pagamento.Status;
+                }
+                // 2. Se não houver pagamento e o associado for isento, define o status como ISENTO
+                else if (associado.IsentoPagamento == 1)
+                {
+                    dto.Status = StatusPagamento.ISENTO;
+                }
+                // 3. Caso contrário, o status padrão é NAO_PAGOU
+                else
+                {
+                    dto.Status = StatusPagamento.NAO_PAGOU;
                 }
 
                 result.Add(dto);
