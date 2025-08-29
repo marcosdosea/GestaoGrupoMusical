@@ -471,40 +471,230 @@ namespace Service
         public IEnumerable<SolicitacaoEventoPessoasDTO> GetSolicitacaoEventoPessoas(int idEvento, int pegarFaltasEmMesesAtras)
         {
             DateTime doisMesesAtras = DateTime.Now.AddMonths(pegarFaltasEmMesesAtras);
-            var query = (from eventoPessoa in _context.Eventopessoas
-                         where idEvento == eventoPessoa.IdEvento
-                         select new SolicitacaoEventoPessoasDTO
-                         {
-                             IdInstrumento = eventoPessoa.IdTipoInstrumentoNavigation.Id,
-                             NomeInstrumento = eventoPessoa.IdTipoInstrumentoNavigation.Nome,
-                             IdAssociado = eventoPessoa.IdPessoa,
-                             IdPapelGrupo = eventoPessoa.IdPapelGrupoPapelGrupo,
-                             NomeAssociado = eventoPessoa.IdPessoaNavigation.Nome,
-                             AprovadoModel = ConvertAprovadoParaEnum(eventoPessoa.Status),
-                             Aprovado = ConvertAprovadoParaEnum(eventoPessoa.Status)
-                         }).AsNoTracking().ToList();
 
+            var dadosBrutos = (from eventoPessoa in _context.Eventopessoas
+                               where idEvento == eventoPessoa.IdEvento
+                               select new
+                               {
+                                   IdInstrumento = eventoPessoa.IdTipoInstrumento ?? 0, 
+                                   NomeInstrumento = eventoPessoa.IdTipoInstrumentoNavigation != null
+                                                   ? eventoPessoa.IdTipoInstrumentoNavigation.Nome
+                                                   : "Sem Instrumento", // Verificação de null
+                                   IdAssociado = eventoPessoa.IdPessoa,
+                                   IdPapelGrupo = eventoPessoa.IdPapelGrupoPapelGrupo,
+                                   NomeAssociado = eventoPessoa.IdPessoaNavigation.Nome,
+                                   Status = eventoPessoa.Status
+                               }).AsNoTracking().ToList();
+
+            var query = dadosBrutos.Select(item => new SolicitacaoEventoPessoasDTO
+            {
+                IdInstrumento = item.IdInstrumento,
+                NomeInstrumento = item.NomeInstrumento,
+                IdAssociado = item.IdAssociado,
+                IdPapelGrupo = item.IdPapelGrupo,
+                NomeAssociado = item.NomeAssociado,
+                AprovadoModel = ConvertAprovadoParaEnum(item.Status),
+                Aprovado = ConvertAprovadoParaEnum(item.Status)
+            }).ToList();
+
+            // Calcular faltas e inadimplência apenas para associados
             for (int i = 0; i < query.Count; i++)
             {
-                if (query[i].IdPapelGrupo != 1)
+                if (query[i].IdPapelGrupo != 1) // Se não é associado, pula
                     continue;
-                query[i].Faltas = _context.Ensaiopessoas.AsNoTracking().
-                             Count(
-                                 ep => ep.IdPessoa == query[i].IdAssociado &&
-                                 ep.Presente == 0 &&
-                                 ep.JustificativaAceita == 0 &&
-                                 ep.IdEnsaioNavigation.DataHoraInicio >= doisMesesAtras &&
-                                 ep.IdEnsaioNavigation.PresencaObrigatoria == 1);
 
-                query[i].Inadiplencia = _context.Receitafinanceiras.Where
-                    (
-                    rf => rf.Receitafinanceirapessoas.Any(
-                        rfp => rfp.IdPessoa == query[i].IdAssociado &&
+                query[i].Faltas = _context.Ensaiopessoas.AsNoTracking()
+                             .Count(ep => ep.IdPessoa == query[i].IdAssociado &&
+                                    ep.Presente == 0 &&
+                                    ep.JustificativaAceita == 0 &&
+                                    ep.IdEnsaioNavigation.DataHoraInicio >= doisMesesAtras &&
+                                    ep.IdEnsaioNavigation.PresencaObrigatoria == 1);
+
+                query[i].Inadiplencia = _context.Receitafinanceiras
+                    .Where(rf => rf.Receitafinanceirapessoas.Any(rfp =>
+                        rfp.IdPessoa == query[i].IdAssociado &&
                         rfp.Status != "PAGO" &&
-                        rf.DataFim > DateTime.Now.Date
-                        )).AsNoTracking().Count();
+                        rf.DataFim > DateTime.Now.Date))
+                    .AsNoTracking().Count();
             }
+
             return query;
+        }
+
+        public IEnumerable<InstrumentoSolicitacaoDTO> GetInstrumentosDisponiveis(int idEvento)
+        {
+            var query = from ati in _context.Apresentacaotipoinstrumentos
+                        join ti in _context.Tipoinstrumentos on ati.IdTipoInstrumento equals ti.Id
+                        where ati.IdApresentacao == idEvento
+                        select new InstrumentoSolicitacaoDTO
+                        {
+                            IdInstrumento = ti.Id,
+                            NomeInstrumento = ti.Nome,
+                            QuantidadePlanejada = ati.QuantidadePlanejada,
+                            QuantidadeConfirmada = ati.QuantidadeConfirmada,
+                            QuantidadeSolicitada = ati.QuantidadeSolicitada,
+                            VagasDisponiveis = ati.QuantidadePlanejada - ati.QuantidadeConfirmada
+                        };
+
+            return query.AsNoTracking().ToList();
+        }
+
+        public async Task<HttpStatusCode> SolicitarParticipacao(int idEvento, int idPessoa, int idTipoInstrumento)
+        {
+            var transaction = _context.Database.BeginTransaction();
+            try
+            {
+                // Verificar se o associado já está inscrito no evento
+                var jaInscrito = await _context.Eventopessoas
+                    .AnyAsync(ep => ep.IdEvento == idEvento && ep.IdPessoa == idPessoa);
+
+                if (jaInscrito)
+                {
+                    // Verificar se já solicitou este instrumento
+                    var jaTemInstrumento = await _context.Eventopessoas
+                        .AnyAsync(ep => ep.IdEvento == idEvento &&
+                                       ep.IdPessoa == idPessoa &&
+                                       ep.IdTipoInstrumento == idTipoInstrumento);
+
+                    if (jaTemInstrumento)
+                    {
+                        transaction.Rollback();
+                        return HttpStatusCode.Conflict; // Já solicitou este instrumento
+                    }
+
+                    // Atualizar o registro existente
+                    var eventoExistente = await _context.Eventopessoas
+                        .FirstOrDefaultAsync(ep => ep.IdEvento == idEvento && ep.IdPessoa == idPessoa);
+
+                    if (eventoExistente != null)
+                    {
+                        eventoExistente.IdTipoInstrumento = idTipoInstrumento;
+                        eventoExistente.Status = InscricaoEventoPessoa.INSCRITO.ToString();
+                        _context.Update(eventoExistente);
+                    }
+                }
+                else
+                {
+                    // Criar nova solicitação
+                    var novaInscricao = new Eventopessoa
+                    {
+                        IdEvento = idEvento,
+                        IdPessoa = idPessoa,
+                        IdTipoInstrumento = idTipoInstrumento,
+                        IdPapelGrupoPapelGrupo = 1, 
+                        Status = InscricaoEventoPessoa.INSCRITO.ToString(),
+                        Presente = 0,
+                        JustificativaAceita = 0
+                    };
+
+                    _context.Eventopessoas.Add(novaInscricao);
+                }
+
+                // Atualizar quantidade solicitada
+                var instrumentoEvento = await _context.Apresentacaotipoinstrumentos
+                    .FirstOrDefaultAsync(ati => ati.IdApresentacao == idEvento &&
+                                               ati.IdTipoInstrumento == idTipoInstrumento);
+
+                if (instrumentoEvento != null)
+                {
+                    instrumentoEvento.QuantidadeSolicitada++;
+                    _context.Update(instrumentoEvento);
+                }
+
+                await _context.SaveChangesAsync();
+                transaction.Commit();
+                return HttpStatusCode.OK;
+            }
+            catch (Exception)
+            {
+                transaction.Rollback();
+                return HttpStatusCode.InternalServerError;
+            }
+        }
+
+        public async Task<HttpStatusCode> CancelarSolicitacao(int idEvento, int idPessoa)
+        {
+            var transaction = _context.Database.BeginTransaction();
+            try
+            {
+                var eventoPessoa = await _context.Eventopessoas
+                    .FirstOrDefaultAsync(ep => ep.IdEvento == idEvento && ep.IdPessoa == idPessoa);
+
+                if (eventoPessoa == null)
+                {
+                    transaction.Rollback();
+                    return HttpStatusCode.NotFound;
+                }
+
+                // Só pode cancelar se ainda não foi aprovado
+                if (eventoPessoa.Status == InscricaoEventoPessoa.DEFERIDO.ToString())
+                {
+                    transaction.Rollback();
+                    return HttpStatusCode.BadRequest; 
+                }
+
+                if (eventoPessoa.IdTipoInstrumento.HasValue)
+                {
+                    var instrumentoEvento = await _context.Apresentacaotipoinstrumentos
+                        .FirstOrDefaultAsync(ati => ati.IdApresentacao == idEvento &&
+                                                   ati.IdTipoInstrumento == eventoPessoa.IdTipoInstrumento);
+
+                    if (instrumentoEvento != null)
+                    {
+                        instrumentoEvento.QuantidadeSolicitada--;
+                        _context.Update(instrumentoEvento);
+                    }
+                }
+
+                eventoPessoa.Status = InscricaoEventoPessoa.NAO_SOLICITADO.ToString();
+                eventoPessoa.IdTipoInstrumento = null;
+                _context.Update(eventoPessoa);
+
+                await _context.SaveChangesAsync();
+                transaction.Commit();
+                return HttpStatusCode.OK;
+            }
+            catch (Exception)
+            {
+                transaction.Rollback();
+                return HttpStatusCode.InternalServerError;
+            }
+        }
+
+        public async Task<bool> PodeAssociadoSolicitar(int idEvento, int idPessoa)
+        {
+            var evento = await _context.Eventos.FindAsync(idEvento);
+            if (evento == null || evento.DataHoraInicio <= DateTime.Now)
+            {
+                return false; // Evento não existe ou já passou
+            }
+
+            var pessoa = await _context.Pessoas.FindAsync(idPessoa);
+            if (pessoa == null || pessoa.IdPapelGrupo != (int)PapelGrupo.ASSOCIADO)
+            {
+                return false; // Não é associado
+            }
+
+            return true;
+        }
+
+        public async Task<EventoPessoaSolicitacaoDTO?> GetSolicitacaoAssociado(int idEvento, int idPessoa)
+        {
+            var query = from ep in _context.Eventopessoas
+                        where ep.IdEvento == idEvento && ep.IdPessoa == idPessoa
+                        select new EventoPessoaSolicitacaoDTO
+                        {
+                            IdEvento = ep.IdEvento,
+                            IdPessoa = ep.IdPessoa,
+                            IdTipoInstrumento = ep.IdTipoInstrumento,
+                            NomeInstrumento = ep.IdTipoInstrumentoNavigation != null
+                                            ? ep.IdTipoInstrumentoNavigation.Nome
+                                            : null,
+                            Status = ep.Status,
+                            StatusEnum = ConvertAprovadoParaEnum(ep.Status)
+                        };
+
+            return await query.AsNoTracking().FirstOrDefaultAsync();
         }
 
 
@@ -851,6 +1041,25 @@ public EventoDetailsDTO? GetDetails(int idEvento)
                                  .Select(ep => ep.Status).AsNoTracking().FirstOrDefault()),
                          }).AsNoTracking().ToList();
             return query;
+        }
+
+        /// <summary>
+        /// Converte o status string para o enum InscricaoEventoPessoa
+        /// </summary>
+        /// <param name="status">Status como string vindo do banco</param>
+        /// <returns>Enum correspondente</returns>
+        private static InscricaoEventoPessoa ConvertAprovadoParaEnum(string? status)
+        {
+            if (string.IsNullOrEmpty(status))
+                return InscricaoEventoPessoa.NAO_SOLICITADO;
+
+            return status.ToUpper() switch
+            {
+                "INSCRITO" => InscricaoEventoPessoa.INSCRITO,
+                "DEFERIDO" => InscricaoEventoPessoa.DEFERIDO,
+                "INDEFERIDO" => InscricaoEventoPessoa.INDEFERIDO,
+                _ => InscricaoEventoPessoa.NAO_SOLICITADO
+            };
         }
 
     }

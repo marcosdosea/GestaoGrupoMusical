@@ -363,6 +363,135 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return RedirectToAction(nameof(GerenciarInstrumentoEvento), new { id = gerenciarInstrumentoEventoViewModel.Id });
         }
 
+        [Authorize(Roles = "ASSOCIADO")]
+        public async Task<ActionResult> SolicitarParticipacao(int id)
+        {
+            int idPessoa = Convert.ToInt32(User.FindFirst("Id")?.Value);
+
+            if (!await _eventoService.PodeAssociadoSolicitar(id, idPessoa))
+            {
+                Notificar("Não é possível solicitar participação neste evento.", Notifica.Alerta);
+                return RedirectToAction("MeusEventos");
+            }
+
+            var evento = _eventoService.Get(id);
+            if (evento == null)
+            {
+                Notificar("Evento não encontrado.", Notifica.Erro);
+                return RedirectToAction("MeusEventos");
+            }
+
+            var instrumentosDisponiveis = _eventoService.GetInstrumentosDisponiveis(id);
+            var minhaInscricao = await _eventoService.GetSolicitacaoAssociado(id, idPessoa);
+
+            var model = new EventoDetalhesAssociadoDTO
+            {
+                Id = evento.Id,
+                DataHoraInicio = evento.DataHoraInicio,
+                DataHoraFim = evento.DataHoraFim,
+                Local = evento.Local,
+                Repertorio = evento.Repertorio,
+                InstrumentosDisponiveis = instrumentosDisponiveis,
+                MinhaInscricao = minhaInscricao,
+                PodeInscrever = minhaInscricao == null || minhaInscricao.StatusEnum == InscricaoEventoPessoa.NAO_SOLICITADO,
+                PodeCancelar = minhaInscricao?.StatusEnum == InscricaoEventoPessoa.INSCRITO
+            };
+
+            return View(model);
+        }
+
+        [Authorize(Roles = "ASSOCIADO")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ConfirmarSolicitacao(SolicitarParticipacaoDTO solicitacao)
+        {
+            if (!ModelState.IsValid)
+            {
+                Notificar("Dados inválidos. Verifique os campos obrigatórios.", Notifica.Alerta);
+                return RedirectToAction("SolicitarParticipacao", new { id = solicitacao.IdEvento });
+            }
+
+            int idPessoa = Convert.ToInt32(User.FindFirst("Id")?.Value);
+
+            var resultado = await _eventoService.SolicitarParticipacao(
+                solicitacao.IdEvento,
+                idPessoa,
+                solicitacao.IdTipoInstrumento
+            );
+
+            switch (resultado)
+            {
+                case HttpStatusCode.OK:
+                    Notificar("Solicitação de participação enviada com <b>sucesso</b>!", Notifica.Sucesso);
+                    break;
+                case HttpStatusCode.Conflict:
+                    Notificar("Você já solicitou participação com este instrumento.", Notifica.Alerta);
+                    break;
+                case HttpStatusCode.BadRequest:
+                    Notificar("Não é possível solicitar participação neste momento.", Notifica.Alerta);
+                    break;
+                default:
+                    Notificar("Erro ao processar sua solicitação. Tente novamente.", Notifica.Erro);
+                    break;
+            }
+
+            return RedirectToAction("MeusEventos");
+        }
+
+        [Authorize(Roles = "ASSOCIADO")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> CancelarSolicitacao(int idEvento)
+        {
+            int idPessoa = Convert.ToInt32(User.FindFirst("Id")?.Value);
+
+            var resultado = await _eventoService.CancelarSolicitacao(idEvento, idPessoa);
+
+            switch (resultado)
+            {
+                case HttpStatusCode.OK:
+                    Notificar("Solicitação cancelada com <b>sucesso</b>.", Notifica.Sucesso);
+                    break;
+                case HttpStatusCode.NotFound:
+                    Notificar("Solicitação não encontrada.", Notifica.Alerta);
+                    break;
+                case HttpStatusCode.BadRequest:
+                    Notificar("Não é possível cancelar esta solicitação.", Notifica.Alerta);
+                    break;
+                default:
+                    Notificar("Erro ao cancelar solicitação. Tente novamente.", Notifica.Erro);
+                    break;
+            }
+
+            return RedirectToAction("MeusEventos");
+        }
+
+        [Authorize(Roles = "ASSOCIADO")]
+        public async Task<ActionResult> MeusEventos()
+        {
+            int idPessoa = Convert.ToInt32(User.FindFirst("Id")?.Value);
+            int idGrupoMusical = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
+
+            // Buscar eventos dos últimos 6 meses
+            var eventos = _eventoService.GetEventosDeAssociado(idPessoa, idGrupoMusical, -6);
+
+            return View(eventos);
+        }
+
+        [Authorize(Roles = "ASSOCIADO")]
+        public JsonResult GetInstrumentosDisponiveis(int idEvento)
+        {
+            var instrumentos = _eventoService.GetInstrumentosDisponiveis(idEvento);
+            return Json(instrumentos);
+        }
+
+        // MÉTODO para administradores verificarem status das solicitações
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
+        public ActionResult StatusSolicitacoes(int id)
+        {
+            var statusGeral = _eventoService.GetInstrumentosPlanejadosEvento(id);
+            return View(statusGeral);
+        }
 
         [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         public ActionResult GerenciarSolicitacaoEvento(int id)

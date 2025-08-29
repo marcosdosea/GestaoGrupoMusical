@@ -86,6 +86,46 @@ namespace Core.DTO
         [Display(Name = "Aprovado")]
         public InscricaoEventoPessoa AprovadoModel { get; set; }
     }
+
+    public class InstrumentoSolicitacaoDTO
+    {
+        public int IdInstrumento { get; set; }
+        public string NomeInstrumento { get; set; } = null!;
+        public int QuantidadePlanejada { get; set; }
+        public int QuantidadeConfirmada { get; set; }
+        public int QuantidadeSolicitada { get; set; }
+        public int VagasDisponiveis { get; set; }
+    }
+
+    public class EventoPessoaSolicitacaoDTO
+    {
+        public int IdEvento { get; set; }
+        public int IdPessoa { get; set; }
+        public int? IdTipoInstrumento { get; set; }
+        public string? NomeInstrumento { get; set; }
+        public string Status { get; set; } = null!;
+        public InscricaoEventoPessoa StatusEnum { get; set; }
+    }
+
+    public class SolicitarParticipacaoDTO
+    {
+        public int IdEvento { get; set; }
+        public int IdTipoInstrumento { get; set; }
+        public string? Observacoes { get; set; }
+    }
+
+    public class EventoDetalhesAssociadoDTO
+    {
+        public int Id { get; set; }
+        public DateTime DataHoraInicio { get; set; }
+        public DateTime DataHoraFim { get; set; }
+        public string? Local { get; set; }
+        public string? Repertorio { get; set; }
+        public IEnumerable<InstrumentoSolicitacaoDTO> InstrumentosDisponiveis { get; set; } = new List<InstrumentoSolicitacaoDTO>();
+        public EventoPessoaSolicitacaoDTO? MinhaInscricao { get; set; }
+        public bool PodeInscrever { get; set; }
+        public bool PodeCancelar { get; set; }
+    }
 }
 
 //ENUM('INSCRITO', 'DEFERIDO', 'INDEFERIDO')
