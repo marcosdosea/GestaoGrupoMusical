@@ -50,6 +50,11 @@ namespace Core.Service
             QuantidadeConfirmadaNegativa,
             QuantidadeSolicitadaNegativa
         }
+        IEnumerable<InstrumentoSolicitacaoDTO> GetInstrumentosDisponiveis(int idEvento);
+        Task<HttpStatusCode> SolicitarParticipacao(int idEvento, int idPessoa, int idTipoInstrumento);
+        Task<HttpStatusCode> CancelarSolicitacao(int idEvento, int idPessoa);
+        Task<bool> PodeAssociadoSolicitar(int idEvento, int idPessoa);
+        Task<EventoPessoaSolicitacaoDTO?> GetSolicitacaoAssociado(int idEvento, int idPessoa);
         IEnumerable<InstrumentoPlanejadoEventoDTO> GetInstrumentosPlanejadosEvento(int idEvento);
         public IEnumerable<EventoAssociadoDTO>? GetEventosDeAssociado(int idPessoa, int idEvento, int PegarUltimosEventoDeAssociado);
     }
