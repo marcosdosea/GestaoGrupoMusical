@@ -169,34 +169,31 @@ namespace Service
 
             try
             {
-
                 if (ensaio.DataHoraFim > ensaio.DataHoraInicio)
                 {
                     if (ensaio.DataHoraInicio >= DateTime.Now)
                     {
-                        var idEnsaioRegentes = _context.Ensaiopessoas
-                                            .Where(ep => ep.IdEnsaio == ensaio.Id && ep.IdPapelGrupo == 5).AsNoTracking().ToList();
-                        if ((idRegentes.Count() != idEnsaioRegentes.Count))
+                        // Remove todos os regentes associados a este ensaio
+                        var regentesAtuais = _context.Ensaiopessoas
+                                                .Where(ep => ep.IdEnsaio == ensaio.Id && ep.IdPapelGrupo == 5);
+                        _context.Ensaiopessoas.RemoveRange(regentesAtuais);
+
+                        // Adiciona os novos regentes
+                        foreach (int idRegente in idRegentes)
                         {
-
-                            _context.Ensaiopessoas.RemoveRange(idEnsaioRegentes);
-                            _context.SaveChanges();
-                            foreach (int idRegente in idRegentes)
+                            Ensaiopessoa ensaioPessoa = new()
                             {
-                                Ensaiopessoa ensaioPessoa = new()
-                                {
-                                    IdEnsaio = ensaio.Id,
-                                    IdPessoa = idRegente,
-                                    IdPapelGrupo = 5,
-                                };
-                                _context.Ensaiopessoas.Add(ensaioPessoa);
-                                _context.SaveChanges();
-                            }
+                                IdEnsaio = ensaio.Id,
+                                IdPessoa = idRegente,
+                                IdPapelGrupo = 5, // ID do papel de Regente
+                            };
+                            _context.Ensaiopessoas.Add(ensaioPessoa);
                         }
-                        _context.Ensaios.Update(ensaio);
 
+                        _context.Ensaios.Update(ensaio);
                         _context.SaveChanges();
                         transaction.Commit();
+
                         return HttpStatusCode.OK;
                     }
                     else
@@ -379,8 +376,9 @@ namespace Service
         public async Task<IEnumerable<int>> GetIdRegentesEnsaioAsync(int idEnsaio)
         {
             return await _context.Ensaiopessoas
-                                 .Where(ep => ep.IdEnsaio == idEnsaio)
-                                 .Select(ep => ep.IdPessoa).ToListAsync();
+                                 .Where(ep => ep.IdEnsaio == idEnsaio && ep.IdPapelGrupo == 5)
+                                 .Select(ep => ep.IdPessoa)
+                                 .ToListAsync();
         }
 
         public List<AssociadoDTO> GetAssociadoAtivos(int idEnsaio)

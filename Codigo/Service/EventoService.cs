@@ -181,64 +181,80 @@ namespace Service
         }
 
         /// <summary>
-        /// Metodo usado para editar um Grupo Musical
+        /// Metodo usado para editar um Evento
         /// </summary>
-        /// <param name="evento"></param>
-        public HttpStatusCode Edit(Evento evento)
+        /// <param name="evento">O objeto evento com as novas informações</param>
+        /// <param name="idRegentes">Uma lista com os IDs dos novos regentes</param>
+        /// <param name="idFigurino">O ID do novo figurino</param>
+        public HttpStatusCode Edit(Evento evento, IEnumerable<int> idRegentes, int idFigurino)
         {
             using var transaction = _context.Database.BeginTransaction();
 
             try
             {
-                if (evento.DataHoraFim > evento.DataHoraInicio)
-                {
-                    if (evento.DataHoraInicio.Date >= DateTime.Today)
-                    {
-                        //Caso existe já regentes cadastrado, primeiro deleta eles
-                        var evPessoaRegentes = GetRegentesEventoPessoasPorIdEvento(evento.Id);
-                        if (evPessoaRegentes.Count != 0)
-                        {
-                            _context.Eventopessoas.RemoveRange(evPessoaRegentes);
-                            _context.SaveChanges();
-                        }
-                        //Caso existe já figurinos cadastrado, primeiro deleta eles
-                        var figurinoApresentacoes = _context.Set<Dictionary<string, object>>("Figurinoapresentacao")
-                        .Where(fa => (int)fa["IdApresentacao"] == evento.Id).ToList();
-                        _context.Set<Dictionary<string, object>>("Figurinoapresentacao").RemoveRange(figurinoApresentacoes);
-                        _context.SaveChanges();
-                        figurinoApresentacoes = null;
-                        //Adiciona os novos regentes
-                        _context.AddRange(evento.Eventopessoas);
-                        _context.SaveChanges();
-                        //Adicinoa um figurino
-                        _context.Set<Dictionary<string, object>>("Figurinoapresentacao").Add(new Dictionary<string, object>
-                                      {
-                                          { "IdFigurino", evento.IdFigurinos.First().Id },
-                                          { "IdApresentacao", evento.Id }
-                                      });
-                        _context.SaveChanges();
-                        evento.IdFigurinos.Clear();
-                        evento.Eventopessoas.Clear();
-                        evento.Apresentacaotipoinstrumentos.Clear();
-                        _context.Update(evento);
-                        _context.SaveChanges();
-                        transaction.Commit();
-                        return HttpStatusCode.OK;
-                    }
-                    else
-                    {
-                        transaction.Rollback();
-                        return HttpStatusCode.BadRequest;
-                    }
-                }
-                else
+                if (evento.DataHoraFim <= evento.DataHoraInicio)
                 {
                     transaction.Rollback();
                     return HttpStatusCode.PreconditionFailed;
                 }
+
+                if (evento.DataHoraInicio.Date < DateTime.Today)
+                {
+                    transaction.Rollback();
+                    return HttpStatusCode.BadRequest;
+                }
+
+                // 1. Remover regentes antigos
+                var regentesAtuais = _context.Eventopessoas
+                                        .Where(ep => ep.IdEvento == evento.Id && ep.IdPapelGrupoPapelGrupo == 5);
+                _context.Eventopessoas.RemoveRange(regentesAtuais);
+                _context.SaveChanges();
+
+                // 2. Adicionar novos regentes
+                foreach (var idRegente in idRegentes)
+                {
+                    var novoRegente = new Eventopessoa
+                    {
+                        IdEvento = evento.Id,
+                        IdPessoa = idRegente,
+                        IdPapelGrupoPapelGrupo = 5, // Papel de Regente
+                        Status = "INSCRITO"
+                    };
+                    _context.Eventopessoas.Add(novoRegente);
+                }
+                _context.SaveChanges();
+
+                // 3. Remover figurino antigo
+                var figurinoAntigo = _context.Set<Dictionary<string, object>>("Figurinoapresentacao")
+                                        .FirstOrDefault(fa => (int)fa["IdApresentacao"] == evento.Id);
+                if (figurinoAntigo != null)
+                {
+                    _context.Set<Dictionary<string, object>>("Figurinoapresentacao").Remove(figurinoAntigo);
+                    _context.SaveChanges();
+                }
+
+                // 4. Adicionar novo figurino
+                _context.Set<Dictionary<string, object>>("Figurinoapresentacao").Add(new Dictionary<string, object>
+        {
+            { "IdFigurino", idFigurino },
+            { "IdApresentacao", evento.Id }
+        });
+                _context.SaveChanges();
+
+                // 5. Limpar coleções para evitar problemas de tracking do EF
+                evento.Eventopessoas.Clear();
+                evento.IdFigurinos.Clear();
+
+                // 6. Atualizar o evento
+                _context.Eventos.Update(evento);
+                _context.SaveChanges();
+
+                transaction.Commit();
+                return HttpStatusCode.OK;
             }
             catch
             {
+                transaction.Rollback();
                 return HttpStatusCode.InternalServerError;
             }
         }
@@ -747,12 +763,34 @@ namespace Service
                 return HttpStatusCode.InternalServerError;
             }
         }
-        public async Task<IEnumerable<int>> GetIdRegentesEventoAsync(int idEnsaio)
-        {
-            return await _context.Ensaiopessoas
-                                 .Where(ep => ep.IdEnsaio == idEnsaio)
-                                 .Select(ep => ep.IdPessoa).ToListAsync();
-        }
+        public async Task<IEnumerable<int>> GetIdRegentesEventoAsync(int idEvento)
+{
+    return await _context.Eventopessoas
+                         .Where(ep => ep.IdEvento == idEvento && ep.IdPapelGrupoPapelGrupo == 5)
+                         .Select(ep => ep.IdPessoa)
+                         .ToListAsync();
+}
+
+// Adicione este novo método
+public EventoDetailsDTO? GetDetails(int idEvento)
+{
+    var query = from evento in _context.Eventos
+                where evento.Id == idEvento
+                select new EventoDetailsDTO
+                {
+                    Id = evento.Id,
+                    DataHoraInicio = evento.DataHoraInicio,
+                    DataHoraFim = evento.DataHoraFim,
+                    Local = evento.Local,
+                    Repertorio = evento.Repertorio,
+                    Regentes = (from eventopessoa in _context.Eventopessoas
+                                join pessoa in _context.Pessoas on eventopessoa.IdPessoa equals pessoa.Id
+                                where eventopessoa.IdEvento == idEvento && eventopessoa.IdPapelGrupoPapelGrupo == 5
+                                select pessoa.Nome).ToList()
+                };
+
+    return query.FirstOrDefault();
+}
         public IEnumerable<InstrumentoPlanejadoEventoDTO> GetInstrumentosPlanejadosEvento(int idApresentacao)
         {
             try

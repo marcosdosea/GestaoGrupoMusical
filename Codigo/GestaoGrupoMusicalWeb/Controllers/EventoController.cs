@@ -64,11 +64,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: EventoController/Details/5
         public ActionResult Details(int id)
         {
-            var evento = _eventoService.Get(id);
-            var eventoModel = _mapper.Map<EventoViewModel>(evento);
-            
-
-            return View(eventoModel);
+            var evento = _eventoService.GetDetails(id);
+            if (evento == null)
+            {
+                Notificar("Evento não encontrado!", Notifica.Alerta);
+                return RedirectToAction(nameof(Index));
+            }
+            return View(evento);
         }
 
         // GET: EventoController/Create
@@ -189,7 +191,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(EventoCreateViewlModel eventoModel)
         {
-
             if (ModelState.IsValid && eventoModel.IdFigurinoSelecionado != 0 && eventoModel.IdRegentes != null && eventoModel.IdRegentes.Any())
             {
                 var colaborador = await _pessoaService.GetByCpf(User.Identity?.Name);
@@ -197,27 +198,17 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 {
                     return RedirectToAction("Sair", "Identity");
                 }
+
                 var evento = _mapper.Map<Evento>(eventoModel);
                 evento.IdColaboradorResponsavel = colaborador.Id;
                 evento.IdGrupoMusical = colaborador.IdGrupoMusical;
-                if (eventoModel.IdFigurinoSelecionado != 0 && eventoModel.IdRegentes != null)
-                {
-                    foreach (int idPessoa in eventoModel.IdRegentes)
-                    {
-                        evento.Eventopessoas.Add(new Eventopessoa()
-                        {
-                            IdPessoa = idPessoa,
-                            IdEvento = evento.Id,
-                            IdPapelGrupoPapelGrupo = 5,
-                        });
-                    }
-                    evento.IdFigurinos.Add(new Figurino() { Id = eventoModel.IdFigurinoSelecionado });
-                }
-                switch (_eventoService.Edit(evento))
+
+                // Chamada ao novo método de serviço
+                switch (_eventoService.Edit(evento, eventoModel.IdRegentes, eventoModel.IdFigurinoSelecionado))
                 {
                     case HttpStatusCode.OK:
                         Notificar("Evento <b>Editado</b> com <b>Sucesso</b>", Notifica.Sucesso);
-                        break;
+                        return RedirectToAction(nameof(Index));
                     case HttpStatusCode.BadRequest:
                         Notificar("Alerta! A <b>data de início</b> deve ser maior que a data de <b>hoje</b>", Notifica.Alerta);
                         break;
@@ -225,13 +216,20 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         Notificar("Alerta! A data de <b>início</b> deve ser menor que a data <b>fim</b> ", Notifica.Alerta);
                         break;
                     default:
-                        Notificar("<b>Erro</b>! Desculpe, ocorreu um erro durante o <b>Cadastro</b> do evento.", Notifica.Erro);
+                        Notificar("<b>Erro</b>! Desculpe, ocorreu um erro durante a <b>Edição</b> do evento.", Notifica.Erro);
                         break;
                 }
-                return RedirectToAction(nameof(Index));
             }
-            eventoModel.ListaPessoa = new SelectList(_pessoaService.GetAll(), "Id", "Nome");
-            return RedirectToAction("Edit", eventoModel);
+            else
+            {
+                Notificar("<b>Erro</b>! Verifique os dados do formulário.", Notifica.Erro);
+            }
+            // Recarregar os dados necessários para a view em caso de erro
+            var listaPessoasAutoComplete = _pessoaService.GetRegentesForAutoComplete(eventoModel.IdGrupoMusical);
+            var figurinosDropdown = await _figurinoService.GetAllFigurinoDropdown(eventoModel.IdGrupoMusical);
+            eventoModel.ListaPessoa = new SelectList(listaPessoasAutoComplete, "Id", "Nome");
+            eventoModel.FigurinoList = new SelectList(figurinosDropdown, "Id", "Nome");
+            return View(eventoModel);
         }
 
         // POST: EventoController/Delete/5

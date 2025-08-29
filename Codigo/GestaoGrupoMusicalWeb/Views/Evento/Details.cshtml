@@ -1,65 +1,81 @@
-﻿@model GestaoGrupoMusicalWeb.Models.EventoViewModel
+﻿@model Core.DTO.EventoDetailsDTO
 
 @{
-    ViewData["Title"] = "Detalhes";
+    ViewData["Title"] = "Detalhes do Evento";
+    ViewData["Eventos"] = "Eventos";
+    Layout = "_LayoutColaborador";
 }
+<partial name="_Notificar" />
 
-<h4>@ViewData["Title"]</h4>
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <h1 class="p-3 bg-danger bg-opacity-75 text-white fs-5">@ViewData["Title"]</h1>
+        <nav>
+            <ol class="breadcrumb px-3">
+                <strong>
+                    <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Eventos"]</a>
+                    <span class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> Detalhes</span>
+                </strong>
+            </ol>
+        </nav>
+        <hr />
+        <br />
 
-<div>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Id)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IdGrupoMusical)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IdGrupoMusical)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DataHoraInicio)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataHoraInicio)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DataHoraFim)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataHoraFim)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Local)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Local)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Repertorio)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Repertorio)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IdColaboradorResponsavel)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IdColaboradorResponsavel)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IdRegente)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IdRegente)
-        </dd>
-    </dl>
-</div>
-<div>
-    @Html.ActionLink("Editar", "Edit", new { id = Model.Id}) |
-    <a asp-action="Index">Voltar</a>
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                <h6 class="m-0 font-weight-bold text-danger">Dados do Evento</h6>
+                <a class="btn btn-outline-secondary btn-sm" asp-action="Index"><i class="fa-solid fa-arrow-left"></i> Voltar</a>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fa-solid fa-music fs-4 text-danger me-2"></i>
+                        <h6 class="m-0 font-weight-bold text-danger">Informações do Evento</h6>
+                    </div>
+                    <hr class="text-danger mt-1 mb-3" style="width: 50px;">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label text-muted">@Html.DisplayNameFor(model => model.DataHoraInicio)</label>
+                                <p class="form-control-plaintext fw-bold">@Model.DataHoraInicio.ToString("dd/MM/yyyy HH:mm")</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-muted">@Html.DisplayNameFor(model => model.DataHoraFim)</label>
+                                <p class="form-control-plaintext fw-bold">@Model.DataHoraFim.ToString("dd/MM/yyyy HH:mm")</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Local)</label>
+                                <p class="form-control-plaintext fw-bold">@Html.DisplayFor(model => model.Local)</p>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <div class="mb-3">
+                                <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Regentes)</label>
+                                @{
+                                    if (Model.Regentes != null && Model.Regentes.Any())
+                                    {
+                                        <p class="form-control-plaintext fw-bold">@string.Join(", ", Model.Regentes)</p>
+                                    }
+                                    else
+                                    {
+                                        <p class="form-control-plaintext fw-bold fst-italic">Nenhum regente alocado.</p>
+                                    }
+                                }
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Repertorio)</label>
+                                <p class="form-control-plaintext fw-bold">@Html.DisplayFor(model => model.Repertorio)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer d-flex justify-content-end">
+                @Html.ActionLink("Editar", "Edit", new { id = Model.Id }, new { @class = "btn btn-danger" })
+            </div>
+        </div>
+    </div>
 </div>
