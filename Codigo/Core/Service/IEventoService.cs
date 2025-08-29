@@ -12,7 +12,9 @@ namespace Core.Service
         Task<IEnumerable<int>> GetIdRegentesEventoAsync(int idEvento);
         Task<HttpStatusCode> Create(Evento evento, IEnumerable<int> idRegentes, int idFigurino);
         HttpStatusCode Delete(int id);
-        HttpStatusCode Edit(Evento evento);
+        HttpStatusCode Edit(Evento evento, IEnumerable<int> idRegentes, int idFigurino);
+        EventoDetailsDTO? GetDetails(int idEvento);
+
         Evento Get(int id);
         ICollection<Eventopessoa> GetEventoPessoasPorIdEvento(int idEvento);
         IEnumerable<Evento> GetAll();

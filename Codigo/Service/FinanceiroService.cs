@@ -146,7 +146,7 @@ namespace Service
                                              ((rfp.Status == StatusPagamento.PAGO || rfp.Status == StatusPagamento.PAGO_COMPROVANTE) && rfp.DataPagamento > financeiro.DataFim) ||
                                              (rfp.Status == StatusPagamento.NAO_PAGOU && financeiro.DataFim < DateTime.Now.Date)
                                  ).Count(),
-                             // --- INÍCIO DA CORREÇÃO ---
+                          
                              Recebido = financeiro.Receitafinanceirapessoas
                                  .Where(rfp => rfp.Status == StatusPagamento.PAGO || rfp.Status == StatusPagamento.PAGO_COMPROVANTE)
                                  .Sum(rfp => rfp.Valor), 
