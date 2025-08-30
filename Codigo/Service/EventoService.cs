@@ -39,6 +39,7 @@ namespace Service
                         _context.Eventos.Add(evento);
                         _context.SaveChanges();
 
+                        // Adicionar regentes
                         List<Eventopessoa> p = new();
                         foreach (int id in idRegentes)
                         {
@@ -46,7 +47,7 @@ namespace Service
                             {
                                 IdEvento = evento.Id,
                                 IdPessoa = id,
-                                IdPapelGrupoPapelGrupo = 5,
+                                IdPapelGrupoPapelGrupo = 5, // Regente
                                 Status = "INSCRITO",
                                 Presente = 0,
                                 JustificativaAceita = 0
@@ -54,33 +55,43 @@ namespace Service
                         }
                         _context.Eventopessoas.AddRange(p);
                         _context.SaveChanges();
+
+                        // Adicionar figurino
                         _context.Set<Dictionary<string, object>>("Figurinoapresentacao").Add(new Dictionary<string, object>
-                        {
-                            {"IdFigurino", idFigurino },
-                            {"IdApresentacao", evento.Id }
-                        });
+                {
+                    {"IdFigurino", idFigurino },
+                    {"IdApresentacao", evento.Id }
+                });
                         _context.SaveChanges();
 
-                        IEnumerable<int> idAssociados = _context.Pessoas.Where
-                            (p => p.IdGrupoMusical == evento.IdGrupoMusical && p.IdPapelGrupo == (int)PapelGrupo.ASSOCIADO).Select(p => p.Id);
-                        if (idAssociados.Any())
+                        // INÍCIO DA CORREÇÃO: Adiciona um registro inicial para cada associado
+                        var associados = _context.Pessoas
+                                                 .Where(p => p.IdGrupoMusical == evento.IdGrupoMusical && p.IdPapelGrupo == 1) // 1 = Associado
+                                                 .AsNoTracking()
+                                                 .ToList();
+
+                        foreach (var associado in associados)
                         {
-                            List<Eventopessoa> ep = new();
-                            foreach (int id in idAssociados)
+                            var existeInscricao = _context.Eventopessoas.Any(ep => ep.IdEvento == evento.Id && ep.IdPessoa == associado.Id);
+                            if (!existeInscricao)
                             {
-                                ep.Add(new Eventopessoa()
+                                _context.Eventopessoas.Add(new Eventopessoa
                                 {
                                     IdEvento = evento.Id,
-                                    IdPessoa = id,
-                                    IdPapelGrupoPapelGrupo = 5,
-                                    Status = "INSCRITO",  
+                                    IdPessoa = associado.Id,
+                                    IdPapelGrupoPapelGrupo = 1, // Associado
+                                    Status = "NAO_SOLICITADO",
                                     Presente = 0,
-                                    JustificativaAceita = 0
+                                    JustificativaAceita = 0,
+                                    IdTipoInstrumento = null
                                 });
                             }
-                            _context.AddRange(ep);
-                            _context.SaveChanges();
                         }
+                        _context.SaveChanges();
+                        // FIM DA CORREÇÃO
+
+                        Console.WriteLine($"Evento {evento.Id} criado com sucesso. Regentes adicionados: {string.Join(", ", idRegentes)}");
+
                         transaction.Commit();
                         return HttpStatusCode.OK;
                     }
@@ -95,10 +106,10 @@ namespace Service
                     transaction.Rollback();
                     return HttpStatusCode.PreconditionFailed;
                 }
-
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"Erro ao criar evento: {ex.Message}");
                 transaction.Rollback();
                 throw;
             }
@@ -470,21 +481,33 @@ namespace Service
 
         public IEnumerable<SolicitacaoEventoPessoasDTO> GetSolicitacaoEventoPessoas(int idEvento, int pegarFaltasEmMesesAtras)
         {
+            Console.WriteLine($"Buscando solicitações para evento {idEvento}");
+
             DateTime doisMesesAtras = DateTime.Now.AddMonths(pegarFaltasEmMesesAtras);
 
             var dadosBrutos = (from eventoPessoa in _context.Eventopessoas
                                where idEvento == eventoPessoa.IdEvento
                                select new
                                {
-                                   IdInstrumento = eventoPessoa.IdTipoInstrumento ?? 0, 
+                                   IdInstrumento = eventoPessoa.IdTipoInstrumento ?? 0,
                                    NomeInstrumento = eventoPessoa.IdTipoInstrumentoNavigation != null
                                                    ? eventoPessoa.IdTipoInstrumentoNavigation.Nome
-                                                   : "Sem Instrumento", // Verificação de null
+                                                   : "Sem Instrumento",
                                    IdAssociado = eventoPessoa.IdPessoa,
                                    IdPapelGrupo = eventoPessoa.IdPapelGrupoPapelGrupo,
                                    NomeAssociado = eventoPessoa.IdPessoaNavigation.Nome,
                                    Status = eventoPessoa.Status
                                }).AsNoTracking().ToList();
+
+            Console.WriteLine($"Total de registros encontrados para evento {idEvento}: {dadosBrutos.Count}");
+
+            // Log detalhado dos dados brutos
+            foreach (var item in dadosBrutos)
+            {
+                Console.WriteLine($"  - Pessoa: {item.NomeAssociado} (ID: {item.IdAssociado}), " +
+                                 $"Papel: {item.IdPapelGrupo}, Status: {item.Status}, " +
+                                 $"Instrumento: {item.NomeInstrumento} (ID: {item.IdInstrumento})");
+            }
 
             var query = dadosBrutos.Select(item => new SolicitacaoEventoPessoasDTO
             {
@@ -518,6 +541,8 @@ namespace Service
                     .AsNoTracking().Count();
             }
 
+            Console.WriteLine($"Retornando {query.Count} solicitações processadas");
+
             return query;
         }
 
@@ -544,34 +569,44 @@ namespace Service
             var transaction = _context.Database.BeginTransaction();
             try
             {
-                // Verificar se o associado já está inscrito no evento
-                var jaInscrito = await _context.Eventopessoas
-                    .AnyAsync(ep => ep.IdEvento == idEvento && ep.IdPessoa == idPessoa);
+                // LOG para debug
+                Console.WriteLine($"Iniciando solicitação - Pessoa: {idPessoa}, Evento: {idEvento}, Instrumento: {idTipoInstrumento}");
 
-                if (jaInscrito)
+                // Verificar se já existe alguma solicitação (qualquer status)
+                var solicitacaoExistente = await _context.Eventopessoas
+                    .FirstOrDefaultAsync(ep => ep.IdEvento == idEvento && ep.IdPessoa == idPessoa);
+
+                if (solicitacaoExistente != null)
                 {
-                    // Verificar se já solicitou este instrumento
-                    var jaTemInstrumento = await _context.Eventopessoas
-                        .AnyAsync(ep => ep.IdEvento == idEvento &&
-                                       ep.IdPessoa == idPessoa &&
-                                       ep.IdTipoInstrumento == idTipoInstrumento);
-
-                    if (jaTemInstrumento)
+                    // Verificar se já tem este instrumento específico
+                    if (solicitacaoExistente.IdTipoInstrumento == idTipoInstrumento)
                     {
+                        Console.WriteLine($"Já existe solicitação com mesmo instrumento para pessoa {idPessoa} no evento {idEvento}");
                         transaction.Rollback();
                         return HttpStatusCode.Conflict; // Já solicitou este instrumento
                     }
 
-                    // Atualizar o registro existente
-                    var eventoExistente = await _context.Eventopessoas
-                        .FirstOrDefaultAsync(ep => ep.IdEvento == idEvento && ep.IdPessoa == idPessoa);
+                    // Atualizar o registro existente com novo instrumento
+                    Console.WriteLine($"Atualizando solicitação existente - Status anterior: {solicitacaoExistente.Status}");
 
-                    if (eventoExistente != null)
+                    // Se estava com instrumento anterior, diminuir a quantidade solicitada do instrumento anterior
+                    if (solicitacaoExistente.IdTipoInstrumento.HasValue)
                     {
-                        eventoExistente.IdTipoInstrumento = idTipoInstrumento;
-                        eventoExistente.Status = InscricaoEventoPessoa.INSCRITO.ToString();
-                        _context.Update(eventoExistente);
+                        var instrumentoAnterior = await _context.Apresentacaotipoinstrumentos
+                            .FirstOrDefaultAsync(ati => ati.IdApresentacao == idEvento &&
+                                                       ati.IdTipoInstrumento == solicitacaoExistente.IdTipoInstrumento);
+                        if (instrumentoAnterior != null && instrumentoAnterior.QuantidadeSolicitada > 0)
+                        {
+                            instrumentoAnterior.QuantidadeSolicitada--;
+                            _context.Update(instrumentoAnterior);
+                        }
                     }
+
+                    solicitacaoExistente.IdTipoInstrumento = idTipoInstrumento;
+                    solicitacaoExistente.Status = InscricaoEventoPessoa.INSCRITO.ToString();
+                    _context.Update(solicitacaoExistente);
+
+                    Console.WriteLine($"Solicitação atualizada - Novo instrumento: {idTipoInstrumento}");
                 }
                 else
                 {
@@ -581,16 +616,17 @@ namespace Service
                         IdEvento = idEvento,
                         IdPessoa = idPessoa,
                         IdTipoInstrumento = idTipoInstrumento,
-                        IdPapelGrupoPapelGrupo = 1, 
+                        IdPapelGrupoPapelGrupo = 1, // ASSOCIADO
                         Status = InscricaoEventoPessoa.INSCRITO.ToString(),
                         Presente = 0,
                         JustificativaAceita = 0
                     };
 
                     _context.Eventopessoas.Add(novaInscricao);
+                    Console.WriteLine($"Nova solicitação criada para pessoa {idPessoa} no evento {idEvento}");
                 }
 
-                // Atualizar quantidade solicitada
+                // Atualizar quantidade solicitada do novo instrumento
                 var instrumentoEvento = await _context.Apresentacaotipoinstrumentos
                     .FirstOrDefaultAsync(ati => ati.IdApresentacao == idEvento &&
                                                ati.IdTipoInstrumento == idTipoInstrumento);
@@ -599,14 +635,23 @@ namespace Service
                 {
                     instrumentoEvento.QuantidadeSolicitada++;
                     _context.Update(instrumentoEvento);
+                    Console.WriteLine($"Quantidade solicitada do instrumento {idTipoInstrumento} incrementada para {instrumentoEvento.QuantidadeSolicitada}");
+                }
+                else
+                {
+                    Console.WriteLine($"AVISO: Instrumento {idTipoInstrumento} não encontrado na apresentação {idEvento}");
                 }
 
                 await _context.SaveChangesAsync();
                 transaction.Commit();
+
+                Console.WriteLine($"Solicitação salva com sucesso para pessoa {idPessoa} no evento {idEvento}");
                 return HttpStatusCode.OK;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine($"ERRO ao solicitar participação: {ex.Message}");
+                Console.WriteLine($"StackTrace: {ex.StackTrace}");
                 transaction.Rollback();
                 return HttpStatusCode.InternalServerError;
             }
@@ -617,11 +662,14 @@ namespace Service
             var transaction = _context.Database.BeginTransaction();
             try
             {
+                Console.WriteLine($"Iniciando cancelamento - Pessoa: {idPessoa}, Evento: {idEvento}");
+
                 var eventoPessoa = await _context.Eventopessoas
                     .FirstOrDefaultAsync(ep => ep.IdEvento == idEvento && ep.IdPessoa == idPessoa);
 
                 if (eventoPessoa == null)
                 {
+                    Console.WriteLine($"Solicitação não encontrada para pessoa {idPessoa} no evento {idEvento}");
                     transaction.Rollback();
                     return HttpStatusCode.NotFound;
                 }
@@ -629,8 +677,9 @@ namespace Service
                 // Só pode cancelar se ainda não foi aprovado
                 if (eventoPessoa.Status == InscricaoEventoPessoa.DEFERIDO.ToString())
                 {
+                    Console.WriteLine($"Não é possível cancelar - solicitação já foi deferida");
                     transaction.Rollback();
-                    return HttpStatusCode.BadRequest; 
+                    return HttpStatusCode.BadRequest;
                 }
 
                 if (eventoPessoa.IdTipoInstrumento.HasValue)
@@ -639,10 +688,11 @@ namespace Service
                         .FirstOrDefaultAsync(ati => ati.IdApresentacao == idEvento &&
                                                    ati.IdTipoInstrumento == eventoPessoa.IdTipoInstrumento);
 
-                    if (instrumentoEvento != null)
+                    if (instrumentoEvento != null && instrumentoEvento.QuantidadeSolicitada > 0)
                     {
                         instrumentoEvento.QuantidadeSolicitada--;
                         _context.Update(instrumentoEvento);
+                        Console.WriteLine($"Quantidade solicitada do instrumento {eventoPessoa.IdTipoInstrumento} decrementada");
                     }
                 }
 
@@ -652,10 +702,13 @@ namespace Service
 
                 await _context.SaveChangesAsync();
                 transaction.Commit();
+
+                Console.WriteLine($"Solicitação cancelada com sucesso para pessoa {idPessoa} no evento {idEvento}");
                 return HttpStatusCode.OK;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine($"ERRO ao cancelar solicitação: {ex.Message}");
                 transaction.Rollback();
                 return HttpStatusCode.InternalServerError;
             }
@@ -701,9 +754,14 @@ namespace Service
 
         public GerenciarSolicitacaoEventoDTO? GetSolicitacoesEventoDTO(int idEvento, int pegarFaltasEmMesesAtras)
         {
+            Console.WriteLine($"Carregando dados para gerenciar solicitações do evento {idEvento}");
+
             Evento? evento = Get(idEvento);
             if (evento == null)
+            {
+                Console.WriteLine($"Evento {idEvento} não encontrado");
                 return null;
+            }
 
             GerenciarSolicitacaoEventoDTO g = new()
             {
@@ -712,10 +770,21 @@ namespace Service
                 DataHoraFim = evento.DataHoraFim,
                 FaltasPessoasEmEnsaioMeses = pegarFaltasEmMesesAtras
             };
+
             g.EventoSolicitacaoPessoasDTO = GetSolicitacaoEventoPessoas(idEvento, pegarFaltasEmMesesAtras);
+
+            Console.WriteLine($"Total de solicitações encontradas: {g.EventoSolicitacaoPessoasDTO.Count()}");
+
+            // Log das solicitações encontradas
+            foreach (var sol in g.EventoSolicitacaoPessoasDTO)
+            {
+                Console.WriteLine($"  Solicitação: {sol.NomeAssociado} - {sol.NomeInstrumento} - Status: {sol.Aprovado}");
+            }
+
+            // Buscar regentes
             foreach (SolicitacaoEventoPessoasDTO s in g.EventoSolicitacaoPessoasDTO)
             {
-                if (s.IdPapelGrupo == 5)
+                if (s.IdPapelGrupo == 5) // Regente
                 {
                     if (g.NomesRegentes.Length > 0)
                         g.NomesRegentes += "; " + s.NomeAssociado;
@@ -723,7 +792,12 @@ namespace Service
                         g.NomesRegentes = s.NomeAssociado;
                 }
             }
+
+            // Filtrar apenas associados (não regentes) para exibição
             g.EventoSolicitacaoPessoasDTO = g.EventoSolicitacaoPessoasDTO.Where(e => e.IdPapelGrupo != 5);
+
+            Console.WriteLine($"Após filtrar regentes, restam {g.EventoSolicitacaoPessoasDTO.Count()} solicitações de associados");
+
             return g;
         }
 

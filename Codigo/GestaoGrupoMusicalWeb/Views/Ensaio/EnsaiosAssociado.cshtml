@@ -134,13 +134,13 @@
                                     @item.Local
                                 </td>
                                 <td>
-                                    @(item.AprovadoModel != Core.DTO.InscricaoEventoPessoa.NAO_SOLICITADO ? item.AprovadoModel : "Não Solicitado")
-                                </td>
-                                <td>
-                                    <a class="btn btn-secondary btn btn-sm" role="button" asp-controller="" asp-action="" asp-route-idEvento="@item.Id">
-                                        <i class="fa-solid fa-outdent"></i>
-                                        Quero Participar
-                                    </a>
+                                    @if (item.AprovadoModel == Core.DTO.InscricaoEventoPessoa.NAO_SOLICITADO)
+                                    {
+                                        <a class="btn btn-secondary btn-sm" role="button" asp-controller="Evento" asp-action="SolicitarParticipacao" asp-route-id="@item.Id">
+                                            <i class="fa-solid fa-circle-check"></i>
+                                            Quero Participar
+                                        </a>
+                                    }
                                 </td>
                             </tr>
                         }
