@@ -435,7 +435,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     break;
             }
 
-            return RedirectToAction("MeusEventos");
+            // CORREÇÃO: Redirecionar de volta para a página de solicitação para mostrar status atualizado
+            return RedirectToAction("SolicitarParticipacao", new { id = solicitacao.IdEvento });
         }
 
         [Authorize(Roles = "ASSOCIADO")]
@@ -463,7 +464,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     break;
             }
 
-            return RedirectToAction("MeusEventos");
+            // CORREÇÃO: Redirecionar de volta para a página de solicitação
+            return RedirectToAction("SolicitarParticipacao", new { id = idEvento });
         }
 
         [Authorize(Roles = "ASSOCIADO")]

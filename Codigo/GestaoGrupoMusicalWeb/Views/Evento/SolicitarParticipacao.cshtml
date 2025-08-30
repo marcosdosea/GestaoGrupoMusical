@@ -1,0 +1,94 @@
+﻿@model Core.DTO.EventoDetalhesAssociadoDTO
+@using Core.DTO
+
+@{
+    ViewData["Title"] = "Solicitar Participação no Evento";
+    Layout = "_LayoutAssociado";
+}
+
+<partial name="_Notificar" />
+
+<div class="container">
+    <h1 class="fs-5 mb-2">@ViewData["Title"]</h1>
+    <hr />
+
+    <div class="card shadow">
+        <div class="card-header bg-danger bg-opacity-75 text-white">
+            Detalhes do Evento
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Início</dt>
+                <dd class="col-sm-9">@Model.DataHoraInicio.ToString("dd/MM/yyyy HH:mm")</dd>
+
+                <dt class="col-sm-3">Fim</dt>
+                <dd class="col-sm-9">@Model.DataHoraFim.ToString("dd/MM/yyyy HH:mm")</dd>
+
+                <dt class="col-sm-3">Local</dt>
+                <dd class="col-sm-9">@Model.Local</dd>
+
+                <dt class="col-sm-3">Repertório</dt>
+                <dd class="col-sm-9">@Model.Repertorio</dd>
+            </dl>
+        </div>
+    </div>
+
+    <hr />
+
+    @* SEÇÃO 1: Se o usuário já estiver inscrito *@
+    @if (Model.MinhaInscricao != null && Model.MinhaInscricao.StatusEnum != InscricaoEventoPessoa.NAO_SOLICITADO)
+    {
+        <div class="alert alert-info">
+            <h4 class="alert-heading">Sua Situação</h4>
+            <p>
+                <strong>Status:</strong> @Model.MinhaInscricao.Status<br />
+                @if (!string.IsNullOrEmpty(Model.MinhaInscricao.NomeInstrumento))
+                {
+                    <strong>Instrumento:</strong> 
+                    @Model.MinhaInscricao.NomeInstrumento
+                }
+            </p>
+        </div>
+
+        @if (Model.PodeCancelar)
+        {
+            <form asp-action="CancelarSolicitacao" method="post">
+                <input type="hidden" name="idEvento" value="@Model.Id" />
+                <button type="submit" class="btn btn-warning">Cancelar Solicitação</button>
+            </form>
+        }
+    }
+    @* SEÇÃO 2: Se o usuário ainda pode se inscrever *@
+    else if (Model.PodeInscrever)
+    {
+        <h3>Escolha seu instrumento</h3>
+        <form asp-action="ConfirmarSolicitacao" method="post">
+            <input type="hidden" name="IdEvento" value="@Model.Id" />
+
+            <div class="form-group mb-3">
+                <label for="IdTipoInstrumento" class="form-label">Instrumentos com vagas:</label>
+                <select name="IdTipoInstrumento" class="form-select" required>
+                    <option value="">Selecione um instrumento...</option>
+                    @foreach (var instrumento in Model.InstrumentosDisponiveis.Where(i => i.VagasDisponiveis > 0))
+                    {
+                        <option value="@instrumento.IdInstrumento">
+                            @instrumento.NomeInstrumento (@instrumento.VagasDisponiveis vagas)
+                        </option>
+                    }
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-success">Confirmar Inscrição</button>
+        </form>
+    }
+    else
+    {
+        <div class="alert alert-warning">
+            Não é mais possível se inscrever ou alterar sua inscrição para este evento.
+        </div>
+    }
+
+    <div class="mt-4">
+        <a asp-controller="Ensaio" asp-action="EnsaiosAssociado" class="btn btn-secondary">Voltar</a>
+    </div>
+</div>
