@@ -277,8 +277,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
             int idGrupoMusical = await _grupoMusical.GetIdGrupo(User.Identity.Name);
 
             var listaAssociadosAtivos = _ensaioService.GetAssociadoAtivos(id);
-            foreach(AssociadoDTO la in listaAssociadosAtivos)
+            foreach (AssociadoDTO la in listaAssociadosAtivos)
             {
+                la.Presente = 1; 
                 la.PresenteModel = la.Presente;
                 la.JustificativaAceitaModel = la.JustificativaAceita;
             }
