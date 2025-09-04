@@ -114,7 +114,7 @@ jobs:
         # Upload apenas o app_offline.htm via PowerShell FTP
         $ftpServer = "win8184.site4now.net"
         $ftpUsername = "itetech-001"
-        $ftpPassword = ${{ env:FTP_PASSWORD }}
+        $ftpPassword = $env:FTP_PASSWORD
         $localFile = "app_offline.htm"
         $remoteFile = "/grupogestaomusical/app_offline.htm"
         
