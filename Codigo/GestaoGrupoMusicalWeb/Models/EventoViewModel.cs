@@ -46,6 +46,7 @@ namespace GestaoGrupoMusicalWeb.Models
         public SelectList? ListaGrupoMusical { get; set; }
         public SelectList? ListaFigurino { get; set; }
         public List<AssociadoDTO>? AssociadosDTO { get; set; }
+        public IEnumerable<EventoListaFrequenciaDTO>? Frequencias { get; set; }
 
         [Display(Name = "Figurino")]
         public int IdFigurinoSelecionado { get; set; }

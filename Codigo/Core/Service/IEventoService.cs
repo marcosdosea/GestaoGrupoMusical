@@ -6,6 +6,7 @@ namespace Core.Service
 {
     public interface IEventoService
     {
+        Task<EventoFrequenciaDTO?> GetFrequenciaAsync(int idEvento, int idGrupoMusical);
         Task<Eventopessoa?> GetEventoPessoaAsync(int idEvento, int idPessoa);
         Task<HttpStatusCode> RegistrarFrequenciaAsync(List<EventoListaFrequenciaDTO> listaFrequencia);
         Task<HttpStatusCode> RegistrarJustificativaAsync(int idEvento, int idPessoa, string? justificativa);

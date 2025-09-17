@@ -535,39 +535,33 @@ namespace GestaoGrupoMusicalWeb.Controllers
         {
             int idGrupoMusical = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
 
-            var listaRegentes = _pessoaService.GetRegentesForAutoComplete(idGrupoMusical);
-
-            if (listaRegentes == null || !listaRegentes.Any())
+            // MODIFICAÇÃO: Busca os dados de frequência já filtrados
+            var eventoFrequenciaData = await _eventoService.GetFrequenciaAsync(id, idGrupoMusical);
+            if (eventoFrequenciaData == null)
             {
-                Notificar("É necessário cadastrar pelo menos um Regente para então registrar uma frequência.", Notifica.Informativo);
-                return RedirectToAction(nameof(Index));
-            }
-
-            var listaFigurinos = await _figurinoService.GetAllFigurinoDropdown(idGrupoMusical);
-
-            if (listaFigurinos == null || !listaFigurinos.Any())
-            {
-                Notificar("É necessário cadastrar pelo menos um Figurino para então registrar uma frequência.", Notifica.Informativo);
-                return RedirectToAction(nameof(Index));
-            }
-
-            var listaAssociadosAtivos = _pessoaService.GetAssociadoAtivos(idGrupoMusical);
-
-            if (listaAssociadosAtivos == null || !listaAssociadosAtivos.Any())
-            {
-                Notificar("É necessário pelo menos um Associado Ativo para então registrar uma frequência.", Notifica.Informativo);
+                Notificar("Evento não encontrado ou sem participantes aprovados.", Notifica.Alerta);
                 return RedirectToAction(nameof(Index));
             }
 
             var evento = _eventoService.Get(id);
+            if (evento == null)
+            {
+                Notificar("Evento não encontrado.", Notifica.Erro);
+                return RedirectToAction(nameof(Index));
+            }
+
+            var listaRegentes = _pessoaService.GetRegentesForAutoComplete(idGrupoMusical);
+            var listaFigurinos = await _figurinoService.GetAllFigurinoDropdown(idGrupoMusical);
 
             EventoViewModel eventoView = _mapper.Map<EventoViewModel>(evento);
 
+            // MODIFICAÇÃO: Atribui a lista correta de associados ao ViewModel
+            eventoView.Frequencias = eventoFrequenciaData.Frequencias;
+
             eventoView.ListaPessoa = new SelectList(listaRegentes, "Id", "Nome");
             eventoView.ListaFigurino = new SelectList(listaFigurinos, "Id", "Nome");
-            eventoView.AssociadosDTO = listaAssociadosAtivos;
 
-            ViewData["exemploRegente"] = listaRegentes.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
+            ViewData["exemploRegente"] = listaRegentes?.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
             ViewData["jsonIdRegentes"] = (await _eventoService.GetIdRegentesEventoAsync(eventoView.Id)).ToJson();
             eventoView.JsonLista = listaRegentes.ToJson();
 
