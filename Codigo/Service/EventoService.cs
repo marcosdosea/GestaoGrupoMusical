@@ -929,7 +929,7 @@ namespace Service
                 .ToListAsync();
 
             var frequencias = await _context.Eventopessoas
-                .Where(eventoPessoa => eventoPessoa.IdEvento == idEvento)
+                .Where(eventoPessoa => eventoPessoa.IdEvento == idEvento && eventoPessoa.Status == "DEFERIDO") // MODIFICAÇÃO: Filtra por status "DEFERIDO"
                 .OrderBy(eventoPessoa => eventoPessoa.IdPessoaNavigation.Nome)
                 .Select(eventoPessoa => new EventoListaFrequenciaDTO
                 {
@@ -938,7 +938,7 @@ namespace Service
                     Cpf = eventoPessoa.IdPessoaNavigation.Cpf,
                     NomeAssociado = eventoPessoa.IdPessoaNavigation.Nome,
                     Justificativa = eventoPessoa.JustificativaFalta,
-                    Presente = Convert.ToBoolean(eventoPessoa.Presente),
+                    Presente = true, // MODIFICAÇÃO: Define a presença como verdadeira por padrão
                     JustificativaAceita = Convert.ToBoolean(eventoPessoa.JustificativaAceita),
                 }).ToListAsync();
 
@@ -965,8 +965,9 @@ namespace Service
                 }
                 int idEvento = frequencias.First().IdEvento;
 
+                // MODIFICAÇÃO: Adicione o filtro de status "DEFERIDO" a esta consulta
                 var dbFrequencias = _context.Eventopessoas
-                                    .Where(ep => ep.IdEvento == frequencias.First().IdEvento)
+                                    .Where(ep => ep.IdEvento == frequencias.First().IdEvento && ep.Status == "DEFERIDO")
                                     .OrderBy(ep => ep.IdPessoaNavigation.Nome);
 
                 if (dbFrequencias == null)
@@ -982,6 +983,7 @@ namespace Service
                 int pos = 0;
                 await dbFrequencias.ForEachAsync(dbFrequencia =>
                 {
+                    // O restante do método permanece o mesmo...
                     if (dbFrequencia.IdEvento == frequencias[0].IdEvento && dbFrequencia.IdPessoa == frequencias[pos].IdPessoa)
                     {
                         dbFrequencia.JustificativaAceita = Convert.ToSByte(frequencias[pos].JustificativaAceita);
