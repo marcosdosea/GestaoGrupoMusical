@@ -5,13 +5,22 @@
     var temEmprestimoPendente = Model.Emprestimos?.Any(e => e.NomeStatus == "Aguardando Confirmação") ?? false;
     var temDevolucaoPendente = Model.Devolucoes?.Any(d => d.NomeStatus == "Aguardando Confirmação") ?? false;
     var idFormConfirmar = "";
+
     if (temEmprestimoPendente)
     {
-        idFormConfirmar = Model.Emprestimos.FirstOrDefault(e => e.NomeStatus == "Aguardando Confirmação")?.Id + "_confirmar";
+        var emprestimoConfirmar = Model.Emprestimos?.FirstOrDefault(e => e.NomeStatus == "Aguardando Confirmação");
+        if (emprestimoConfirmar != null)
+        {
+            idFormConfirmar = emprestimoConfirmar.Id + "_confirmar";
+        }
     }
     else if (temDevolucaoPendente)
     {
-        idFormConfirmar = Model.Devolucoes.FirstOrDefault(d => d.NomeStatus == "Aguardando Confirmação")?.Id + "_confirmar";
+        var devolucaoConfirmar = Model.Devolucoes?.FirstOrDefault(d => d.NomeStatus == "Aguardando Confirmação");
+        if (devolucaoConfirmar != null)
+        {
+            idFormConfirmar = devolucaoConfirmar.Id + "_confirmar";
+        }
     }
 }
 
@@ -65,6 +74,9 @@
                 var form = document.getElementById(idFormConfirmar);
                 if (form) {
                     form.submit();
+                } else {
+                    console.error('Form not found: ' + idFormConfirmar);
+                    alert('O formulário de confirmação não foi encontrado. Por favor, tente novamente ou entre em contato com o suporte.');
                 }
             });
         });
