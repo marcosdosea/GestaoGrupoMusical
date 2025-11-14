@@ -92,6 +92,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             int idGrupo = await _grupoMusical.GetIdGrupo(User.Identity.Name);
             instrumentoMusicalViewModel.IdGrupoMusical = idGrupo;
+            instrumentoMusicalViewModel.DataAquisicao = instrumentoMusicalViewModel.DataAquisicao.Date;
             if (ModelState.IsValid)
             {
                 var instrumentoMusicalModel = _mapper.Map<Instrumentomusical>(instrumentoMusicalViewModel);
