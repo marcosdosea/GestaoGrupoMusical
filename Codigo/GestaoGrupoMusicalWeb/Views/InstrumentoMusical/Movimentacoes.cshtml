@@ -2,23 +2,20 @@
 @{
     Layout = "_LayoutAssociado";
     ViewData["Title"] = "Movimentação de Instrumentos";
-}
-
-<partial name="_Notificar" />
-
-@{
     var temEmprestimoPendente = Model.Emprestimos?.Any(e => e.NomeStatus == "Aguardando Confirmação") ?? false;
     var temDevolucaoPendente = Model.Devolucoes?.Any(d => d.NomeStatus == "Aguardando Confirmação") ?? false;
     var idFormConfirmar = "";
     if (temEmprestimoPendente)
     {
-        idFormConfirmar = Model.Emprestimos.First(e => e.NomeStatus == "Aguardando Confirmação").Id + "_confirmar";
+        idFormConfirmar = Model.Emprestimos.FirstOrDefault(e => e.NomeStatus == "Aguardando Confirmação")?.Id + "_confirmar";
     }
     else if (temDevolucaoPendente)
     {
-        idFormConfirmar = Model.Devolucoes.First(d => d.NomeStatus == "Aguardando Confirmação").Id + "_confirmar";
+        idFormConfirmar = Model.Devolucoes.FirstOrDefault(d => d.NomeStatus == "Aguardando Confirmação")?.Id + "_confirmar";
     }
 }
+
+<partial name="_Notificar" />
 
 <!-- Modal Bootstrap -->
 <div class="modal fade" id="confirmacaoModal" tabindex="-1" aria-labelledby="confirmacaoModalLabel" aria-hidden="true">
@@ -65,7 +62,6 @@
             }
 
             document.getElementById('btnConfirmar').addEventListener('click', function () {
-                // Dispara o submit do formulário correto
                 var form = document.getElementById(idFormConfirmar);
                 if (form) {
                     form.submit();
