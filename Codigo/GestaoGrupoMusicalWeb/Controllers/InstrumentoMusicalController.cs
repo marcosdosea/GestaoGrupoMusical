@@ -149,7 +149,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
         public async Task<ActionResult> Edit(int id, InstrumentoMusicalViewModel instrumentoMusicalViewModel)
         {
-
             if (instrumentoMusicalViewModel.IsDanificado != null)
             {
                 if (instrumentoMusicalViewModel.IsDanificado == true)
@@ -161,6 +160,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     instrumentoMusicalViewModel.Status = "DISPONIVEL";
                 }
             }
+
 
             if (ModelState.IsValid)
             {

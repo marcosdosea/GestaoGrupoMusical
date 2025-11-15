@@ -2,14 +2,83 @@
 @{
     Layout = "_LayoutAssociado";
     ViewData["Title"] = "Movimentação de Instrumentos";
+    var temEmprestimoPendente = Model.Emprestimos?.Any(e => e.NomeStatus == "Aguardando Confirmação") ?? false;
+    var temDevolucaoPendente = Model.Devolucoes?.Any(d => d.NomeStatus == "Aguardando Confirmação") ?? false;
+    var idFormConfirmar = "";
+
+    if (temEmprestimoPendente)
+    {
+        var emprestimoConfirmar = Model.Emprestimos?.FirstOrDefault(e => e.NomeStatus == "Aguardando Confirmação");
+        if (emprestimoConfirmar != null)
+        {
+            idFormConfirmar = emprestimoConfirmar.Id + "_confirmar";
+        }
+    }
+    else if (temDevolucaoPendente)
+    {
+        var devolucaoConfirmar = Model.Devolucoes?.FirstOrDefault(d => d.NomeStatus == "Aguardando Confirmação");
+        if (devolucaoConfirmar != null)
+        {
+            idFormConfirmar = devolucaoConfirmar.Id + "_confirmar";
+        }
+    }
 }
 
 <partial name="_Notificar" />
 
-<h1 class="fs-5 my-3">@Html.DisplayNameFor(m => m.Emprestimos)</h1>
+<!-- Modal Bootstrap -->
+<div class="modal fade" id="confirmacaoModal" tabindex="-1" aria-labelledby="confirmacaoModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmacaoModalLabel">Confirmação</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        @if (temEmprestimoPendente)
+        {
+            <span>Confirma o recebimento do instrumento?</span>
+        }
+        else if (temDevolucaoPendente)
+        {
+            <span>Confirma devolução do instrumento?</span>
+        }
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" id="btnConfirmar">Confirmar</button>
+        <button type="button" class="btn btn-danger" id="btnRecusar" data-bs-dismiss="modal">Recusar</button>
+      </div>
+    </div>
+  </div>
+</div>
 
+<h1 class="fs-5 my-3">@Html.DisplayNameFor(m => m.Emprestimos)</h1>
 <partial name="_TabelaEmprestimosAssociado" model="Model.Emprestimos" />
 
 <h1 class="fs-5 my-3">@Html.DisplayNameFor(m => m.Devolucoes)</h1>
-
 <partial name="_TabelaDevolucoesAssociado" model="Model.Devolucoes" />
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var temEmprestimoPendente = @temEmprestimoPendente.ToString().ToLower();
+            var temDevolucaoPendente = @temDevolucaoPendente.ToString().ToLower();
+            var idFormConfirmar = '@idFormConfirmar';
+
+            if (temEmprestimoPendente || temDevolucaoPendente) {
+                var modal = new bootstrap.Modal(document.getElementById('confirmacaoModal'));
+                modal.show();
+            }
+
+            document.getElementById('btnConfirmar').addEventListener('click', function () {
+                var form = document.getElementById(idFormConfirmar);
+                if (form) {
+                    form.submit();
+                } else {
+                    console.error('Form not found: ' + idFormConfirmar);
+                    alert('O formulário de confirmação não foi encontrado. Por favor, tente novamente ou entre em contato com o suporte.');
+                }
+            });
+        });
+    </script>
+}
