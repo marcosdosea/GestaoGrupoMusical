@@ -7,7 +7,7 @@
 }
 
 
-<partial name="_Notificar">
+<partial name="_Notificar" />
     <div class="container">
         <h1 class="p-3 bg-danger bg-opacity-75 text-white fs-5">Novo Pagamento</h1>
         <nav>
@@ -54,6 +54,41 @@
     </form>
 
 
+        <div class="modal fade" id="modalNotificar" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Notificar associados</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        Deseja notificar os associados?
+                    </div>
+                    <div class="modal-footer d-flex justify-content-end gap-3">
+
+                        <a class="btn btn-outline-secondary" style="width: 120px;"
+                           asp-controller="Financeiro"
+                           asp-action="Index">
+                            Não
+                        </a>
+
+                        <form method="post"
+                              asp-controller="Financeiro"
+                              asp-action="NotificarFinanceiroViaEmail">
+
+                            <input type="hidden" name="id" value="@TempData["IdPagamentoCriado"]" />
+
+                            <button type="submit" class="btn btn-secondary" style="width: 120px;">
+                                Sim
+                            </button>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
     <script>
         function updateCharacterDescricao() {
             var textArea = document.getElementById('descricaoTextArea');
@@ -66,7 +101,21 @@
             updateCharacterDescricao();
         });
 
+            function abrirModal() {
+            var modal = new bootstrap.Modal(document.getElementById('modalNotificar'));
+            modal.show();
+        }
+
     </script>
+
+    @if (TempData["MostrarModal"] != null)
+    {
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    abrirModal();
+                });
+            </script>
+    }
 
 
     @section Scripts {

@@ -46,6 +46,9 @@ namespace Service
                 _context.Add(f);
                 _context.SaveChanges();
 
+                // devolve ID gerado pelo EF
+                rf.Id = f.Id;
+
                 // 1. Busca todos os associados ATIVOS, já trazendo a informação de isenção
                 var associados = _context.Pessoas
                     .Where(p => p.IdGrupoMusical == rf.IdGrupoMusical && p.IdPapelGrupo == 1 && p.Ativo == 1)
