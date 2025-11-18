@@ -63,6 +63,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: Pagamento/Create
         public ActionResult Create()
         {
+            TempData.Keep(); // impede TempData de sumir antes da View usar
             return View(new FinanceiroCreateViewModel() { DataInicio = DateTime.Now.Date });
         }
 
@@ -77,30 +78,33 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 int idGrupoMusical = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
                 model.IdGrupoMusical = idGrupoMusical;
                 FinanceiroCreateDTO rf = _mapper.Map<FinanceiroCreateDTO>(model);
-
+                
 
                 switch (_financeiroService.Create(rf))
                 {
                     case FinanceiroStatus.Success:
                         Notificar("<b>Sucesso</b>! Pagamento criado com sucesso!", Notifica.Sucesso);
-                        RedirectToAction(nameof(Index));
-                        break;
+                        TempData["IdPagamentoCriado"] = rf.Id;
+                        TempData["MostrarModal"] = true;
+                        TempData.Keep();
+                        return RedirectToAction(nameof(Create));
+                        
                     case FinanceiroStatus.DataInicioMaiorQueDataFim:
                         Notificar("<b>Erro</b>! A data de <b>inicio</b> deve ser maior que a data <b>fim</b>!!", Notifica.Alerta);
-                        RedirectToAction(nameof(Create));
-                        break;
+                        return RedirectToAction(nameof(Create));
+                        
                     case FinanceiroStatus.DataFimMenorQueDataDeHoje:
                         Notificar("<b>Erro</b>! A data <b>fim</b> deve ser maior que a data de <b>hoje</b>!!", Notifica.Alerta);
-                        RedirectToAction(nameof(Create));
-                        break;
+                        return RedirectToAction(nameof(Create));
+                        
                     case FinanceiroStatus.ValorZeroOuNegativo:
                         Notificar("<b>Erro</b>! O <b>valor</b> deve ser <b>positivo</b>!!", Notifica.Alerta);
-                        RedirectToAction(nameof(Create));
-                        break;
+                        return RedirectToAction(nameof(Create));
+                        
                     default:
                         Notificar("<b>Erro</b>! Algo deu errado na criação do pagamento!", Notifica.Erro);
-                        RedirectToAction(nameof(Create));
-                        break;
+                        return RedirectToAction(nameof(Create));
+                        
                 }
             }
             return RedirectToAction(nameof(Index));
