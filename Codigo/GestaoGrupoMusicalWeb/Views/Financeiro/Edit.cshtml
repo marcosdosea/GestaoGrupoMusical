@@ -33,13 +33,13 @@
             <div class="row">
                 <div class="form-group col-md-4 mb-3">
                     <label asp-for="DataInicio" class="control-label"></label>
-                    <input asp-for="DataInicio" type="date" class="form-control" value="@Model.DataInicio?.ToString("yyyy-MM-dd")" />
+                    <input asp-for="DataInicio" type="date" max="9999-12-31" class="form-control" value="@Model.DataInicio?.ToString("yyyy-MM-dd")" />
                     <span asp-validation-for="DataInicio" class="text-danger"></span>
                 </div>
 
                 <div class="form-group col-md-4 mb-3">
                     <label asp-for="DataFim" class="control-label"></label>
-                    <input asp-for="DataFim" type="date" class="form-control" value="@Model.DataFim?.ToString("yyyy-MM-dd")" />
+                    <input asp-for="DataFim" type="date" max="9999-12-31" class="form-control" value="@Model.DataFim?.ToString("yyyy-MM-dd")" />
                     <span asp-validation-for="DataFim" class="text-danger"></span>
                 </div>
 
