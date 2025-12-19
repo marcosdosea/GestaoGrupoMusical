@@ -29,18 +29,18 @@
         <div class="row mb-4">
             <div class="form-group " style="width: 250px;">
                 <label asp-for="DataInicio" style="width: 150px;" class="control-label"></label>
-                <input asp-for="DataInicio" class="form-control" readonly />
+                <input asp-for="DataInicio" type = "date" class="form-control" readonly />
                 <span asp-validation-for="DataInicio" class="text-danger"></span>
             </div>
             <div class="form-group " style="width: 250px;">
                 <label asp-for="DataFim" class="control-label"></label>
-                <input asp-for="DataFim" class="form-control" />
+                <input asp-for="DataFim" type="date" max="9999-12-31" class="form-control" />
                 <span asp-validation-for="DataFim" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group mb-5" style="width: 200px;">
             <label asp-for="Valor" class="control-label"></label>
-            <input asp-for="Valor" type="number" inputmode="decimal" class="form-control" />
+            <input asp-for="Valor" type="text" inputmode="decimal" class="form-control" id="valorPagamento" />
             <span asp-validation-for="Valor" class="text-danger"></span>
         </div>
         <div class="container">
@@ -88,25 +88,61 @@
             </div>
         </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/localization/messages_pt_BR.min.js"></script>
 
-    <script>
-        function updateCharacterDescricao() {
-            var textArea = document.getElementById('descricaoTextArea');
-            var charCount = textArea.value.length;
-            var charLimitFromGrupoMusical = textArea.maxLength;
-            document.getElementById('descricaoCount').innerText = charCount + '/' + charLimitFromGrupoMusical;
-        }
+<script>
+    
+    function updateCharacterDescricao() {
+        var textArea = document.getElementById('descricaoTextArea');
+        var charCount = textArea.value.length;
+        var charLimitFromGrupoMusical = textArea.maxLength;
+        document.getElementById('descricaoCount').innerText =
+            charCount + '/' + charLimitFromGrupoMusical;
+    }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            updateCharacterDescricao();
+    document.addEventListener('DOMContentLoaded', function () {
+        updateCharacterDescricao();
+
+        const form = document.getElementById('formCreate');
+        const valorInput = document.getElementById('valorPagamento');
+
+        form.addEventListener('submit', function (event) {
+            
+            valorInput.value = valorInput.value.replace(/,/g, '.');
         });
+    });
 
-            function abrirModal() {
-            var modal = new bootstrap.Modal(document.getElementById('modalNotificar'));
-            modal.show();
+   
+    document.getElementById("valorPagamento").addEventListener("input", function () {
+        let valor = this.value;
+
+        // Troca toda vírgula (,) por ponto (.) IMEDIATAMENTE.
+        // Isso resolve o erro de validação do front-end que espera o ponto.
+        valor = valor.replace(/,/g, '.');
+
+        valor = valor.replace(/[^0-9.]/g, '');
+
+        // Garante que haja no máximo um ponto decimal
+        const partes = valor.split('.');
+        if (partes.length > 2) {
+
+            valor = partes[0] + '.' + partes.slice(1).join('');
         }
 
-    </script>
+        // Se a parte decimal tiver mais de 2 dígitos, trunca (opcional, mas recomendado para o Regex)
+        if (partes.length > 1 && partes[1].length > 2) {
+             partes[1] = partes[1].substring(0, 2);
+             valor = partes.join('.');
+        }
+
+        this.value = valor;
+    });
+
+    function abrirModal() {
+        var modal = new bootstrap.Modal(document.getElementById('modalNotificar'));
+        modal.show();
+    }
+</script>
 
     @if (TempData["MostrarModal"] != null)
     {

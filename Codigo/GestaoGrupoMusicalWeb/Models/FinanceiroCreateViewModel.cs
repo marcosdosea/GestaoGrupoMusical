@@ -27,7 +27,7 @@ namespace GestaoGrupoMusicalWeb.Models
         [Required(ErrorMessage = "O valor é obrigatório")]
         [Range(0.01, 99999999.99, ErrorMessage = "O valor deve ser maior que zero e ter até duas casas decimais.")]
         [RegularExpression(@"^\d{1,8}(\.\d{1,2})?$", ErrorMessage = "O valor deve ter até 8 dígitos inteiros e 2 casas decimais.")]
-
+        
         public decimal? Valor { get; set; }
         public int IdGrupoMusical { get; set; }
     }
