@@ -16,7 +16,7 @@
                         <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Create"]</spn>
                     </strong>
                 </ol>
-            </nav>
+            </nav>  
             <hr />
             <br />
             <form id="formCreate" asp-action="Create">
@@ -24,12 +24,12 @@
                     <div class="row">
                         <div class="form-group col-xl-4">
                             <label asp-for="DataHoraInicio" class="control-label"></label>
-                            <input asp-for="DataHoraInicio" class="form-control" />
+                            <input asp-for="DataHoraInicio" max="9999-12-31T23:59" class="form-control" />
                             <span asp-validation-for="DataHoraInicio" class="text-danger"></span>
                         </div>
                         <div class="form-group col-xl-4">
                             <label asp-for="DataHoraFim" class="control-label"></label>
-                            <input asp-for="DataHoraFim" class="form-control" />
+                            <input asp-for="DataHoraFim" max="9999-12-31T23:59" class="form-control" />
                             <span asp-validation-for="DataHoraFim" class="text-danger"></span>
                         </div>
                         <div class="form-group col-xl">
