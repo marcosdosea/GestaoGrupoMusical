@@ -80,7 +80,7 @@ namespace Service
                                     IdEvento = evento.Id,
                                     IdPessoa = associado.Id,
                                     IdPapelGrupoPapelGrupo = 1, // Associado
-                                    Status = "NAO_SOLICITADO",
+                                    Status = "DEFERIDO",
                                     Presente = 0,
                                     JustificativaAceita = 0,
                                     IdTipoInstrumento = null
