@@ -11,6 +11,10 @@
     <link rel="stylesheet" href="~/css/headerLayout.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/GestaoGrupoMusicalWeb.styles.css" asp-append-version="true" />
     <link rel="icon" type="image/x-icon" href="~/assets/logo_batalase_SF.png" />
+    @if (IsSectionDefined("Header"))
+    {
+        @await RenderSectionAsync("Header", required: false)
+    }
 </head>
 <body>
     <div class="d-flex" id="wrapper">
