@@ -26,7 +26,7 @@
                 </tr>
             </thead>
         </table>
-        @*    </div>*@
+           @* </div> *@
         @section Scripts {
             <script src="~/lib/datatable/js/datatables.min.js"></script>
             <script>
@@ -53,6 +53,7 @@
                         },
                         {
                             "targets": [2],
+                            "visible": @(User.IsInRole("ASSOCIADO") ? "false" : "true"),
                             "visible": true,
                             "searchable": false,
                             "orderable": false
@@ -97,7 +98,7 @@
                             },
                         ],
                         language: {
-                            url: "lib/datatable/js/pt-br.json",
+                            url: "/lib/datatable/js/pt-br.json",
                         }
                     });
                 });
