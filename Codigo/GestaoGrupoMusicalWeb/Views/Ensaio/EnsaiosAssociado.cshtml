@@ -141,6 +141,19 @@
                                             Quero Participar
                                         </a>
                                     }
+                                    else if (item.AprovadoModel == Core.DTO.InscricaoEventoPessoa.INSCRITO)
+                                    {
+                                        <div class="d-inline-flex align-items-center text-secondary fw-semibold px-2">
+                                            <i class="fa-solid fa-circle-check me-1"></i>
+                                            Realizada
+                                        </div>
+                                      <td>
+                                          <a class="btn btn-secondary btn-sm" role="button" asp-controller="Evento" asp-action="SolicitarParticipacao" asp-route-id="@item.Id">
+                                                <i class="fa-solid fa-circle-info"></i>
+                                                Detalhes   
+                                          </a>
+                                    </td>
+                                    }
                                 </td>
                             </tr>
                         }
