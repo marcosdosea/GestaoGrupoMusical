@@ -59,7 +59,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR, ASSOCIADO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE, ASSOCIADO")]
         public async Task<ActionResult> Details(int id)
         {
             var listaMaterialEstudo = await _materialEstudo.Get(id);
@@ -118,7 +118,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
 
         // GET: MaterialEstudoController/Edit/5
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE")]
         public async Task<ActionResult> Edit(int id)
         {
             var materialEstudo = await _materialEstudo.Get(id);
@@ -129,7 +129,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: MaterialEstudoController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE")]
         public async Task<ActionResult> Edit(int id, MaterialEstudoViewModel materialEstudo)
         {
             
@@ -150,7 +150,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: MaterialEstudoController/Delete/5
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE")]
         public async Task<ActionResult>Delete(int id)
         {
             var materialEstudo = await _materialEstudo.Get(id);
@@ -161,7 +161,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: MaterialEstudoController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE")]
         public async Task<ActionResult> Delete(int id, MaterialEstudoViewModel instrumentoMusicalViewModel)
         {
             switch (await _materialEstudo.Delete(id))
@@ -178,7 +178,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         //[HttpPost]
         //[ValidateAntiForgeryToken]
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE")]
         public async Task<ActionResult> NotificarMaterialViaEmail(int id)
         {
             var pessoas = await _grupoMusical.GetAllPeopleFromGrupoMusical(await _grupoMusical.GetIdGrupo(User.Identity.Name));
