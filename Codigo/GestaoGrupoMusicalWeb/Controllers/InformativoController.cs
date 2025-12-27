@@ -36,13 +36,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
             _mapper = mapper;
         }
 
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR, ASSOCIADO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE, ASSOCIADO")]
         public  ActionResult Index()
         {
             return View();
         }
 
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR, ASSOCIADO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE, ASSOCIADO")]
         public async Task<IActionResult> GetDataPage(DatatableRequest request)
         {
             int idGrupoMusical = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
