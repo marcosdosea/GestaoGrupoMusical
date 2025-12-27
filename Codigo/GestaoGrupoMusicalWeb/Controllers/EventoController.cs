@@ -444,7 +444,16 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> CancelarSolicitacao(int idEvento)
         {
-            int idPessoa = Convert.ToInt32(User.FindFirst("Id")?.Value);
+
+            var claimId = User.FindFirst("Id")?.Value;
+
+            if (string.IsNullOrEmpty(claimId))
+            {
+                Notificar("Erro: Identificador numérico não encontrado no perfil.", Notifica.Erro);
+                return RedirectToAction("Index","Home");
+            }
+          
+            int idPessoa = Convert.ToInt32(claimId);
 
             var resultado = await _eventoService.CancelarSolicitacao(idEvento, idPessoa);
 

@@ -3,8 +3,13 @@ using Core.Datatables;
 using Core.DTO;
 using Core.Service;
 using Email;
+using Google.Protobuf.WellKnownTypes;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Net;
+using System.Numerics;
+using System.Runtime.ConstrainedExecution;
+using System.Runtime.Intrinsics.X86;
 using static Core.Service.IEventoService;
 
 
@@ -80,7 +85,7 @@ namespace Service
                                     IdEvento = evento.Id,
                                     IdPessoa = associado.Id,
                                     IdPapelGrupoPapelGrupo = 1, // Associado
-                                    Status = "NAO_SOLICITADO",
+                                    Status = "DEFERIDO",
                                     Presente = 0,
                                     JustificativaAceita = 0,
                                     IdTipoInstrumento = null
@@ -659,57 +664,53 @@ namespace Service
 
         public async Task<HttpStatusCode> CancelarSolicitacao(int idEvento, int idPessoa)
         {
-            var transaction = _context.Database.BeginTransaction();
+            using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                Console.WriteLine($"Iniciando cancelamento - Pessoa: {idPessoa}, Evento: {idEvento}");
-
                 var eventoPessoa = await _context.Eventopessoas
                     .FirstOrDefaultAsync(ep => ep.IdEvento == idEvento && ep.IdPessoa == idPessoa);
 
-                if (eventoPessoa == null)
-                {
-                    Console.WriteLine($"Solicitação não encontrada para pessoa {idPessoa} no evento {idEvento}");
-                    transaction.Rollback();
-                    return HttpStatusCode.NotFound;
-                }
+                if (eventoPessoa == null) return HttpStatusCode.NotFound;
 
-                // Só pode cancelar se ainda não foi aprovado
-                if (eventoPessoa.Status == InscricaoEventoPessoa.DEFERIDO.ToString())
-                {
-                    Console.WriteLine($"Não é possível cancelar - solicitação já foi deferida");
-                    transaction.Rollback();
-                    return HttpStatusCode.BadRequest;
-                }
+                if (eventoPessoa.Status == "DEFERIDO") return HttpStatusCode.BadRequest;
 
-                if (eventoPessoa.IdTipoInstrumento.HasValue)
+                if (eventoPessoa.IdTipoInstrumento > 0)
                 {
-                    var instrumentoEvento = await _context.Apresentacaotipoinstrumentos
-                        .FirstOrDefaultAsync(ati => ati.IdApresentacao == idEvento &&
-                                                   ati.IdTipoInstrumento == eventoPessoa.IdTipoInstrumento);
+                    var vaga = await _context.Apresentacaotipoinstrumentos.FirstOrDefaultAsync
+                        (ati => ati.IdApresentacao == idEvento &&
+                                ati.IdTipoInstrumento == eventoPessoa.IdTipoInstrumento);
 
-                    if (instrumentoEvento != null && instrumentoEvento.QuantidadeSolicitada > 0)
+                    if (vaga != null && vaga.QuantidadeSolicitada > 0)
                     {
-                        instrumentoEvento.QuantidadeSolicitada--;
-                        _context.Update(instrumentoEvento);
-                        Console.WriteLine($"Quantidade solicitada do instrumento {eventoPessoa.IdTipoInstrumento} decrementada");
+                        vaga.QuantidadeSolicitada--;
+                        _context.Update(vaga);
                     }
                 }
 
-                eventoPessoa.Status = InscricaoEventoPessoa.NAO_SOLICITADO.ToString();
-                eventoPessoa.IdTipoInstrumento = null;
-                _context.Update(eventoPessoa);
+                // Antes de atribuir 0, verificamos se o banco realmente possui esse ID na tabela pai.
+                bool existeInstrumentoNenhum = await _context.Tipoinstrumentos.AnyAsync(t => t.Id == 0);
 
-                await _context.SaveChangesAsync();
-                transaction.Commit();
+                eventoPessoa.Status = "DEFERIDO"; 
 
-                Console.WriteLine($"Solicitação cancelada com sucesso para pessoa {idPessoa} no evento {idEvento}");
+                if (!existeInstrumentoNenhum)       
+                {
+                    eventoPessoa.IdTipoInstrumento = null;
+                }
+
+                _context.Eventopessoas.Remove(eventoPessoa);
+                await _context.SaveChangesAsync(); 
+
+                await transaction.CommitAsync();
                 return HttpStatusCode.OK;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"ERRO ao cancelar solicitação: {ex.Message}");
-                transaction.Rollback();
+                if (_context.Database.GetDbConnection().State == System.Data.ConnectionState.Open)
+                {
+                    await transaction.RollbackAsync();
+                }
+
+                Console.WriteLine($"[FALHA NO CANCELAMENTO]: {ex.Message}");
                 return HttpStatusCode.InternalServerError;
             }
         }
