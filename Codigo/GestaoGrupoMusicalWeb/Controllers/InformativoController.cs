@@ -54,7 +54,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         // GET: InformativoController/Details/5
         [HttpPost]
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR, ASSOCIADO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE, ASSOCIADO")]
         public async Task<ActionResult> Details(uint id)
         {
             var informativo = await _informativoService.Get(id); 
@@ -115,7 +115,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: InformativoController/Edit/5
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE")]
         public async Task<ActionResult> Edit(uint id)
         {
             var informativo = await _informativoService.Get(id); 
@@ -135,7 +135,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: InformativoController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE")]
         public ActionResult Edit(InformativoViewModel informativoModel)
         {
             if (ModelState.IsValid)
@@ -154,7 +154,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: InformativoController/Delete/5
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE")]
         public async Task<ActionResult> Delete(uint id)
         {
             if (await _informativoService.Delete(id) == HttpStatusCode.OK)
@@ -172,7 +172,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: InformativoController/GetDataPage
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE")]
         public async Task<IActionResult> NotificarInformativoViaEmail(uint id)
         {
             var pessoas = await _grupoMusicalService.GetAllPeopleFromGrupoMusical(await _grupoMusicalService.GetIdGrupo(User.Identity.Name));
