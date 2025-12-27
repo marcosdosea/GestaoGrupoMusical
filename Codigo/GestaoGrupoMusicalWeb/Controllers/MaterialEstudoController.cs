@@ -36,7 +36,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             _pessoa = pessoa;
         }
         // GET: MaterialEstudoController
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE, ASSOCIADO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE, ASSOCIADO, COLABORADOR")]
         public ActionResult Index()
         {
             if (User.IsInRole("ASSOCIADO"))
@@ -47,7 +47,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return View("Index");
         }
 
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE, ASSOCIADO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE, ASSOCIADO, COLABORADOR")]
         public async Task<IActionResult> GetDataPage(DatatableRequest request)
         {
             int idGrupoMusical = await _grupoMusical.GetIdGrupo(User.Identity.Name);
@@ -59,7 +59,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE, ASSOCIADO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE, ASSOCIADO, COLABORADOR")]
         public async Task<ActionResult> Details(int id)
         {
             var listaMaterialEstudo = await _materialEstudo.Get(id);
@@ -73,7 +73,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: MaterialEstudoController/Create
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE, COLABORADOR")]
         public ActionResult Create()
         {
             return View();
@@ -83,7 +83,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: MaterialEstudoController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE, COLABORADOR")]
         public async Task<ActionResult> Create(MaterialEstudoViewModel materialEstudoViewModel)
         {
             if (ModelState.IsValid)
@@ -118,7 +118,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
 
         // GET: MaterialEstudoController/Edit/5
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE, COLABORADOR")]
         public async Task<ActionResult> Edit(int id)
         {
             var materialEstudo = await _materialEstudo.Get(id);
@@ -129,7 +129,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: MaterialEstudoController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE, COLABORADOR")]
         public async Task<ActionResult> Edit(int id, MaterialEstudoViewModel materialEstudo)
         {
             
@@ -150,7 +150,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: MaterialEstudoController/Delete/5
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE, COLABORADOR")]
         public async Task<ActionResult>Delete(int id)
         {
             var materialEstudo = await _materialEstudo.Get(id);
@@ -161,7 +161,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: MaterialEstudoController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE, COLABORADOR")]
         public async Task<ActionResult> Delete(int id, MaterialEstudoViewModel instrumentoMusicalViewModel)
         {
             switch (await _materialEstudo.Delete(id))
@@ -178,7 +178,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         //[HttpPost]
         //[ValidateAntiForgeryToken]
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE, COLABORADOR")]
         public async Task<ActionResult> NotificarMaterialViaEmail(int id)
         {
             var pessoas = await _grupoMusical.GetAllPeopleFromGrupoMusical(await _grupoMusical.GetIdGrupo(User.Identity.Name));
