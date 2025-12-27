@@ -73,7 +73,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: MaterialEstudoController/Create
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE")]
         public ActionResult Create()
         {
             return View();
@@ -83,7 +83,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: MaterialEstudoController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE")]
         public async Task<ActionResult> Create(MaterialEstudoViewModel materialEstudoViewModel)
         {
             if (ModelState.IsValid)
