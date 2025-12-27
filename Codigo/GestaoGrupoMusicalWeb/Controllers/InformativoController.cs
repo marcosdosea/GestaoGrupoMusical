@@ -64,7 +64,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
 
         // GET: InformativoController/Create
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE")]
         public ActionResult Create()
         {
             var model = new InformativoViewModel();
@@ -76,7 +76,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: InformativoController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE")]
         public async Task<ActionResult> Create(InformativoViewModel informativoViewModel)
         {
             if (ModelState.IsValid)
