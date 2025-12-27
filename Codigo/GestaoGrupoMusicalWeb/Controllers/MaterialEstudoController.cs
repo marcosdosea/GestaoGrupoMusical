@@ -36,7 +36,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             _pessoa = pessoa;
         }
         // GET: MaterialEstudoController
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR, ASSOCIADO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE, ASSOCIADO")]
         public ActionResult Index()
         {
             if (User.IsInRole("ASSOCIADO"))
@@ -47,7 +47,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return View("Index");
         }
 
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR, ASSOCIADO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE, ASSOCIADO")]
         public async Task<IActionResult> GetDataPage(DatatableRequest request)
         {
             int idGrupoMusical = await _grupoMusical.GetIdGrupo(User.Identity.Name);
