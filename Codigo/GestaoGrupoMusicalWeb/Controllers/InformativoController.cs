@@ -36,13 +36,13 @@ namespace GestaoGrupoMusicalWeb.Controllers
             _mapper = mapper;
         }
 
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR, ASSOCIADO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE, ASSOCIADO, COLABORADOR")]
         public  ActionResult Index()
         {
             return View();
         }
 
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR, ASSOCIADO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE, ASSOCIADO, COLABORADOR")]
         public async Task<IActionResult> GetDataPage(DatatableRequest request)
         {
             int idGrupoMusical = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
@@ -54,7 +54,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
         // GET: InformativoController/Details/5
         [HttpPost]
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR, ASSOCIADO")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE, ASSOCIADO, COLABORADOR")]
         public async Task<ActionResult> Details(uint id)
         {
             var informativo = await _informativoService.Get(id); 
@@ -64,7 +64,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
 
         // GET: InformativoController/Create
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE, COLABORADOR")]
         public ActionResult Create()
         {
             var model = new InformativoViewModel();
@@ -76,7 +76,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: InformativoController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE, COLABORADOR")]
         public async Task<ActionResult> Create(InformativoViewModel informativoViewModel)
         {
             if (ModelState.IsValid)
@@ -115,7 +115,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: InformativoController/Edit/5
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE, COLABORADOR")]
         public async Task<ActionResult> Edit(uint id)
         {
             var informativo = await _informativoService.Get(id); 
@@ -135,7 +135,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: InformativoController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE, COLABORADOR")]
         public ActionResult Edit(InformativoViewModel informativoModel)
         {
             if (ModelState.IsValid)
@@ -154,7 +154,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
 
         // GET: InformativoController/Delete/5
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE, COLABORADOR")]
         public async Task<ActionResult> Delete(uint id)
         {
             if (await _informativoService.Delete(id) == HttpStatusCode.OK)
@@ -172,7 +172,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // POST: InformativoController/GetDataPage
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE, COLABORADOR")]
         public async Task<IActionResult> NotificarInformativoViaEmail(uint id)
         {
             var pessoas = await _grupoMusicalService.GetAllPeopleFromGrupoMusical(await _grupoMusicalService.GetIdGrupo(User.Identity.Name));
