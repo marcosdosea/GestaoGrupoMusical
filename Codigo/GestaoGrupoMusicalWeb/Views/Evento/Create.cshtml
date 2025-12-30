@@ -8,12 +8,14 @@
 <partial name="_Notificar">
     <div class="row">
         <div class="col-md-8">
-            <h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">Novo Evento Musical</h1>
+            <h1 class="p-3 bg-danger bg-opacity-75 text-white fs-5">Novo Evento Musical</h1>
             <nav>
                 <ol class="breadcrumb px-3">
                     <strong>
                         <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Evento"]</a>
-                        <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Create"]</spn>
+                        <span class="text-secondary">
+                            <i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Create"]
+                        </span>
                     </strong>
                 </ol>
             </nav>
@@ -34,7 +36,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="container">
+
+                <div class="container mt-3">
                     <div class="row">
                         <div class="form-group col-xl">
                             <label asp-for="IdRegentes" class="control-label"></label>
@@ -60,17 +63,21 @@
                                     <p class="text-muted">Nenhum regente cadastrado</p>
                                 }
                             </div>
-                            <!-- Hidden field para enviar os valores selecionados -->
-                            <select multiple asp-for="IdRegentes" class="d-none" id="hiddenRegenteSelect">
-                            </select>
-                            <span asp-validation-for="IdRegentes" class="text-danger"></span>
-                            <small class="form-text text-muted">
+
+                            <select multiple asp-for="IdRegentes" class="d-none" id="hiddenRegenteSelect"></select>
+
+                            <span id="validacao-regente" class="text-danger field-validation-error" style="display:none;">
+                                Selecione pelo menos um regente.
+                            </span>
+
+                            <small class="form-text text-muted d-block mt-1">
                                 <span id="regenteCount">0</span> regente(s) selecionado(s)
                             </small>
                         </div>
                     </div>
                 </div>
-                <div class="container">
+
+                <div class="container mt-3">
                     <div class="form-group">
                         <label asp-for="IdFigurinoSelecionado" class="control-label"></label>
                         <select asp-items="@Model.FigurinoList" asp-for="IdFigurinoSelecionado" class="form-select"></select>
@@ -78,30 +85,29 @@
                     </div>
                 </div>
 
-                <div class="container">
+                <div class="container mt-3">
                     <div class="form-group col-md-12">
                         <label asp-for="Local" class="control-label"></label>
                         <textarea asp-for="Local" class="form-control" maxlength="100" id="linkTextAreaLocal" oninput="updateCharacterCountLocal()"></textarea>
                         <span asp-validation-for="Local" class="text-danger"></span>
-                        <small id="characterCountLocal">0/100</small>
+                        <small id="characterCountLocal" class="text-muted">0/100</small>
                     </div>
                 </div>
-                <div class="container">
+
+                <div class="container mt-3">
                     <div class="form-group col-md-12">
                         <label asp-for="Repertorio" class="control-label"></label>
                         <textarea asp-for="Repertorio" class="form-control" maxlength="100" id="linkTextAreaRepertorio" oninput="updateCharacterCountRepertorio()"></textarea>
                         <span asp-validation-for="Repertorio" class="text-danger"></span>
-                        <small id="characterCountRepertorio">0/100</small>
+                        <small id="characterCountRepertorio" class="text-muted">0/100</small>
                     </div>
                 </div>
                 <br />
-                <br />
-                <div class="container">
-                    <div class="row d-flex flex-column-reverse d-grig gap-2 mx-auto d-flex flex-sm-column-reverse flex-xl-row">
+                <div class="container mb-5">
+                    <div class="row d-flex flex-column-reverse d-grid gap-2 mx-auto flex-sm-column-reverse flex-xl-row">
                         <div class="col-5 d-none d-sm-block"></div>
-                        <input type="submit" value="Adicionar" class="btn btn-secondary d-grid gap-2 col-sm " />
+                        <input type="submit" value="Adicionar" class="btn btn-secondary d-grid gap-2 col-sm" />
                         <a class="btn btn-light text-secondary border border-secondary d-grid gap-2 col-sm" asp-controller="Evento" asp-action="Index"> Voltar </a>
-                        
                     </div>
                 </div>
             </form>
@@ -109,55 +115,69 @@
     </div>
 
     <script>
-        function updateCharacterCountLocal() {
-            var textArea = document.getElementById('linkTextAreaLocal');
-            var charCount = textArea.value.length;
-            var charLimitFromGrupoMusical = textArea.maxLength;
-            document.getElementById('characterCountLocal').innerText = charCount + '/' + charLimitFromGrupoMusical;
-        }
+        
+        document.getElementById("formCreate").addEventListener('submit', function(e) {
+            const checkboxes = document.querySelectorAll('.regente-checkbox');
+            const selecionado = Array.from(checkboxes).some(cb => cb.checked);
+            const spanErro = document.getElementById('validacao-regente');
 
-        function updateCharacterCountRepertorio() {
-            var textArea = document.getElementById('linkTextAreaRepertorio');
-            var charCount = textArea.value.length;
-            var charLimitFromGrupoMusical = textArea.maxLength;
-            document.getElementById('characterCountRepertorio').innerText = charCount + '/' + charLimitFromGrupoMusical;
-        }
+            if (!selecionado) {
+                e.preventDefault(); 
+                spanErro.style.display = 'block'; 
+                spanErro.scrollIntoView({ behavior: 'smooth', block: 'center' }); 
+            } else {
+                spanErro.style.display = 'none';
+            }
+        });
+
 
         function updateRegenteSelection() {
-            const checkboxes = document.querySelectorAll('.regente-checkbox:checked');
+            const checkboxesChecked = document.querySelectorAll('.regente-checkbox:checked');
             const hiddenSelect = document.getElementById('hiddenRegenteSelect');
             const countSpan = document.getElementById('regenteCount');
+            const spanErro = document.getElementById('validacao-regente');
 
-            // Limpar options existentes
             hiddenSelect.innerHTML = '';
-
-            // Adicionar options para cada checkbox marcado
-            checkboxes.forEach(checkbox => {
+            checkboxesChecked.forEach(checkbox => {
                 const option = document.createElement('option');
                 option.value = checkbox.value;
                 option.selected = true;
                 hiddenSelect.appendChild(option);
             });
 
-            // Atualizar contador
-            countSpan.textContent = checkboxes.length;
+            countSpan.textContent = checkboxesChecked.length;
+
+            if (checkboxesChecked.length > 0) {
+                spanErro.style.display = 'none';
+            }
+        }
+
+        function updateCharacterCountLocal() {
+            const textArea = document.getElementById('linkTextAreaLocal');
+            document.getElementById('characterCountLocal').innerText = textArea.value.length + '/' + textArea.maxLength;
+        }
+
+        function updateCharacterCountRepertorio() {
+            const textArea = document.getElementById('linkTextAreaRepertorio');
+            document.getElementById('characterCountRepertorio').innerText = textArea.value.length + '/' + textArea.maxLength;
         }
 
         document.addEventListener('DOMContentLoaded', function () {
             updateCharacterCountLocal();
             updateCharacterCountRepertorio();
+            updateRegenteSelection(); 
         });
     </script>
 
-    @section Header {
-        @{
-            await Html.RenderPartialAsync("_AutoCompleteCssPartial");
-        }
+@section Header {
+    @{
+        await Html.RenderPartialAsync("_AutoCompleteCssPartial");
     }
-    @section Scripts {
-        @{
-            await Html.RenderPartialAsync("_ValidationScriptsPartial");
-            await Html.RenderPartialAsync("_EnablePopoversPartial");
-            await Html.RenderPartialAsync("_AutoCompletePartial");
-        }
+}
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        await Html.RenderPartialAsync("_EnablePopoversPartial");
+        await Html.RenderPartialAsync("_AutoCompletePartial");
     }
+}
