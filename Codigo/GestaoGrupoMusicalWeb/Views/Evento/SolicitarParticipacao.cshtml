@@ -38,9 +38,9 @@
     @* SEÇÃO 1: Se o usuário já estiver inscrito *@
     @if (Model.MinhaInscricao != null && Model.MinhaInscricao.StatusEnum != InscricaoEventoPessoa.NAO_SOLICITADO)
     {
-        <div class="alert alert-info">
+        <div class="alert alert-info shadow-sm">
             <h4 class="alert-heading">Sua Situação</h4>
-            <p>
+            <p class="mb-0">
                 <strong>Status:</strong> @Model.MinhaInscricao.Status<br />
                 @if (!string.IsNullOrEmpty(Model.MinhaInscricao.NomeInstrumento))
                 {
@@ -50,45 +50,54 @@
             </p>
         </div>
 
-        @if (Model.PodeCancelar)
-        {
-            <form asp-action="CancelarSolicitacao" method="post">
-                <input type="hidden" name="idEvento" value="@Model.Id" />
-                <button type="submit" class="btn btn-warning">Cancelar Solicitação</button>
-            </form>
-        }
+        <div class="d-flex justify-content-end gap-2 mt-4">
+            <a asp-controller="Ensaio" asp-action="EnsaiosAssociado" class="btn btn-secondary col-1">Voltar</a>
+            @if (Model.PodeCancelar)
+            {
+                <form asp-action="CancelarSolicitacao" method="post">
+                    <input type="hidden" name="idEvento" value="@Model.Id" />
+                    <button type="submit" class="btn btn-outline-secondary">Cancelar Solicitação</button>
+                </form>
+            }
+        </div>
     }
     @* SEÇÃO 2: Se o usuário ainda pode se inscrever *@
     else if (Model.PodeInscrever)
     {
-        <h3>Escolha seu instrumento</h3>
-        <form asp-action="ConfirmarSolicitacao" method="post">
-            <input type="hidden" name="IdEvento" value="@Model.Id" />
+        <div class="card border-light shadow-sm">
+            <div class="card-body">
+                <h3 class="fs-5 mb-3">Escolha seu instrumento</h3>
+                <form asp-action="ConfirmarSolicitacao" method="post">
+                    <input type="hidden" name="IdEvento" value="@Model.Id" />
 
-            <div class="form-group mb-3">
-                <label for="IdTipoInstrumento" class="form-label">Instrumentos com vagas:</label>
-                <select name="IdTipoInstrumento" class="form-select" required>
-                    <option value="">Selecione um instrumento...</option>
-                    @foreach (var instrumento in Model.InstrumentosDisponiveis.Where(i => i.VagasDisponiveis > 0))
-                    {
-                        <option value="@instrumento.IdInstrumento">
-                            @instrumento.NomeInstrumento (@instrumento.VagasDisponiveis vagas)
-                        </option>
-                    }
-                </select>
+                    <div class="form-group mb-4">
+                        <label for="IdTipoInstrumento" class="form-label">Instrumentos com vagas:</label>
+                        <select name="IdTipoInstrumento" class="form-select" required>
+                            <option value="">Selecione um instrumento...</option>
+                            @foreach (var instrumento in Model.InstrumentosDisponiveis.Where(i => i.VagasDisponiveis > 0))
+                            {
+                                <option value="@instrumento.IdInstrumento">
+                                    @instrumento.NomeInstrumento (@instrumento.VagasDisponiveis vagas)
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-controller="Ensaio" asp-action="EnsaiosAssociado" class="btn btn-secondary col-1">Voltar</a>
+                        <button type="submit" class="btn btn-outline-secondary">Confirmar Inscrição</button>
+                    </div>
+                </form>
             </div>
-
-            <button type="submit" class="btn btn-success">Confirmar Inscrição</button>
-        </form>
+        </div>
     }
     else
     {
-        <div class="alert alert-warning">
+        <div class="alert alert-warning shadow-sm">
             Não é mais possível se inscrever ou alterar sua inscrição para este evento.
         </div>
+        <div class="d-flex justify-content-end">
+            <a asp-controller="Ensaio" asp-action="EnsaiosAssociado" class="btn btn-secondary col-2">Voltar</a>
+        </div>
     }
-
-    <div class="mt-4">
-        <a asp-controller="Ensaio" asp-action="EnsaiosAssociado" class="btn btn-secondary">Voltar</a>
-    </div>
 </div>
