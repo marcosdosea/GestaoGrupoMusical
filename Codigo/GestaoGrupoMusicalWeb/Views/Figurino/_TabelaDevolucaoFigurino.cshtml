@@ -21,7 +21,7 @@
                     <td>@movimentacao.Tamanho</td>
                     <td>@movimentacao.Quantidade</td>
                     <td>@movimentacao.Status</td>
-                    @if (@movimentacao.Status.Equals("Agurdando Confirmação"))
+                    @if (@movimentacao.Status.Equals("Aguardando Confirmação"))
                     {
                         <td class="py-3 border-0 d-flex flex-column flex-lg-row gap-3">
                             <form id="@(movimentacao.Id + "_confirmar")" asp-controller="Figurino" asp-action="ConfirmarMovimentacao" asp-route-idMovimentacao="@movimentacao.Id" method="post">
