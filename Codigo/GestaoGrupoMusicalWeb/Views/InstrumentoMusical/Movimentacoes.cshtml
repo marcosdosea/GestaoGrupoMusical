@@ -1,4 +1,6 @@
-﻿@model Core.DTO.InstrumentoAssociadoDTO.MovimentacoesAssociado
+﻿@using System.Linq
+@model Core.DTO.InstrumentoAssociadoDTO.MovimentacoesAssociado
+@inject Core.Service.IInformativoService informativoService
 @{
     Layout = "_LayoutAssociado";
     ViewData["Title"] = "Movimentação de Instrumentos";
@@ -22,9 +24,52 @@
             idFormConfirmar = devolucaoConfirmar.Id + "_confirmar";
         }
     }
+
+    // Busca os 5 últimos informativos do grupo (sem alterar DTOs/controller)
+    int idGrupoMusical = 0;
+    int.TryParse(User.FindFirst("IdGrupoMusical")?.Value, out idGrupoMusical);
+    var informativos = Enumerable.Empty<Core.Informativo>();
+    if (idGrupoMusical > 0)
+    {
+        informativos = informativoService
+            .GetAllInformativoServicePorIdGrupoMusical(idGrupoMusical)
+            .OrderByDescending(i => i.Data)
+            .Take(5);
+    }
 }
 
 <partial name="_Notificar" />
+
+<h5 class="mb-3">Últimos Informativos</h5>
+
+<div class="table-responsive">
+    <table class="table mt-3">
+        <thead>
+            <tr class="bg-danger bg-opacity-75 text-white">
+                <th class="col-md-3">Data</th>
+                <th class="col-md-9">Mensagem</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (informativos != null && informativos.Any())
+            {
+                foreach (var info in informativos)
+                {
+                    <tr class="border-bottom border-danger border-opacity-75 align-middle">
+                        <td class="py-3">@info.Data.ToString("dd/MM/yyyy")</td>
+                        <td class="py-3">@info.Mensagem</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="2" class="py-3 text-center">Nenhum informativo disponível.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
 
 <!-- Modal Bootstrap -->
 <div class="modal fade" id="confirmacaoModal" tabindex="-1" aria-labelledby="confirmacaoModalLabel" aria-hidden="true">
@@ -70,15 +115,18 @@
                 modal.show();
             }
 
-            document.getElementById('btnConfirmar').addEventListener('click', function () {
-                var form = document.getElementById(idFormConfirmar);
-                if (form) {
-                    form.submit();
-                } else {
-                    console.error('Form not found: ' + idFormConfirmar);
-                    alert('O formulário de confirmação não foi encontrado. Por favor, tente novamente ou entre em contato com o suporte.');
-                }
-            });
+            var btnConfirm = document.getElementById('btnConfirmar');
+            if (btnConfirm) {
+                btnConfirm.addEventListener('click', function () {
+                    var form = document.getElementById(idFormConfirmar);
+                    if (form) {
+                        form.submit();
+                    } else {
+                        console.error('Form not found: ' + idFormConfirmar);
+                        alert('O formulário de confirmação não foi encontrado. Por favor, tente novamente ou entre em contato com o suporte.');
+                    }
+                });
+            }
         });
     </script>
 }
