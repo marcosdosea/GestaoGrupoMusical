@@ -21,6 +21,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Util", "Util\Util.csproj", 
 		{E8910704-22E5-445F-965B-26C5DBDA8239} = {E8910704-22E5-445F-965B-26C5DBDA8239}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GestaoGrupoMusicalAPI", "GestaoGrupoMusicalAPI\GestaoGrupoMusicalAPI.csproj", "{4CDB3CA1-606D-48A4-AE61-0EFDC9C03441}"
+	ProjectSection(ProjectDependencies) = postProject
+		{97356CDA-7E4E-417E-9CA1-4C5D83493BF6} = {97356CDA-7E4E-417E-9CA1-4C5D83493BF6}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +60,10 @@ Global
 		{0F60BEDE-9B17-4686-8418-5F16DD12576D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F60BEDE-9B17-4686-8418-5F16DD12576D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F60BEDE-9B17-4686-8418-5F16DD12576D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CDB3CA1-606D-48A4-AE61-0EFDC9C03441}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CDB3CA1-606D-48A4-AE61-0EFDC9C03441}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CDB3CA1-606D-48A4-AE61-0EFDC9C03441}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CDB3CA1-606D-48A4-AE61-0EFDC9C03441}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
