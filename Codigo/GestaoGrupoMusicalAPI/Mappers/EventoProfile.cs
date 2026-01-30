@@ -1,21 +1,18 @@
 ﻿using AutoMapper;
 using Core;
-using Core.DTO;
 using GestaoGrupoMusicalAPI.Models;
 
-namespace GestaoGrupoMusicalAPI.Mapper
+namespace GestaoGrupoMusicalAPI.Mappers
 {
     public class EventoProfile : Profile
     {
         public EventoProfile()
         {
-            CreateMap<EventoViewModel, Evento>().ReverseMap();
-            CreateMap<EventoCreateViewlModel, Evento>().ReverseMap();
             CreateMap<EventoCreateDTO, Evento>()
-                .ForMember(dest => dest.Repertorio, opt => opt.MapFrom(src => string.Empty))
-                .ReverseMap();
-            CreateMap<GerenciarSolicitacaoEventoViewModel, GerenciarSolicitacaoEventoDTO>().ReverseMap();
-            CreateMap<EventosEnsaiosAssociadoViewlModel, EventosEnsaiosAssociadoDTO>().ReverseMap();
+                .ForMember(dest => dest.Repertorio,
+                           opt => opt.MapFrom(_ => string.Empty));
+
+            CreateMap<EventoViewModel, Evento>().ReverseMap();
         }
     }
 }

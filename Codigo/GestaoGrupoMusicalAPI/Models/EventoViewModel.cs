@@ -212,4 +212,23 @@ namespace GestaoGrupoMusicalAPI.Models
         public IEnumerable<EnsaioAssociadoDTO>? Ensaios { get; set; }
         public IEnumerable<EventoAssociadoDTO>? Eventos { get; set; }
     }
+    public class EventoCreateDTO
+    {
+        [Required]
+        public DateTime DataHoraInicio { get; set; }
+
+        [Required]
+        public DateTime DataHoraFim { get; set; }
+
+        [Required]
+        public string Local { get; set; } = null!;
+
+        public int IdGrupoMusical { get; set; }
+        public int IdColaboradorResponsavel { get; set; }
+        public List<int> IdRegentes { get; set; } = [];
+        public int IdFigurino { get; set; }
+        public string? Repertorio { get; set; }
+    }
 }
+
+
