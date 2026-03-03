@@ -4,13 +4,12 @@ using Core.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace GestaoGrupoMusicalAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class FinanceiroController : ControllerBase
     {
         private readonly IFinanceiroService financeiroService;
@@ -27,33 +26,41 @@ namespace GestaoGrupoMusicalAPI.Controllers
         [HttpGet]
         public ActionResult Get()
         {
-            var listaFinanceiro = financeiroService.GetAllFinanceiroPorIdGrupo(5);
-            return Ok();
+            var idGrupoClaim = User.Claims.FirstOrDefault(c => c.Type == "IdGrupoMusical")?.Value;
+
+            if (idGrupoClaim == null) return Unauthorized("Grupo musical não identificado.");
+
+            int id = int.Parse(idGrupoClaim);
+
+            var listafinanceiro =   financeiroService.GetAllFinanceiroPorIdGrupo(id);
+
+            return Ok(listafinanceiro);
         }
 
         // GET api/<FinanceiroController>/5
         [HttpGet("{id}")]
-        public ActionResult Get(int id)
+        public  ActionResult GetAsync(int id)
         {
-            var pagamento = financeiroService.GetAssociadosPagamento(id);
+            var pagamento = financeiroService.Get(id);
 
             if(pagamento == null)
             {
-                return BadRequest();
+                return NotFound();
             }
             return Ok(pagamento);
         }
 
         // POST api/<FinanceiroController>
         [HttpPost]
-        public ActionResult Post([FromBody] FinanceiroCreateDTO financeiro)
+        public  ActionResult Post([FromBody] FinanceiroCreateDTO financeiro)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-          
-            return Ok();
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var status =  financeiroService.Create(financeiro);
+
+            if (status == FinanceiroStatus.Success) return Ok();
+
+            return BadRequest(status.ToString());
         }
 
     }
