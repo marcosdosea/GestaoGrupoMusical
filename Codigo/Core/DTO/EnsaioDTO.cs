@@ -13,6 +13,8 @@ namespace Core.DTO
         public int Id { get; set; }
         public string? Local { get; set; }
         public DateTime? DataHoraInicio { get; set; }
+        public string? Tipo { get; set; }
+        public string? PresencaObrigatoria { get; set; }
 
     }
 
