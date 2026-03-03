@@ -4,7 +4,6 @@ using Core.DTO;
 using Core.Service;
 using Microsoft.AspNetCore.Mvc;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace GestaoGrupoMusicalAPI.Controllers
 {
@@ -27,12 +26,9 @@ namespace GestaoGrupoMusicalAPI.Controllers
         public async Task<ActionResult> GetAsync()
         {   
 
-            var listaEnsaios = await ensaioService.GetAll();
-            if(listaEnsaios == null)
-            {
-                return NotFound();
-            }
-
+            var listaEnsaios = await ensaioService.GetAllIndexDTO(1);
+            if(listaEnsaios == null) return NotFound();
+            
             var listaDto = mapper.Map<IEnumerable<EnsaioIndexDTO>>(listaEnsaios);
             return Ok(listaDto);
            
@@ -42,15 +38,19 @@ namespace GestaoGrupoMusicalAPI.Controllers
         [HttpGet("{id}")]
         public ActionResult GetAsync(int id)
         {
-            Ensaio ensaio = ensaioService.Get(id);
+            var ensaioDetails = ensaioService.GetDetails(id);
 
-            if(ensaio == null)
+            if (ensaioDetails == null) return NotFound();
+
+            var ensaioItem = mapper.Map<EnsaioAssociadoDTO>(ensaioDetails);
+
+            var response = new EventosEnsaiosAssociadoDTO
             {
-                return NotFound();
-            }
+                Ensaios = new List<EnsaioAssociadoDTO> { ensaioItem },
+                Eventos = new List<EventoAssociadoDTO>() // Lista vazia ou vinda de outro serviço
+            };
 
-            var listaDto = mapper.Map<EventosEnsaiosAssociadoDTO>(ensaio);
-            return Ok(listaDto);
+            return Ok(response);
         }
        
     }

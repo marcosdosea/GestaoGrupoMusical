@@ -4,6 +4,7 @@ using Core.DTO;
 using Core.Service;
 using Email;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Cms;
 using System.Linq;
 using System.Net;
 
@@ -241,7 +242,9 @@ namespace Service
                 {
                     Id = g.Id,
                     DataHoraInicio = g.DataHoraInicio,
-                    Local = g.Local
+                    Local = g.Local,
+                    Tipo = g.Tipo,
+                    PresencaObrigatoria = g.PresencaObrigatoria == 1 ? "Sim" : "Não",
                 }).AsNoTracking().ToListAsync();
             return await query;
         }
@@ -277,6 +280,7 @@ namespace Service
                             PresencaObrigatoria = ensaio.PresencaObrigatoria == 1 ? "Sim" : "Não",
                             Local = ensaio.Local,
                             Repertorio = ensaio.Repertorio,
+                            IdGrupoMusical = ensaio.IdGrupoMusical,
                             // CORREÇÃO: Filtrando pelo papel de regente (5) na tabela Ensaiopessoa
                             Regentes = (from ensaiopessoa in _context.Ensaiopessoas
                                         join pessoa in _context.Pessoas on ensaiopessoa.IdPessoa equals pessoa.Id
