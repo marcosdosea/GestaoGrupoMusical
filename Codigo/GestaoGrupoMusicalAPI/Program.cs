@@ -1,90 +1,78 @@
 using Core;
 using Core.Service;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Service;
-namespace GestaoGrupoMusicalAPI
+using System.Text;
+
+var builder = WebApplication.CreateBuilder(args);
+
+var connectionString = builder.Configuration.GetConnectionString("GrupoMusicalDatabase")
+                      ?? throw new InvalidOperationException("Connection string 'GrupoMusicalDatabase' not found.");
+
+builder.Services.AddDbContext<IdentityContext>(options => options.UseMySQL(connectionString));
+builder.Services.AddDbContext<GrupoMusicalContext>(options =>
+    options.UseMySQL(builder.Configuration.GetConnectionString("GrupoMusicalDatabase") ?? ""));
+
+builder.Services.AddIdentity<UsuarioIdentity, IdentityRole>(options =>
 {
-    public class Program
+    options.Password.RequireDigit = true;
+    options.Password.RequiredLength = 6;
+    options.User.RequireUniqueEmail = true;
+})
+.AddEntityFrameworkStores<IdentityContext>()
+.AddDefaultTokenProviders();
+
+// 3. Configuração do JWT
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+var secretKey = jwtSettings["ChaveSecreta"] ?? "CHAVE_PADRAO_COM_MAIS_DE_32_CARACTERES";
+var key = Encoding.ASCII.GetBytes(secretKey);
+
+builder.Services.AddAuthentication(x =>
+{
+    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(x =>
+{
+    x.RequireHttpsMetadata = true; 
+    x.SaveToken = true;
+    x.TokenValidationParameters = new TokenValidationParameters
     {
-        public static void Main(string[] args)
-        {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidateIssuer = true,
+        ValidIssuer = jwtSettings["Emissor"],
+        ValidateAudience = true,
+        ValidAudience = jwtSettings["Audiencia"],
+        ClockSkew = TimeSpan.Zero
+    };
+});
 
-            var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
-            // Add services to the container.
+builder.Services.AddTransient<IPessoaService, PessoaService>();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+var app = builder.Build();
 
-            builder.Services.AddTransient<IEnsaioService, EnsaioService>();
-            builder.Services.AddTransient<IEventoService, EventoService>();
-            builder.Services.AddTransient<IPessoaService, PessoaService>();
-            builder.Services.AddTransient<IFinanceiroService, FinanceiroService>();
-            builder.Services.AddTransient<IInformativoService, InformativoService>();
-            builder.Services.AddTransient<IPessoaService, PessoaService>();
-
-            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
-            builder.Services.AddDbContext<GrupoMusicalContext>(
-                options => options.UseMySQL(builder.Configuration.GetConnectionString("GrupoMusicalDatabase")));
-
-            builder.Services.AddDbContext<IdentityContext>(
-                options => options.UseMySQL(builder.Configuration.GetConnectionString("IdentityDatabase")));
-
-            builder.Services.AddIdentityApiEndpoints<UsuarioIdentity>(
-                options =>
-                {
-                    // SignIn settings
-                    options.SignIn.RequireConfirmedAccount = false;
-                    options.SignIn.RequireConfirmedEmail = false;
-                    options.SignIn.RequireConfirmedPhoneNumber = false;
-
-                    // Password settings
-                    options.Password.RequireDigit = true;
-                    options.Password.RequireLowercase = false;
-                    options.Password.RequireNonAlphanumeric = false;
-                    options.Password.RequireUppercase = false;
-                    options.Password.RequiredLength = 6;
-
-                    // Default User settings.
-                    options.User.AllowedUserNameCharacters =
-                            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-                    //options.User.RequireUniqueEmail = true;
-
-                    // Default Lockout settings
-                    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-                    options.Lockout.MaxFailedAccessAttempts = 5;
-                    options.Lockout.AllowedForNewUsers = true;
-                }).AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<IdentityContext>();
-
-
-            builder.Services.AddAuthentication();
-            builder.Services.AddAuthorization();
-            var app = builder.Build();
-
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
-
-            app.UseHttpsRedirection();
-
-            app.MapIdentityApi<UsuarioIdentity>();
-
-            app.UseAuthorization();
-
-            app.MapControllers();
-
-            app.Run();
-
-
-        }
-
-    }
+if (!app.Environment.IsDevelopment())
+{
+    app.UsePathBase("/grupogestaomusical");
 }
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllers();
+app.Run();
