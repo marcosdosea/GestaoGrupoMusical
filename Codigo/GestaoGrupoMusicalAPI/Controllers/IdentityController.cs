@@ -1,6 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+﻿using Core;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace GestaoGrupoMusicalAPI.Controllers
 {
@@ -8,36 +12,74 @@ namespace GestaoGrupoMusicalAPI.Controllers
     [ApiController]
     public class IdentityController : ControllerBase
     {
-        // GET: api/<IdentityController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly SignInManager<UsuarioIdentity> _signInManager;
+        private readonly UserManager<UsuarioIdentity> _userManager;
+        private readonly IConfiguration _configuration;
+
+        public IdentityController(
+            SignInManager<UsuarioIdentity> signInManager,
+            UserManager<UsuarioIdentity> userManager,
+            IConfiguration configuration)
         {
-            return new string[] { "value1", "value2" };
+            _signInManager = signInManager;
+            _userManager = userManager;
+            _configuration = configuration;
         }
 
-        // GET api/<IdentityController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
-            return "value";
+            // O web usa CPF como nome de usuário
+            var result = await _signInManager.PasswordSignInAsync(model.Cpf ?? "", model.Senha ?? "", false, false);
+
+            if (result.Succeeded)
+            {
+                var user = await _userManager.FindByNameAsync(model.Cpf ?? "");
+                if (user == null) return Unauthorized();
+
+                var token = await GerarTokenJwt(user);
+                return Ok(new { token });
+            }
+
+            return Unauthorized("CPF ou senha inválidos.");
         }
 
-        // POST api/<IdentityController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        private async Task<string> GerarTokenJwt(UsuarioIdentity user)
         {
-        }
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var secret = _configuration["Jwt:ChaveSecreta"] ?? "CHAVE_PADRAO_COM_MAIS_DE_32_CARACTERES";
+            var key = Encoding.ASCII.GetBytes(secret);
 
-        // PUT api/<IdentityController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
+            var roles = await _userManager.GetRolesAsync(user);
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.UserName ?? ""),
+                new Claim(ClaimTypes.Email, user.Email ?? ""),
+                new Claim("Id", user.Id)
+            };
 
-        // DELETE api/<IdentityController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.AddHours(2),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+                Issuer = _configuration["Jwt:Emissor"],
+                Audience = _configuration["Jwt:Audiencia"]
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
         }
+    }
+
+    public class LoginModel
+    {
+        public string? Cpf { get; set; } = string.Empty;
+        public string? Senha { get; set; } = string.Empty;
     }
 }
