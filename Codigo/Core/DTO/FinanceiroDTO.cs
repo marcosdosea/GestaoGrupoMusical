@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+namespace Core.DTO;
 
-namespace Core.DTO
-{
     public class FinanceiroIndexDataPage
     {
         [Key]
@@ -46,4 +45,3 @@ namespace Core.DTO
         public int IdGrupoMusical { get; set; }
         public IEnumerable<int>? IdAssociados { get; set; }
     }
-}
