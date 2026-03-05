@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Core.Service;
+using Microsoft.AspNetCore.Mvc;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace GestaoGrupoMusicalAPI.Controllers
 {
@@ -8,36 +9,32 @@ namespace GestaoGrupoMusicalAPI.Controllers
     [ApiController]
     public class InformativoController : ControllerBase
     {
+        private readonly IInformativoService informativo;
+        private readonly IMapper mapper;
+
+        public InformativoController(IInformativoService informativo, IMapper mapper)
+        {
+            this.informativo = informativo;
+            this.mapper = mapper;
+        }
+
         // GET: api/<InformativoController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public ActionResult Get()
         {
-            return new string[] { "value1", "value2" };
+            var idGrupoClaim = User.Claims.FirstOrDefault(c => c.Type == "IdGrupoMusical")?.Value;
+
+            if (idGrupoClaim == null) return Unauthorized("Grupo musical não identificado.");
+
+            int idGrupo = int.Parse(idGrupoClaim);
+
+            var listaInformativos = informativo.GetAllInformativoServicePorIdGrupoMusical(idGrupo);
+
+            if (listaInformativos == null) return NotFound("Nenhum informativo no grupo");
+
+            return Ok(listaInformativos);
         }
 
-        // GET api/<InformativoController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
 
-        // POST api/<InformativoController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<InformativoController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<InformativoController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
     }
 }

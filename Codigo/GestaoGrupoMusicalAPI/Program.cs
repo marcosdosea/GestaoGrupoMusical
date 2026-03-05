@@ -56,6 +56,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddTransient<IPessoaService, PessoaService>();
+builder.Services.AddScoped<IInformativoService, InformativoService>();
+builder.Services.AddScoped<IFinanceiroService, FinanceiroService>();
+builder.Services.AddScoped<IEnsaioService, EnsaioService>();
+builder.Services.AddScoped<IEventoService, EventoService>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
