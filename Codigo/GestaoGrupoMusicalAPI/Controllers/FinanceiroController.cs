@@ -3,13 +3,14 @@ using Core.Service;
 using Core.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 
 
 namespace GestaoGrupoMusicalAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize(Roles = "REGENTE")]
     public class FinanceiroController : ControllerBase
     {
         private readonly IFinanceiroService financeiroService;
