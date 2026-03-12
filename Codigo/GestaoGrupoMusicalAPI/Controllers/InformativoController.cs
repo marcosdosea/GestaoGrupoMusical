@@ -19,7 +19,7 @@ namespace GestaoGrupoMusicalAPI.Controllers
         }
 
         // GET: api/<InformativoController>
-        [HttpGet]
+        [HttpGet("Grupo")]
         public ActionResult Get()
         {
             var idGrupoClaim = User.Claims.FirstOrDefault(c => c.Type == "IdGrupoMusical")?.Value;
