@@ -1,38 +1,44 @@
-*.swp
-*.*~
-project.lock.json
-.DS_Store
-*.pyc
-nupkg/
-
-# Visual Studio Code
-.vscode
-
-# Rider
-.idea
-
-# User-specific files
-*.suo
-*.user
-*.userosscache
-*.sln.docstates
-
-# Build results
+# --- [ C# / .NET ] ---
 [Dd]ebug/
-[Dd]ebugPublic/
 [Rr]elease/
-[Rr]eleases/
-x64/
-x86/
-build/
-bld/
 [Bb]in/
 [Oo]bj/
-[Oo]ut/
-msbuild.log
-msbuild.err
-msbuild.wrn
-
-# Visual Studio 2015
-.vs/appsettings.json
+*.swp
+*.suo
+*.user
+*.sln.docstates
+.vs/
+.idea/
+.vscode/
 appsettings.Development.json
+
+# --- [ FLUTTER / DART ] ---
+# Arquivos de ferramentas e pacotes
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+
+# Configurações específicas do Android
+android/**/local.properties
+android/**/*.keystore
+android/**/*.jks
+android/key.properties
+
+# Configurações específicas do iOS / macOS
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+ios/Podfile.lock
+Pods/
+
+# Configurações específicas do Windows (Já que você usa Windows)
+build/windows/
+managed/
+
+# --- [ SISTEMA / OUTROS ] ---
+.DS_Store
+Thumbs.db
+*.log
