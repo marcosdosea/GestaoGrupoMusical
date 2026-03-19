@@ -19,6 +19,8 @@ namespace Core.Service
 
         Task<IEnumerable<AssociadoPagamentoDTO>> GetAssociadosPagamento(int idReceita);
         Task SalvarPagamentos(int idReceita, IEnumerable<AssociadoPagamentoDTO> associados);
+
+        Task<IEnumerable<FinanceiroMobileDTO>> GetPagamentosDoAssociadoAsync(int idAssociado);
     }
 
 
