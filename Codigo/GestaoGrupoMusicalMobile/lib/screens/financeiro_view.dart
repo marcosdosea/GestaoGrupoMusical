@@ -40,6 +40,8 @@ class _FinanceiroFormViewState extends State<FinanceiroView> {
             Text("Resumo: ${widget.solicitacao.descricao}", style: const TextStyle(fontSize: 16)),
             const SizedBox(height: 25),
             TextField(
+              maxLines: 4, 
+              keyboardType: TextInputType.multiline,
               controller: _descController,
               decoration: const InputDecoration(
                 labelText: "Descrição/Observação",
