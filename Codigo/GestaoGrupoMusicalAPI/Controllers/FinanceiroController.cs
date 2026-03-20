@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
-using Core.Service;
 using Core.DTO;
+using Core.Service;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
+using Microsoft.AspNetCore.Mvc;
+using Service;
 
 
 namespace GestaoGrupoMusicalAPI.Controllers
@@ -62,6 +63,24 @@ namespace GestaoGrupoMusicalAPI.Controllers
             if (status == FinanceiroStatus.Success) return Ok();
 
             return BadRequest(status.ToString());
+        }
+
+        [HttpGet("associado/{idAssociado}")]
+        public async Task<ActionResult<IEnumerable<FinanceiroMobileDTO>>> GetPagamentosDoAssociado(int idAssociado)
+        {
+            try
+            {
+                var pagamentos = await financeiroService.GetPagamentosDoAssociadoAsync(idAssociado);
+                if (pagamentos == null || !pagamentos.Any())
+                {
+                    return NotFound("Nenhum pagamento encontrado para este associado.");
+                }
+                return Ok(pagamentos);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno: {ex.Message}");
+            }
         }
 
     }

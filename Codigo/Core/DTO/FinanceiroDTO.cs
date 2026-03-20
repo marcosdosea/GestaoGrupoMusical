@@ -45,3 +45,13 @@ namespace Core.DTO;
         public int IdGrupoMusical { get; set; }
         public IEnumerable<int>? IdAssociados { get; set; }
     }
+
+        public class FinanceiroMobileDTO
+        {
+            public int Id { get; set; }
+            public string Descricao { get; set; } = string.Empty;
+            public DateTime DataInicio { get; set; }
+            public DateTime DataFim { get; set; }
+            public decimal Valor { get; set; }
+            public string StatusPagamento { get; set; } = string.Empty;
+        }
