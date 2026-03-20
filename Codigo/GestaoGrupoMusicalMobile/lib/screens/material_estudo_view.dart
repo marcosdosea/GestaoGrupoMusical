@@ -1,9 +1,36 @@
 import 'package:batala_mobile/model/material_estudo_model.dart';
 import 'package:batala_mobile/service/material_estudo_service.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart'; // Importação do pacote
 
 class MaterialEstudoView extends StatelessWidget {
   const MaterialEstudoView({super.key});
+
+  Future<void> _abrirLink(String urlString, BuildContext context) async {
+
+    if (!urlString.startsWith('http://') && !urlString.startsWith('https://')) {
+      urlString = 'https://$urlString';
+    }
+
+    final Uri url = Uri.parse(urlString);
+
+    try {
+      if (await canLaunchUrl(url)) {
+        await launchUrl(
+          url,
+          mode: LaunchMode.externalApplication, 
+        );
+      } else {
+        throw 'Não foi possível abrir: $urlString';
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Link inválido ou não suportado pelo dispositivo.')),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,22 +39,19 @@ class MaterialEstudoView extends StatelessWidget {
     return FutureBuilder<List<MaterialestudoModel>>(
       future: service.getAll(),
       builder: (context, snapshot) {
-        // 1. Tratamento de Carregamento
+
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } 
-        
-        // 2. Tratamento de Erro
+
         else if (snapshot.hasError) {
           return Center(child: Text("Erro ao carregar materiais: ${snapshot.error}"));
         } 
         
-        // 3. Verificação de Dados
         else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
           final materiais = snapshot.data!;
 
           return ListView.builder(
-            // Padding para não ficar colado na barra flutuante
             padding: const EdgeInsets.only(top: 10, bottom: 100, left: 10, right: 10),
             itemCount: materiais.length,
             itemBuilder: (context, index) {
@@ -52,22 +76,19 @@ class MaterialEstudoView extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        "Adicionado em: ${item.dataInicio.day}/${item.dataInicio.month}/${item.dataInicio.year}",
+                        "Adicionado em: ${item.dataInicio.day.toString().padLeft(2, '0')}/${item.dataInicio.month.toString().padLeft(2, '0')}/${item.dataInicio.year}",
                         style: TextStyle(color: Colors.grey[600], fontSize: 12),
                       ),
                     ],
                   ),
                   isThreeLine: true,
-                  onTap: () {
-                    // Aqui você pode implementar a lógica para abrir o link
-                  },
+                  onTap: () => _abrirLink(item.link, context), 
                 ),
               );
             },
           );
         }
 
-        // 4. Caso a lista esteja vazia
         return const Center(child: Text("Nenhum material de estudo disponível."));
       },
     );
