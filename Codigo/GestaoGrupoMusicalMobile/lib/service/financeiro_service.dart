@@ -12,8 +12,7 @@ class FinanceiroService {
       final String url  = ApiConfig.baseUrl;
 
       final response = await http.get(
-        // CORREÇÃO: Adicionado o /15 no final para a API não recusar (Erro 400)
-        Uri.parse('$url/api/Financeiro/associado/15'),
+        Uri.parse('$url/api/Financeiro'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -34,10 +33,9 @@ class FinanceiroService {
 
   Future<bool> postFinanceiro(FinanceiroModel financeiro) async {
     final String? token = await SessionManager.getToken();
-    final String url = ApiConfig.baseUrl; // Trazemos a variável de URL para cá também
+    final String url = ApiConfig.baseUrl;
 
     final response = await http.post(
-      // CORREÇÃO: Adicionado o $ na frente da variável url
       Uri.parse('$url/api/Financeiro'),
       headers: {
         'Content-Type': 'application/json',
