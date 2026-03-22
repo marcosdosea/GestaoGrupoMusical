@@ -5,24 +5,11 @@ import 'package:flutter/material.dart';
 class InformativoView extends StatelessWidget {
   const InformativoView({super.key});
 
-  String _formatarData(String dataString) {
-    try {
-      final data = DateTime.parse(dataString);
-      final dia = data.day.toString().padLeft(2, '0');
-      final mes = data.month.toString().padLeft(2, '0');
-      final ano = data.year;
-      final hora = data.hour.toString().padLeft(2, '0');
-      final minuto = data.minute.toString().padLeft(2, '0');
-      return "$dia/$mes/$ano às $hora:$minuto";
-    } catch (e) {
-      return dataString; 
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final service = InformativoService();
 
+    // Retornamos apenas o FutureBuilder, sem Scaffold ou AppBar
     return FutureBuilder<List<InformativoModel>>(
       future: service.getAll(),
       builder: (context, snapshot) {
@@ -33,6 +20,7 @@ class InformativoView extends StatelessWidget {
         } else if (snapshot.hasData) {
           final informativos = snapshot.data!;
           return ListView.builder(
+            // Adicionamos um padding para o conteúdo não colar no topo
             padding: const EdgeInsets.only(top: 10, bottom: 100), 
             itemCount: informativos.length,
             itemBuilder: (context, index) => ListTile(
@@ -41,7 +29,12 @@ class InformativoView extends StatelessWidget {
                 informativos[index].mensagem,
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
-              subtitle: Text("Postado em: ${_formatarData(informativos[index].dataInicio.toString())}"),
+            subtitle: Text(
+              "Postado em: ${informativos[index].dataInicio.day.toString().padLeft
+              (2, '0')}/${informativos[index].dataInicio.month.toString().padLeft
+              (2, '0')}/${informativos[index].dataInicio.year} às ${informativos[index].dataInicio.hour.toString().padLeft
+              (2, '0')}:${informativos[index].dataInicio.minute.toString().padLeft(2, '0')}",
+            ),
             ),
           );
         }
