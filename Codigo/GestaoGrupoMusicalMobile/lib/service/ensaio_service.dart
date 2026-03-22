@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 
 class EnsaioService {
 
-   static const String baseUrl = ApiConfig.baseUrl;
+   final String baseUrl = ApiConfig.baseUrl;
 
   Future<List<EnsaioModel>> getAll() async {
     final response = await http.get(
