@@ -12,10 +12,8 @@ class PagamentosSolicitadosView extends StatelessWidget {
     final service = FinanceiroService();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Pagamentos Solicitados"),
-        backgroundColor: AppColors.secondary,
-        foregroundColor: Colors.white,
+       appBar: AppBar(
+         title: const Text("Pagamentos Solicitados"),
       ),
       body: FutureBuilder<List<FinanceiroModel>>(
         future: service.getAll(),
@@ -43,7 +41,7 @@ class PagamentosSolicitadosView extends StatelessWidget {
               return Card(
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: ListTile(
-                  isThreeLine: true, // Importante para o título crescer
+                  isThreeLine: true,
                   title: Text(
                     item.descricao, 
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
@@ -51,8 +49,27 @@ class PagamentosSolicitadosView extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.visible,
                   ),
-                  subtitle: Text(
-                    "Vence em: ${item.dataFim.day.toString().padLeft(2, '0')}/${item.dataFim.month.toString().padLeft(2, '0')}"
+                  subtitle: Padding(
+                    padding: const EdgeInsets.only(top: 4.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Vence em: ${item.dataFim.day.toString().padLeft(2, '0')}/${item.dataFim.month.toString().padLeft(2, '0')}"),
+                        const SizedBox(height: 2),
+                        // Removida a verificação de null, imprimindo o int diretamente
+                        Text(
+                          "Status: ${item.statusPagamento}", 
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: item.statusPagamento == 'Pago' 
+                                ? Colors.green 
+                                : item.statusPagamento == 'Atrasado' 
+                                    ? Colors.red 
+                                    : Colors.orange[800], // Para 'Pendente'
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   trailing: ElevatedButton(
                     style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
