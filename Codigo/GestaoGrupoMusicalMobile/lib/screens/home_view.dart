@@ -60,6 +60,10 @@ class HomeView extends StatelessWidget {
               }
               return ListView.builder(
                 scrollDirection: Axis.horizontal, 
+                // 🔥 Efeito de "mola" nativo ao deslizar (deixa o toque muito mais suave)
+                physics: const BouncingScrollPhysics(), 
+                // 🔥 Dá um espaço de respiro no final para o último card não grudar na borda
+                padding: const EdgeInsets.only(right: 16), 
                 itemCount: list.length, 
                 itemBuilder: (context, i) => builder(list[i])
               );
@@ -69,7 +73,6 @@ class HomeView extends StatelessWidget {
       ]
     );
   }
-
   Widget _buildEventCard(EventoModel item) {
     return _baseCard(
       title: item.local, 
