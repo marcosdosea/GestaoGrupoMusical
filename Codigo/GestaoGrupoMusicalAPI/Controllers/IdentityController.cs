@@ -68,6 +68,7 @@ namespace GestaoGrupoMusicalAPI.Controllers
             {
                 claims.Add(new Claim("IdGrupoMusical", pessoaLogada.IdGrupoMusical.ToString()));
                 claims.Add(new Claim("IdPessoa", pessoaLogada.Id.ToString()));
+                claims.Add(new Claim("nome", pessoaLogada.Nome ?? "Usuario"));
             }
 
             foreach (var role in roles)
