@@ -7,7 +7,7 @@ import '../model/evento_model.dart';
 
 class EventoService {
 
-  static const String baseUrl = ApiConfig.baseUrl;
+  final String baseUrl = ApiConfig.baseUrl;
 
   Future<List<EventoModel>> getAll() async {
     final response = await http.get(
