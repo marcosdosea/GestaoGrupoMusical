@@ -156,16 +156,6 @@ namespace Service
                                                          
                          }).ToList();
 
-            if (query.Any())
-            {
-                foreach (var item in query)
-                {
-                    if (item.Descricao.Length > 15)
-                    {
-                        item.Descricao = item.Descricao.Substring(0, 15) + "...";
-                    }
-                }
-            }
             return query;
         }
 
@@ -315,24 +305,6 @@ namespace Service
         public Receitafinanceira? Get(int id)
         {
             return _context.Receitafinanceiras.Find(id);
-        }
-
-        public async Task<IEnumerable<FinanceiroMobileDTO>> GetPagamentosDoAssociadoAsync(int idAssociado)
-        {
-            var query = await (from rfp in _context.Receitafinanceirapessoas
-                               join rf in _context.Receitafinanceiras on rfp.IdReceitaFinanceira equals rf.Id
-                               where rfp.IdPessoa == idAssociado
-                               select new FinanceiroMobileDTO
-                               {
-                                   Id = rf.Id,
-                                   Descricao = rf.Descricao,
-                                   DataInicio = rf.DataInicio,
-                                   DataFim = rf.DataFim,
-                                   Valor = rfp.Valor,
-                                   StatusPagamento = rfp.Status 
-                               }).ToListAsync();
-
-            return query;
         }
 
         public HttpStatusCode NotificarFinanceiroViaEmail(IEnumerable<PessoaEnviarEmailDTO> pessoas, int idFinanceiro)

@@ -12,10 +12,8 @@ class PagamentosSolicitadosView extends StatelessWidget {
     final service = FinanceiroService();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Pagamentos Solicitados"),
-        backgroundColor: AppColors.secondary,
-        foregroundColor: Colors.white,
+       appBar: AppBar(
+         title: const Text("Pagamentos Solicitados"),
       ),
       body: FutureBuilder<List<FinanceiroModel>>(
         future: service.getAll(),
