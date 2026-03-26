@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 
 class MaterialestudoService {
 
-   static const String baseUrl = ApiConfig.baseUrl;
+   final String baseUrl = ApiConfig.baseUrl;
 
 Future<List<MaterialestudoModel>> getAll() async {
   final String? token = await SessionManager.getToken();
