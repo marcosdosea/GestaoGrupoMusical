@@ -6,8 +6,9 @@ import 'package:url_launcher/url_launcher.dart'; // Importação do pacote
 class MaterialEstudoView extends StatelessWidget {
   const MaterialEstudoView({super.key});
 
+  // Lógica completa para tratar e abrir o link
   Future<void> _abrirLink(String urlString, BuildContext context) async {
-
+    // Garante que o link tenha o prefixo correto, caso o usuário tenha digitado apenas "www.site.com"
     if (!urlString.startsWith('http://') && !urlString.startsWith('https://')) {
       urlString = 'https://$urlString';
     }
@@ -18,7 +19,7 @@ class MaterialEstudoView extends StatelessWidget {
       if (await canLaunchUrl(url)) {
         await launchUrl(
           url,
-          mode: LaunchMode.externalApplication, 
+          mode: LaunchMode.externalApplication, // Força a abertura fora do app (Navegador/YouTube)
         );
       } else {
         throw 'Não foi possível abrir: $urlString';
@@ -39,19 +40,22 @@ class MaterialEstudoView extends StatelessWidget {
     return FutureBuilder<List<MaterialestudoModel>>(
       future: service.getAll(),
       builder: (context, snapshot) {
-
+        // 1. Tratamento de Carregamento
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } 
-
+        
+        // 2. Tratamento de Erro
         else if (snapshot.hasError) {
           return Center(child: Text("Erro ao carregar materiais: ${snapshot.error}"));
         } 
         
+        // 3. Verificação de Dados
         else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
           final materiais = snapshot.data!;
 
           return ListView.builder(
+            // Padding para não ficar colado na barra flutuante
             padding: const EdgeInsets.only(top: 10, bottom: 100, left: 10, right: 10),
             itemCount: materiais.length,
             itemBuilder: (context, index) {
@@ -75,13 +79,16 @@ class MaterialEstudoView extends StatelessWidget {
                         style: const TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
                       ),
                       const SizedBox(height: 4),
+                      // Formatação da data com zeros à esquerda (ex: 05/09/2026)
+                      // Formatação da data e hora (ex: 20/03/2026 21:03)
                       Text(
-                        "Adicionado em: ${item.dataInicio.day.toString().padLeft(2, '0')}/${item.dataInicio.month.toString().padLeft(2, '0')}/${item.dataInicio.year}",
+                        "Postado em: ${item.dataInicio.day.toString().padLeft(2, '0')}/${item.dataInicio.month.toString().padLeft(2, '0')}/${item.dataInicio.year} às ${item.dataInicio.hour.toString().padLeft(2, '0')}:${item.dataInicio.minute.toString().padLeft(2, '0')}",
                         style: TextStyle(color: Colors.grey[600], fontSize: 12),
                       ),
                     ],
                   ),
                   isThreeLine: true,
+                  // Chama a nova função passando a URL e o contexto
                   onTap: () => _abrirLink(item.link, context), 
                 ),
               );
@@ -89,6 +96,7 @@ class MaterialEstudoView extends StatelessWidget {
           );
         }
 
+        // 4. Caso a lista esteja vazia
         return const Center(child: Text("Nenhum material de estudo disponível."));
       },
     );

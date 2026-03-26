@@ -18,8 +18,8 @@ class MaterialestudoModel {
     id: json['id'] ?? 0,
     nome: json['nome']?? 'Não informado',
     link: json['link']?? 'Não informado',
-    dataInicio: json['dataHoraInicio'] != null 
-        ? DateTime.parse(json['dataHoraInicio']) 
+    dataInicio: json['data'] != null 
+        ? DateTime.parse(json['data']) 
         : DateTime.now(), 
   );
 }

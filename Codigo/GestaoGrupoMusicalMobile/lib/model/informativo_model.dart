@@ -12,8 +12,8 @@ class InformativoModel {
   factory InformativoModel.fromJson(Map<String, dynamic> json) {
   return InformativoModel(
     id: json['id'] ?? 0,
-    dataInicio: json['dataHoraInicio'] != null 
-        ? DateTime.parse(json['dataHoraInicio']) 
+    dataInicio: json['data'] != null 
+        ? DateTime.parse(json['data']) 
         : DateTime.now(), 
     mensagem: json['mensagem']?? 'Não informado'
     
