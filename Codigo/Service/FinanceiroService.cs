@@ -3,7 +3,7 @@ using Core.Datatables;
 using Core.DTO;
 using Core.Service;
 using Email;
-using Microsoft.EntityFrameworkCore; 
+using Microsoft.EntityFrameworkCore;
 using System.Net;
 
 namespace Service
@@ -67,7 +67,7 @@ namespace Service
                             Valor = rf.Valor ?? 0,
                             // 2. Define o status como ISENTO ou NAO_PAGOU no momento da criação
                             Status = (associado.IsentoPagamento == 1) ? StatusPagamento.ISENTO : StatusPagamento.NAO_PAGOU,
-                            
+
                         });
                     }
                     _context.AddRange(pagamentos);
@@ -92,7 +92,7 @@ namespace Service
             {
                 return FinanceiroStatus.DataInicioMaiorQueDataFim;
             }
-            if (financeiro.DataFim < DateTime.Now.Date) 
+            if (financeiro.DataFim < DateTime.Now.Date)
             {
                 return FinanceiroStatus.DataFimMenorQueDataDeHoje;
             }
@@ -113,7 +113,7 @@ namespace Service
             }
         }
 
-        
+
         public void Delete(int id)
         {
             var financeiro = _context.Receitafinanceiras.Find(id);
@@ -149,11 +149,11 @@ namespace Service
                                              ((rfp.Status == StatusPagamento.PAGO || rfp.Status == StatusPagamento.PAGO_COMPROVANTE) && rfp.DataPagamento > financeiro.DataFim) ||
                                              (rfp.Status == StatusPagamento.NAO_PAGOU && financeiro.DataFim < DateTime.Now.Date)
                                  ).Count(),
-                          
+
                              Recebido = financeiro.Receitafinanceirapessoas
                                  .Where(rfp => rfp.Status == StatusPagamento.PAGO || rfp.Status == StatusPagamento.PAGO_COMPROVANTE)
-                                 .Sum(rfp => rfp.Valor), 
-                                                         
+                                 .Sum(rfp => rfp.Valor),
+
                          }).ToList();
 
             return query;
@@ -305,6 +305,24 @@ namespace Service
         public Receitafinanceira? Get(int id)
         {
             return _context.Receitafinanceiras.Find(id);
+        }
+
+        public async Task<IEnumerable<FinanceiroMobileDTO>> GetPagamentosDoAssociadoAsync(int idAssociado)
+        {
+            var query = await (from rfp in _context.Receitafinanceirapessoas
+                               join rf in _context.Receitafinanceiras on rfp.IdReceitaFinanceira equals rf.Id
+                               where rfp.IdPessoa == idAssociado
+                               select new FinanceiroMobileDTO
+                               {
+                                   Id = rf.Id,
+                                   Descricao = rf.Descricao,
+                                   DataInicio = rf.DataInicio,
+                                   DataFim = rf.DataFim,
+                                   Valor = rfp.Valor,
+                                   StatusPagamento = rfp.Status
+                               }).ToListAsync();
+
+            return query;
         }
 
         public HttpStatusCode NotificarFinanceiroViaEmail(IEnumerable<PessoaEnviarEmailDTO> pessoas, int idFinanceiro)

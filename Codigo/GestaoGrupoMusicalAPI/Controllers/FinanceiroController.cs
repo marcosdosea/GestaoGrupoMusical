@@ -11,12 +11,12 @@ namespace GestaoGrupoMusicalAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "REGENTE")]
+    [Authorize(Roles = "ASSOCIADO, ADMINISTRADOR_DO_GRUPO_MUSICAL")]
     public class FinanceiroController : ControllerBase
     {
         private readonly IFinanceiroService financeiroService;
         private readonly IMapper mapper;
-        
+
 
         public FinanceiroController(IFinanceiroService financeiroService, IMapper mapper)
         {
@@ -34,18 +34,18 @@ namespace GestaoGrupoMusicalAPI.Controllers
 
             int id = int.Parse(idGrupoClaim);
 
-            var listafinanceiro =   financeiroService.GetAllFinanceiroPorIdGrupo(id);
+            var listafinanceiro = financeiroService.GetAllFinanceiroPorIdGrupo(id);
 
             return Ok(listafinanceiro);
         }
 
         // GET api/<FinanceiroController>/5
         [HttpGet("{id}")]
-        public  ActionResult GetAsync(int id)
+        public ActionResult GetAsync(int id)
         {
             var pagamento = financeiroService.Get(id);
 
-            if(pagamento == null)
+            if (pagamento == null)
             {
                 return NotFound();
             }
@@ -54,26 +54,28 @@ namespace GestaoGrupoMusicalAPI.Controllers
 
         // POST api/<FinanceiroController>
         [HttpPost]
-        public  ActionResult Post([FromBody] FinanceiroCreateDTO financeiro)
+        public ActionResult Post([FromBody] FinanceiroCreateDTO financeiro)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            var status =  financeiroService.Create(financeiro);
+            var status = financeiroService.Create(financeiro);
 
             if (status == FinanceiroStatus.Success) return Ok();
 
             return BadRequest(status.ToString());
         }
 
-        [HttpGet("associado/{idAssociado}")]
-        public async Task<ActionResult<IEnumerable<FinanceiroMobileDTO>>> GetPagamentosDoAssociado(int idAssociado)
+        [HttpGet("associado")]
+        public async Task<ActionResult<IEnumerable<FinanceiroMobileDTO>>> GetPagamentosDoAssociado()
         {
             try
             {
-                var pagamentos = await financeiroService.GetPagamentosDoAssociadoAsync(idAssociado);
+                int idPessoa = Convert.ToInt32(User.FindFirst("IdPessoa")?.Value);
+                var pagamentos = await financeiroService.GetPagamentosDoAssociadoAsync(idPessoa);
                 if (pagamentos == null || !pagamentos.Any())
                 {
-                    return NotFound("Nenhum pagamento encontrado para este associado.");
+                    return Ok(new List<FinanceiroMobileDTO>());
+
                 }
                 return Ok(pagamentos);
             }
