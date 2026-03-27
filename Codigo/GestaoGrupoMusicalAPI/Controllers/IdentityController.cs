@@ -68,7 +68,12 @@ namespace GestaoGrupoMusicalAPI.Controllers
             {
                 claims.Add(new Claim("IdGrupoMusical", pessoaLogada.IdGrupoMusical.ToString()));
                 claims.Add(new Claim("IdPessoa", pessoaLogada.Id.ToString()));
+<<<<<<< remotes/origin/branch_Talysson_871
                 claims.Add(new Claim("nome", pessoaLogada.Nome ?? "Usuario"));
+=======
+                claims.Add(new Claim("Nome", pessoaLogada.Nome ?? "Usuário"));
+                claims.Add(new Claim("Email", pessoaLogada.Email ?? ""));
+>>>>>>> local
             }
 
             foreach (var role in roles)
