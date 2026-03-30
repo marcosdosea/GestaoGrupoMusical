@@ -2,21 +2,17 @@
 using Core.DTO;
 using Core.Service;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
-using Service;
-
 
 namespace GestaoGrupoMusicalAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "REGENTE")]
+    [Authorize(Roles = "ASSOCIADO, ADMINISTRADOR GRUPO")] 
     public class FinanceiroController : ControllerBase
     {
         private readonly IFinanceiroService financeiroService;
         private readonly IMapper mapper;
-        
 
         public FinanceiroController(IFinanceiroService financeiroService, IMapper mapper)
         {
@@ -24,7 +20,8 @@ namespace GestaoGrupoMusicalAPI.Controllers
             this.mapper = mapper;
         }
 
-        // GET: api/<FinanceiroController>
+        // Rota: GET api/Financeiro
+
         [HttpGet]
         public ActionResult Get()
         {
@@ -34,47 +31,48 @@ namespace GestaoGrupoMusicalAPI.Controllers
 
             int id = int.Parse(idGrupoClaim);
 
-            var listafinanceiro =   financeiroService.GetAllFinanceiroPorIdGrupo(id);
+            // Esse método do seu service já traz Pagos, Isentos, Atrasos e Recebido!
+            var listafinanceiro = financeiroService.GetAllFinanceiroPorIdGrupo(id);
 
             return Ok(listafinanceiro);
         }
 
-        // GET api/<FinanceiroController>/5
-        [HttpGet("{id}")]
-        public  ActionResult GetAsync(int id)
-        {
-            var pagamento = financeiroService.Get(id);
+        // Rota: GET api/Financeiro/5/associados
 
-            if(pagamento == null)
-            {
-                return NotFound();
-            }
-            return Ok(pagamento);
-        }
-
-        // POST api/<FinanceiroController>
-        [HttpPost]
-        public  ActionResult Post([FromBody] FinanceiroCreateDTO financeiro)
-        {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-
-            var status =  financeiroService.Create(financeiro);
-
-            if (status == FinanceiroStatus.Success) return Ok();
-
-            return BadRequest(status.ToString());
-        }
-
-        [HttpGet("associado/{idAssociado}")]
-        public async Task<ActionResult<IEnumerable<FinanceiroMobileDTO>>> GetPagamentosDoAssociado(int idAssociado)
+        [HttpGet("{idReceita}/associados")]
+        public async Task<ActionResult<IEnumerable<AssociadoPagamentoDTO>>> GetAssociadosDoPagamento(int idReceita)
         {
             try
             {
-                var pagamentos = await financeiroService.GetPagamentosDoAssociadoAsync(idAssociado);
+                // Chama o método que você já criou no FinanceiroService
+                var associados = await financeiroService.GetAssociadosPagamento(idReceita);
+
+                if (associados == null || !associados.Any())
+                {
+                    return Ok(new List<AssociadoPagamentoDTO>());
+                }
+                return Ok(associados);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno: {ex.Message}");
+            }
+        }
+
+        // GET api/Financeiro/associado
+        [HttpGet("associado")]
+        public async Task<ActionResult<IEnumerable<FinanceiroMobileDTO>>> GetPagamentosDoAssociado()
+        {
+            try
+            {
+                int idPessoa = Convert.ToInt32(User.FindFirst("IdPessoa")?.Value);
+                var pagamentos = await financeiroService.GetPagamentosDoAssociadoAsync(idPessoa);
+
                 if (pagamentos == null || !pagamentos.Any())
                 {
-                    return NotFound("Nenhum pagamento encontrado para este associado.");
+                    return Ok(new List<FinanceiroMobileDTO>());
                 }
+
                 return Ok(pagamentos);
             }
             catch (Exception ex)
@@ -83,5 +81,28 @@ namespace GestaoGrupoMusicalAPI.Controllers
             }
         }
 
+        [HttpGet("{id}")]
+        public ActionResult GetAsync(int id)
+        {
+            var pagamento = financeiroService.Get(id);
+
+            if (pagamento == null)
+            {
+                return NotFound();
+            }
+            return Ok(pagamento);
+        }
+
+        [HttpPost]
+        public ActionResult Post([FromBody] FinanceiroCreateDTO financeiro)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var status = financeiroService.Create(financeiro);
+
+            if (status == FinanceiroStatus.Success) return Ok();
+
+            return BadRequest(status.ToString());
+        }
     }
 }
