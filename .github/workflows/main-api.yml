@@ -1,0 +1,165 @@
+name: GestaoGrupoMusical-API Deploy (Release)
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0"
+
+      - name: Restore test dependencies
+        run: |
+          cd Codigo\ServiceTests
+          dotnet restore
+
+      - name: Run tests
+        run: |
+          cd Codigo\ServiceTests
+          dotnet test --configuration Release --no-restore --verbosity normal
+
+  build-and-deploy-api:
+    needs: [test, test-api]
+    runs-on: windows-latest
+
+    env:
+      work-directory: Codigo/GestaoGrupoMusicalAPI
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0"
+
+      - name: Debug - List API files
+        run: |
+          echo "=== Verificando estrutura da API ==="
+          echo "Work directory: ${{env.work-directory}}"
+          if (Test-Path "${{env.work-directory}}") {
+            echo "✅ Pasta da API existe!"
+            echo "Arquivos na pasta:"
+            Get-ChildItem "${{env.work-directory}}" | Select-Object Name, Length
+            echo "Procurando appsettings.json:"
+            Get-ChildItem "${{env.work-directory}}" -Filter "appsettings.json" | Select-Object FullName
+          } else {
+            echo "❌ Pasta da API não existe!"
+            echo "Procurando GestaoGrupoMusicalAPI em todo o repositório:"
+            Get-ChildItem -Recurse -Include "GestaoGrupoMusicalAPI" -Directory | Select-Object FullName
+          }
+
+      - name: Replace connection string
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: "${{env.work-directory}}/appsettings.json"
+        env:
+          ConnectionStrings.GrupoMusicalDatabase: ${{secrets.CONNECTION_STRING}}
+
+      - name: Restore dependencies
+        run: |
+          cd ${{env.work-directory}}
+          dotnet restore
+
+      - name: Build API
+        run: |
+          cd ${{env.work-directory}}
+          dotnet build --configuration Release --no-restore
+
+      - name: Publish API
+        run: |
+          cd ${{env.work-directory}}
+          dotnet publish --configuration Release --no-build --output ./publishAPI
+
+      - name: Create and Deploy App_Offline for API
+        run: |
+          cd ${{env.work-directory}}/publishAPI
+          echo "<!DOCTYPE html><html><head><meta charset='utf-8'><title>API em Manutenção</title></head><body><h1>API de Gestão de Grupo Musical em Manutenção</h1><p>A API está sendo atualizada. Voltaremos em instantes...</p></body></html>" > app_offline.htm
+
+          $ftpServer = "win8184.site4now.net"
+          $ftpUsername = "itetech-001"
+          $ftpPassword = $env:FTP_PASSWORD
+          $localFile = "app_offline.htm"
+          $remoteFile = "/gestaomusicalapi/app_offline.htm"
+
+          if ([string]::IsNullOrEmpty($ftpPassword)) {
+            Write-Host "❌ FTP_PASSWORD está vazio ou não definido!"
+            throw "FTP_PASSWORD não encontrado"
+          }
+
+          try {
+            $ftpRequest = [System.Net.FtpWebRequest]::Create("ftp://$ftpServer$remoteFile")
+            $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
+            $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($ftpUsername, $ftpPassword)
+            $ftpRequest.UseBinary = $true
+            $ftpRequest.UsePassive = $true
+
+            $fileContent = Get-Content $localFile -Raw -Encoding UTF8
+            $data = [System.Text.Encoding]::UTF8.GetBytes($fileContent)
+
+            $ftpRequest.ContentLength = $data.Length
+            $requestStream = $ftpRequest.GetRequestStream()
+            $requestStream.Write($data, 0, $data.Length)
+            $requestStream.Close()
+
+            $response = $ftpRequest.GetResponse()
+            Write-Host "✅ App_Offline da API enviado com sucesso!"
+            $response.Close()
+          }
+          catch {
+            Write-Host "❌ Erro ao enviar App_Offline da API: $($_.Exception.Message)"
+            throw
+          }
+        env:
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+
+      - name: Wait for API to stop
+        run: Start-Sleep -Seconds 20
+
+      - name: Deploy API Files
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: win8184.site4now.net
+          username: itetech-001
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: "${{env.work-directory}}/publishAPI/"
+          server-dir: /gestaomusicalapi/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/obj/**
+            **/bin/**
+            app_offline.htm
+
+      - name: Remove App_Offline from API
+        run: |
+          $ftpServer = "win8184.site4now.net"
+          $ftpUsername = "itetech-001"
+          $ftpPassword = $env:FTP_PASSWORD
+          $remoteFile = "/gestaomusicalapi/app_offline.htm"
+
+          try {
+            $ftpRequest = [System.Net.FtpWebRequest]::Create("ftp://$ftpServer$remoteFile")
+            $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::DeleteFile
+            $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($ftpUsername, $ftpPassword)
+            $ftpRequest.UsePassive = $true
+
+            $response = $ftpRequest.GetResponse()
+            Write-Host "✅ App_Offline da API removido com sucesso!"
+            $response.Close()
+          }
+          catch {
+            Write-Host "⚠️ Erro ao remover App_Offline da API (pode já ter sido removido): $($_.Exception.Message)"
+          }
+        env:
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
