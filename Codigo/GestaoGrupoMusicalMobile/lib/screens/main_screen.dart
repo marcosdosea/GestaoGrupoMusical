@@ -22,7 +22,13 @@ class _MainScreenState extends State<MainScreen> {
   
   String _primeiroNome = "Carregando...";
   String _tipoConta = "";
+  String _emailConta = ""; 
   bool _isMenuExpanded = false; 
+
+  bool get _podeVerPagamentos {
+    final role = _tipoConta.toUpperCase();
+    return role == 'ASSOCIADO' || role == 'ADMINISTRADOR GRUPO';
+  }
 
   final List<Widget> _screens = [
     const HomeView(),
@@ -54,17 +60,20 @@ class _MainScreenState extends State<MainScreen> {
           final String decoded = utf8.decode(base64Url.decode(payload));
           final Map<String, dynamic> data = jsonDecode(decoded);
 
-          String nomeCompleto = data['nome'] ??                              
+          String nomeCompleto = data['Nome'] ??                              
                                 data['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] ?? 
                                 "Bataleiro";
 
           String role = data['role'] ?? 
                         data['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ?? 
                         "Músico";
+          
+          String email = data['Email'] ?? "";
 
           setState(() {
             _primeiroNome = nomeCompleto.split(' ')[0];
             _tipoConta = role;
+            _emailConta = email; 
           });
           return;
         }
@@ -77,21 +86,21 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  @override
+   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          // 2. CONTEÚDO DAS TELAS (Home, Avisos, etc)
           Padding(
             padding: const EdgeInsets.only(top: 50.0, bottom: 60.0),
-            child: _screens[_selectedIndex],
+            child: (!_podeVerPagamentos && _selectedIndex == 3) 
+                ? const HomeView() 
+                : _screens[_selectedIndex],
           ),
           
-          // 3. FUNDO ESCURO (Aparece quando o menu abre para focar na tela vermelha)
           if (_isMenuExpanded)
             GestureDetector(
-              onTap: () => setState(() => _isMenuExpanded = false), // Clica fora e ele fecha
+              onTap: () => setState(() => _isMenuExpanded = false),
               child: Container(
                 color: Colors.black.withValues(alpha: 0.5),
                 width: double.infinity,
@@ -99,7 +108,6 @@ class _MainScreenState extends State<MainScreen> {
               ),
             ),
 
-          // 4. O NOSSO CABEÇALHO ANIMADO E BOTTOM NAV
           _buildCustomHeader(),
           _buildBottomNav(),
         ],
@@ -107,19 +115,20 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  // --- O NOVO CABEÇALHO ANIMADO ---
   Widget _buildCustomHeader() {
     final screenHeight = MediaQuery.of(context).size.height;
     
-    // Se aberto, 25% da tela. Se fechado, altura padrão de 55.
-    final double headerHeight = _isMenuExpanded ? screenHeight * 0.25 : 55.0;
+    // 🔥 A CORREÇÃO: Aumentei a altura fechada de 55.0 para 65.0 para evitar estouro em alguns dispositivos.
+    final double headerClosedHeight = 65.0;
+    final double headerExpandedHeight = screenHeight * 0.25;
+    
+    final double currentHeaderHeight = _isMenuExpanded ? headerExpandedHeight : headerClosedHeight;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 450),
       curve: Curves.fastOutSlowIn, 
-      height: headerHeight,
+      height: currentHeaderHeight,
       width: double.infinity,
-      // clipBehavior impede que o botão "vaze" para fora do vermelho durante a animação
       clipBehavior: Clip.hardEdge, 
       decoration: const BoxDecoration(
         color: AppColors.secondary,
@@ -127,37 +136,39 @@ class _MainScreenState extends State<MainScreen> {
           bottom: Radius.circular(25.0),
         ),
       ),
-      child: SafeArea(
+      child: SafeArea( // SafeArea apenas no topo para evitar o notch.
         bottom: false,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0), // Padding apenas nas laterais.
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            // Centraliza verticalmente todo o conteúdo dentro do header quando fechado.
+            mainAxisAlignment: MainAxisAlignment.center, 
             children: [
-              // --- LINHA DO TOPO (Logo, Textos e Botão de Perfil) ---
+              // Linha principal com logo, textos e ícone de perfil.
               Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center, // Centraliza verticalmente o logo e o bloco de textos.
                 children: [
-                  // Logo que cresce e diminui
                   AnimatedContainer(
                     duration: const Duration(milliseconds: 400),
                     curve: Curves.fastOutSlowIn,
+                    // Logo redondo.
                     height: _isMenuExpanded ? 55 : 45, 
                     child: Image.asset('assets/img/batala.png'),
                   ),
                   const SizedBox(width: 10),
                   
-                  // Textos que crescem e diminuem
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      // Centraliza verticalmente os três textos entre si.
+                      mainAxisAlignment: MainAxisAlignment.center, 
                       children: [
                         AnimatedDefaultTextStyle(
                           duration: const Duration(milliseconds: 400),
                           style: TextStyle(
                             color: AppColors.textLight, 
-                            fontSize: _isMenuExpanded ? 13 : 10
+                            fontSize: _isMenuExpanded ? 13 : 10 
                           ),
                           child: const Text("Batalá Mobile"),
                         ),
@@ -166,11 +177,10 @@ class _MainScreenState extends State<MainScreen> {
                           style: TextStyle(
                             color: Colors.white, 
                             fontWeight: FontWeight.bold, 
-                            fontSize: _isMenuExpanded ? 17 : 15
+                            fontSize: _isMenuExpanded ? 17 : 15 
                           ),
                           child: Text("Olá, $_primeiroNome"),
                         ),
-
                         AnimatedDefaultTextStyle(
                           duration: const Duration(milliseconds: 400),
                           style: TextStyle(
@@ -180,11 +190,28 @@ class _MainScreenState extends State<MainScreen> {
                           ),
                           child: Text(_tipoConta),
                         ),
+                        
+                        // 🔥 O E-mail só é renderizado quando o menu expande.
+                        if (_isMenuExpanded && _emailConta.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 2.0),
+                            child: AnimatedOpacity(
+                              duration: const Duration(milliseconds: 300),
+                              opacity: 1.0,
+                              child: Text(
+                                _emailConta,
+                                style: const TextStyle(
+                                  color: Colors.white54,
+                                  fontSize: 12, 
+                                ),
+                              ),
+                            ),
+                          ),
                       ],
                     ),
                   ),
                   
-                  // Botão de Perfil / Fechar (Voltar)
+                  // Ícone de perfil à direita, centralizado com o logo.
                   IconButton(
                     icon: Icon(
                       _isMenuExpanded ? Icons.close : Icons.person,
@@ -200,11 +227,10 @@ class _MainScreenState extends State<MainScreen> {
                 ],
               ),
               
-              // --- CONTEÚDO DO MENU EXPANDIDO (Botão Sair) ---
-              // Troquei Expanded por Flexible para evitar estouro de tela
+              // Flexible para o botão de sair, visível apenas quando expandido.
               Flexible(
                 child: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 300), // Deixei levemente mais rápido
+                  duration: const Duration(milliseconds: 300),
                   opacity: _isMenuExpanded ? 1.0 : 0.0, 
                   child: _isMenuExpanded 
                     ? Column(
@@ -212,7 +238,6 @@ class _MainScreenState extends State<MainScreen> {
                         children: [
                           const SizedBox(width: double.infinity), 
                           
-                          // Botão Sair
                           ElevatedButton.icon(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
@@ -242,7 +267,6 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  // O seu BottomNav continua idêntico!
   Widget _buildBottomNav() {
     return Align(
       alignment: Alignment.bottomCenter,
@@ -263,7 +287,8 @@ class _MainScreenState extends State<MainScreen> {
             _buildNavItem(0, Icons.home, "Início", 0),
             _buildNavItem(1, Icons.notifications, "Avisos", countAvisos),
             _buildNavItem(2, Icons.library_books, "Estudo", countEstudo),
-            _buildNavItem(3, Icons.payments, "Pagar", 0),
+            if (_podeVerPagamentos) 
+              _buildNavItem(3, Icons.payments, "Pagar", 0),
           ],
         ),
       ),

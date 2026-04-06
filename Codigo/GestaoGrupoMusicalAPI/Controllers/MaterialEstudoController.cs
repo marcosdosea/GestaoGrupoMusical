@@ -7,7 +7,7 @@ namespace GestaoGrupoMusicalAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "REGENTE")]
+    [Authorize]
     public class MaterialEstudoController : Controller
     {
 

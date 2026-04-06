@@ -38,6 +38,34 @@ class PagamentosSolicitadosView extends StatelessWidget {
             itemBuilder: (context, index) {
               final item = lista[index];
               
+              // 🔥 1. Normaliza a string para caixa alta (ignora maiúsculas/minúsculas)
+              String statusRaw = item.statusPagamento.toUpperCase().trim();
+              
+              Color corStatus;
+              bool isPendente = true; // Flag para controlar se mostra PAGAR ou VER
+
+              // 🔥 2. Analisa o status com segurança
+              if (statusRaw.contains('PAGO')) {
+                corStatus = Colors.green;
+                isPendente = false;
+              } else if (statusRaw.contains('ISENTO')) {
+                corStatus = Colors.blue;
+                isPendente = false;
+              } else if (statusRaw.contains('ENVIADO')) {
+                // Enviado (comprovante em análise)
+                corStatus = Colors.orange; 
+                isPendente = true; // Mantém como pendente até aprovação final
+              } else {
+                // ABERTO ou qualquer outro status não previsto
+                corStatus = Colors.red[700]!; // Vermelho para chamar atenção que precisa pagar
+                isPendente = true;
+              }
+
+              // Deixa a primeira letra maiúscula para ficar bonito na tela (Ex: "Aberto", "Enviado")
+              String textoExibicao = item.statusPagamento.isNotEmpty 
+                  ? item.statusPagamento[0].toUpperCase() + item.statusPagamento.substring(1).toLowerCase()
+                  : "Desconhecido";
+
               return Card(
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: ListTile(
@@ -46,7 +74,7 @@ class PagamentosSolicitadosView extends StatelessWidget {
                     item.descricao, 
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                     softWrap: true,
-                    maxLines: 2,
+                    maxLines: null,
                     overflow: TextOverflow.visible,
                   ),
                   subtitle: Padding(
@@ -56,23 +84,22 @@ class PagamentosSolicitadosView extends StatelessWidget {
                       children: [
                         Text("Vence em: ${item.dataFim.day.toString().padLeft(2, '0')}/${item.dataFim.month.toString().padLeft(2, '0')}"),
                         const SizedBox(height: 2),
-                        // Removida a verificação de null, imprimindo o int diretamente
+                        // 🔥 3. Aplica a cor dinâmica e o texto formatado
                         Text(
-                          "Status: ${item.statusPagamento}", 
+                          "Status: $textoExibicao", 
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
-                            color: item.statusPagamento == 'Pago' 
-                                ? Colors.green 
-                                : item.statusPagamento == 'Atrasado' 
-                                    ? Colors.red 
-                                    : Colors.orange[800], // Para 'Pendente'
+                            color: corStatus, 
                           ),
                         ),
                       ],
                     ),
                   ),
                   trailing: ElevatedButton(
-                    style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
+                    // 🔥 4. O botão fica cinza se já foi pago/isento!
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: isPendente ? AppColors.primary : AppColors.secondary
+                    ),
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -81,7 +108,11 @@ class PagamentosSolicitadosView extends StatelessWidget {
                         ),
                       );
                     },
-                    child: const Text("PAGAR", style: TextStyle(color: Colors.white)),
+                    // 🔥 Muda o texto do botão
+                    child: Text(
+                      isPendente ? "PAGAR" : "VER", 
+                      style: const TextStyle(color: Colors.white)
+                    ),
                   ),
                 ),
               );

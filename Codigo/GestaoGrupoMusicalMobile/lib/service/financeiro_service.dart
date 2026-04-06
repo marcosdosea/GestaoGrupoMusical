@@ -12,7 +12,7 @@ class FinanceiroService {
       final String url  = ApiConfig.baseUrl;
 
       final response = await http.get(
-        Uri.parse('$url/api/Financeiro'),
+        Uri.parse('$url/api/Financeiro/associado'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
