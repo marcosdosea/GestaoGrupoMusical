@@ -1,22 +1,18 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Core.DTO;
 using Core.Service;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
-using Service;
-
 
 namespace GestaoGrupoMusicalAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "ASSOCIADO, ADMINISTRADOR_DO_GRUPO_MUSICAL")]
+    [Authorize(Roles = "ASSOCIADO, ADMINISTRADOR GRUPO")] 
     public class FinanceiroController : ControllerBase
     {
         private readonly IFinanceiroService financeiroService;
         private readonly IMapper mapper;
-
 
         public FinanceiroController(IFinanceiroService financeiroService, IMapper mapper)
         {
@@ -24,7 +20,8 @@ namespace GestaoGrupoMusicalAPI.Controllers
             this.mapper = mapper;
         }
 
-        // GET: api/<FinanceiroController>
+        // Rota: GET api/Financeiro
+
         [HttpGet]
         public ActionResult Get()
         {
@@ -34,12 +31,56 @@ namespace GestaoGrupoMusicalAPI.Controllers
 
             int id = int.Parse(idGrupoClaim);
 
+            // Esse método do seu service já traz Pagos, Isentos, Atrasos e Recebido!
             var listafinanceiro = financeiroService.GetAllFinanceiroPorIdGrupo(id);
 
             return Ok(listafinanceiro);
         }
 
-        // GET api/<FinanceiroController>/5
+        // Rota: GET api/Financeiro/5/associados
+
+        [HttpGet("{idReceita}/associados")]
+        public async Task<ActionResult<IEnumerable<AssociadoPagamentoDTO>>> GetAssociadosDoPagamento(int idReceita)
+        {
+            try
+            {
+                // Chama o método que você já criou no FinanceiroService
+                var associados = await financeiroService.GetAssociadosPagamento(idReceita);
+
+                if (associados == null || !associados.Any())
+                {
+                    return Ok(new List<AssociadoPagamentoDTO>());
+                }
+                return Ok(associados);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno: {ex.Message}");
+            }
+        }
+
+        // GET api/Financeiro/associado
+        [HttpGet("associado")]
+        public async Task<ActionResult<IEnumerable<FinanceiroMobileDTO>>> GetPagamentosDoAssociado()
+        {
+            try
+            {
+                int idPessoa = Convert.ToInt32(User.FindFirst("IdPessoa")?.Value);
+                var pagamentos = await financeiroService.GetPagamentosDoAssociadoAsync(idPessoa);
+
+                if (pagamentos == null || !pagamentos.Any())
+                {
+                    return Ok(new List<FinanceiroMobileDTO>());
+                }
+
+                return Ok(pagamentos);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno: {ex.Message}");
+            }
+        }
+
         [HttpGet("{id}")]
         public ActionResult GetAsync(int id)
         {
@@ -52,7 +93,6 @@ namespace GestaoGrupoMusicalAPI.Controllers
             return Ok(pagamento);
         }
 
-        // POST api/<FinanceiroController>
         [HttpPost]
         public ActionResult Post([FromBody] FinanceiroCreateDTO financeiro)
         {
@@ -64,26 +104,5 @@ namespace GestaoGrupoMusicalAPI.Controllers
 
             return BadRequest(status.ToString());
         }
-
-        [HttpGet("associado")]
-        public async Task<ActionResult<IEnumerable<FinanceiroMobileDTO>>> GetPagamentosDoAssociado()
-        {
-            try
-            {
-                int idPessoa = Convert.ToInt32(User.FindFirst("IdPessoa")?.Value);
-                var pagamentos = await financeiroService.GetPagamentosDoAssociadoAsync(idPessoa);
-                if (pagamentos == null || !pagamentos.Any())
-                {
-                    return Ok(new List<FinanceiroMobileDTO>());
-
-                }
-                return Ok(pagamentos);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Erro interno: {ex.Message}");
-            }
-        }
-
     }
 }

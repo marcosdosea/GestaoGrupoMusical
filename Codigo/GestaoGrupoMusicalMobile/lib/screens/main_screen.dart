@@ -1,6 +1,7 @@
 import 'dart:convert'; 
 import 'package:batala_mobile/config/app_colors.dart';
 import 'package:batala_mobile/screens/login_view.dart';
+import 'package:batala_mobile/screens/pagamentos_adm_view.dart';
 import 'package:batala_mobile/screens/pagamentos_solicitados_view.dart';
 import 'package:flutter/material.dart';
 import '../config/session_manager.dart'; 
@@ -85,19 +86,20 @@ class _MainScreenState extends State<MainScreen> {
       _primeiroNome = "Bataleiro"; 
     });
   }
-
-   @override
+@override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 50.0, bottom: 60.0),
-            child: (!_podeVerPagamentos && _selectedIndex == 3) 
-                ? const HomeView() 
+            child: _selectedIndex == 3 
+                ? (_tipoConta.toUpperCase() == 'ADMINISTRADOR GRUPO' 
+                    ? const PagamentosAdminView() 
+                    : const PagamentosSolicitadosView()) 
                 : _screens[_selectedIndex],
           ),
-          
+          // 3. FUNDO ESCURO (Aparece quando o menu abre para focar na tela vermelha)
           if (_isMenuExpanded)
             GestureDetector(
               onTap: () => setState(() => _isMenuExpanded = false),
