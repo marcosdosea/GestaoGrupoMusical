@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Core.DTO;
 using Core.Service;
 using Microsoft.AspNetCore.Authorization;

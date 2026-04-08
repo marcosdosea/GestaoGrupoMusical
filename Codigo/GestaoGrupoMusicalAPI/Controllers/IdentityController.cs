@@ -1,7 +1,6 @@
 ﻿using Core;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -68,7 +67,8 @@ namespace GestaoGrupoMusicalAPI.Controllers
             {
                 claims.Add(new Claim("IdGrupoMusical", pessoaLogada.IdGrupoMusical.ToString()));
                 claims.Add(new Claim("IdPessoa", pessoaLogada.Id.ToString()));
-                claims.Add(new Claim("nome", pessoaLogada.Nome ?? "Usuario"));
+                claims.Add(new Claim("Nome", pessoaLogada.Nome ?? "Usuário"));
+                claims.Add(new Claim("Email", pessoaLogada.Email ?? ""));
             }
 
             foreach (var role in roles)
