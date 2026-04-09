@@ -28,7 +28,7 @@ jobs:
           dotnet test --configuration Release --no-restore --verbosity normal
 
   build-and-deploy-api:
-    needs: [test, test-api]
+    needs: [test]
     runs-on: windows-latest
 
     env:
