@@ -531,7 +531,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     Notificar("<b>Erro!</b> Ultrapassou o <b>limite</b> de participação de associados em um determinado <b>instrumento</b>", Notifica.Erro);
                     break;
                 default:
-                    Notificar("Desculpe, ocorreu um <b>Erro</b> durante o geremciamento de <b>solicitação</b> dos associados.", Notifica.Erro);
+                    Notificar("Desculpe, ocorreu um <b>Erro</b> durante o gerenciamento de <b>solicitação</b> dos associados.", Notifica.Erro);
                     break;
             }
             
