@@ -251,9 +251,11 @@ namespace Service
 
         public async Task<IEnumerable<EnsaioIndexDTO>> GetAllIndexDTO(int idGrupo)
         {
+            DateTime dataAtual = DateTime.Now;  
+
             var query = _context.Ensaios
+                .Where(g => g.IdGrupoMusical == idGrupo && g.DataHoraFim >= dataAtual)
                 .OrderBy(g => g.DataHoraInicio)
-                .Where(g => g.IdGrupoMusical == idGrupo)
                 .Select(g => new EnsaioIndexDTO
                 {
                     Id = g.Id,
