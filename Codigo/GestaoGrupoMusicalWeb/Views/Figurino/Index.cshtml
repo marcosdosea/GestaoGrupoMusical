@@ -4,8 +4,8 @@
     ViewData["Title"] = "Figurinos";
 }
 
-<link href="~/lib/datatable/css/datatables.min.css" rel="stylesheet" />
-<partial name="_Notificar" />
+<link href="~/lib/datatable/css/dataTables.min.css" rel="stylesheet"/>
+<partial name="_Notificar"/>
 
 <div class="d-flex justify-content-between align-items-center">
     <h5>@ViewData["Title"]</h5>
@@ -15,18 +15,18 @@
 <div class="table-responsive-md">
     <table id="tableFigurino" class="table table-striped table-bordered dt-responsive nowrap">
         <thead>
-            <tr class="bg-danger bg-opacity-75 text-white">
-                <th class="px-3">@Html.DisplayNameFor(model => model.Id)</th>
-                <th class="px-3">@Html.DisplayNameFor(model => model.Nome)</th>
-                <th class="px-3">@Html.DisplayNameFor(model => model.Data)</th>
-                <th class="px-3">Ações</th>
-            </tr>
+        <tr class="bg-danger bg-opacity-75 text-white">
+            <th class="px-3">@Html.DisplayNameFor(model => model.Id)</th>
+            <th class="px-3">@Html.DisplayNameFor(model => model.Nome)</th>
+            <th class="px-3">@Html.DisplayNameFor(model => model.Data)</th>
+            <th class="px-3">Ações</th>
+        </tr>
         </thead>
     </table>
 </div>
 
 @section Scripts {
-    <script src="~/lib/datatable/js/datatables.min.js"></script>
+    <script src="~/lib/datatable/js/dataTables.min.js"></script>
 
     <script>
         $(document).ready(function () {
@@ -56,8 +56,8 @@
                     }
                 ],
                 columns: [
-                    { data: "id", name: "Código", autoWidth: true },
-                    { data: "nome", name: "Nome", autoWidth: true },
+                    {data: "id", name: "Código", autoWidth: true},
+                    {data: "nome", name: "Nome", autoWidth: true},
                     {
                         data: "data",
                         name: "Data",
@@ -78,18 +78,18 @@
                         data: null,
                         render: function (data, type, full) {
                             return '<a class="btn btn-secondary btn-sm m-2" href="/Figurino/Edit/' + full.id + '">' +
-                                       '<i class="fa-solid fa-pen-to-square"></i> Editar</a>' +
-                                   '<a onclick="showConfirmationModal(' + full.id + ')" class="btn btn-secondary btn-sm m-2">' +
-                                       '<i class="fa-solid fa-xmark"></i> Excluir</a>' +
-                                   '<a class="btn btn-secondary btn-sm m-2" href="/Figurino/Estoque/' + full.id + '">' +
-                                       '<i class="fa-solid fa-arrow-right-arrow-left"></i> Estoque</a>' +
-                                   '<a class="btn btn-secondary btn-sm m-2" href="/Figurino/Movimentar/' + full.id + '">' +
-                                       '<i class="fa-solid fa-arrow-right-arrow-left"></i> Movimentar</a>';
+                                '<i class="fa-solid fa-pen-to-square"></i> Editar</a>' +
+                                '<a onclick="showConfirmationModal(' + full.id + ')" class="btn btn-secondary btn-sm m-2">' +
+                                '<i class="fa-solid fa-xmark"></i> Excluir</a>' +
+                                '<a class="btn btn-secondary btn-sm m-2" href="/Figurino/Estoque/' + full.id + '">' +
+                                '<i class="fa-solid fa-arrow-right-arrow-left"></i> Estoque</a>' +
+                                '<a class="btn btn-secondary btn-sm m-2" href="/Figurino/Movimentar/' + full.id + '">' +
+                                '<i class="fa-solid fa-arrow-right-arrow-left"></i> Movimentar</a>';
                         }
                     }
                 ],
                 language: {
-                    url: "lib/datatable/js/pt-br.json"
+                    url: "lib/datatable/js/pt-BR.json"
                 }
             });
         });

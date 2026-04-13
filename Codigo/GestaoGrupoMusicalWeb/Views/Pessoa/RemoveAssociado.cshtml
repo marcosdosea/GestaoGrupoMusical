@@ -14,17 +14,19 @@
             <ol class="breadcrumb px-3">
                 <strong>
                     <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Pessoa"]</a>
-                    <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["RemoveAssociado"]</spn>
+                    <spn class="text-secondary"><i
+                            class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["RemoveAssociado"]
+                    </spn>
                 </strong>
             </ol>
         </nav>
-        <hr />
-        <br />
+        <hr/>
+        <br/>
         <div class="container">
             <div class="row">
                 <h2 class="fs-5">Dados do Associado(a)</h2>
-                <hr />
-                <br />
+                <hr/>
+                <br/>
 
                 <div class="form-group">
                     <label class="control-label">Nome</label>
@@ -56,8 +58,8 @@
                 </div>
             </div>
         </div>
-        <br />
-        <br />
+        <br/>
+        <br/>
 
         <div class="container">
             <div class="row">
@@ -69,14 +71,16 @@
                         <textarea asp-for="MotivoSaida" class="form-control"></textarea>
                         <span asp-validation-for="MotivoSaida" class="text-danger"></span>
                     </div>
-                    <br />
-                    <br />
-                    <input type="hidden" name="Cpf" value="@Model.Cpf" />
+                    <br/>
+                    <br/>
+                    <input type="hidden" name="Cpf" value="@Model.Cpf"/>
                     <div class="container">
-                        <div class="row d-flex flex-column-reverse d-grig gap-2 mx-auto d-flex flex-sm-column-reverse flex-xl-row">
+                        <div
+                            class="row d-flex flex-column-reverse d-grig gap-2 mx-auto d-flex flex-sm-column-reverse flex-xl-row">
                             <div class="col-5 d-none d-sm-block"></div>
-                            <a class="btn btn-light text-secondary border border-secondary d-grid gap-2 col-sm" asp-action="Index"> Voltar </a>
-                            <input type="submit" value="Excluir" class="btn btn-secondary d-grid gap-2 col-sm " />
+                            <a class="btn btn-light text-secondary border border-secondary d-grid gap-2 col-sm"
+                               asp-action="Index"> Voltar </a>
+                            <input type="submit" value="Excluir" class="btn btn-secondary d-grid gap-2 col-sm "/>
                         </div>
                     </div>
                 </form>
