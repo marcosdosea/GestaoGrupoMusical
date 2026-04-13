@@ -2,23 +2,22 @@
 
 
 
-<link href="~/lib/datatable/css/datatables.min.css" rel="stylesheet" />
+<link href="~/lib/datatable/css/dataTables.min.css" rel="stylesheet"/>
 
 @{
-
     ViewData["Title"] = "Pagamentos";
-
 }
 
 
 
 <partial name="_Notificar">
-    
+
     <div class="d-flex justify-content-between align-items-center">
 
         <h5>@ViewData["Title"]</h5>
 
-        <a role="button" class="btn btn-secondary m-3" asp-controller="Financeiro" asp-action="Create">Novo Pagamento</a>
+        <a role="button" class="btn btn-secondary m-3" asp-controller="Financeiro" asp-action="Create">Novo
+            Pagamento</a>
 
     </div>
 
@@ -26,67 +25,67 @@
 
         <thead>
 
-            <tr class="bg-danger bg-opacity-75 text-white">
+        <tr class="bg-danger bg-opacity-75 text-white">
 
-                <th class="px-3">
+            <th class="px-3">
 
-                    @Html.DisplayNameFor(model => model.Descricao)
+                @Html.DisplayNameFor(model => model.Descricao)
 
-                </th>
+            </th>
 
-                <th class="px-3">
+            <th class="px-3">
 
-                    @Html.DisplayNameFor(model => model.DataInicio)
+                @Html.DisplayNameFor(model => model.DataInicio)
 
-                </th>
+            </th>
 
-                <th class="px-3">
+            <th class="px-3">
 
-                    @Html.DisplayNameFor(model => model.DataFim)
+                @Html.DisplayNameFor(model => model.DataFim)
 
-                </th>
+            </th>
 
-                <th class="px-3">
+            <th class="px-3">
 
-                    @Html.DisplayNameFor(model => model.Pagos)
+                @Html.DisplayNameFor(model => model.Pagos)
 
-                </th>
+            </th>
 
-                <th class="px-3">
+            <th class="px-3">
 
-                    @Html.DisplayNameFor(model => model.Isentos)
+                @Html.DisplayNameFor(model => model.Isentos)
 
-                </th>
+            </th>
 
-                <th class="px-3">
+            <th class="px-3">
 
-                    @Html.DisplayNameFor(model => model.Atrasos)
+                @Html.DisplayNameFor(model => model.Atrasos)
 
-                </th>
+            </th>
 
-                <th class="px-3">
+            <th class="px-3">
 
-                    @Html.DisplayNameFor(model => model.Recebido)
+                @Html.DisplayNameFor(model => model.Recebido)
 
-                </th>
+            </th>
 
-                <th class="px-3">
+            <th class="px-3">
 
-                    <span>Ações</span>
+                <span>Ações</span>
 
-                </th>
+            </th>
 
-            </tr>
+        </tr>
 
         </thead>
 
     </table>
 
-@*    </div>*@
+    @*    </div>*@
 
-@section Scripts {
+    @section Scripts {
 
-        <script src="~/lib/datatable/js/datatables.min.js"></script>
+        <script src="~/lib/datatable/js/dataTables.min.js"></script>
 
         <script>
 
@@ -132,21 +131,20 @@
 
                     },
 
-                    {
+                        {
 
-                        "targets": [3],
+                            "targets": [3],
 
-                        "visible": true,
+                            "visible": true,
 
-                        "searchable": false,
+                            "searchable": false,
 
-                        "orderable": false
+                            "orderable": false
 
 
+                        }],
 
-                    }],
-
-                    "order": [[1, 'desc'],[2, 'desc'], [0, 'asc']],
+                    "order": [[1, 'desc'], [2, 'desc'], [0, 'asc']],
 
                     "columns": [
 
@@ -250,20 +248,20 @@
 
                         {
 
-                "render": function (data, type, full, meta) {
-                
-                const baseClass = "btn btn-secondary btn-sm m-1";
+                            "render": function (data, type, full, meta) {
 
-                
-                let editBtn = `<a class="${baseClass}" href="/Financeiro/Edit/${full.id}"><i class="fa-solid fa-pen-to-square"></i> Editar</a>`;
-                let detailsBtn = `<a class="${baseClass}" href="/Financeiro/Details/${full.id}"><i class="fa-solid fa-circle-info"></i> Detalhes</a>`;
-                let pagAssociadosBtn = `<a class="${baseClass}" href="/Financeiro/Pag_Associados/${full.id}"><i class="fa-solid fa-users"></i> Pag. Associados</a>`;
-                let deleteBtn = `<button type="button" onclick="showConfirmationModalDelete(${full.id})" class="${baseClass}"><i class="fa-solid fa-xmark"></i> Excluir</button>`;
-                let notifyBtn = `<button type="button" onclick="showConfirmationModalNotificar(${full.id})" class="${baseClass}"><i class="fa-solid fa-envelope"></i> Notificar</button>`;
+                                const baseClass = "btn btn-secondary btn-sm m-1";
 
 
-                return `<div class="btn-group">${editBtn}${detailsBtn}${pagAssociadosBtn}${deleteBtn}${notifyBtn}</div>`;
-            }
+                                let editBtn = `<a class="${baseClass}" href="/Financeiro/Edit/${full.id}"><i class="fa-solid fa-pen-to-square"></i> Editar</a>`;
+                                let detailsBtn = `<a class="${baseClass}" href="/Financeiro/Details/${full.id}"><i class="fa-solid fa-circle-info"></i> Detalhes</a>`;
+                                let pagAssociadosBtn = `<a class="${baseClass}" href="/Financeiro/Pag_Associados/${full.id}"><i class="fa-solid fa-users"></i> Pag. Associados</a>`;
+                                let deleteBtn = `<button type="button" onclick="showConfirmationModalDelete(${full.id})" class="${baseClass}"><i class="fa-solid fa-xmark"></i> Excluir</button>`;
+                                let notifyBtn = `<button type="button" onclick="showConfirmationModalNotificar(${full.id})" class="${baseClass}"><i class="fa-solid fa-envelope"></i> Notificar</button>`;
+
+
+                                return `<div class="btn-group">${editBtn}${detailsBtn}${pagAssociadosBtn}${deleteBtn}${notifyBtn}</div>`;
+                            }
 
                         },
 
@@ -271,7 +269,7 @@
 
                     language: {
 
-                        url: "lib/datatable/js/pt-br.json",
+                        url: "lib/datatable/js/pt-BR.json",
 
                     }
 
@@ -281,9 +279,10 @@
 
         </script>
 
-}
+    }
 
-    <div class="modal fade" id="financeiroModalDelete" tabindex="-1" aria-labelledby="financeiroLabel" aria-hidden="true">
+    <div class="modal fade" id="financeiroModalDelete" tabindex="-1" aria-labelledby="financeiroLabel"
+         aria-hidden="true">
 
         <div class="modal-dialog">
 
@@ -305,7 +304,8 @@
 
                 <form method="post" class="modal-footer">
 
-                    <button type="button" class="btn btn-outline-secondary col-3 me-4" data-bs-dismiss="modal">Não</button>
+                    <button type="button" class="btn btn-outline-secondary col-3 me-4" data-bs-dismiss="modal">Não
+                    </button>
 
                     <button type="submit" class="btn btn-secondary col-3">Sim</button>
 
@@ -317,7 +317,8 @@
 
     </div>
 
-    <div class="modal fade" id="financeiroModalNotificar" tabindex="-1" aria-labelledby="financeiroLabel" aria-hidden="true">
+    <div class="modal fade" id="financeiroModalNotificar" tabindex="-1" aria-labelledby="financeiroLabel"
+         aria-hidden="true">
 
         <div class="modal-dialog">
 
@@ -339,7 +340,8 @@
 
                 <form method="post" class="modal-footer">
 
-                    <button type="button" class="btn btn-outline-secondary col-3 me-4" data-bs-dismiss="modal">Não</button>
+                    <button type="button" class="btn btn-outline-secondary col-3 me-4" data-bs-dismiss="modal">Não
+                    </button>
 
                     <button type="submit" class="btn btn-secondary col-3">Sim</button>
 
@@ -370,7 +372,6 @@
             modal.show();
 
         }
-
 
 
         function showConfirmationModalNotificar(formId) {
