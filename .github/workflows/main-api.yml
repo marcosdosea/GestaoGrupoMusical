@@ -69,17 +69,17 @@ jobs:
       - name: Restore dependencies
         run: |
           cd ${{env.work-directory}}
-          dotnet restore
+          dotnet restore GestaoGrupoMusicalAPI.csproj
 
       - name: Build API
         run: |
           cd ${{env.work-directory}}
-          dotnet build --configuration Release --no-restore
+          dotnet build GestaoGrupoMusicalAPI.csproj --configuration Release --no-restore
 
       - name: Publish API
         run: |
           cd ${{env.work-directory}}
-          dotnet publish --configuration Release --no-build --output ./publishAPI
+          dotnet publish GestaoGrupoMusicalAPI.csproj --configuration Release --no-build --output ./publishAPI
 
       - name: Create and Deploy App_Offline for API
         run: |
