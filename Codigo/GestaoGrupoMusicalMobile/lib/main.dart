@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:batala_mobile/config/http_overrides.dart';
 import 'package:batala_mobile/screens/pagamentos_solicitados_view.dart';
 import 'package:flutter/material.dart';
@@ -7,13 +6,14 @@ import 'config/session_manager.dart';
 import 'screens/main_screen.dart';
 import 'screens/login_view.dart';
 
+import 'config/api_config.dart'; 
+
 void main() async { 
   WidgetsFlutterBinding.ensureInitialized(); 
 
+  await ApiConfig.inicializarConfiguracoes();
+
   HttpOverrides.global = MyHttpOverrides();
-  
-  // LEMBRETE: Comente essa linha após testar, senão ele nunca salvará o login.
-  await SessionManager.clear(); 
   
   runApp(const MyApp());
 }
