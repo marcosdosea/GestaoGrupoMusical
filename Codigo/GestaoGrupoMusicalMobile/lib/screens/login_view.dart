@@ -1,7 +1,7 @@
 import 'package:batala_mobile/config/app_colors.dart';
-import 'package:batala_mobile/screens/main_screen.dart'; 
 import 'package:flutter/material.dart';
-import 'package:batala_mobile/service/login_service.dart'; 
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import '../service/login_service.dart'; 
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -11,41 +11,70 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-  final _formKey = GlobalKey<FormState>(); 
-  final _cpfController = TextEditingController();
-  final _senhaController = TextEditingController();
+  final LoginService _loginService = LoginService();
   
 
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _cpfController = TextEditingController();
+  final TextEditingController _senhaController = TextEditingController();
+  
+
+  bool _isLoading = false; 
   bool _obscureSenha = true;
   bool _permanecerConectado = false;
-  bool _isLoading = false;
 
+  final cpfFormatter = MaskTextInputFormatter(
+    mask: '###.###.###-##', 
+    filter: { "#": RegExp(r'[0-9]') },
+    type: MaskAutoCompletionType.lazy
+  );
+
+  // Lógica de Login
   Future<void> _fazerLogin() async {
-    if (_formKey.currentState!.validate()) {
-      
-      setState(() { _isLoading = true; }); // Mostra a bolinha girando
+    // Valida os campos do formulário antes de enviar
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
 
-      bool sucesso = await LoginService().login(
-        _cpfController.text, 
-        _senhaController.text
-      );
-      
-      setState(() { _isLoading = false; }); // Para de girar a bolinha
+    // Pega apenas os números puros do CPF
+    String cpfLimpo = cpfFormatter.getUnmaskedText();
+    String senha = _senhaController.text;
+
+    setState(() => _isLoading = true);
+
+    try {
+      bool sucesso = await _loginService.login(cpfLimpo, senha);
 
       if (sucesso) {
         if (!mounted) return;
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainScreen()));
+        Navigator.pushReplacementNamed(context, '/home'); 
       } else {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('CPF ou senha incorretos!'),
+            content: Text('CPF ou senha inválidos.'),
             backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
           ),
         );
       }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString().replaceAll('Exception: ', '')),
+          backgroundColor: Colors.orange,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  @override
+  void dispose() {
+    _cpfController.dispose();
+    _senhaController.dispose();
+    super.dispose();
   }
 
   @override
@@ -99,6 +128,7 @@ class _LoginViewState extends State<LoginView> {
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _cpfController,
+                  inputFormatters: [cpfFormatter],
                   decoration: const InputDecoration(
                     prefixIcon: Icon(Icons.person_outline),
                     hintText: '000.000.000-00',
@@ -112,8 +142,8 @@ class _LoginViewState extends State<LoginView> {
                     if (value == null || value.trim().isEmpty) {
                       return 'Por favor, informe o seu CPF';
                     }
-                    if (value.length < 11) {
-                      return 'CPF incompleto';
+                    if (cpfFormatter.getUnmaskedText().length != 11) {
+                      return 'CPF inválido';
                     }
                     return null; 
                   },
@@ -170,10 +200,9 @@ class _LoginViewState extends State<LoginView> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                       elevation: 3,
                     ),
-                    // Chama a função que adicionamos ali em cima
                     onPressed: _isLoading ? null : _fazerLogin, 
                     child: _isLoading 
-                        ? const CircularProgressIndicator(color: Colors.white) // Mostra bolinha girando
+                        ? const CircularProgressIndicator(color: Colors.white)
                         : const Text("Entrar", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   ),
                 ),
