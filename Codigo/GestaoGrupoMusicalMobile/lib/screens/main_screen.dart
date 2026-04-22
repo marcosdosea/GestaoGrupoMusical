@@ -86,13 +86,16 @@ class _MainScreenState extends State<MainScreen> {
       _primeiroNome = "Bataleiro"; 
     });
   }
+
 @override
   Widget build(BuildContext context) {
+    final statusBarHeight = MediaQuery.of(context).padding.top;
+    final double headerHeight = 75.0 + statusBarHeight;
     return Scaffold(
       body: Stack(
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 50.0, bottom: 60.0),
+            padding: EdgeInsets.only(top: headerHeight + 10.0, bottom: 90.0),
             child: _selectedIndex == 3 
                 ? (_tipoConta.toUpperCase() == 'ADMINISTRADOR GRUPO' 
                     ? const PagamentosAdminView() 
@@ -117,157 +120,106 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  Widget _buildCustomHeader() {
-    final screenHeight = MediaQuery.of(context).size.height;
-    
-    // 🔥 A CORREÇÃO: Aumentei a altura fechada de 55.0 para 65.0 para evitar estouro em alguns dispositivos.
-    final double headerClosedHeight = 65.0;
-    final double headerExpandedHeight = screenHeight * 0.25;
-    
-    final double currentHeaderHeight = _isMenuExpanded ? headerExpandedHeight : headerClosedHeight;
+Widget _buildCustomHeader() {
+  final mediaQuery = MediaQuery.of(context);
+  final statusBarHeight = mediaQuery.padding.top;
+  
+  final double headerClosedHeight = 75.0 + statusBarHeight;
+  final double headerExpandedHeight = mediaQuery.size.height * 0.25;
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 450),
-      curve: Curves.fastOutSlowIn, 
-      height: currentHeaderHeight,
-      width: double.infinity,
-      clipBehavior: Clip.hardEdge, 
-      decoration: const BoxDecoration(
-        color: AppColors.secondary,
-        borderRadius: BorderRadius.vertical(
-          bottom: Radius.circular(25.0),
-        ),
-      ),
-      child: SafeArea( // SafeArea apenas no topo para evitar o notch.
-        bottom: false,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0), // Padding apenas nas laterais.
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            // Centraliza verticalmente todo o conteúdo dentro do header quando fechado.
-            mainAxisAlignment: MainAxisAlignment.center, 
-            children: [
-              // Linha principal com logo, textos e ícone de perfil.
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center, // Centraliza verticalmente o logo e o bloco de textos.
-                children: [
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 400),
-                    curve: Curves.fastOutSlowIn,
-                    // Logo redondo.
-                    height: _isMenuExpanded ? 55 : 45, 
-                    child: Image.asset('assets/img/batala.png'),
-                  ),
-                  const SizedBox(width: 10),
-                  
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      // Centraliza verticalmente os três textos entre si.
-                      mainAxisAlignment: MainAxisAlignment.center, 
-                      children: [
-                        AnimatedDefaultTextStyle(
-                          duration: const Duration(milliseconds: 400),
-                          style: TextStyle(
-                            color: AppColors.textLight, 
-                            fontSize: _isMenuExpanded ? 13 : 10 
-                          ),
-                          child: const Text("Batalá Mobile"),
-                        ),
-                        AnimatedDefaultTextStyle(
-                          duration: const Duration(milliseconds: 400),
-                          style: TextStyle(
-                            color: Colors.white, 
-                            fontWeight: FontWeight.bold, 
-                            fontSize: _isMenuExpanded ? 17 : 15 
-                          ),
-                          child: Text("Olá, $_primeiroNome"),
-                        ),
-                        AnimatedDefaultTextStyle(
-                          duration: const Duration(milliseconds: 400),
-                          style: TextStyle(
-                            color: Colors.white70, 
-                            fontSize: _isMenuExpanded ? 14 : 11, 
-                            fontStyle: FontStyle.italic, 
-                          ),
-                          child: Text(_tipoConta),
-                        ),
-                        
-                        // 🔥 O E-mail só é renderizado quando o menu expande.
-                        if (_isMenuExpanded && _emailConta.isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 2.0),
-                            child: AnimatedOpacity(
-                              duration: const Duration(milliseconds: 300),
-                              opacity: 1.0,
-                              child: Text(
-                                _emailConta,
-                                style: const TextStyle(
-                                  color: Colors.white54,
-                                  fontSize: 12, 
-                                ),
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                  
-                  // Ícone de perfil à direita, centralizado com o logo.
-                  IconButton(
-                    icon: Icon(
-                      _isMenuExpanded ? Icons.close : Icons.person,
-                      color: Colors.white,
-                      size: 25,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _isMenuExpanded = !_isMenuExpanded;
-                      });
-                    },
-                  ),
-                ],
-              ),
-              
-              // Flexible para o botão de sair, visível apenas quando expandido.
-              Flexible(
-                child: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 300),
-                  opacity: _isMenuExpanded ? 1.0 : 0.0, 
-                  child: _isMenuExpanded 
-                    ? Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+  return AnimatedContainer(
+    duration: const Duration(milliseconds: 450),
+    curve: Curves.fastOutSlowIn,
+    height: _isMenuExpanded ? headerExpandedHeight : headerClosedHeight,
+    width: double.infinity,
+    clipBehavior: Clip.hardEdge, 
+    decoration: const BoxDecoration(
+      color: AppColors.secondary,
+      borderRadius: BorderRadius.vertical(bottom: Radius.circular(25.0)),
+    ),
+    child: SafeArea(
+      bottom: false,
+      child: Column(
+        children: [
+          // 1. BLOCO SUPERIOR (Logo + Textos + Perfil)
+          Container(
+            height: 75, // Altura fixa para o topo nunca "pular"
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Row(
+              children: [
+                Image.asset('assets/img/batala.png', height: _isMenuExpanded ? 55 : 45),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("Batalá Mobile", style: TextStyle(color: AppColors.textLight, fontSize: _isMenuExpanded ? 13 : 10)),
+                      Text("Olá, $_primeiroNome", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: _isMenuExpanded ? 17 : 14)),
+                      
+                      // Container flexível para Tipo e Email
+                      Stack(
                         children: [
-                          const SizedBox(width: double.infinity), 
+                          // Tipo de conta (Sempre visível ou movendo-se suavemente)
+                          Text(_tipoConta, style: TextStyle(color: Colors.white70, fontSize: _isMenuExpanded ? 14 : 11, fontStyle: FontStyle.italic)),
                           
-                          ElevatedButton.icon(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: AppColors.secondary,
-                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                              elevation: 5,
+                          // Aparece com fade somente ao expandir
+                          AnimatedOpacity(
+                            duration: const Duration(milliseconds: 500),
+                            opacity: _isMenuExpanded ? 1.0 : 0.0,
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 15.0), // Ajuste para ficar logo abaixo do tipo
+                              child: _isMenuExpanded 
+                                ? Text(_emailConta, style: const TextStyle(color: Colors.white54, fontSize: 11))
+                                : const SizedBox.shrink(),
                             ),
-                            icon: const Icon(Icons.logout),
-                            label: const Text("Sair ou mudar de conta", style: TextStyle(fontSize: 15.6, fontWeight: FontWeight.bold)),
-                            onPressed: () async {
-                              await SessionManager.clear(); 
-                              if (!mounted) return;
-                              
-                               Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginView()));
-                            },
                           ),
                         ],
-                      )
-                    : const SizedBox.shrink(), 
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(_isMenuExpanded ? Icons.close : Icons.person, color: Colors.white),
+                  onPressed: () => setState(() => _isMenuExpanded = !_isMenuExpanded),
+                ),
+              ],
+            ),
+          ),
+
+          // 2. CONTEÚDO EXPANSÍVEL (Botão de Sair)
+          if (_isMenuExpanded)
+            Expanded(
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 400),
+                opacity: 1.0,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: AppColors.secondary,
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                      ),
+                      icon: const Icon(Icons.logout),
+                      label: const Text("Sair ou mudar de conta", style: TextStyle(fontWeight: FontWeight.bold)),
+                      onPressed: () async {
+                         await SessionManager.clear();
+                         if (!mounted) return;
+                         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginView()));
+                      },
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
+            ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildBottomNav() {
     return Align(
