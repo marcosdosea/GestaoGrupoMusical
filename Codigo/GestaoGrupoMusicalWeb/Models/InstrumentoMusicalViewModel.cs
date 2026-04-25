@@ -15,9 +15,9 @@ namespace GestaoGrupoMusicalWeb.Models
         [StringLength(20, MinimumLength = 5, ErrorMessage = "O nome do associado deve ter entre 5 e 20 caracteres")]
         public string Patrimonio { get; set; }
 
-        [Display(Name ="Data Aquisição")]
-        [Required(ErrorMessage ="A data é obrigatória")]
-        public DateTime DataAquisicao { get; set; }
+        [Display(Name = "Data Aquisição")]
+        [Required(ErrorMessage = "A data é obrigatória")]
+        public DateTime DataAquisicao { get; set; } = DateTime.Today;
 
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         [Display(Name = "Status")]
