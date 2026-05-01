@@ -530,6 +530,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 case IEventoService.EventoStatus.UltrapassouLimiteQuantidadePlanejada:
                     Notificar("<b>Erro!</b> Ultrapassou o <b>limite</b> de participação de associados em um determinado <b>instrumento</b>", Notifica.Erro);
                     break;
+                case IEventoService.EventoStatus.AssociadoSemInstrumento:
+                    Notificar("<b>Alerta!</b> Não houve alterações na solicitação de participação do evento, <b>associados sem Instumentos</b>.", Notifica.Informativo);
+                    break;
                 default:
                     Notificar("Desculpe, ocorreu um <b>Erro</b> durante o gerenciamento de <b>solicitação</b> dos associados.", Notifica.Erro);
                     break;
