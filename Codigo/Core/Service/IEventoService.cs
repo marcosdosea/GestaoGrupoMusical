@@ -49,7 +49,8 @@ namespace Core.Service
             ErroGenerico,
             SemAlteracao,
             QuantidadeConfirmadaNegativa,
-            QuantidadeSolicitadaNegativa
+            QuantidadeSolicitadaNegativa,
+            AssociadoSemInstrumento
         }
         IEnumerable<InstrumentoSolicitacaoDTO> GetInstrumentosDisponiveis(int idEvento);
         Task<HttpStatusCode> SolicitarParticipacao(int idEvento, int idPessoa, int idTipoInstrumento);
