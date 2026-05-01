@@ -10,6 +10,7 @@ using System.Net;
 using System.Numerics;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.Intrinsics.X86;
+using System.Transactions;
 using static Core.Service.IEventoService;
 
 
@@ -832,11 +833,17 @@ namespace Service
                 {
                     for (int i = 0; i < auxSolicitacaoEvento.Count; i++)
                     {
+
+                        if (auxSolicitacaoEvento[i].IdInstrumento == 0) 
+                        {
+                            transaction.Rollback();
+                            return EventoStatus.AssociadoSemInstrumento;
+                        }
                         Eventopessoa? e = _context.Eventopessoas.Where(
                             ep => ep.IdPessoa == auxSolicitacaoEvento[i].IdAssociado &&
                             ep.IdTipoInstrumento == auxSolicitacaoEvento[i].IdInstrumento &&
                             ep.IdEvento == g.Id
-                        ).FirstOrDefault();
+                        ).FirstOrDefault();                    
                         if (e != null)
                         {
                             e.Status = auxSolicitacaoEvento[i].AprovadoModel.ToString();
@@ -864,6 +871,12 @@ namespace Service
                     {
                         for (int i = 0; i < auxSolicitacaoEvento.Count; i++)
                         {
+                            if (auxSolicitacaoEvento[i].IdInstrumento == 0)
+                            {
+                                transaction.Rollback();
+                                return EventoStatus.AssociadoSemInstrumento;
+                            }
+
                             Eventopessoa? e = _context.Eventopessoas.Where(
                             ep => ep.IdPessoa == auxSolicitacaoEvento[i].IdAssociado &&
                             ep.IdTipoInstrumento == auxSolicitacaoEvento[i].IdInstrumento &&
@@ -876,6 +889,7 @@ namespace Service
                                 if (auxSolicitacaoEvento[i].Aprovado == InscricaoEventoPessoa.DEFERIDO)
                                 {
                                     auxAt.QuantidadeConfirmada--;
+                                    
                                 }
                                 else if (auxSolicitacaoEvento[i].Aprovado == InscricaoEventoPessoa.INDEFERIDO || auxSolicitacaoEvento[i].Aprovado == InscricaoEventoPessoa.INSCRITO)
                                 {
@@ -886,6 +900,7 @@ namespace Service
                                     transaction.Rollback();
                                     return EventoStatus.ErroGenerico;
                                 }
+                                
                                 if (auxAt.QuantidadeConfirmada < 0)
                                 {
                                     transaction.Rollback();
