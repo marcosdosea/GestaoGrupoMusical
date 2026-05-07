@@ -44,7 +44,7 @@ class HomeView extends StatelessWidget {
           child: Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold))
         ),
         SizedBox(
-          height: 185, 
+          height: 240,
           child: FutureBuilder<List<T>>(
             future: future,
             builder: (context, snapshot) {
@@ -57,18 +57,16 @@ class HomeView extends StatelessWidget {
               final list = snapshot.data ?? [];
               if (list.isEmpty) {
                 return const Padding(
-                  padding: EdgeInsets.only(left: 16.0),
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
                   child: Text("Nada agendado por enquanto."),
                 );
               }
-              return ListView.builder(
-                scrollDirection: Axis.horizontal, 
-                // 🔥 Efeito de "mola" nativo ao deslizar (deixa o toque muito mais suave)
-                physics: const BouncingScrollPhysics(), 
-                // 🔥 Dá um espaço de respiro no final para o último card não grudar na borda
-                padding: const EdgeInsets.only(right: 16), 
-                itemCount: list.length, 
-                itemBuilder: (context, i) => builder(list[i])
+              return ListView.separated(
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: list.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 12),
+                itemBuilder: (context, i) => builder(list[i]),
               );
             },
           ),
@@ -102,38 +100,39 @@ class HomeView extends StatelessWidget {
     Widget? trailing, 
     Widget? actionWidget,
   }) {
-    return Container(
-      width: 270,
-      margin: const EdgeInsets.only(left: 16, bottom: 5),
-      child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        elevation: 4,
-        child: Padding(
-          padding: const EdgeInsets.all(14.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(title, 
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16), 
-                      maxLines: 1, overflow: TextOverflow.ellipsis
-                    ),
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      elevation: 4,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    title,
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  if (trailing != null) trailing,
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text(
-                "📅 ${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')} às ${date.hour}:${date.minute.toString().padLeft(2, '0')}",
-                style: TextStyle(color: Colors.grey[700], fontSize: 13),
-              ),
-              const Spacer(),
-              if (actionWidget != null) actionWidget, 
+                ),
+                if (trailing != null) trailing,
+              ],
+            ),
+            const SizedBox(height: 6),
+            Text(
+              "📅 ${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')} às ${date.hour}:${date.minute.toString().padLeft(2, '0')}",
+              style: TextStyle(color: Colors.grey[700], fontSize: 13),
+            ),
+            if (actionWidget != null) ...[
+              const SizedBox(height: 10),
+              Align(alignment: Alignment.centerRight, child: actionWidget),
             ],
-          ),
+          ],
         ),
       ),
     );
