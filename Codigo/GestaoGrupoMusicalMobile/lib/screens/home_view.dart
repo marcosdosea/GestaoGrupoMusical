@@ -29,7 +29,7 @@ class HomeView extends StatelessWidget {
             ensaioService.getAll(), 
             (item) => _buildEnsaioCard(item)
           ),
-          const SizedBox(height: 100),
+          const SizedBox(height: 60),
         ],
       ),
     );
@@ -40,38 +40,42 @@ class HomeView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start, 
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 20, 16, 8), 
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 4), 
           child: Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold))
         ),
-        SizedBox(
-          height: 185, 
-          child: FutureBuilder<List<T>>(
-            future: future,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (snapshot.hasError) {
-                return Center(child: Text("Erro ao carregar $title"));
-              }
-              final list = snapshot.data ?? [];
-              if (list.isEmpty) {
-                return const Padding(
-                  padding: EdgeInsets.only(left: 16.0),
-                  child: Text("Nada agendado por enquanto."),
-                );
-              }
-              return ListView.builder(
-                scrollDirection: Axis.horizontal, 
-                // 🔥 Efeito de "mola" nativo ao deslizar (deixa o toque muito mais suave)
-                physics: const BouncingScrollPhysics(), 
-                // 🔥 Dá um espaço de respiro no final para o último card não grudar na borda
-                padding: const EdgeInsets.only(right: 16), 
-                itemCount: list.length, 
-                itemBuilder: (context, i) => builder(list[i])
+        FutureBuilder<List<T>>(
+          future: future,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Padding(
+                padding: EdgeInsets.only(left: 16.0),
+                child: SizedBox(height: 30, child: CircularProgressIndicator()),
               );
-            },
-          ),
+            }
+            if (snapshot.hasError) {
+              return Padding(
+                padding: const EdgeInsets.only(left: 16.0),
+                child: Text("Erro ao carregar $title"),
+              );
+            }
+            final list = snapshot.data ?? [];
+            if (list.isEmpty) {
+              return const Padding(
+                padding: EdgeInsets.only(left: 16.0),
+                child: Text("Nada agendado por enquanto."),
+              );
+            }
+            return SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+              child: Padding(
+                padding: const EdgeInsets.only(right: 16),
+                child: Row(
+                  children: List.generate(list.length, (i) => builder(list[i])),
+                ),
+              ),
+            );
+          },
         )
       ]
     );
@@ -103,14 +107,15 @@ class HomeView extends StatelessWidget {
     Widget? actionWidget,
   }) {
     return Container(
-      width: 270,
-      margin: const EdgeInsets.only(left: 16, bottom: 5),
+      width: 232,
+      margin: const EdgeInsets.only(left: 16, bottom: 2),
       child: Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         elevation: 4,
         child: Padding(
-          padding: const EdgeInsets.all(14.0),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
@@ -118,20 +123,22 @@ class HomeView extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(title, 
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16), 
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14), 
                       maxLines: 1, overflow: TextOverflow.ellipsis
                     ),
                   ),
                   if (trailing != null) trailing,
                 ],
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 1),
               Text(
                 "📅 ${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')} às ${date.hour}:${date.minute.toString().padLeft(2, '0')}",
-                style: TextStyle(color: Colors.grey[700], fontSize: 13),
+                style: TextStyle(color: Colors.grey[700], fontSize: 11),
               ),
-              const Spacer(),
-              if (actionWidget != null) actionWidget, 
+              if (actionWidget != null) ...[
+                const SizedBox(height: 2),
+                actionWidget,
+              ],
             ],
           ),
         ),
@@ -319,7 +326,7 @@ class _EventToggleButtonState extends State<EventToggleButton> {
         backgroundColor: _isAccepted ? Colors.grey[200] : AppColors.primary,
         foregroundColor: _isAccepted ? Colors.black87 : Colors.white,
         elevation: _isAccepted ? 0 : 2,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       child: _isLoading 
