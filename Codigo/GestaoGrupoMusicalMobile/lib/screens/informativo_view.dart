@@ -132,7 +132,7 @@ class _InformativoViewState extends State<InformativoView> {
     }
   }
 
-  /// Retorna indicador de status do cache
+  /// Retorna indicador de status do cache e economia de dados
   Widget _buildCacheIndicator() {
     return FutureBuilder<Map<String, dynamic>>(
       future: _service.getCacheInfo(),
