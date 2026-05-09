@@ -48,7 +48,7 @@ class EnsaioService {
       // Se falhar a requisição, tenta retornar o cache mesmo que expirado
       debugPrint('Erro na requisição de ensaios, tentando cache expirado: $e');
       try {
-        final prefs = await CacheManager.getCache(_cacheKey);
+        final prefs = await CacheManager.getStaleCache(_cacheKey);
         if (prefs != null) {
           final List data = prefs is List ? prefs : jsonDecode(prefs);
           return data.map((e) => EnsaioModel.fromJson(e)).toList();

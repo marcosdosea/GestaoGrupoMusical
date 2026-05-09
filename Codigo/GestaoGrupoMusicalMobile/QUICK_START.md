@@ -41,7 +41,7 @@ final ensaios = await EnsaioService().getAll();
 // 1. Verifica cache válido (< 30 min)? → Retorna cache (RÁPIDO)
 // 2. Não? Faz requisição HTTP
 // 3. Sucesso? Salva novo cache
-// 4. Falha HTTP? Usa cache expirado
+// 4. Falha HTTP? Usa o último cache salvo, mesmo expirado
 // 5. Tudo falha? Erro ao usuário
 ```
 
@@ -71,8 +71,8 @@ body: CacheManagementWidget()
 
 1. **Primeira Vez**: App baixa dados da internet
 2. **Próximas 30 Minutos**: App usa dados salvos (super rápido!)
-3. **Sem Internet**: App mostra dados salvos normalmente
-4. **Após 30 Minutos Offline**: App tenta dados antigos como último recurso
+3. **Sem Internet**: App mostra os últimos dados salvos normalmente
+4. **Após 30 Minutos Offline**: App continua mostrando o último cache salvo até voltar a ter internet
 
 ### Benefícios
 
@@ -113,7 +113,7 @@ R: Não! Cache funciona automaticamente.
 R: Desative internet (airplane mode) e veja os dados.
 
 **P: Quanto tempo dura o cache?**
-R: 30 minutos. Depois, novo cache é criado.
+R: 30 minutos é o tempo de frescor. Se estiver offline, o último cache continua disponível até a conexão voltar.
 
 **P: Como limpar cache?**
 R: Use `CacheService.clearAllCaches()` ou a UI de gerenciamento.

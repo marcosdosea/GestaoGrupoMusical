@@ -48,7 +48,7 @@ class FinanceiroService {
       } else {
         // Se falhar, tenta retornar cache mesmo que expirado
         try {
-          final cachedData = await CacheManager.getCache(_cachekeyAssociado);
+          final cachedData = await CacheManager.getStaleCache(_cachekeyAssociado);
           if (cachedData != null) {
             final List data = cachedData is List ? cachedData : jsonDecode(cachedData);
             return data.map((json) => FinanceiroModel.fromJson(json)).toList();
@@ -120,7 +120,7 @@ class FinanceiroService {
       } else {
         // Se falhar, tenta retornar cache mesmo que expirado
         try {
-          final cachedData = await CacheManager.getCache(_cacheKeyAdmin);
+          final cachedData = await CacheManager.getStaleCache(_cacheKeyAdmin);
           if (cachedData != null) {
             final List data = cachedData is List ? cachedData : jsonDecode(cachedData);
             return data.map((json) => CampanhaPagamentoModel.fromJson(json)).toList();
@@ -176,7 +176,7 @@ class FinanceiroService {
       } else {
         // Se falhar, tenta retornar cache mesmo que expirado
         try {
-          final cachedData = await CacheManager.getCache(cacheKey);
+          final cachedData = await CacheManager.getStaleCache(cacheKey);
           if (cachedData != null) {
             final List data = cachedData is List ? cachedData : jsonDecode(cachedData);
             return data.map((json) => AssociadoPagamentoModel.fromJson(json)).toList();

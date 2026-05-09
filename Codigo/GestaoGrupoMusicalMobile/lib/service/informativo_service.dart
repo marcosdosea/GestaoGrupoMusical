@@ -44,7 +44,7 @@ class InformativoService {
     } else {
       // Se falhar, tenta retornar cache mesmo que expirado
       try {
-        final cachedData = await CacheManager.getCache(_cacheKey);
+        final cachedData = await CacheManager.getStaleCache(_cacheKey);
         if (cachedData != null) {
           final List data = cachedData is List ? cachedData : jsonDecode(cachedData);
           return data.map((e) => InformativoModel.fromJson(e)).toList();

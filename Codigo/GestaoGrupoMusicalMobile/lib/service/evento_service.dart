@@ -52,7 +52,7 @@ class EventoService {
       // Se falhar a requisição, tenta retornar o cache mesmo que expirado
       debugPrint('Erro na requisição de eventos, tentando cache expirado: $e');
       try {
-        final prefs = await CacheManager.getCache(_cacheKey);
+        final prefs = await CacheManager.getStaleCache(_cacheKey);
         if (prefs != null) {
           final List data = prefs is List ? prefs : jsonDecode(prefs);
           return data.map((e) => EventoModel.fromJson(e)).toList();
@@ -96,7 +96,7 @@ class EventoService {
       
       // Se falhar, tenta retornar cache mesmo que expirado
       try {
-        final cachedData = await CacheManager.getCache('$_instrumentosCacheKeyPrefix$idEvento');
+        final cachedData = await CacheManager.getStaleCache('$_instrumentosCacheKeyPrefix$idEvento');
         if (cachedData != null) {
           return cachedData is List ? cachedData : jsonDecode(cachedData);
         }

@@ -6,6 +6,19 @@ class CacheManager {
   static const String _timestampPrefix = 'timestamp_';
   static const int _defaultCacheDurationMinutes = 30; // Duração padrão do cache
 
+  static String _cacheKey(String key) => '$_cachePrefix$key';
+  static String _timestampKey(String key) => '$_timestampPrefix$key';
+
+  static int? _getCacheAgeMinutes(SharedPreferences prefs, String key) {
+    final timestamp = prefs.getInt(_timestampKey(key));
+    if (timestamp == null) {
+      return null;
+    }
+
+    final cacheAge = DateTime.now().millisecondsSinceEpoch - timestamp;
+    return cacheAge ~/ (1000 * 60);
+  }
+
   /// Salva dados no cache com um timestamp
   static Future<void> saveCache(
     String key,
@@ -14,8 +27,8 @@ class CacheManager {
   }) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final cacheKey = '$_cachePrefix$key';
-      final timestampKey = '$_timestampPrefix$key';
+      final cacheKey = _cacheKey(key);
+      final timestampKey = _timestampKey(key);
 
       // Salva os dados como JSON string
       final jsonString = jsonEncode(data);
@@ -29,35 +42,42 @@ class CacheManager {
     }
   }
 
-  /// Recupera dados do cache se ainda forem válidos
+  /// Recupera dados do cache somente se ainda estiverem frescos.
   static Future<dynamic> getCache(String key) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final cacheKey = '$_cachePrefix$key';
-      final timestampKey = '$_timestampPrefix$key';
+      final cacheKey = _cacheKey(key);
 
       final jsonString = prefs.getString(cacheKey);
       if (jsonString == null) {
-        return null; // Cache não existe
+        return null;
       }
 
-      // Verifica se o cache ainda é válido
-      final timestamp = prefs.getInt(timestampKey);
-      if (timestamp != null) {
-        final cacheAge = DateTime.now().millisecondsSinceEpoch - timestamp;
-        final cacheAgeMinutes = cacheAge / (1000 * 60);
-
-        if (cacheAgeMinutes > _defaultCacheDurationMinutes) {
-          // Cache expirou, remove e retorna null
-          await clearCache(key);
-          return null;
-        }
+      final cacheAgeMinutes = _getCacheAgeMinutes(prefs, key);
+      if (cacheAgeMinutes != null && cacheAgeMinutes > _defaultCacheDurationMinutes) {
+        return null;
       }
 
-      // Retorna o cache ainda válido
       return jsonDecode(jsonString);
     } catch (e) {
       print('Erro ao recuperar cache: $e');
+      return null;
+    }
+  }
+
+  /// Recupera dados do cache independentemente da idade.
+  /// Use isso como fallback quando não houver conectividade.
+  static Future<dynamic> getStaleCache(String key) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final jsonString = prefs.getString(_cacheKey(key));
+      if (jsonString == null) {
+        return null;
+      }
+
+      return jsonDecode(jsonString);
+    } catch (e) {
+      print('Erro ao recuperar cache expirado: $e');
       return null;
     }
   }
@@ -66,8 +86,8 @@ class CacheManager {
   static Future<void> clearCache(String key) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final cacheKey = '$_cachePrefix$key';
-      final timestampKey = '$_timestampPrefix$key';
+      final cacheKey = _cacheKey(key);
+      final timestampKey = _timestampKey(key);
 
       await prefs.remove(cacheKey);
       await prefs.remove(timestampKey);
@@ -101,24 +121,31 @@ class CacheManager {
   static Future<bool> isCacheValid(String key) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final cacheKey = '$_cachePrefix$key';
-      final timestampKey = '$_timestampPrefix$key';
+      final cacheKey = _cacheKey(key);
 
       if (!prefs.containsKey(cacheKey)) {
         return false;
       }
 
-      final timestamp = prefs.getInt(timestampKey);
-      if (timestamp == null) {
+      final cacheAgeMinutes = _getCacheAgeMinutes(prefs, key);
+      if (cacheAgeMinutes == null) {
         return false;
       }
-
-      final cacheAge = DateTime.now().millisecondsSinceEpoch - timestamp;
-      final cacheAgeMinutes = cacheAge / (1000 * 60);
 
       return cacheAgeMinutes <= _defaultCacheDurationMinutes;
     } catch (e) {
       print('Erro ao verificar validade do cache: $e');
+      return false;
+    }
+  }
+
+  /// Indica se existe qualquer cache salvo, mesmo que esteja expirado.
+  static Future<bool> hasAnyCache(String key) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.containsKey(_cacheKey(key));
+    } catch (e) {
+      print('Erro ao verificar existência do cache: $e');
       return false;
     }
   }
