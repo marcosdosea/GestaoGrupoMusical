@@ -5,7 +5,7 @@ import '../config/cache_service.dart';
 /// Widget para gerenciar cache manualmente
 /// Pode ser adicionado em um menu de settings ou usado isoladamente
 class CacheManagementWidget extends StatefulWidget {
-  const CacheManagementWidget({Key? key}) : super(key: key);
+  const CacheManagementWidget({super.key});
 
   @override
   State<CacheManagementWidget> createState() => _CacheManagementWidgetState();
