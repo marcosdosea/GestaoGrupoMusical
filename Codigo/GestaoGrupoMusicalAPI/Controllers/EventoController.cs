@@ -23,10 +23,10 @@ namespace GestaoGrupoMusicalAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult Get()
+        public async Task<ActionResult> Get()
         {
-            var listaEvento = eventoService.GetAllDTO();
-            if (listaEvento == null) return NotFound();
+            var listaEvento = await eventoService.GetAllDTOAsync();
+            if (listaEvento == null) return NotFound("Nenhum evento encontrado");
             return Ok(listaEvento);
         }
 
@@ -40,7 +40,7 @@ namespace GestaoGrupoMusicalAPI.Controllers
             var evento = eventoService.Get(id);
             if (evento == null) return NotFound("Evento não encontrado.");
 
-            var instrumentosDisponiveis = eventoService.GetInstrumentosDisponiveis(id);
+            var instrumentosDisponiveis = await eventoService.GetInstrumentosDisponiveisAsync(id);
             var minhaInscricao = await eventoService.GetSolicitacaoAssociado(id, idPessoa);
 
             var model = new EventoDetalhesAssociadoDTO
@@ -50,7 +50,7 @@ namespace GestaoGrupoMusicalAPI.Controllers
                 DataHoraFim = evento.DataHoraFim,
                 Local = evento.Local,
                 Repertorio = evento.Repertorio,
-                InstrumentosDisponiveis = instrumentosDisponiveis,
+                InstrumentosDisponiveis =  instrumentosDisponiveis,
                 MinhaInscricao = minhaInscricao,
                 // Lógica de permissão para os botões do Mobile
                 PodeInscrever = minhaInscricao == null || minhaInscricao.Status == "NAO_SOLICITADO",
