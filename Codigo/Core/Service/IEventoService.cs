@@ -19,7 +19,7 @@ namespace Core.Service
         Evento Get(int id);
         ICollection<Eventopessoa> GetEventoPessoasPorIdEvento(int idEvento);
         IEnumerable<Evento> GetAll();
-        IEnumerable<EventoDTO> GetAllDTO();
+        IEnumerable<EventoDTO> GetAllDTOAsync();
         IEnumerable<EventoIndexDTO> GetAllIndexDTO();
         IEnumerable<EventoIndexDTO> GetAllEventoIndexDTOPerIdGrupoMusical(int idGrupoMusical);
         DatatableResponse<EventoIndexDTO> GetDataPage(DatatableRequest request, int idGrupo);

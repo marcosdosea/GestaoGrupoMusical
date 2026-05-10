@@ -303,19 +303,17 @@ namespace Service
         }
 
 
-        public IEnumerable<EventoDTO> GetAllDTO()
+        public async Task<IEnumerable<EventoDTO>> GetAllDTOAsync()
         {
-            var query = _context.Eventos
+            return await _context.Eventos
+                .AsNoTracking()
                 .OrderBy(g => g.DataHoraInicio)
-                .Select(g =>
-                new EventoDTO
+                .Select(g => new EventoDTO
                 {
                     Id = g.Id,
                     DataHoraInicio = g.DataHoraInicio,
                     Local = g.Local
-                });
-
-            return query.AsNoTracking();
+                }).ToListAsync();
         }
 
         public IEnumerable<EventoIndexDTO> GetAllIndexDTO()
