@@ -11,7 +11,7 @@ class EventoService {
 
   final String baseUrl = ApiConfig.baseUrl;
   static const String _cacheKey = 'evento_list';
-  static const String _instrumentosCacheKeyPrefix = 'instrumentos_';
+  static const String _detalhesCachePrefix = 'detalhes_evento_';
 
   Future<List<EventoModel>> getAll() async {
     try {
@@ -61,26 +61,27 @@ class EventoService {
       rethrow;
     }
   } 
- Future<List<dynamic>> getInstrumentosDoEvento(int idEvento) async {
+ Future<Map<String, dynamic>?> getDetalhesEvento(int idEvento) async {
+    final String cacheKey = '$_detalhesCachePrefix$idEvento';
+
     try {
-      final cacheKey = '$_instrumentosCacheKeyPrefix$idEvento';
-      
-      // Tenta recuperar do cache primeiro
+      // 1. Tenta recuperar do cache primeiro (Prioridade)
       final cachedData = await CacheManager.getCache(cacheKey);
       if (cachedData != null) {
-        debugPrint('Usando dados em cache para instrumentos do evento $idEvento');
-        return cachedData is List ? cachedData : jsonDecode(cachedData);
+        debugPrint('Usando cache para detalhes do evento $idEvento');
+        return cachedData is Map<String, dynamic> ? cachedData : jsonDecode(cachedData);
       }
     } catch (e) {
-      debugPrint("Erro ao recuperar cache de instrumentos: $e");
+      debugPrint("Erro ao recuperar cache de detalhes: $e");
     }
 
+    // 2. Se não houver cache, faz a requisição HTTP
     try {
       final token = await SessionManager.getToken();
       final response = await http.get(
-        Uri.parse('$baseUrl/api/Evento/$idEvento/Instrumentos'),
+        Uri.parse('$baseUrl/api/Evento/Detalhes/$idEvento'),
         headers: {
-          'Content-Type': 'application/json',
+          'Accept': 'application/json',
           'Authorization': 'Bearer $token',
         },
       );
@@ -88,25 +89,22 @@ class EventoService {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         
-        // Salva no cache
-        await CacheManager.saveCache('$_instrumentosCacheKeyPrefix$idEvento', data);
+        // 3. Salva no cache para uso futuro
+        await CacheManager.saveCache(cacheKey, data);
         
-        return data; 
+        return data;
       }
       
-      // Se falhar, tenta retornar cache mesmo que expirado
-      try {
-        final cachedData = await CacheManager.getStaleCache('$_instrumentosCacheKeyPrefix$idEvento');
-        if (cachedData != null) {
-          return cachedData is List ? cachedData : jsonDecode(cachedData);
-        }
-      } catch (_) {}
-      
-      return [];
+      // 4. Se falhar a rede, tenta o cache expirado (Stale data)
+      final staleData = await CacheManager.getStaleCache(cacheKey);
+      if (staleData != null) {
+        return staleData is Map<String, dynamic> ? staleData : jsonDecode(staleData);
+      }
     } catch (e) {
-      debugPrint("Erro ao buscar instrumentos: $e");
-      return [];
+      debugPrint("Erro ao buscar detalhes do servidor: $e");
     }
+    
+    return null; 
   }
 
   // Retorna 'null' se for sucesso, ou a mensagem de erro se falhar
