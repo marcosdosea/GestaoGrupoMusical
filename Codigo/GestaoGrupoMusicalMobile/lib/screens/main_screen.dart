@@ -1,5 +1,6 @@
 import 'dart:convert'; 
 import 'package:batala_mobile/config/app_colors.dart';
+import 'package:batala_mobile/config/cache_service.dart';
 import 'package:batala_mobile/screens/login_view.dart';
 import 'package:batala_mobile/screens/pagamentos_adm_view.dart';
 import 'package:batala_mobile/screens/pagamentos_solicitados_view.dart';
@@ -206,7 +207,8 @@ Widget _buildCustomHeader() {
                       icon: const Icon(Icons.logout),
                       label: const Text("Sair ou mudar de conta", style: TextStyle(fontWeight: FontWeight.bold)),
                       onPressed: () async {
-                         await SessionManager.clear();
+                         await SessionManager.clear();  
+                         await CacheService.clearAllCaches();// 2. Limpa todos os caches para não vazar dados para a próxima conta
                          if (!mounted) return;
                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginView()));
                       },

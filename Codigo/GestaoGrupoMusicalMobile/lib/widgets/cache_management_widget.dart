@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_to_list_in_spreads
+
 import 'package:flutter/material.dart';
 import '../config/cache_manager.dart';
 import '../config/cache_service.dart';
@@ -181,10 +183,10 @@ class CacheRefreshButton extends StatefulWidget {
   final bool isLoading;
 
   const CacheRefreshButton({
-    Key? key,
+    super.key,
     required this.onRefresh,
     this.isLoading = false,
-  }) : super(key: key);
+  });
 
   @override
   State<CacheRefreshButton> createState() => _CacheRefreshButtonState();
