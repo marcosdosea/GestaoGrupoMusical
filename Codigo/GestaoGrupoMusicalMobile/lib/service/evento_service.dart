@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:batala_mobile/config/api_config.dart';
 import 'package:batala_mobile/config/cache_manager.dart';
 import 'package:batala_mobile/config/session_manager.dart';
@@ -8,17 +7,18 @@ import 'package:http/http.dart' as http;
 import '../model/evento_model.dart';
 
 class EventoService {
-
   final String baseUrl = ApiConfig.baseUrl;
   static const String _cacheKey = 'evento_list';
-  static const String _instrumentosCacheKeyPrefix = 'instrumentos_';
+  static const String _detalhesCachePrefix = 'detalhes_evento_';
 
   Future<List<EventoModel>> getAll() async {
+    // Usamos o ID da pessoa para o cache ser persistente mesmo se o token mudar
+    final userId = (await SessionManager.getIdPessoa())?.toString();
+
     try {
-      // Tenta recuperar do cache primeiro
-      final cachedData = await CacheManager.getCache(_cacheKey);
+      final cachedData = await CacheManager.getCache(_cacheKey, userId: userId);
       if (cachedData != null) {
-        debugPrint('Usando dados em cache para eventos');
+        debugPrint('Usando dados em cache isolados para o usuário $userId');
         final List data = cachedData is List ? cachedData : jsonDecode(cachedData);
         return data.map((e) => EventoModel.fromJson(e)).toList();
       }
@@ -26,7 +26,6 @@ class EventoService {
       debugPrint('Erro ao recuperar cache de eventos: $e');
     }
 
-    // Se não tem cache válido, faz requisição HTTP
     try {
       final token = await SessionManager.getToken();
       final response = await http.get(
@@ -37,83 +36,66 @@ class EventoService {
         },
       );
 
-      if (response.statusCode != 200) {
-        throw Exception('Erro ao buscar eventos');
+      if (response.statusCode == 200) {
+        final List data = jsonDecode(response.body);
+        await CacheManager.saveCache(_cacheKey, data, userId: userId);
+        return data.map((e) => EventoModel.fromJson(e)).toList();
+      } else {
+        throw Exception('Status ${response.statusCode}');
       }
-
-      final List data = jsonDecode(response.body);
-      final eventos = data.map((e) => EventoModel.fromJson(e)).toList();
-      
-      // Salva no cache
-      await CacheManager.saveCache(_cacheKey, data);
-      
-      return eventos;
     } catch (e) {
-      // Se falhar a requisição, tenta retornar o cache mesmo que expirado
-      debugPrint('Erro na requisição de eventos, tentando cache expirado: $e');
-      try {
-        final prefs = await CacheManager.getStaleCache(_cacheKey);
-        if (prefs != null) {
-          final List data = prefs is List ? prefs : jsonDecode(prefs);
-          return data.map((e) => EventoModel.fromJson(e)).toList();
-        }
-      } catch (_) {}
+      debugPrint('Erro na rede, tentando fallback de cache: $e');
+      final staleData = await CacheManager.getCache(_cacheKey, userId: userId);
+      if (staleData != null) {
+        final List data = staleData is List ? staleData : jsonDecode(staleData);
+        return data.map((e) => EventoModel.fromJson(e)).toList();
+      }
       rethrow;
     }
-  } 
- Future<List<dynamic>> getInstrumentosDoEvento(int idEvento) async {
-    try {
-      final cacheKey = '$_instrumentosCacheKeyPrefix$idEvento';
-      
-      // Tenta recuperar do cache primeiro
-      final cachedData = await CacheManager.getCache(cacheKey);
-      if (cachedData != null) {
-        debugPrint('Usando dados em cache para instrumentos do evento $idEvento');
-        return cachedData is List ? cachedData : jsonDecode(cachedData);
-      }
-    } catch (e) {
-      debugPrint("Erro ao recuperar cache de instrumentos: $e");
-    }
+  }
+
+  Future<Map<String, dynamic>?> getDetalhesEvento(int idEvento) async {
+    final token = await SessionManager.getToken();
+    final userId = (await SessionManager.getIdPessoa())?.toString();
+    final String cacheKey = '$_detalhesCachePrefix$idEvento';
 
     try {
-      final token = await SessionManager.getToken();
       final response = await http.get(
-        Uri.parse('$baseUrl/api/Evento/$idEvento/Instrumentos'),
+        Uri.parse('$baseUrl/api/Evento/Detalhes/$idEvento'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
         },
-      );
+      ).timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        
-        // Salva no cache
-        await CacheManager.saveCache('$_instrumentosCacheKeyPrefix$idEvento', data);
-        
-        return data; 
-      }
-      
-      // Se falhar, tenta retornar cache mesmo que expirado
-      try {
-        final cachedData = await CacheManager.getStaleCache('$_instrumentosCacheKeyPrefix$idEvento');
-        if (cachedData != null) {
-          return cachedData is List ? cachedData : jsonDecode(cachedData);
+        // ESSA LINHA É A CHAVE: Imprime o JSON real para você ver as chaves
+        debugPrint("JSON RECEBIDO DA API: ${response.body}");
+
+        final Map<String, dynamic> data = jsonDecode(response.body);
+
+        // Verifica se os campos básicos existem no Map antes de salvar
+        if (data.containsKey('id') || data.containsKey('Id')) {
+          await CacheManager.saveCache(cacheKey, data, userId: userId);
+          return data;
+        } else {
+          debugPrint("ERRO: O JSON chegou, mas não tem a estrutura esperada.");
+          return null;
         }
-      } catch (_) {}
-      
-      return [];
+      } else {
+        debugPrint("ERRO API: Status ${response.statusCode} - ${response.body}");
+        return null;
+      }
     } catch (e) {
-      debugPrint("Erro ao buscar instrumentos: $e");
-      return [];
+      debugPrint("EXCEÇÃO NO SERVICE: $e");
+      // Fallback para cache se a rede falhar
+      return await CacheManager.getCache(cacheKey, userId: userId);
     }
   }
-
-  // Retorna 'null' se for sucesso, ou a mensagem de erro se falhar
+  // Métodos de POST (Participação e Cancelamento) permanecem iguais...
   Future<String?> solicitarParticipacao(int idEvento, int idTipoInstrumento) async {
     try {
       final token = await SessionManager.getToken();
-
       final response = await http.post(
         Uri.parse('${ApiConfig.baseUrl}/api/Evento/ResponderPresenca'),
         headers: {
@@ -126,37 +108,26 @@ class EventoService {
         }),
       );
 
-      // Se deu 200 OK, retorna null (sem erros!)
-      if (response.statusCode == 200) {
-        return null; 
-      } 
-      
-      // Se deu qualquer outro status (como 409 Conflict ou 400 BadRequest)
-      // Nós lemos o JSON do C# para extrair a propriedade "mensagem"
-      else {
-        final data = jsonDecode(response.body);
-        return data['mensagem'] ?? "Ocorreu um erro inesperado ao se inscrever.";
-      }
+      if (response.statusCode == 200) return null;
+      final data = jsonDecode(response.body);
+      return data['mensagem'] ?? "Erro ao se inscrever.";
     } catch (e) {
-      debugPrint("Erro ao responder presença: $e");
-      return "Erro de conexão com o servidor.";
+      return "Erro de conexão.";
     }
   }
+
   Future<bool> cancelarSolicitacao(int idEvento) async {
     try {
       final token = await SessionManager.getToken();
-
-      final response = await http.post( 
-        Uri.parse('${ApiConfig.baseUrl}/api/Evento/CancelarPresenca/$idEvento'), 
+      final response = await http.post(
+        Uri.parse('${ApiConfig.baseUrl}/api/Evento/CancelarPresenca/$idEvento'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
         },
       );
-
       return response.statusCode == 200;
     } catch (e) {
-      debugPrint("Erro ao cancelar presença: $e");
       return false;
     }
   }

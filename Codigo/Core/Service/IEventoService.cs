@@ -19,14 +19,14 @@ namespace Core.Service
         Evento Get(int id);
         ICollection<Eventopessoa> GetEventoPessoasPorIdEvento(int idEvento);
         IEnumerable<Evento> GetAll();
-        IEnumerable<EventoDTO> GetAllDTO();
-        IEnumerable<EventoIndexDTO> GetAllIndexDTO();
+        IEnumerable<EventoIndexDTO> GetAllIndexDTO(); 
         IEnumerable<EventoIndexDTO> GetAllEventoIndexDTOPerIdGrupoMusical(int idGrupoMusical);
         DatatableResponse<EventoIndexDTO> GetDataPage(DatatableRequest request, int idGrupo);
         HttpStatusCode NotificarEventoViaEmail(IEnumerable<PessoaEnviarEmailDTO> pessoas, int idEvento);
         Task<string> GetNomeInstrumento(int id);
         Task<IEnumerable<FigurinoDropdownDTO>> GetAllFigurinoDropdown(int idGrupo);
         Task<IEnumerable<Eventopessoa>> GetPessoas(int idGrupo);
+        Task<IEnumerable<EventoDTO>> GetAllDTOAsync();
         Task<HttpStatusCode> CreateApresentacaoInstrumento(Apresentacaotipoinstrumento apresentacaotipoinstrumento);
         GerenciarSolicitacaoEventoDTO? GetSolicitacoesEventoDTO(int idEvento, int pegarFaltasEmMesesAtras);
         IEnumerable<SolicitacaoEventoPessoasDTO> GetSolicitacaoEventoPessoas(int idEvento, int pegarFaltasEmMesesAtras);
@@ -52,7 +52,8 @@ namespace Core.Service
             QuantidadeSolicitadaNegativa,
             AssociadoSemInstrumento
         }
-        IEnumerable<InstrumentoSolicitacaoDTO> GetInstrumentosDisponiveis(int idEvento);
+
+        Task<IEnumerable<InstrumentoSolicitacaoDTO>> GetInstrumentosDisponiveisAsync(int idEvento);
         Task<HttpStatusCode> SolicitarParticipacao(int idEvento, int idPessoa, int idTipoInstrumento);
         Task<HttpStatusCode> CancelarSolicitacao(int idEvento, int idPessoa);
         Task<bool> PodeAssociadoSolicitar(int idEvento, int idPessoa);

@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:batala_mobile/config/cache_manager.dart';
 
 /// Classe utilitária para gerenciar operações de cache no aplicativo

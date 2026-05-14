@@ -13,17 +13,14 @@ class EventoModel {
     required this.repertorio,
   });
 
-  factory EventoModel.fromJson(Map<String, dynamic> json) {
-  return EventoModel(
-    id: json['id'] ?? 0,
-    dataInicio: json['dataHoraInicio'] != null 
-        ? DateTime.parse(json['dataHoraInicio']) 
-        : DateTime.now(), 
-    dataFim: json['dataHoraFim'] != null 
-        ? DateTime.parse(json['dataHoraFim']) 
-        : DateTime.now(),
-    local: json['local'] ?? 'Local não informado',
-    repertorio: json['repertorio'] ?? 'Sem repertório',
-  );
-}
+ factory EventoModel.fromJson(Map<String, dynamic> json) {
+    return EventoModel(
+      // Tenta minúsculo, se for nulo tenta maiúsculo, se não 0
+      id: json['id'] ?? json['Id'] ?? 0,
+      dataInicio: DateTime.parse(json['dataHoraInicio'] ?? json['DataHoraInicio'] ?? DateTime.now().toIso8601String()),
+      dataFim: DateTime.parse(json['dataHoraFim'] ?? json['DataHoraFim'] ?? DateTime.now().toIso8601String()),
+      local: json['local'] ?? json['Local'] ?? 'Local não informado',
+      repertorio: json['repertorio'] ?? json['Repertorio'] ?? 'Sem repertório',
+    );
+  }
 }

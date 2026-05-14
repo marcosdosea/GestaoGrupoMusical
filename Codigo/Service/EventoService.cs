@@ -302,20 +302,17 @@ namespace Service
             return _context.Eventos.AsNoTracking();
         }
 
-
-        public IEnumerable<EventoDTO> GetAllDTO()
+        public async Task<IEnumerable<EventoDTO>> GetAllDTOAsync()
         {
-            var query = _context.Eventos
+            return await _context.Eventos
+                .AsNoTracking()
                 .OrderBy(g => g.DataHoraInicio)
-                .Select(g =>
-                new EventoDTO
+                .Select(g => new EventoDTO
                 {
                     Id = g.Id,
                     DataHoraInicio = g.DataHoraInicio,
                     Local = g.Local
-                });
-
-            return query.AsNoTracking();
+                }).ToListAsync();
         }
 
         public IEnumerable<EventoIndexDTO> GetAllIndexDTO()
@@ -552,22 +549,22 @@ namespace Service
             return query;
         }
 
-        public IEnumerable<InstrumentoSolicitacaoDTO> GetInstrumentosDisponiveis(int idEvento)
-        {
-            var query = from ati in _context.Apresentacaotipoinstrumentos
-                        join ti in _context.Tipoinstrumentos on ati.IdTipoInstrumento equals ti.Id
-                        where ati.IdApresentacao == idEvento
-                        select new InstrumentoSolicitacaoDTO
-                        {
-                            IdInstrumento = ti.Id,
-                            NomeInstrumento = ti.Nome,
-                            QuantidadePlanejada = ati.QuantidadePlanejada,
-                            QuantidadeConfirmada = ati.QuantidadeConfirmada,
-                            QuantidadeSolicitada = ati.QuantidadeSolicitada,
-                            VagasDisponiveis = ati.QuantidadePlanejada - ati.QuantidadeConfirmada
-                        };
-
-            return query.AsNoTracking().ToList();
+       public async Task<IEnumerable<InstrumentoSolicitacaoDTO>> GetInstrumentosDisponiveisAsync(int idEvento)
+{
+        return await _context.Apresentacaotipoinstrumentos
+            .AsNoTracking()
+            .Where(ati => ati.IdApresentacao == idEvento && 
+                          (ati.QuantidadePlanejada - ati.QuantidadeConfirmada) > 0)
+            .Select(ati => new InstrumentoSolicitacaoDTO
+            {
+                IdInstrumento = ati.IdTipoInstrumento,
+                NomeInstrumento = ati.IdTipoInstrumentoNavigation.Nome,
+                QuantidadePlanejada = ati.QuantidadePlanejada,
+                QuantidadeConfirmada = ati.QuantidadeConfirmada,
+                QuantidadeSolicitada = ati.QuantidadeSolicitada,
+                VagasDisponiveis = ati.QuantidadePlanejada - ati.QuantidadeConfirmada
+            })
+            .ToListAsync();
         }
 
         public async Task<HttpStatusCode> SolicitarParticipacao(int idEvento, int idPessoa, int idTipoInstrumento)
