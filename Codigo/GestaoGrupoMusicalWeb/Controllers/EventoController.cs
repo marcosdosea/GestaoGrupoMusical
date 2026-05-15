@@ -381,7 +381,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 return RedirectToAction("MeusEventos");
             }
 
-            var instrumentosDisponiveis = _eventoService.GetInstrumentosDisponiveis(id);
+            var instrumentosDisponiveis = _eventoService.GetInstrumentosDisponiveisAsync(id);
             var minhaInscricao = await _eventoService.GetSolicitacaoAssociado(id, idPessoa);
 
             var model = new EventoDetalhesAssociadoDTO
@@ -391,7 +391,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 DataHoraFim = evento.DataHoraFim,
                 Local = evento.Local,
                 Repertorio = evento.Repertorio,
-                InstrumentosDisponiveis = instrumentosDisponiveis,
+                InstrumentosDisponiveis = await instrumentosDisponiveis,
                 MinhaInscricao = minhaInscricao,
                 PodeInscrever = minhaInscricao == null || minhaInscricao.StatusEnum == InscricaoEventoPessoa.NAO_SOLICITADO,
                 PodeCancelar = minhaInscricao?.StatusEnum == InscricaoEventoPessoa.INSCRITO
@@ -492,7 +492,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [Authorize(Roles = "ASSOCIADO")]
         public JsonResult GetInstrumentosDisponiveis(int idEvento)
         {
-            var instrumentos = _eventoService.GetInstrumentosDisponiveis(idEvento);
+            var instrumentos = _eventoService.GetInstrumentosDisponiveisAsync(idEvento);
             return Json(instrumentos);
         }
 
