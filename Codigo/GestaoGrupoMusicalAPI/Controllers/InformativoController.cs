@@ -35,6 +35,25 @@ namespace GestaoGrupoMusicalAPI.Controllers
             return Ok(listaInformativos);
         }
 
+        [HttpGet("Grupo/Paginado")]
+        public async Task<ActionResult> GetPaginado([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        {
+            var idGrupoClaim = User.Claims.FirstOrDefault(c => c.Type == "IdGrupoMusical")?.Value;
+
+            if (idGrupoClaim == null) return Unauthorized("Grupo musical não identificado.");
+
+            int idGrupo = int.Parse(idGrupoClaim);
+
+            var pagina = await informativo.GetPagedInformativoServicePorIdGrupoMusical(idGrupo, pageNumber, pageSize);
+
+            if (pagina == null || pagina.Items.Count == 0)
+            {
+                return NotFound("Nenhum informativo no grupo");
+            }
+
+            return Ok(pagina);
+        }
+
 
     }
 }
