@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:batala_mobile/config/app_colors.dart';
-import 'package:intl/intl.dart'; // Certifique-se de ter o intl no pubspec.yaml
+import 'package:intl/intl.dart';
+import 'dart:math' as math;
 import '../model/ensaio_model.dart';
 import '../model/evento_model.dart';
 import '../service/evento_service.dart';
@@ -19,45 +20,108 @@ class _HomeViewState extends State<HomeView> {
   late Future<List<EventoModel>> _futureEventos;
   late Future<List<EnsaioModel>> _futureEnsaios;
 
+  // Controladores de scroll e limites de paginação
+  final ScrollController _eventoScrollController = ScrollController();
+  final ScrollController _ensaioScrollController = ScrollController();
+  
+  int _eventosLimit = 3;
+  int _ensaiosLimit = 3;
+  final int _incrementoPaginacao = 3;
+
+  // NOVO: Cache local em memória para os detalhes dos eventos
+  final Map<int, Map<String, dynamic>> _detalhesCache = {};
+
   @override
   void initState() {
     super.initState();
     _eventoService = EventoService();
     _ensaioService = EnsaioService();
+    _carregarDados();
+
+    // Listeners para ativar a paginação ao "esticar" o final da lista
+    _eventoScrollController.addListener(_onEventoScroll);
+    _ensaioScrollController.addListener(_onEnsaioScroll);
+  }
+
+  @override
+  void dispose() {
+    _eventoScrollController.dispose();
+    _ensaioScrollController.dispose();
+    super.dispose();
+  }
+
+  void _carregarDados() {
     _futureEventos = _eventoService.getAll();
     _futureEnsaios = _ensaioService.getAll();
   }
 
+  Future<void> _onRefresh() async {
+    setState(() {
+      _eventosLimit = 3;
+      _ensaiosLimit = 3;
+      _detalhesCache.clear(); // Limpa o cache ao recarregar a tela
+      _carregarDados();
+    });
+  }
+
+  void _onEventoScroll() {
+    if (_eventoScrollController.offset >= _eventoScrollController.position.maxScrollExtent) {
+      setState(() {
+        _eventosLimit += _incrementoPaginacao;
+      });
+    }
+  }
+
+  void _onEnsaioScroll() {
+    if (_ensaioScrollController.offset >= _ensaioScrollController.position.maxScrollExtent) {
+      setState(() {
+        _ensaiosLimit += _incrementoPaginacao;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          child: _buildSection<EventoModel>(
-            "Próximos Eventos",
-            _futureEventos,
-            (item) => _buildEventCard(context, item, _eventoService),
+    return RefreshIndicator(
+      onRefresh: _onRefresh,
+      child: Column(
+        children: [
+          Expanded(
+            child: _buildSection<EventoModel>(
+              "Próximos Eventos",
+              _futureEventos,
+              _eventoScrollController,
+              _eventosLimit,
+              (item) => _buildEventCard(context, item, _eventoService),
+            ),
           ),
-        ),
-        Expanded(
-          child: _buildSection<EnsaioModel>(
-            "Próximos Ensaios",
-            _futureEnsaios,
-            (item) => _buildEnsaioCard(item),
+          Expanded(
+            child: _buildSection<EnsaioModel>(
+              "Próximos Ensaios",
+              _futureEnsaios,
+              _ensaioScrollController,
+              _ensaiosLimit,
+              (item) => _buildEnsaioCard(item),
+            ),
           ),
-        ),
-        const SizedBox(height: 16),
-      ],
+          const SizedBox(height: 8),
+        ],
+      ),
     );
   }
 
-  Widget _buildSection<T>(String title, Future<List<T>> future, Widget Function(T) builder) {
+  Widget _buildSection<T>(
+      String title, 
+      Future<List<T>> future, 
+      ScrollController controller, 
+      int limit, 
+      Widget Function(T) builder) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
-          child: Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87)),
+          child: Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87)),
         ),
         Expanded(
           child: FutureBuilder<List<T>>(
@@ -67,13 +131,20 @@ class _HomeViewState extends State<HomeView> {
                 return const Center(child: CircularProgressIndicator());
               }
               if (snapshot.hasError) return const Center(child: Text("Erro ao carregar"));
+              
               final list = snapshot.data ?? [];
               if (list.isEmpty) return const Center(child: Text("Nada agendado."));
 
+              final int itemCount = math.min(list.length, limit);
+
               return ListView.builder(
+                controller: controller,
+                physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()), 
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                itemCount: list.length,
-                itemBuilder: (context, index) => builder(list[index]),
+                itemCount: itemCount,
+                itemBuilder: (context, index) {
+                  return builder(list[index]);
+                },
               );
             },
           ),
@@ -85,27 +156,34 @@ class _HomeViewState extends State<HomeView> {
   Widget _buildEventCard(BuildContext context, EventoModel item, EventoService service) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: () => _abrirDetalhes(item.id, service), // Apenas visualização
+      onTap: () => _abrirDetalhes(item.id, service),
       child: _baseCard(
         title: item.local,
         date: item.dataInicio,
         actionWidget: EventToggleButton(
           isAccepted: false,
-          onPressed: () => _abrirSelecaoInstrumento(item.id, service), // Ação de se inscrever
+          onPressed: () => _abrirSelecaoInstrumento(item.id, service),
         ),
       ),
     );
   }
 
-  // --- LÓGICA DE VISUALIZAÇÃO (APENAS INFO) ---
   Future<void> _abrirDetalhes(int id, EventoService service) async {
+    // 1. Verifica se os dados já estão no cache em memória
+    if (_detalhesCache.containsKey(id)) {
+      _mostrarModalInformativo(_detalhesCache[id]!);
+      return;
+    }
+
+    // 2. Se não estiver no cache, chama a API
     _showLoading();
     try {
       final data = await service.getDetalhesEvento(id).timeout(const Duration(seconds: 8));
       if (!mounted) return;
-      Navigator.of(context, rootNavigator: true).pop(); // Fecha loading
+      Navigator.of(context, rootNavigator: true).pop();
 
       if (data != null) {
+        _detalhesCache[id] = data; // 3. Salva a resposta no cache para a próxima vez
         _mostrarModalInformativo(data);
       }
     } catch (e) {
@@ -138,8 +216,14 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  // --- LÓGICA DE INSCRIÇÃO (ESCOLHER INSTRUMENTO) ---
   Future<void> _abrirSelecaoInstrumento(int id, EventoService service) async {
+    // 1. Verifica se os dados já estão no cache em memória
+    if (_detalhesCache.containsKey(id)) {
+      _mostrarModalInscricao(_detalhesCache[id]!, service);
+      return;
+    }
+
+    // 2. Se não estiver no cache, chama a API
     _showLoading();
     try {
       final data = await service.getDetalhesEvento(id);
@@ -147,6 +231,7 @@ class _HomeViewState extends State<HomeView> {
       Navigator.of(context, rootNavigator: true).pop();
 
       if (data != null) {
+        _detalhesCache[id] = data; // 3. Salva a resposta no cache
         _mostrarModalInscricao(data, service);
       }
     } catch (e) {
@@ -155,124 +240,118 @@ class _HomeViewState extends State<HomeView> {
   }
 
   void _mostrarModalInscricao(Map<String, dynamic> data, EventoService service) {
-  // Extrai a lista com segurança
-  final List instrumentos = data['instrumentosDisponiveis'] ?? [];
+    final List instrumentos = data['instrumentosDisponiveis'] ?? [];
 
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
-    ),
-    builder: (context) => Container(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            "Solicitar Participação",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10),
-          
-          // --- LÓGICA DE LISTA VAZIA ---
-          if (instrumentos.isEmpty)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 30),
-              child: Center(
-                child: Column(
-                  children: [
-                    Icon(Icons.info_outline, size: 50, color: Colors.grey[400]),
-                    const SizedBox(height: 16),
-                    Text(
-                      "Ops! Não há instrumentos disponíveis para este evento no momento.",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.grey[600], fontSize: 16),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      "Fique atento aos próximos informativos!",
-                      style: TextStyle(color: Colors.grey, fontSize: 14),
-                    ),
-                  ],
-                ),
-              ),
-            )
-          else ...[
-            const Text("Selecione o instrumento que você irá tocar:"),
-            const Divider(height: 30),
-            ...instrumentos.map((inst) => ListTile(
-                  leading: const Icon(Icons.music_note, color: AppColors.primary),
-                  title: Text(inst['nomeInstrumento']),
-                  subtitle: Text("${inst['vagasDisponiveis']} vagas restantes"),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () async {
-                    Navigator.pop(context); // Fecha o modal de escolha
-                    _processarInscricao(data['id'], inst['idInstrumento'], inst['nomeInstrumento'], service);
-                  },
-                )),
-          ],
-          const SizedBox(height: 10),
-        ],
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
       ),
-    ),
-  );
-}
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Solicitar Participação",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            if (instrumentos.isEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 30),
+                child: Center(
+                  child: Column(
+                    children: [
+                      Icon(Icons.info_outline, size: 50, color: Colors.grey[400]),
+                      const SizedBox(height: 16),
+                      Text(
+                        "Ops! Não há instrumentos disponíveis para este evento no momento.",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.grey[600], fontSize: 16),
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        "Fique atento aos próximos informativos!",
+                        style: TextStyle(color: Colors.grey, fontSize: 14),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            else ...[
+              const Text("Selecione o instrumento que você irá tocar:"),
+              const Divider(height: 30),
+              ...instrumentos.map((inst) => ListTile(
+                    leading: const Icon(Icons.music_note, color: AppColors.primary),
+                    title: Text(inst['nomeInstrumento']),
+                    subtitle: Text("${inst['vagasDisponiveis']} vagas restantes"),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () async {
+                      Navigator.pop(context);
+                      _processarInscricao(data['id'], inst['idInstrumento'], inst['nomeInstrumento'], service);
+                    },
+                  )),
+            ],
+            const SizedBox(height: 10),
+          ],
+        ),
+      ),
+    );
+  }
 
-// Nova função para gerenciar o feedback da inscrição
-Future<void> _processarInscricao(int eventoId, int instId, String nomeInst, EventoService service) async {
-  _showLoading(); // Mostra um loading rápido enquanto envia para a API
+  Future<void> _processarInscricao(int eventoId, int instId, String nomeInst, EventoService service) async {
+    _showLoading();
 
-  try {
-    final erro = await service.solicitarParticipacao(eventoId, instId);
-    
-    if (!mounted) return;
-    Navigator.of(context, rootNavigator: true).pop(); // Fecha o loading
+    try {
+      final erro = await service.solicitarParticipacao(eventoId, instId);
+      
+      if (!mounted) return;
+      Navigator.of(context, rootNavigator: true).pop();
 
-    if (erro == null) {
-      // --- FEEDBACK DE SUCESSO ---
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: const Icon(Icons.check_circle, color: Colors.green, size: 60),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                "Solicitação Enviada!",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                "Sua participação com o instrumento $nomeInst foi solicitada com sucesso. Agora é só aguardar a aprovação do regente!",
-                textAlign: TextAlign.center,
+      if (erro == null) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            title: const Icon(Icons.check_circle, color: Colors.green, size: 60),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  "Solicitação Enviada!",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  "Sua participação com o instrumento $nomeInst foi solicitada com sucesso. Agora é só aguardar a aprovação do regente!",
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("OK", style: TextStyle(fontWeight: FontWeight.bold)),
               ),
             ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("OK", style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
-          ],
-        ),
-      );
-    } else {
-      // Exibe erro retornado pela API
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(erro), backgroundColor: Colors.red),
+        );
+      }
+    } catch (e) {
+      if (mounted) Navigator.of(context, rootNavigator: true).pop();
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(erro), backgroundColor: Colors.red),
+        const SnackBar(content: Text("Erro ao enviar solicitação."), backgroundColor: Colors.red),
       );
     }
-  } catch (e) {
-    if (mounted) Navigator.of(context, rootNavigator: true).pop();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Erro ao enviar solicitação."), backgroundColor: Colors.red),
-    );
   }
-}
-  // --- WIDGETS AUXILIARES ---
+
   Widget _infoRow(IconData icon, String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6.0),
@@ -302,42 +381,63 @@ Future<void> _processarInscricao(int eventoId, int instId, String nomeInst, Even
 
   Widget _baseCard({required String title, required DateTime date, String? subtitle, Widget? actionWidget}) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 5),
       color: AppColors.cardBackground,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center, 
           children: [
-            Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-            const SizedBox(height: 8),
-            Text("📅 ${date.day}/${date.month} às ${date.hour}:${date.minute.toString().padLeft(2, '0')}") ,
-            if (subtitle != null) Text("\n$subtitle", style: const TextStyle(fontSize: 14, color: Colors.black54)),
-            if (actionWidget != null) Align(alignment: Alignment.centerRight, child: actionWidget),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  const SizedBox(height: 4),
+                  Text("📅 ${date.day}/${date.month} às ${date.hour}:${date.minute.toString().padLeft(2, '0')}"),
+                  if (subtitle != null) ...[
+                    const SizedBox(height: 2),
+                    Text(subtitle, style: const TextStyle(fontSize: 13, color: Colors.black54)),
+                  ]
+                ],
+              ),
+            ),
+            if (actionWidget != null) ...[
+              const SizedBox(width: 8), 
+              actionWidget,
+            ]
           ],
         ),
       ),
     );
   }
-}
+} 
 
 class EventToggleButton extends StatelessWidget {
   final bool isAccepted;
-  final VoidCallback onPressed; // Adicionado callback
+  final VoidCallback onPressed;
+  
   const EventToggleButton({super.key, required this.isAccepted, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onPressed,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: isAccepted ? Colors.grey : const Color(0xFFD9534F),
-          borderRadius: BorderRadius.circular(10),
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: isAccepted ? Colors.grey : const Color(0xFFD9534F), 
+        foregroundColor: Colors.white, 
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        minimumSize: Size.zero, 
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap, 
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
         ),
-        child: Text(isAccepted ? "CANCELAR" : "ACEITAR", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        elevation: 0, 
+      ),
+      child: Text(
+        isAccepted ? "CANCELAR" : "ACEITAR", 
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
       ),
     );
   }
