@@ -12,10 +12,11 @@ namespace Core.Service
         Task<HttpStatusCode> Create(Informativo informativo);
         HttpStatusCode Edit(Informativo informativo);
         Task<HttpStatusCode> Delete(uint id);
-        Task<Informativo?> Get(uint id); // <-- Apenas este Get com um parâmetro
+        Task<Informativo?> Get(uint id); // <-- Apenas este Get com um parï¿½metro
         Task<IEnumerable<Informativo>> GetAll();
         Task<IEnumerable<Informativo>> GetAllInformativoServiceIdGrupo(int idGrupoMusical, int idPessoa);
         IEnumerable<Informativo> GetAllInformativoServicePorIdGrupoMusical(int idGrupoMusical);
+        Task<PagedResponse<InformativoIndexDTO>> GetPagedInformativoServicePorIdGrupoMusical(int idGrupoMusical, int pageNumber, int pageSize);
         Task<HttpStatusCode> NotificarInformativoViaEmail(IEnumerable<PessoaEnviarEmailDTO> pessoas, uint idInformativo, string mensagem);
         DatatableResponse<InformativoIndexDTO> GetDataPage(DatatableRequest request, IEnumerable<InformativoIndexDTO> listaInformativoDTO);
     }

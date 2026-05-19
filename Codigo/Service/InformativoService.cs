@@ -89,6 +89,42 @@ namespace Service
             return query;
         }
 
+        public async Task<PagedResponse<InformativoIndexDTO>> GetPagedInformativoServicePorIdGrupoMusical(int idGrupoMusical, int pageNumber, int pageSize)
+        {
+            pageNumber = pageNumber < 1 ? 1 : pageNumber;
+            pageSize = pageSize < 1 ? 10 : pageSize;
+
+            var query = _context.Informativos
+                .AsNoTracking()
+                .Where(informativo => informativo.IdGrupoMusical == idGrupoMusical)
+                .OrderByDescending(informativo => informativo.Data)
+                .ThenByDescending(informativo => informativo.Id);
+
+            var totalItems = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+            var items = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Select(informativo => new InformativoIndexDTO
+                {
+                    Id = (int)informativo.Id,
+                    Data = informativo.Data,
+                    Mensagem = informativo.Mensagem
+                })
+                .ToListAsync();
+
+            return new PagedResponse<InformativoIndexDTO>
+            {
+                Items = items,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                TotalItems = totalItems,
+                TotalPages = totalPages,
+                HasNextPage = pageNumber < totalPages
+            };
+        }
+
         public DatatableResponse<InformativoIndexDTO> GetDataPage(DatatableRequest request, IEnumerable<InformativoIndexDTO> listaInformativoDTO)
         {
             var totalRecords = listaInformativoDTO.Count();
