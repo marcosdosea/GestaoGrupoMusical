@@ -1,6 +1,8 @@
 import 'package:batala_mobile/config/app_colors.dart';
+import 'package:batala_mobile/config/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../service/login_service.dart'; 
 
 class LoginView extends StatefulWidget {
@@ -28,6 +30,23 @@ class _LoginViewState extends State<LoginView> {
     filter: { "#": RegExp(r'[0-9]') },
     type: MaskAutoCompletionType.lazy
   );
+
+  Future<void> _abrirRecuperacaoSenhaWeb() async {
+    final uri = Uri.parse('${ApiConfig.webBaseUrl}/Identity/ForgotPassword');
+
+    if (!await canLaunchUrl(uri)) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Não foi possível abrir a página de recuperação de senha.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
 
   // Lógica de Login
   Future<void> _fazerLogin() async {
@@ -211,7 +230,7 @@ class _LoginViewState extends State<LoginView> {
                 // Esqueceu a senha
                 Center(
                   child: TextButton(
-                    onPressed: () { /* Lógica esqueci senha */ },
+                    onPressed: _abrirRecuperacaoSenhaWeb,
                     child: const Text(
                       "Esqueceu a senha? Clique aqui",
                       style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
