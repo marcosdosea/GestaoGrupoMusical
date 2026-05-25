@@ -521,7 +521,9 @@ namespace Service
                 NomeAssociado = item.NomeAssociado,
                 AprovadoModel = ConvertAprovadoParaEnum(item.Status),
                 Aprovado = ConvertAprovadoParaEnum(item.Status)
-            }).ToList();
+            })
+            .Where(x => x.AprovadoModel != InscricaoEventoPessoa.NAO_SOLICITADO)
+            .ToList();
 
             // Calcular faltas e inadimplência apenas para associados
             for (int i = 0; i < query.Count; i++)
