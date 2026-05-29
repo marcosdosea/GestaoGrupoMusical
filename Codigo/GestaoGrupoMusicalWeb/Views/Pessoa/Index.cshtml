@@ -71,12 +71,21 @@
                         },
                         {
                             "render": function (data, type, full, meta) {
-
-                                return '<a class="btn btn btn-secondary btn-sm  m-2" href="/Pessoa/Edit/' + full.id + '"><i class="fa-solid fa-pen-to-square"> </i> Editar</a> ' +
-                                    '<a class="btn btn btn-secondary btn-sm  m-2" href="/Pessoa/DetailsAssociado/' + full.id + '"><i class="fa-solid fa-circle-info"> </i> Detalhes</a> ' +
-                                    '<a class="btn btn btn-secondary btn-sm  m-2" href="/Pessoa/RemoveAssociado/' + full.id + '"><i class="fa-solid fa-pen-to-square"> </i> Excluir</a> '
-                                    ;
+                                return `
+        <div class="d-flex flex-wrap gap-1 justify-content-center">
+            <a class="btn btn-secondary btn-sm" href="/Pessoa/Edit/${full.id}" data-bs-toggle="tooltip" title="Editar">
+                <i class="fa-solid fa-pen-to-square"></i>
+            </a>
+            <a class="btn btn-secondary btn-sm" href="/Pessoa/DetailsAssociado/${full.id}" data-bs-toggle="tooltip" title="Detalhes">
+                <i class="fa-solid fa-circle-info"></i>
+            </a>
+            <a class="btn btn-secondary btn-sm" href="/Pessoa/RemoveAssociado/${full.id}" data-bs-toggle="tooltip" title="Excluir">
+                <i class="fa-solid fa-xmark"></i>
+            </a>
+        </div>
+        `;
                             }
+
                         },
                     ],
                     language: {
