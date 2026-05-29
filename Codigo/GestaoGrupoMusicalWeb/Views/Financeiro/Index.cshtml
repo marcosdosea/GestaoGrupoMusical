@@ -247,20 +247,26 @@
                         },
 
                         {
-
                             "render": function (data, type, full, meta) {
-
-                                const baseClass = "btn btn-secondary btn-sm m-1";
-
-
-                                let editBtn = `<a class="${baseClass}" href="/Financeiro/Edit/${full.id}"><i class="fa-solid fa-pen-to-square"></i> Editar</a>`;
-                                let detailsBtn = `<a class="${baseClass}" href="/Financeiro/Details/${full.id}"><i class="fa-solid fa-circle-info"></i> Detalhes</a>`;
-                                let pagAssociadosBtn = `<a class="${baseClass}" href="/Financeiro/Pag_Associados/${full.id}"><i class="fa-solid fa-users"></i> Pag. Associados</a>`;
-                                let deleteBtn = `<button type="button" onclick="showConfirmationModalDelete(${full.id})" class="${baseClass}"><i class="fa-solid fa-xmark"></i> Excluir</button>`;
-                                let notifyBtn = `<button type="button" onclick="showConfirmationModalNotificar(${full.id})" class="${baseClass}"><i class="fa-solid fa-envelope"></i> Notificar</button>`;
-
-
-                                return `<div class="btn-group">${editBtn}${detailsBtn}${pagAssociadosBtn}${deleteBtn}${notifyBtn}</div>`;
+                                return `
+        <div class="d-flex flex-wrap gap-1 justify-content-center">
+            <a class="btn btn-secondary btn-sm" href="/Financeiro/Edit/${full.id}" data-bs-toggle="tooltip" title="Editar">
+                <i class="fa-solid fa-pen-to-square"></i>
+            </a>
+            <a class="btn btn-secondary btn-sm" href="/Financeiro/Details/${full.id}" data-bs-toggle="tooltip" title="Detalhes">
+                <i class="fa-solid fa-circle-info"></i>
+            </a>
+            <a class="btn btn-secondary btn-sm" href="/Financeiro/Pag_Associados/${full.id}" data-bs-toggle="tooltip" title="Pag. Associados">
+                <i class="fa-solid fa-users"></i>
+            </a>
+            <a onclick="showConfirmationModalDelete(${full.id})" class="btn btn-secondary btn-sm" role="button" data-bs-toggle="tooltip" title="Excluir">
+                <i class="fa-solid fa-xmark"></i>
+            </a>
+            <a onclick="showConfirmationModalNotificar(${full.id})" class="btn btn-secondary btn-sm" role="button" data-bs-toggle="tooltip" title="Notificar">
+                <i class="fa-solid fa-envelope"></i>
+            </a>
+        </div>
+        `;
                             }
 
                         },

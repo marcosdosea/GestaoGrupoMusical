@@ -86,19 +86,27 @@
                         {"data": "presencaObrigatoria", "name": "Presença Obrigatória", "autoWidth": true},
                         {
                             "render": function (data, type, full, meta) {
-                                // Define uma classe base para padronizar todos os botões
-                                const baseClass = "btn btn-secondary btn-sm m-1";
-
-                                // Cria cada botão individualmente
-                                let editBtn = `<a class="${baseClass}" href="/Ensaio/Edit/${full.id}"><i class="fa-solid fa-pen-to-square"></i> Editar</a>`;
-                                let detailsBtn = `<a class="${baseClass}" href="/Ensaio/Details/${full.id}"><i class="fa-solid fa-circle-info"></i> Detalhes</a>`;
-                                let deleteBtn = `<button type="button" onclick="showConfirmationModal(${full.id})" class="${baseClass}"><i class="fa-solid fa-xmark"></i> Excluir</button>`;
-                                let frequencyBtn = `<a class="${baseClass}" href="/Ensaio/RegistrarFrequencia/${full.id}"><i class="fa-solid fa-arrow-right-arrow-left"></i> Frequência</a>`;
-                                let notifyBtn = `<button type="button" onclick="showConfirmationModalNotificar(${full.id})" class="${baseClass}"><i class="fa-solid fa-envelope"></i> Notificar</button>`;
-
-                                // Retorna todos os botões na mesma linha, dentro de um grupo para melhor alinhamento
-                                return `<div class="btn-group">${editBtn}${detailsBtn}${deleteBtn}${frequencyBtn}${notifyBtn}</div>`;
+                                return `
+        <div class="d-flex flex-wrap gap-1 justify-content-center">
+            <a class="btn btn-secondary btn-sm" href="/Ensaio/Edit/${full.id}" data-bs-toggle="tooltip" title="Editar">
+                <i class="fa-solid fa-pen-to-square"></i>
+            </a>
+            <a class="btn btn-secondary btn-sm" href="/Ensaio/Details/${full.id}" data-bs-toggle="tooltip" title="Detalhes">
+                <i class="fa-solid fa-circle-info"></i>
+            </a>
+            <a onclick="showConfirmationModal(${full.id})" class="btn btn-secondary btn-sm" role="button" data-bs-toggle="tooltip" title="Excluir">
+                <i class="fa-solid fa-xmark"></i>
+            </a>
+            <a class="btn btn-secondary btn-sm" href="/Ensaio/RegistrarFrequencia/${full.id}" data-bs-toggle="tooltip" title="Frequência">
+                <i class="fa-solid fa-user-check"></i>
+            </a>
+            <a onclick="showConfirmationModalNotificar(${full.id})" class="btn btn-secondary btn-sm" role="button" data-bs-toggle="tooltip" title="Notificar">
+                <i class="fa-solid fa-envelope"></i>
+            </a>
+        </div>
+        `;
                             }
+
                         },
                     ],
                     language: {

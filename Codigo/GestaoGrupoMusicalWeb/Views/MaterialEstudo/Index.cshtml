@@ -97,11 +97,21 @@
                         },
                         {
                             "render": function (data, type, full, meta) {
-
-                                return '<a class="btn btn btn-secondary btn-sm  m-2" href="/MaterialEstudo/Edit/' + full.id + '"><i class="fa-solid fa-pen-to-square"> </i> Editar</a> ' +
-                                    '<a onclick="showConfirmationModalDelete(' + full.id + ')" class="btn btn-sm btn-secondary" role="button"><i class="fa-solid fa-xmark"></i> Excluir</a>' +
-                                    '<a onclick="showConfirmationModalNotificar(' + full.id + ')" class="btn btn btn-secondary btn-sm  m-2" "><i class="fa-solid fa-envelope"> </i> Notificar</a> ';
+                                return `
+        <div class="d-flex flex-wrap gap-1 justify-content-center">
+            <a class="btn btn-secondary btn-sm" href="/MaterialEstudo/Edit/${full.id}" data-bs-toggle="tooltip" title="Editar">
+                <i class="fa-solid fa-pen-to-square"></i>
+            </a>
+            <a onclick="showConfirmationModalDelete(${full.id})" class="btn btn-secondary btn-sm" role="button" data-bs-toggle="tooltip" title="Excluir">
+                <i class="fa-solid fa-xmark"></i>
+            </a>
+            <a onclick="showConfirmationModalNotificar(${full.id})" class="btn btn-secondary btn-sm" role="button" data-bs-toggle="tooltip" title="Notificar">
+                <i class="fa-solid fa-envelope"></i>
+            </a>
+        </div>
+        `;
                             }
+
                         },
                     ],
                     language: {
