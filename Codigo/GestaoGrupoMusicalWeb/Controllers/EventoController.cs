@@ -504,7 +504,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return View(statusGeral);
         }
 
-        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR")]
+        [Authorize(Roles = "ADMINISTRADOR GRUPO, COLABORADOR, REGENTE")]
         public ActionResult GerenciarSolicitacaoEvento(int id)
         {
             GerenciarSolicitacaoEventoDTO? g = _eventoService.GetSolicitacoesEventoDTO(id, FaltasPessoasEmEnsaioMeses);
