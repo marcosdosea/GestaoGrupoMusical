@@ -88,6 +88,8 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-              cd /srv/docker/mysql-cluster
-              docker compose pull gestao-grupo-musical-web
-              docker compose up -d gestao-grupo-musical-web
+            export PATH=$HOME/bin:$PATH
+            export DOCKER_HOST=unix:///run/user/$(id -u)/docker.sock
+            cd /srv/docker/mysql-cluster
+            docker compose pull gestao-grupo-musical-web
+            docker compose up -d gestao-grupo-musical-web
