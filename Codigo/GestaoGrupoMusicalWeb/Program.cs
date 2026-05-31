@@ -18,17 +18,17 @@ namespace GestaoGrupoMusicalWeb
             // 1. Define a cultura base como pt-BR
             var cultureInfo = new CultureInfo("pt-BR");
 
-            // 2. FORÇA o separador decimal a ser o PONTO ('.')
+            // 2. FORÃ‡A o separador decimal a ser o PONTO ('.')
             //    Isso garante que o Model Binder (que recebe 50.5 do front-end) 
             //    o interprete corretamente como 50.5, resolvendo o problema de salvar 505.
             cultureInfo.NumberFormat.NumberDecimalSeparator = ".";
             cultureInfo.NumberFormat.CurrencyDecimalSeparator = ".";
 
-            // 3. Aplica essa configuração ao thread padrão
+            // 3. Aplica essa configuraÃ§Ã£o ao thread padrÃ£o
             CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
             CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 
-            // 4. Configura o RequestLocalizationOptions para toda a aplicação
+            // 4. Configura o RequestLocalizationOptions para toda a aplicaÃ§Ã£o
             builder.Services.Configure<Microsoft.AspNetCore.Builder.RequestLocalizationOptions>(options =>
             {
                 options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture(culture: cultureInfo, uiCulture: cultureInfo);
@@ -115,10 +115,13 @@ namespace GestaoGrupoMusicalWeb
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            if (!app.Environment.IsProduction())
+            {
+                app.UseHttpsRedirection();
+            }
             app.UseStaticFiles();
 
-            // NOVO: Aplica as configurações de localização (incluindo o separador decimal)
+            // NOVO: Aplica as configuraÃ§Ãµes de localizaÃ§Ã£o (incluindo o separador decimal)
             app.UseRequestLocalization();
 
             app.UseRouting();
