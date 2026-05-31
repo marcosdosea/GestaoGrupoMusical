@@ -1,0 +1,89 @@
+name: GestaoGrupoMusicalWeb CI/CD Pipeline
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0'
+
+      - name: Restore dependencies
+        run: |
+          cd Codigo/ServiceTests
+          dotnet restore
+
+      - name: Run tests
+        run: |
+          cd Codigo/ServiceTests
+          dotnet test --configuration Release --no-restore --verbosity normal
+
+  test-web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0'
+
+      - name: Restore dependencies
+        run: |
+          cd Codigo/GestaoGrupoMusicalWebTests
+          dotnet restore
+
+      - name: Run web tests
+        run: |
+          cd Codigo/GestaoGrupoMusicalWebTests
+          dotnet test --configuration Release --no-restore --verbosity normal
+
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    needs: [test, test-web]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login no ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extrair versão da release
+        id: version
+        run: |
+          if [[ "${{ github.event_name }}" == "release" ]]; then
+            echo "VERSION=${{ github.event.release.tag_name }}" >> $GITHUB_ENV
+          else
+            echo "VERSION=latest" >> $GITHUB_ENV
+          fi
+
+      - name: Build e push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./Codigo/GestaoGrupoMusicalWeb
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/gestaogrupomusical-web:latest
+            ghcr.io/${{ github.repository_owner }}/gestaogrupomusical-web:${{ env.VERSION }}
+
+      - name: Deploy na VPS
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+              cd /srv/docker/mysql-cluster
+              docker compose pull gestao-grupo-musical-web
+              docker compose up -d gestao-grupo-musical-web
