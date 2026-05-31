@@ -71,7 +71,8 @@ jobs:
       - name: Build e push
         uses: docker/build-push-action@v5
         with:
-          context: ./Codigo/GestaoGrupoMusicalWeb
+          context: ./Codigo
+          file: ./Codigo/GestaoGrupoMusicalWeb/Dockerfile
           push: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/gestaogrupomusical-web:latest
