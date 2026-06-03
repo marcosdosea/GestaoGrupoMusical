@@ -32,7 +32,7 @@ class _LoginViewState extends State<LoginView> {
   );
 
   Future<void> _abrirRecuperacaoSenhaWeb() async {
-    final uri = Uri.parse('${ApiConfig.webBaseUrl}/Identity/ForgotPassword');
+    final uri = Uri.parse('https://batala.itatechjr.com.br/Identity/ForgotPassword');
 
     if (!await canLaunchUrl(uri)) {
       if (!mounted) return;
