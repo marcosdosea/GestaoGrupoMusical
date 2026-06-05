@@ -5,12 +5,24 @@ class SessionManager {
   static const String _keyIdGrupo = "id_grupo";
   static const String _keyIdPessoa = "id_pessoa";
 
-  static Future<void> saveSession(String token, int idGrupo, int idPessoa) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_keyToken, token);
-    await prefs.setInt(_keyIdGrupo, idGrupo);
-    await prefs.setInt(_keyIdPessoa, idPessoa);
-  }
+ static Future<void> saveSession(
+  String token,
+  int idGrupo,
+  int idPessoa,
+) async {
+  final prefs = await SharedPreferences.getInstance();
+
+  print("SALVANDO:");
+  print("token=$token");
+  print("idGrupo=$idGrupo");
+  print("idPessoa=$idPessoa");
+
+  await prefs.setString(_keyToken, token);
+  await prefs.setInt(_keyIdGrupo, idGrupo);
+  await prefs.setInt(_keyIdPessoa, idPessoa);
+
+  print("SALVO COM SUCESSO");
+}
 
   static Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();
@@ -28,7 +40,12 @@ class SessionManager {
   }
 
   static Future<int?> getIdPessoa() async {
-      final prefs = await SharedPreferences.getInstance();
-      return prefs.getInt(_keyIdPessoa);
-    }
+  final prefs = await SharedPreferences.getInstance();
+
+  final valor = prefs.getInt(_keyIdPessoa);
+
+  print("LENDO ID PESSOA: $valor");
+
+  return valor;
+}
 }
