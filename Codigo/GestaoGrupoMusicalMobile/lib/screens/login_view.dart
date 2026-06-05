@@ -1,5 +1,7 @@
 import 'package:batala_mobile/config/app_colors.dart';
 import 'package:batala_mobile/config/api_config.dart';
+import 'package:batala_mobile/config/session_manager.dart';
+import 'package:batala_mobile/service/notificacao_service.dart';
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -49,7 +51,7 @@ class _LoginViewState extends State<LoginView> {
   }
 
   // Lógica de Login
-  Future<void> _fazerLogin() async {
+ Future<void> _fazerLogin() async {
     // Valida os campos do formulário antes de enviar
     if (!_formKey.currentState!.validate()) {
       return;
@@ -64,10 +66,23 @@ class _LoginViewState extends State<LoginView> {
     try {
       bool sucesso = await _loginService.login(cpfLimpo, senha);
 
-      if (sucesso) {
+     if (sucesso) {
+        print("LOGIN BEM SUCEDIDO! Iniciando registro de dispositivo..."); // Log de confirmação
+        
+        int? idPessoaLogada = await SessionManager.getIdPessoa();
+        print("ID da pessoa recuperado do SessionManager: $idPessoaLogada"); // Debug importante
+        
+        if (idPessoaLogada != null) {
+          print("Chamando NotificacaoService...");
+          await NotificacaoService().registrarDispositivoNoBackend(idPessoaLogada);
+        } else {
+          print("ERRO: O ID da pessoa logada é NULO!");
+        }
+
         if (!mounted) return;
         Navigator.pushReplacementNamed(context, '/home'); 
       } else {
+        print("LOGIN FALHOU: O _loginService.login retornou false."); // Alerta caso a senha esteja errada
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
