@@ -8,8 +8,10 @@ import '../model/financeiro_model.dart';
 
 class FinanceiroService {
   static const String _cachekeyAssociado = 'financeiro_associado';
+  static const String _cacheKeyAssociadoPagos = 'financeiro_associado_pagos';
   static const String _cacheKeyAdmin = 'financeiro_campanhas';
   static const String _cacheKeyAssociadoPrefix = 'financeiro_associados_';
+  static const int _cachePagoDurationMinutes = 1440; // 24 horas para itens PAGO
 
   Future<List<FinanceiroModel>> getAll() async {
     try {
@@ -18,7 +20,10 @@ class FinanceiroService {
       if (cachedData != null) {
         debugPrint('Usando dados em cache para financeiro associado');
         final List data = cachedData is List ? cachedData : jsonDecode(cachedData);
-        return data.map((json) => FinanceiroModel.fromJson(json)).toList();
+        // Mescla com items PAGO cacheados
+        return _mergeWithCachedPaidItems(
+          data.map((json) => FinanceiroModel.fromJson(json)).toList()
+        );
       }
     } catch (e) {
       debugPrint('Erro ao recuperar cache de financeiro: $e');
@@ -41,17 +46,24 @@ class FinanceiroService {
         final List<dynamic> jsonList = json.decode(response.body);
         final result = jsonList.map((json) => FinanceiroModel.fromJson(json)).toList();
         
-        // Salva no cache
+        // Salva itens PAGO separadamente com TTL maior
+        await _cachePaidItems(result);
+        
+        // Salva todos os dados no cache normal
         await CacheManager.saveCache(_cachekeyAssociado, jsonList);
         
-        return result;
+        // Mescla com items PAGO cacheados
+        return _mergeWithCachedPaidItems(result);
       } else {
         // Se falhar, tenta retornar cache mesmo que expirado
         try {
           final cachedData = await CacheManager.getStaleCache(_cachekeyAssociado);
           if (cachedData != null) {
             final List data = cachedData is List ? cachedData : jsonDecode(cachedData);
-            return data.map((json) => FinanceiroModel.fromJson(json)).toList();
+            // Mescla com items PAGO cacheados
+            return _mergeWithCachedPaidItems(
+              data.map((json) => FinanceiroModel.fromJson(json)).toList()
+            );
           }
         } catch (_) {}
         
@@ -60,6 +72,62 @@ class FinanceiroService {
     } catch (e) {
       debugPrint('Erro ao buscar financeiro: $e');
       rethrow;
+    }
+  }
+
+  /// Cacheia items com status PAGO com TTL de 24 horas
+  Future<void> _cachePaidItems(List<FinanceiroModel> items) async {
+    final paidItems = items
+        .where((item) => item.statusPagamento.toUpperCase().contains('PAGO'))
+        .map((item) => {
+          'id': item.id,
+          'descricao': item.descricao,
+          'dataInicio': item.dataInicio.toIso8601String(),
+          'dataFim': item.dataFim.toIso8601String(),
+          'valor': item.valor,
+          'statusPagamento': item.statusPagamento,
+        })
+        .toList();
+    
+    if (paidItems.isNotEmpty) {
+      await CacheManager.saveCache(
+        _cacheKeyAssociadoPagos,
+        paidItems,
+        cacheDurationMinutes: _cachePagoDurationMinutes,
+      );
+      debugPrint('Items PAGO cacheados (TTL: 24h) - Qtd: ${paidItems.length}');
+    }
+  }
+
+  /// Mescla items PAGO cacheados com a lista atual
+  Future<List<FinanceiroModel>> _mergeWithCachedPaidItems(
+    List<FinanceiroModel> currentItems
+  ) async {
+    try {
+      final cachedPaidData = await CacheManager.getCache(_cacheKeyAssociadoPagos);
+      if (cachedPaidData == null) {
+        return currentItems;
+      }
+
+      final List data = cachedPaidData is List ? cachedPaidData : jsonDecode(cachedPaidData);
+      final cachedPaidItems = data.map((json) => FinanceiroModel.fromJson(json)).toList();
+      
+      // Cria um mapa de IDs dos items atuais para evitar duplicatas
+      final currentIds = currentItems.map((item) => item.id).toSet();
+      
+      // Adiciona items PAGO cacheados que não estão na lista atual
+      final mergedItems = [...currentItems];
+      for (final cachedItem in cachedPaidItems) {
+        if (!currentIds.contains(cachedItem.id)) {
+          mergedItems.add(cachedItem);
+          debugPrint('Item PAGO recuperado do cache: ${cachedItem.descricao}');
+        }
+      }
+      
+      return mergedItems;
+    } catch (e) {
+      debugPrint('Erro ao mesclar items PAGO cacheados: $e');
+      return currentItems;
     }
   }
 
