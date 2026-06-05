@@ -19,11 +19,13 @@ namespace Service
     public class EventoService : IEventoService
     {
         private readonly GrupoMusicalContext _context;
+        private readonly IDispositivoService dispositivoService;
 
 
-        public EventoService(GrupoMusicalContext context)
+        public EventoService(GrupoMusicalContext context, IDispositivoService dispositivoService)
         {
             _context = context;
+            this.dispositivoService = dispositivoService;
         }
 
         /// <summary>
@@ -99,7 +101,14 @@ namespace Service
                         Console.WriteLine($"Evento {evento.Id} criado com sucesso. Regentes adicionados: {string.Join(", ", idRegentes)}");
 
                         transaction.Commit();
+                        await dispositivoService.EnviarNotificacaoParaGrupoAsync(
+                        evento.IdGrupoMusical,
+                        "Novo Evento!",
+                        $"Um novo evento foi agendado para {evento.DataHoraInicio:dd/MM/yyyy HH:mm} em {evento.Local}.");
+
                         return HttpStatusCode.OK;
+
+
                     }
                     else
                     {
