@@ -1,5 +1,7 @@
 using Core;
 using Core.Service;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -9,12 +11,13 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// 1. Configurações de Banco de Dados
 var connectionString = builder.Configuration.GetConnectionString("GrupoMusicalDatabase")
-                      ?? throw new InvalidOperationException("Connection string 'GrupoMusicalDatabase' not found.");
+                       ?? throw new InvalidOperationException("Connection string 'GrupoMusicalDatabase' not found.");
 
 builder.Services.AddDbContext<IdentityContext>(options => options.UseMySQL(connectionString));
 builder.Services.AddDbContext<GrupoMusicalContext>(options =>
-    options.UseMySQL(builder.Configuration.GetConnectionString("GrupoMusicalDatabase") ?? ""));
+    options.UseMySQL(connectionString));
 
 builder.Services.AddIdentity<UsuarioIdentity, IdentityRole>(options =>
 {
@@ -25,7 +28,24 @@ builder.Services.AddIdentity<UsuarioIdentity, IdentityRole>(options =>
 .AddEntityFrameworkStores<IdentityContext>()
 .AddDefaultTokenProviders();
 
-// 3. Configuração do JWT
+// 2. Configuração do Firebase Admin (Inicialização Única)
+var caminhoFirebase = Path.Combine(builder.Environment.ContentRootPath, "firebase-admin.json");
+if (File.Exists(caminhoFirebase))
+{
+    if (FirebaseApp.DefaultInstance == null)
+    {
+        FirebaseApp.Create(new AppOptions()
+        {
+            Credential = GoogleCredential.FromFile(caminhoFirebase)
+        });
+    }
+}
+else
+{
+    Console.WriteLine($"ERRO: Arquivo de credenciais não encontrado em: {caminhoFirebase}");
+}
+
+// 3. Configuração de JWT, Services e CORS
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 var secretKey = jwtSettings["ChaveSecreta"] ?? "CHAVE_PADRAO_COM_MAIS_DE_32_CARACTERES";
 var key = Encoding.ASCII.GetBytes(secretKey);
@@ -37,7 +57,7 @@ builder.Services.AddAuthentication(x =>
 })
 .AddJwtBearer(x =>
 {
-    x.RequireHttpsMetadata = true; 
+    x.RequireHttpsMetadata = true;
     x.SaveToken = true;
     x.TokenValidationParameters = new TokenValidationParameters
     {
@@ -51,42 +71,14 @@ builder.Services.AddAuthentication(x =>
     };
 });
 
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
+builder.Services.AddControllers().AddJsonOptions(options =>
 {
-    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
-    {
-        Title = "Gestão Grupo Musical API",
-        Version = "v1"
-    });
-
-    // Isso cria o botão "Authorize" (Cadeado) no Swagger
-    c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
-    {
-        Description = "JWT Authorization header. Digite: 'Bearer {seu_token}'",
-        Name = "Authorization",
-        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-        Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
-    });
-
-    c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
-    {
-        {
-            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
-            {
-                Reference = new Microsoft.OpenApi.Models.OpenApiReference
-                {
-                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new string[] {}
-        }
-    });
+    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
 });
 
+// Registro dos Serviços
+builder.Services.AddScoped<INotificacaoAdminService, NotificacaoAdminService>();
+builder.Services.AddTransient<IDispositivoService, DispositivoService>();
 builder.Services.AddTransient<IPessoaService, PessoaService>();
 builder.Services.AddScoped<IInformativoService, InformativoService>();
 builder.Services.AddScoped<IFinanceiroService, FinanceiroService>();
@@ -99,8 +91,12 @@ builder.Services.AddCors(options => {
     options.AddPolicy("AllowAll", b => b.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 });
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
 
+// 4. Pipeline de Requisição
 app.UseCors("AllowAll");
 
 if (!app.Environment.IsDevelopment())
@@ -114,8 +110,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
 app.Run();
