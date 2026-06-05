@@ -1,6 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Core;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 
 namespace Core;
 
@@ -58,6 +59,8 @@ public partial class GrupoMusicalContext : DbContext
     public virtual DbSet<Papelgrupo> Papelgrupos { get; set; }
 
     public virtual DbSet<Pessoa> Pessoas { get; set; }
+
+    public virtual DbSet<DispositivoPessoa> DispositivoPessoas { get; set; }
 
     public virtual DbSet<Receitafinanceira> Receitafinanceiras { get; set; }
 
@@ -959,6 +962,35 @@ public partial class GrupoMusicalContext : DbContext
             entity.Property(e => e.Nome)
                 .HasMaxLength(100)
                 .HasColumnName("nome");
+        });
+
+        modelBuilder.Entity<DispositivoPessoa>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("dispositivopessoa");
+
+            entity.HasIndex(e => e.IdPessoa, "fk_DispositivoPessoa_Pessoa_idx");
+
+            entity.Property(e => e.Id)
+                .HasColumnName("id");
+
+            entity.Property(e => e.IdPessoa)
+                .HasColumnName("idPessoa");
+
+            entity.Property(e => e.FcmToken)
+                .HasColumnType("text")
+                .HasColumnName("fcmToken");
+
+            entity.Property(e => e.DataAtualizacao)
+                .HasColumnType("datetime")
+                .HasColumnName("dataAtualizacao");
+
+            entity.HasOne(d => d.Pessoa)
+                .WithMany()
+                .HasForeignKey(d => d.IdPessoa)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_DispositivoPessoa_Pessoa");
         });
 
         OnModelCreatingPartial(modelBuilder);
