@@ -40,8 +40,17 @@ namespace GestaoGrupoMusicalAPI.Controllers
                 var user = await userManager.FindByNameAsync(model.Cpf ?? "");
                 if (user == null) return Unauthorized();
 
+                var pessoaLogada = context.Pessoas
+             .FirstOrDefault(p => p.Cpf == user.UserName);
+
                 var token = await GerarTokenJwt(user);
-                return Ok(new { token });
+
+                return Ok(new
+                {
+                    token,
+                    idGrupoMusical = pessoaLogada?.IdGrupoMusical ?? 0,
+                    idPessoa = pessoaLogada?.Id ?? 0
+                });
             }
 
             return Unauthorized("CPF ou senha inválidos.");
