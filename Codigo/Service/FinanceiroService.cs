@@ -4,6 +4,7 @@ using Core.DTO;
 using Core.Service;
 using Email;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Net;
 
 namespace Service
@@ -11,10 +12,12 @@ namespace Service
     public class FinanceiroService : IFinanceiroService
     {
         private readonly GrupoMusicalContext _context;
+        private readonly IDispositivoService dispositivoService;
 
-        public FinanceiroService(GrupoMusicalContext context)
+        public FinanceiroService(GrupoMusicalContext context, IDispositivoService dispositivoService)
         {
             _context = context;
+            this.dispositivoService = dispositivoService;
         }
 
         public FinanceiroStatus Create(FinanceiroCreateDTO rf)
@@ -76,6 +79,11 @@ namespace Service
 
 
                 transaction.Commit();
+                dispositivoService.EnviarNotificacaoParaGrupoAsync(
+                rf.IdGrupoMusical,
+                "Novo Boleto Gerado",
+                "Uma nova mensalidade ou taxa foi gerada para você. Verifique sua área financeira.");
+
                 return FinanceiroStatus.Success;
             }
             catch
