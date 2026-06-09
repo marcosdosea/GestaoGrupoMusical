@@ -20,10 +20,9 @@
             </nav>
             <hr />
             <br />
-            @* MODIFICAÇÃO: Corrigido o asp-action do formulário *@
+
             <form id="formFrequencia" asp-action="RegistrarFrequencia">
                 <div class="container">
-                    @* Seção de detalhes do evento (inalterada) *@
                     <div class="row">
                         <div class="form-group col-md-6">
                             <label asp-for="DataHoraInicio" class="control-label"></label>
@@ -36,7 +35,7 @@
                             <span asp-validation-for="DataHoraFim" class="text-danger"></span>
                         </div>
                     </div>
-                    @* ... outros campos de detalhes do evento ... *@
+
                     <div class="row">
                         <div class="form-group col-md-12">
                             <label asp-for="Local" class="control-label"></label>
@@ -56,7 +55,6 @@
                                     <th class="border-0">Justificativa Aceita</th>
                                 </tr>
                             </thead>
-                            @* MODIFICAÇÃO COMPLETA: Itera sobre a lista correta (Model.Frequencias) e ajusta os nomes dos inputs para o model binding *@
                             <tbody>
                                 @if (Model.Frequencias != null)
                                 {
@@ -70,13 +68,19 @@
                                             <td class="p-3">@frequencias[i].Cpf</td>
                                             <td class="p-3">@frequencias[i].NomeAssociado</td>
                                             <td class="p-3">@frequencias[i].Justificativa</td>
+
                                             <td class="p-3">
-                                                <input type="checkbox" name="listaFrequencia[@i].Presente" value="true" @(frequencias[i].Presente ? "checked" : "") />
-                                                <input type="hidden" name="listaFrequencia[@i].Presente" value="false" />
+                                                <input type="checkbox" class="check-presente" data-id="@i"
+                                                       @(frequencias[i].Presente ? "checked" : "") />
+
+                                                <input type="hidden" id="hdn_presente_@i" name="listaFrequencia[@i].Presente" value="@(frequencias[i].Presente ? "true" : "false")" />
                                             </td>
+
                                             <td class="p-3 text-center">
-                                                <input type="checkbox" name="listaFrequencia[@i].JustificativaAceita" value="true" @(frequencias[i].JustificativaAceita ? "checked" : "") />
-                                                <input type="hidden" name="listaFrequencia[@i].JustificativaAceita" value="false" />
+                                                <input type="checkbox" class="check-justificativa" data-id="@i"
+                                                       @(frequencias[i].JustificativaAceita ? "checked" : "") />
+
+                                                <input type="hidden" id="hdn_justif_@i" name="listaFrequencia[@i].JustificativaAceita" value="@(frequencias[i].JustificativaAceita ? "true" : "false")" />
                                             </td>
                                         </tr>
                                     }
@@ -93,6 +97,59 @@
             </form>
         </div>
     </div>
-
-@* Seção de Scripts (inalterada) *@
 </partial>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        await Html.RenderPartialAsync("_EnablePopoversPartial");
+        await Html.RenderPartialAsync("_AutoCompletePartial");
+    }
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log("Script de frequência de Eventos carregado!");
+
+            const checksPresente = document.querySelectorAll('.check-presente');
+            const checksJustificativa = document.querySelectorAll('.check-justificativa');
+
+            // Lógica ao clicar em PRESENTE
+            checksPresente.forEach(function (chk) {
+                chk.addEventListener('change', function () {
+                    const index = this.getAttribute('data-id');
+
+                    const hdnPresente = document.getElementById('hdn_presente_' + index);
+                    const chkJustif = document.querySelector('.check-justificativa[data-id="' + index + '"]');
+                    const hdnJustif = document.getElementById('hdn_justif_' + index);
+
+                    // Usa "true" e "false" como strings para bater com o bool do C#
+                    hdnPresente.value = this.checked ? "true" : "false";
+
+                    if (this.checked && chkJustif) {
+                        chkJustif.checked = false; // Desmarca visualmente
+                        hdnJustif.value = "false"; // Zera no banco
+                    }
+                });
+            });
+
+            // Lógica ao clicar em JUSTIFICATIVA
+            checksJustificativa.forEach(function (chk) {
+                chk.addEventListener('change', function () {
+                    const index = this.getAttribute('data-id');
+
+                    const hdnJustif = document.getElementById('hdn_justif_' + index);
+                    const chkPresente = document.querySelector('.check-presente[data-id="' + index + '"]');
+                    const hdnPresente = document.getElementById('hdn_presente_' + index);
+
+                    // Usa "true" e "false"
+                    hdnJustif.value = this.checked ? "true" : "false";
+
+                    if (this.checked && chkPresente) {
+                        chkPresente.checked = false; // Desmarca visualmente
+                        hdnPresente.value = "false"; // Zera no banco
+                    }
+                });
+            });
+        });
+    </script>
+}
