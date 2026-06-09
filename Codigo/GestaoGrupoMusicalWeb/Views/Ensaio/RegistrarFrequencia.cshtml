@@ -13,7 +13,7 @@
         <ol class="breadcrumb px-3">
             <strong>
                 <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Ensaio"]</a>
-                <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Registrar Frequência"]</spn>
+                <span class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Registrar Frequência"]</span>
             </strong>
         </ol>
     </nav>
@@ -87,8 +87,7 @@
                             {
                                 <tr class="border-bottom border-danger border-opacity-75 p-3 align-middle">
                                     <input type="hidden" name="AssociadosDTO[@i].Id" value="@Model.AssociadosDTO[i].Id" />
-
-                                    <input type="hidden" name="AssociadosDTO[@i].IdPapelGrupo" value="@Model.AssociadosDTO[i].IdPapelGrupo"/>
+                                    <input type="hidden" name="AssociadosDTO[@i].IdPapelGrupo" value="@Model.AssociadosDTO[i].IdPapelGrupo" />
 
                                     <td class="p-3">
                                         @Html.DisplayFor(model => Model.AssociadosDTO[i].Cpf)
@@ -103,14 +102,18 @@
                                     </td>
 
                                     <td class="p-3">
-                                        <input type="checkbox" name="AssociadosDTO[@i].Presente" value="1" @(Model.AssociadosDTO[i].Presente == 1 ? "checked" : "") />
-                                        <input type="hidden" name="AssociadosDTO[@i].Presente" value="0" />
+                                        <input type="checkbox" class="check-presente" data-id="@i"
+                                               @(Model.AssociadosDTO[i].Presente == 1 ? "checked" : "") />
+
+                                        <input type="hidden" id="hdn_presente_@i" name="AssociadosDTO[@i].Presente" value="@Model.AssociadosDTO[i].Presente" />
                                         <input type="hidden" name="AssociadosDTO[@i].PresenteModel" value="@Model.AssociadosDTO[i].PresenteModel" />
                                     </td>
 
                                     <td class="p-3 text-center">
-                                        <input type="checkbox" name="AssociadosDTO[@i].JustificativaAceita" value="1" @(Model.AssociadosDTO[i].JustificativaAceita == 1 ? "checked" : "") />
-                                        <input type="hidden" name="AssociadosDTO[@i].JustificativaAceita" value="0" />
+                                        <input type="checkbox" class="check-justificativa" data-id="@i"
+                                               @(Model.AssociadosDTO[i].JustificativaAceita == 1 ? "checked" : "") />
+
+                                        <input type="hidden" id="hdn_justif_@i" name="AssociadosDTO[@i].JustificativaAceita" value="@Model.AssociadosDTO[i].JustificativaAceita" />
                                         <input type="hidden" name="AssociadosDTO[@i].JustificativaAceitaModel" value="@Model.AssociadosDTO[i].JustificativaAceitaModel" />
                                     </td>
                                 </tr>
@@ -129,11 +132,57 @@
         </div>
     </form>
 
-
-    @section Scripts {
-        @{
-            await Html.RenderPartialAsync("_ValidationScriptsPartial");
-            await Html.RenderPartialAsync("_EnablePopoversPartial");
-            await Html.RenderPartialAsync("_AutoCompletePartial");
-        }
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        await Html.RenderPartialAsync("_EnablePopoversPartial");
+        await Html.RenderPartialAsync("_AutoCompletePartial");
     }
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                console.log("Script de frequência carregado com sucesso!");
+
+                const checksPresente = document.querySelectorAll('.check-presente');
+                const checksJustificativa = document.querySelectorAll('.check-justificativa');
+
+                // Lógica ao clicar em PRESENTE
+                checksPresente.forEach(function (chk) {
+                    chk.addEventListener('change', function () {
+                        const index = this.getAttribute('data-id');
+                        console.log("Clicou em presente. Linha: " + index);
+
+                        const hdnPresente = document.getElementById('hdn_presente_' + index);
+                        const chkJustif = document.querySelector('.check-justificativa[data-id="' + index + '"]');
+                        const hdnJustif = document.getElementById('hdn_justif_' + index);
+
+                        hdnPresente.value = this.checked ? "1" : "0";
+
+                        if (this.checked && chkJustif) {
+                            chkJustif.checked = false; // Desmarca na tela
+                            hdnJustif.value = "0";     // Zera no banco
+                        }
+                    });
+                });
+
+                // Lógica ao clicar em JUSTIFICATIVA
+                checksJustificativa.forEach(function (chk) {
+                    chk.addEventListener('change', function () {
+                        const index = this.getAttribute('data-id');
+                        console.log("Clicou em justificativa. Linha: " + index);
+
+                        const hdnJustif = document.getElementById('hdn_justif_' + index);
+                        const chkPresente = document.querySelector('.check-presente[data-id="' + index + '"]');
+                        const hdnPresente = document.getElementById('hdn_presente_' + index);
+
+                        hdnJustif.value = this.checked ? "1" : "0";
+
+                        if (this.checked && chkPresente) {
+                            chkPresente.checked = false; // Desmarca na tela
+                            hdnPresente.value = "0";     // Zera no banco
+                        }
+                    });
+                });
+            });
+        </script>
+}
