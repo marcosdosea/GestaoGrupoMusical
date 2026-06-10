@@ -43,6 +43,7 @@ class _FinanceiroFormViewState extends State<FinanceiroView> {
               maxLines: 4, 
               keyboardType: TextInputType.multiline,
               controller: _descController,
+              readOnly: true,
               decoration: const InputDecoration(
                 labelText: "Descrição/Observação",
                 border: OutlineInputBorder(),
