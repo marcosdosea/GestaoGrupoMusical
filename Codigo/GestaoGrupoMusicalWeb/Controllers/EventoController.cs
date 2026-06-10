@@ -381,7 +381,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 return RedirectToAction("MeusEventos");
             }
 
-            var instrumentosDisponiveis = _eventoService.GetInstrumentosDisponiveisAsync(id);
+            var instrumentosDisponiveis = await _eventoService.GetInstrumentosDisponiveisAsync(id);
             var minhaInscricao = await _eventoService.GetSolicitacaoAssociado(id, idPessoa);
 
             var model = new EventoDetalhesAssociadoDTO
@@ -391,7 +391,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 DataHoraFim = evento.DataHoraFim,
                 Local = evento.Local,
                 Repertorio = evento.Repertorio,
-                InstrumentosDisponiveis = await instrumentosDisponiveis,
+                InstrumentosDisponiveis = instrumentosDisponiveis,
                 MinhaInscricao = minhaInscricao,
                 PodeInscrever = minhaInscricao == null || minhaInscricao.StatusEnum == InscricaoEventoPessoa.NAO_SOLICITADO,
                 PodeCancelar = minhaInscricao?.StatusEnum == InscricaoEventoPessoa.INSCRITO
