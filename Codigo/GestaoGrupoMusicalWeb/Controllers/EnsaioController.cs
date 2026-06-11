@@ -277,9 +277,18 @@ namespace GestaoGrupoMusicalWeb.Controllers
             int idGrupoMusical = await _grupoMusical.GetIdGrupo(User.Identity.Name);
 
             var listaAssociadosAtivos = _ensaioService.GetAssociadoAtivos(id);
+
+            // Verifica se é uma lista "nova" (ninguém tem presença ou justificativa registrada ainda)
+            bool isListaNova = !listaAssociadosAtivos.Any(a => a.Presente == 1 || a.JustificativaAceita == 1);
+
             foreach (AssociadoDTO la in listaAssociadosAtivos)
             {
-                la.Presente = 1; 
+                // Se for a primeira vez abrindo a lista, inicia todos como Presente
+                if (isListaNova)
+                {
+                    la.Presente = 1;
+                }
+
                 la.PresenteModel = la.Presente;
                 la.JustificativaAceitaModel = la.JustificativaAceita;
             }
@@ -314,6 +323,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
             }
 
             ensaioView.AssociadosDTO = listaAssociadosAtivos;
+
+            ModelState.Clear();
 
             return View(ensaioView);
         }
