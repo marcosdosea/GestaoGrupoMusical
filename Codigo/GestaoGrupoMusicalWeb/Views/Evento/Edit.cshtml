@@ -4,6 +4,10 @@
     ViewData["Title"] = "Editar Evento";
     ViewData["Evento"] = "Evento";
     ViewData["Edit"] = "Editar";
+
+    var regentesSelecionados = Model.IdRegentes?
+        .Select(id => id.ToString())
+        .ToHashSet() ?? new HashSet<string>();
 }
 
 <hr />
@@ -49,6 +53,7 @@
                                                type="checkbox"
                                                value="@regente.Value"
                                                id="regente_@regente.Value"
+                                               checked="@regentesSelecionados.Contains(regente.Value)"
                                                onchange="updateRegenteSelection()">
                                         <label class="form-check-label" for="regente_@regente.Value">
                                             @regente.Text
@@ -142,12 +147,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         updateCharacterCountLocal();
         updateCharacterCountRepertorio();
-    });
-</script>
-
-<script>
-    window.addEventListener("load", () => {
-        fillAutocomplete('@(Html.Raw(Model.JsonLista))', "regentes", "IdRegentes", "formEdit", "O campo Regentes é obrigatório");
+        updateRegenteSelection();
     });
 </script>
 

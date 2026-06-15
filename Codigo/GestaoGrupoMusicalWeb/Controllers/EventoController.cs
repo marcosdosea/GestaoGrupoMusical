@@ -177,6 +177,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 DataHoraFim = evento.DataHoraFim,
                 Local = evento.Local,
                 Repertorio = evento.Repertorio,
+                IdRegentes = await _eventoService.GetIdRegentesEventoAsync(evento.Id),
                 ListaPessoa = new SelectList(listaPessoasAutoComplete, "Id", "Nome"),
                 FigurinoList = new SelectList(figurinosDropdown, "Id", "Nome")
             };
