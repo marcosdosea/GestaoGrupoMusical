@@ -546,14 +546,27 @@ namespace GestaoGrupoMusicalWeb.Controllers
         // GET: EventoController/RegistrarFrequencia
         public async Task<ActionResult> RegistrarFrequencia(int id)
         {
+            // 1. LIMPEZA IMEDIATA: Força o ASP.NET a esquecer submissões anteriores corrompidas
+            ModelState.Clear();
+
             int idGrupoMusical = await _grupoMusicalService.GetIdGrupo(User.Identity.Name);
 
-            // MODIFICAÇÃO: Busca os dados de frequência já filtrados
             var eventoFrequenciaData = await _eventoService.GetFrequenciaAsync(id, idGrupoMusical);
             if (eventoFrequenciaData == null)
             {
                 Notificar("Evento não encontrado ou sem participantes aprovados.", Notifica.Alerta);
                 return RedirectToAction(nameof(Index));
+            }
+
+            // Checa se NINGUÉM tem presença OU justificativa aceita. Se for true, a lista é virgem.
+            bool isListaNova = !eventoFrequenciaData.Frequencias.Any(f => f.Presente || f.JustificativaAceita);
+
+            if (isListaNova)
+            {
+                foreach (var freq in eventoFrequenciaData.Frequencias)
+                {
+                    freq.Presente = true; // Inicia todos como presentes na primeira vez
+                }
             }
 
             var evento = _eventoService.Get(id);
@@ -568,9 +581,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             EventoViewModel eventoView = _mapper.Map<EventoViewModel>(evento);
 
-            // MODIFICAÇÃO: Atribui a lista correta de associados ao ViewModel
             eventoView.Frequencias = eventoFrequenciaData.Frequencias;
-
             eventoView.ListaPessoa = new SelectList(listaRegentes, "Id", "Nome");
             eventoView.ListaFigurino = new SelectList(listaFigurinos, "Id", "Nome");
 
@@ -604,7 +615,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     Notificar("Desculpe, ocorreu um <b>Erro</b> ao registrar a Lista de <b>Frequência</b>.", Notifica.Erro);
                     break;
             }
-            return RedirectToAction(nameof(RegistrarFrequencia), new { idEvento = listaFrequencia.First().IdEvento });
+
+            // 2. LIMPEZA APÓS POST: Garante que o redirecionamento inicie uma requisição limpa
+            ModelState.Clear();
+
+            return RedirectToAction(nameof(RegistrarFrequencia), new { id = listaFrequencia.First().IdEvento });
         }
 
 

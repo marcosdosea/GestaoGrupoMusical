@@ -953,8 +953,8 @@ namespace Service
                     Cpf = eventoPessoa.IdPessoaNavigation.Cpf,
                     NomeAssociado = eventoPessoa.IdPessoaNavigation.Nome,
                     Justificativa = eventoPessoa.JustificativaFalta,
-                    Presente = true, // MODIFICAÇÃO: Define a presença como verdadeira por padrão
-                    JustificativaAceita = Convert.ToBoolean(eventoPessoa.JustificativaAceita),
+                    Presente = eventoPessoa.Presente == 1,
+                    JustificativaAceita = eventoPessoa.JustificativaAceita == 1,
                 }).ToListAsync();
 
             var query = from evento in _context.Eventos
