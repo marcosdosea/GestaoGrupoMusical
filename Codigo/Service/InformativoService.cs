@@ -94,7 +94,7 @@ namespace Service
             var totalRecords = listaInformativoDTO.Count();
             if (request.Search != null && request.Search.GetValueOrDefault("value") != null)
             {
-                listaInformativoDTO = listaInformativoDTO.Where(g => g.Mensagem.ToString().Contains(request.Search.GetValueOrDefault("value")!, StringComparison.OrdinalIgnoreCase)
+                listaInformativoDTO = listaInformativoDTO.Where(g => g.Mensagem.ToString().Contains(request.Search.GetValueOrDefault("value")!, StringComparison.OrdinalIgnoreCase) // nova logica para implementar a solução da issue 948
                                                             || g.Data.ToString().Contains(request.Search.GetValueOrDefault("value")!, StringComparison.OrdinalIgnoreCase));
             }
 
