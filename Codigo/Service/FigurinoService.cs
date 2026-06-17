@@ -221,8 +221,8 @@ namespace Service
             // filtra pelo campos de busca
             if (request.Search != null && request.Search.GetValueOrDefault("value") != null)
             {
-                figurinos = figurinos.Where(figurinos => figurinos.Id.ToString().Contains(request.Search.GetValueOrDefault("value"))
-                                              || figurinos.Nome.ToLower().Contains(request.Search.GetValueOrDefault("value")));
+                figurinos = figurinos.Where(figurinos => figurinos.Id.ToString().Contains(request.Search.GetValueOrDefault("value"), StringComparison.OrdinalIgnoreCase)
+                                              || figurinos.Nome.Contains(request.Search.GetValueOrDefault("value"), StringComparison.OrdinalIgnoreCase));
             }
 
             if (request.Order != null && request.Order[0].GetValueOrDefault("column").Equals("1"))
