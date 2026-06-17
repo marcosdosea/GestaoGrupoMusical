@@ -95,7 +95,7 @@ namespace Service
             if (request.Search != null && request.Search.GetValueOrDefault("value") != null)
             {
                 listaInformativoDTO = listaInformativoDTO.Where(g => g.Mensagem.ToString().Contains(request.Search.GetValueOrDefault("value")!, StringComparison.OrdinalIgnoreCase)
-                                                           || g.Data.ToString().Contains(request.Search.GetValueOrDefault("value")!));
+                                                            || g.Data.ToString().Contains(request.Search.GetValueOrDefault("value")!, StringComparison.OrdinalIgnoreCase));
             }
 
             if (request.Order != null && request.Order[0].GetValueOrDefault("column")!.Equals("0"))

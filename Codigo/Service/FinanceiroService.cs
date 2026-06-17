@@ -266,7 +266,7 @@ namespace Service
             if (request.Search != null && request.Search.GetValueOrDefault("value") != null)
             {
                 financeiroIndexDTO = financeiroIndexDTO.Where
-                    (g => g.Descricao.ToString().ToLower().Contains(request.Search.GetValueOrDefault("value")!.ToLower()));
+                    (g => g.Descricao.ToString().Contains(request.Search.GetValueOrDefault("value")!, StringComparison.OrdinalIgnoreCase));
             }
 
             if (request.Order != null && request.Order[0].GetValueOrDefault("column")!.Equals("0"))
