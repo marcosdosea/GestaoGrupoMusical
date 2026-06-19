@@ -225,11 +225,22 @@ namespace GestaoGrupoMusicalWeb.Controllers
             {
                 Notificar("<b>Erro</b>! Verifique os dados do formulário.", Notifica.Erro);
             }
-            // Recarregar os dados necessários para a view em caso de erro
+            // Recarregar os dados necessários para a view em caso de erro.
+            // Isso evita que a lista de regentes desapareça após uma validação inválida.
+            if (eventoModel.IdGrupoMusical == 0 && eventoModel.Id != 0)
+            {
+                var eventoOriginal = _eventoService.Get(eventoModel.Id);
+                eventoModel.IdGrupoMusical = eventoOriginal?.IdGrupoMusical ?? 0;
+            }
+
             var listaPessoasAutoComplete = _pessoaService.GetRegentesForAutoComplete(eventoModel.IdGrupoMusical);
             var figurinosDropdown = await _figurinoService.GetAllFigurinoDropdown(eventoModel.IdGrupoMusical);
+
             eventoModel.ListaPessoa = new SelectList(listaPessoasAutoComplete, "Id", "Nome");
-            eventoModel.FigurinoList = new SelectList(figurinosDropdown, "Id", "Nome");
+            eventoModel.FigurinoList = new SelectList(figurinosDropdown, "Id", "Nome", eventoModel.IdFigurinoSelecionado);
+            eventoModel.JsonLista = listaPessoasAutoComplete.ToJson();
+            ViewData["exemploRegente"] = listaPessoasAutoComplete.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
+
             return View(eventoModel);
         }
 
