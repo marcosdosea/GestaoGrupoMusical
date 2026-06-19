@@ -356,8 +356,8 @@ namespace Service
 
             if (request.Search != null && request.Search.GetValueOrDefault("value") != null)
             {
-                eventos = eventos.Where(g => g.DataHoraInicio.ToString().Contains(request.Search.GetValueOrDefault("value")!)
-                                                           || g.Local.ToString().Contains(request.Search.GetValueOrDefault("value")!));
+                eventos = eventos.Where(g => g.DataHoraInicio.ToString().Contains(request.Search.GetValueOrDefault("value")!, StringComparison.OrdinalIgnoreCase)
+                                                           || g.Local.ToString().Contains(request.Search.GetValueOrDefault("value")!, StringComparison.OrdinalIgnoreCase));
             }
 
             if (request.Order != null && request.Order[0].GetValueOrDefault("column")!.Equals("0"))

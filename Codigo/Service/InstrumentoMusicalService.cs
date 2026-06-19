@@ -158,10 +158,10 @@ namespace Service
 
             if (request.Search != null && request.Search.GetValueOrDefault("value") != null)
             {
-                instrumentoMusical = instrumentoMusical.Where(g => g.Patrimonio.ToString().Contains(request.Search.GetValueOrDefault("value"))
-                                                           || g.Status.ToString().Contains(request.Search.GetValueOrDefault("value"))
-                                                           || g.NomeAssociado.ToString().Contains(request.Search.GetValueOrDefault("value"))
-                                                           || g.NomeInstrumento.ToString().Contains(request.Search.GetValueOrDefault("value")));
+                instrumentoMusical = instrumentoMusical.Where(g => g.Patrimonio.ToString().Contains(request.Search.GetValueOrDefault("value"), StringComparison.OrdinalIgnoreCase)
+                                                            || g.Status.ToString().Contains(request.Search.GetValueOrDefault("value"), StringComparison.OrdinalIgnoreCase)
+                                                            || g.NomeAssociado.ToString().Contains(request.Search.GetValueOrDefault("value"), StringComparison.OrdinalIgnoreCase)
+                                                            || g.NomeInstrumento.ToString().Contains(request.Search.GetValueOrDefault("value"), StringComparison.OrdinalIgnoreCase));
             }
 
             if (request.Order != null && request.Order[0].GetValueOrDefault("column").Equals("0"))

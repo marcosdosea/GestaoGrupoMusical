@@ -82,7 +82,7 @@ namespace Service
             var totalRecords = materialEstudoIndexDTO.Count();
             if (request.Search != null && request.Search.GetValueOrDefault("value") != null)
             {
-                materialEstudoIndexDTO = materialEstudoIndexDTO.Where(g => g.Nome.ToString().Contains(request.Search.GetValueOrDefault("value")!));
+                materialEstudoIndexDTO = materialEstudoIndexDTO.Where(g => g.Nome.ToString().Contains(request.Search.GetValueOrDefault("value")!, StringComparison.OrdinalIgnoreCase));
             }
 
             if (request.Order != null && request.Order[0].GetValueOrDefault("column")!.Equals("0"))
