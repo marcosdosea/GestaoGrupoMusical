@@ -13,12 +13,12 @@
 <hr />
 <div class="row">
     <div class="col-md-8">
-        <h1 class="p-3 bg-danger  bg-opacity-75 text-white fs-5">Editar Evento Musical</h1>
+        <h1 class="p-3 bg-danger bg-opacity-75 text-white fs-5">Editar Evento Musical</h1>
         <nav>
             <ol class="breadcrumb px-3">
                 <strong>
                     <a class="text-danger text-opacity-75" asp-action="Index">@ViewData["Evento"]</a>
-                    <spn class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Edit"]</spn>
+                    <span class="text-secondary"><i class="text-dark fa-sharp fa-solid fa-angle-right fa-xs"></i> @ViewData["Edit"]</span>
                 </strong>
             </ol>
         </nav>
@@ -65,13 +65,14 @@
                             {
                                 <p class="text-muted">Nenhum regente cadastrado</p>
                             }
-                    </div>
+                        </div>
                         <select multiple asp-for="IdRegentes" class="d-none" id="hiddenRegenteSelect">
                         </select>
                         <span asp-validation-for="IdRegentes" class="text-danger"></span>
                         <small class="form-text text-muted">
                             <span id="regenteCount">0</span> regente(s) selecionado(s)
                         </small>
+                    </div>
                 </div>
             </div>
             <div class="container">
@@ -101,10 +102,10 @@
             <br />
             <br />
             <div class="container">
-                <div class="row d-flex flex-column-reverse d-grig gap-2 mx-auto d-flex flex-sm-column-reverse flex-xl-row">
+                <div class="row d-flex flex-column-reverse d-grid gap-2 mx-auto d-flex flex-sm-column-reverse flex-xl-row">
                     <div class="col-5 d-none d-sm-block"></div>
                     <a class="btn btn-light text-secondary border border-secondary d-grid gap-2 col-sm" asp-controller="Evento" asp-action="Index"> Voltar </a>
-                    <input type="submit" value="Salvar" class="btn btn-secondary d-grid gap-2 col-sm " />
+                    <input type="submit" value="Salvar" class="btn btn-secondary d-grid gap-2 col-sm" />
                 </div>
             </div>
         </form>
@@ -112,21 +113,20 @@
 </div>
 
 <script>
-
     function updateRegenteSelection() {
         const checkboxes = document.querySelectorAll('.regente-checkbox:checked');
         const hiddenSelect = document.getElementById('hiddenRegenteSelect');
         const countSpan = document.getElementById('regenteCount');
-        // Limpar options existentes
+
         hiddenSelect.innerHTML = '';
-        // Adicionar options para cada checkbox marcado
+
         checkboxes.forEach(checkbox => {
             const option = document.createElement('option');
             option.value = checkbox.value;
             option.selected = true;
             hiddenSelect.appendChild(option);
         });
-        // Atualizar contador
+
         countSpan.textContent = checkboxes.length;
     }
 
