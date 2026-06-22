@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Filter\**" />
+    <Content Remove="Filter\**" />
+    <EmbeddedResource Remove="Filter\**" />
+    <None Remove="Filter\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Controllers\WeatherForecastController.cs" />
     <Compile Remove="IEnsaioService.cs" />
   </ItemGroup>
@@ -16,10 +23,6 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.16.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Filter\" />
   </ItemGroup>
 
   <ItemGroup>
