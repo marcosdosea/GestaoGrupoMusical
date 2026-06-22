@@ -16,6 +16,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IGrupoMusicalService _grupoMusical;
         private readonly IMapper _mapper;
         private readonly IPessoaService _pessoa;
+        private readonly IServiceScopeFactory _scopeFactory;
 
         private readonly IMaterialEstudoService _materialEstudoService;
 
@@ -26,7 +27,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             IMaterialEstudoService materialEstudo, 
             IGrupoMusicalService grupoMusical, 
             IMapper mapper,
-            ILogger<BaseController> logger)
+            ILogger<BaseController> logger, IServiceScopeFactory scopeFactory)
                 : base(logger)
         {
             _materialEstudoService = materialEstudoService;
@@ -34,6 +35,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             _grupoMusical = grupoMusical;
             _mapper = mapper;
             _pessoa = pessoa;
+            _scopeFactory = scopeFactory;
         }
         // GET: MaterialEstudoController
         [Authorize(Roles = "ADMINISTRADOR GRUPO, REGENTE, ASSOCIADO, COLABORADOR")]
@@ -103,6 +105,24 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 if (statusCode == HttpStatusCode.Created)
                 {
                     Notificar("Material de Estudo <b>Cadastrado</b> com <b>Sucesso</b>.", Notifica.Sucesso);
+                    _ = Task.Run(async () =>
+                    {
+                        using (var scope = _scopeFactory.CreateScope())
+                        {
+                            var dispositivoService = scope.ServiceProvider.GetRequiredService<IDispositivoService>();
+                            try
+                            {
+                                await dispositivoService.EnviarNotificacaoParaGrupoAsync(
+                                    materialEstudo.IdGrupoMusical,
+                                    "Novo Material de Estudo!",
+                                    $"Um novo material '{materialEstudo.Nome}' foi adicionado.");
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"Erro ao enviar notificação de Material: {ex.Message}");
+                            }
+                        }
+                    });
                     return RedirectToAction(nameof(Index));
                 }
                 Notificar("<b>Erro</b>! Há algo errado ao cadastrar Material de Estudo", Notifica.Erro);

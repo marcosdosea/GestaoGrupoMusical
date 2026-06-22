@@ -12,11 +12,9 @@ namespace Service
     public class MaterialEstudoService : IMaterialEstudoService
     {
         private readonly GrupoMusicalContext _context;
-        private readonly IDispositivoService dispositivoService;
-        public MaterialEstudoService(GrupoMusicalContext context, IDispositivoService dispositivoService)
+        public MaterialEstudoService(GrupoMusicalContext context)
         {
             _context = context;
-            this.dispositivoService = dispositivoService;
         }
 
         public async Task<HttpStatusCode> Create(Materialestudo materialEstudo)
@@ -25,12 +23,6 @@ namespace Service
             {
                 await _context.AddAsync(materialEstudo);
                 await _context.SaveChangesAsync();
-
-                await dispositivoService.EnviarNotificacaoParaGrupoAsync(
-                    materialEstudo.IdGrupoMusical,
-                    "Novo Material de Estudo!",
-                    $"O material '{materialEstudo.Nome}' foi disponibilizado para você.");
-
                 return HttpStatusCode.Created;
             }
             catch
