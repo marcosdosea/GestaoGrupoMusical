@@ -43,3 +43,13 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Arquivos de sistema operacional
+.DS_Store
+Thumbs.db
+
+# Arquivos gerados por plugins de plataforma
+linux/flutter/generated_*
+macos/Flutter/GeneratedPluginRegistrant.*
+windows/flutter/generated_*
+ios/Flutter/Generated.xcconfig
