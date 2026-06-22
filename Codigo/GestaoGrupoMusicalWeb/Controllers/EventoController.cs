@@ -25,6 +25,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IPessoaService _pessoaService;
         private readonly IFigurinoService _figurinoService;
         private readonly IInstrumentoMusicalService _tipoIntrumentoMusicalService;
+        private readonly IServiceScopeFactory _scopeFactory;
         
         private int FaltasPessoasEmEnsaioMeses { get; }
 
@@ -37,7 +38,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             IFigurinoService figurino, 
             IInstrumentoMusicalService tipoInstrumentoMusical,
             IConfiguration configuration,
-            ILogger<BaseController> logger)
+            ILogger<BaseController> logger, IServiceScopeFactory scopeFactory)
                 : base(logger)
         {
             _eventoService = evento ?? throw new ArgumentNullException(nameof(evento));
@@ -47,6 +48,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             _pessoaService = pessoaService;
             _figurinoService = figurino;
             _tipoIntrumentoMusicalService = tipoInstrumentoMusical;
+            _scopeFactory = scopeFactory;
             FaltasPessoasEmEnsaioMeses = configuration.GetValue<int>("Aplication:FaltasPessoasEmEnsaioEmMeses");        }
 
         // GET: EventoController
@@ -124,6 +126,25 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     {
                         case HttpStatusCode.OK:
                             Notificar("Evento <b>Cadastrado</b> com <b>Sucesso</b>", Notifica.Sucesso);
+
+                            _ = Task.Run(async () =>
+                            {
+                                using (var scope = _scopeFactory.CreateScope())
+                                {
+                                    var dispositivoServiceIsolado = scope.ServiceProvider.GetRequiredService<IDispositivoService>();
+                                    try
+                                    {
+                                        await dispositivoServiceIsolado.EnviarNotificacaoParaGrupoAsync(
+                                            evento.IdGrupoMusical,
+                                            "Novo Evento!",
+                                            $"Um novo evento foi agendado para {evento.DataHoraInicio:dd/MM/yyyy HH:mm} em {evento.Local}.");
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Console.WriteLine($"Erro ao enviar notificação de Evento: {ex.Message}");
+                                    }
+                                }
+                            });
                             break;
                         case HttpStatusCode.BadRequest:
                             mensagem = "Alerta! A <b>data de início</b> deve ser maior que a data de <b>hoje</b>";
