@@ -22,6 +22,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IPessoaService _pessoa;
         private readonly IFigurinoService _figurino;
         private readonly IGrupoMusicalService _grupoMusical;
+        private readonly IServiceScopeFactory _scopeFactory;
 
         private int PegarUltimosEventosDeAssociado { get; }
         private int PegarUltimosEnsaiosDeAssociado { get; }
@@ -34,7 +35,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             IFigurinoService figurino,
             IGrupoMusicalService grupoMusical,
             IConfiguration configuration,
-            ILogger<BaseController> logger)
+            ILogger<BaseController> logger, IServiceScopeFactory scopeFactory)
                 : base(logger)
         {
             _ensaioService = ensaio;
@@ -43,6 +44,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             _pessoa = pessoa;
             _figurino = figurino;
             _grupoMusical = grupoMusical;
+            _scopeFactory = scopeFactory;
             PegarUltimosEventosDeAssociado = configuration.GetValue<int>("Aplication:PegarUltimosEventosDeAssociado");
             PegarUltimosEnsaiosDeAssociado = configuration.GetValue<int>("Aplication:PegarUltimosEnsaiosDeAssociado");
         }
@@ -132,6 +134,25 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     case HttpStatusCode.OK:
                         mensagem = "Ensaio <b>Cadastrado</b> com <b>Sucesso</b>";
                         Notificar(mensagem, Notifica.Sucesso);
+                        _ = Task.Run(async () =>
+                        {
+                            using (var scope = _scopeFactory.CreateScope())
+                            {
+                                var dispositivoServiceIsolado = scope.ServiceProvider.GetRequiredService<IDispositivoService>();
+
+                                try
+                                {
+                                    await dispositivoServiceIsolado.EnviarNotificacaoParaGrupoAsync(
+                                        ensaio.IdGrupoMusical,
+                                        "Novo Ensaio Marcado!",
+                                        $"Um novo ensaio foi agendado para {ensaio.DataHoraInicio:dd/MM/yyyy HH:mm}. Local: {ensaio.Local}");
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine($"Erro ao enviar notificação: {ex.Message}");
+                                }
+                            }
+                        });
                         return RedirectToAction(nameof(Index));
                     case HttpStatusCode.BadRequest:
                         mensagem = "Alerta ! A <b>data de início</b> deve ser menor que a data de <b>fim</b>";

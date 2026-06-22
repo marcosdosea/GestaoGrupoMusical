@@ -13,11 +13,9 @@ namespace Service
     public class EnsaioService : IEnsaioService
     {
         private readonly GrupoMusicalContext _context;
-        private readonly IDispositivoService dispositivoService;
         public EnsaioService(GrupoMusicalContext context, IDispositivoService dispositivoService)
         {
             _context = context;
-            this.dispositivoService = dispositivoService;
 
         }
         /// <summary>
@@ -75,12 +73,6 @@ namespace Service
                             _context.SaveChanges();
                         }
                         transaction.Commit();
-
-                         dispositivoService.EnviarNotificacaoParaGrupoAsync(
-                        ensaio.IdGrupoMusical,
-                        "Novo Ensaio Marcado!",
-                        $"Um novo ensaio foi agendado para {ensaio.DataHoraInicio:dd/MM/yyyy HH:mm}. Local: {ensaio.Local}");
-
                         return HttpStatusCode.OK;
 
 
