@@ -358,8 +358,8 @@ namespace Service
 
             if (request.Search != null && request.Search.GetValueOrDefault("value") != null)
             {
-                eventos = eventos.Where(g => g.DataHoraInicio.ToString().Contains(request.Search.GetValueOrDefault("value")!)
-                                                           || g.Local.ToString().Contains(request.Search.GetValueOrDefault("value")!));
+                eventos = eventos.Where(g => g.DataHoraInicio.ToString().Contains(request.Search.GetValueOrDefault("value")!, StringComparison.OrdinalIgnoreCase)
+                                                           || g.Local.ToString().Contains(request.Search.GetValueOrDefault("value")!, StringComparison.OrdinalIgnoreCase));
             }
 
             if (request.Order != null && request.Order[0].GetValueOrDefault("column")!.Equals("0"))
@@ -955,8 +955,8 @@ namespace Service
                     Cpf = eventoPessoa.IdPessoaNavigation.Cpf,
                     NomeAssociado = eventoPessoa.IdPessoaNavigation.Nome,
                     Justificativa = eventoPessoa.JustificativaFalta,
-                    Presente = true, // MODIFICAÇÃO: Define a presença como verdadeira por padrão
-                    JustificativaAceita = Convert.ToBoolean(eventoPessoa.JustificativaAceita),
+                    Presente = eventoPessoa.Presente == 1,
+                    JustificativaAceita = eventoPessoa.JustificativaAceita == 1,
                 }).ToListAsync();
 
             var query = from evento in _context.Eventos

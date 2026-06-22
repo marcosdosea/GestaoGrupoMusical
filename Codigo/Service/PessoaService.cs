@@ -947,9 +947,9 @@ namespace Service
             //verificando filtro
             if(request.Search != null && request.Search.GetValueOrDefault("value")  != null)
             {
-                listaAssociado = listaAssociado.Where( g => g.Id.ToString().Contains(request.Search.GetValueOrDefault("value"))
-                                                       || g.Ativo.ToString().Contains(request.Search.GetValueOrDefault("value"))
-                                                       || g.Nome.ToString().Contains(request.Search.GetValueOrDefault("value")));
+                listaAssociado = listaAssociado.Where( g => g.Id.ToString().Contains(request.Search.GetValueOrDefault("value"), StringComparison.OrdinalIgnoreCase)
+                                                       || g.Ativo.ToString().Contains(request.Search.GetValueOrDefault("value"), StringComparison.OrdinalIgnoreCase)
+                                                       || g.Nome.ToString().Contains(request.Search.GetValueOrDefault("value"), StringComparison.OrdinalIgnoreCase));
             }
             //ordenar por:
             if(request.Order != null && request.Order[0].GetValueOrDefault("column").Equals("0"))

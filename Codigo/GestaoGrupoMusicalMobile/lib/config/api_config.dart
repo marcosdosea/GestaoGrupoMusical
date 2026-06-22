@@ -17,8 +17,8 @@ class ApiConfig {
     }
 
     if (Platform.isWindows) {
-      baseUrl = "http://localhost:5153";
-      webBaseUrl = "https://localhost:7242";
+       baseUrl = "http://localhost:5153";
+       webBaseUrl = "https://batala.itatechjr.com.br";
       return;
     }
 

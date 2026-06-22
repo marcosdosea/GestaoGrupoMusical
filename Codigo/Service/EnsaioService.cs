@@ -1,4 +1,4 @@
-﻿using Core;
+using Core;
 using Core.Datatables;
 using Core.DTO;
 using Core.Service;
@@ -13,10 +13,9 @@ namespace Service
     public class EnsaioService : IEnsaioService
     {
         private readonly GrupoMusicalContext _context;
-        public EnsaioService(GrupoMusicalContext context, IDispositivoService dispositivoService)
+        public EnsaioService(GrupoMusicalContext context)
         {
             _context = context;
-
         }
         /// <summary>
         /// Cadastra um novo Ensaio no banco de dados
@@ -74,8 +73,6 @@ namespace Service
                         }
                         transaction.Commit();
                         return HttpStatusCode.OK;
-
-
                     }
                     else
                     {
@@ -407,8 +404,9 @@ namespace Service
             // filtra pelo campos de busca
             if (request.Search != null && request.Search.GetValueOrDefault("value") != null)
             {
-                ensaios = ensaios.Where(ensaios => ensaios.Id.ToString().Contains(request.Search.GetValueOrDefault("value"))
-                                              || ensaios.Local.ToLower().Contains(request.Search.GetValueOrDefault("value")));
+                var searchValue = request.Search.GetValueOrDefault("value").ToLower();
+                ensaios = ensaios.Where(ensaios => ensaios.Id.ToString().Contains(request.Search.GetValueOrDefault("value"), StringComparison.OrdinalIgnoreCase)
+                                              || ensaios.Local.Contains(request.Search.GetValueOrDefault("value"), StringComparison.OrdinalIgnoreCase));
             }
 
             if (request.Order != null && request.Order[0].GetValueOrDefault("column").Equals("0"))
