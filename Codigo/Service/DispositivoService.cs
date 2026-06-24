@@ -21,24 +21,24 @@ namespace Service
         {
             try
             {
-                var dispositivoExistente = await context.DispositivoPessoas
+                var dispositivoExistente = await context.DispositivoPessoa
                     .FirstOrDefaultAsync(d => d.IdPessoa == dto.IdPessoa);
 
                 if (dispositivoExistente != null)
                 {
                     dispositivoExistente.FcmToken = dto.FcmToken;
                     dispositivoExistente.DataAtualizacao = DateTime.Now;
-                    context.DispositivoPessoas.Update(dispositivoExistente);
+                    context.DispositivoPessoa.Update(dispositivoExistente);
                 }
                 else
                 {
-                    var novoDispositivo = new DispositivoPessoas
+                    var novoDispositivo = new DispositivoPessoa
                     {
                         IdPessoa = dto.IdPessoa,
                         FcmToken = dto.FcmToken,
                         DataAtualizacao = DateTime.Now
                     };
-                    await context.DispositivoPessoas.AddAsync(novoDispositivo);
+                    await context.DispositivoPessoa.AddAsync(novoDispositivo);
                 }
                 await context.SaveChangesAsync();
                 return true;
@@ -48,7 +48,7 @@ namespace Service
 
         public async Task EnviarNotificacaoParaGrupoAsync(int idGrupo, string titulo, string corpo)
         {
-            var tokens = await context.DispositivoPessoas
+            var tokens = await context.DispositivoPessoa
                 .Where(d => d.Pessoa.IdGrupoMusical == idGrupo)
                 .Select(d => d.FcmToken)
                 .ToListAsync();

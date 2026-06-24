@@ -60,7 +60,7 @@ public partial class GrupoMusicalContext : DbContext
 
     public virtual DbSet<Pessoa> Pessoas { get; set; }
 
-    public virtual DbSet<DispositivoPessoas> DispositivoPessoas { get; set; }
+    public virtual DbSet<DispositivoPessoa> DispositivoPessoa { get; set; }
 
     public virtual DbSet<Receitafinanceira> Receitafinanceiras { get; set; }
 
@@ -964,11 +964,11 @@ public partial class GrupoMusicalContext : DbContext
                 .HasColumnName("nome");
         });
 
-        modelBuilder.Entity<DispositivoPessoas>(entity =>
+        modelBuilder.Entity<DispositivoPessoa>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
-            entity.ToTable("dispositivopessoas");
+            entity.ToTable("dispositivopessoa");
 
             entity.HasIndex(e => e.IdPessoa, "fk_DispositivoPessoa_Pessoa_idx");
 

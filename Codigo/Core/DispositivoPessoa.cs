@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
     namespace Core
     {
-        public partial class DispositivoPessoas
+        public partial class DispositivoPessoa
         {
             public int Id { get; set; }
 

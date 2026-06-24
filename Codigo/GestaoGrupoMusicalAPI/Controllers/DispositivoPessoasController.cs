@@ -49,7 +49,7 @@ namespace GestaoGrupoMusicalAPI.Controllers
         public async Task<IActionResult> TestarDisparo(int idGrupo, [FromBody] string mensagem)
         {
             // 1. Busca todos os tokens de dispositivos dos membros deste grupo
-            var tokens = await context.DispositivoPessoas
+            var tokens = await context.DispositivoPessoa
                 .Where(d => d.Pessoa.IdGrupoMusical == idGrupo)
                 .Select(d => d.FcmToken)
                 .ToListAsync();
