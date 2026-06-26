@@ -135,18 +135,20 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-footer d-flex justify-content-end gap-2">
-                        <button id="editButton" type="button" class="btn btn-secondary btn-sm m-2 view-mode">
-                            <i class="fa-solid fa-pen-to-square"></i> Editar
+                    <div class="card-footer d-flex justify-content-end align-items-center gap-2 py-3">
+                        <button id="editButton" type="button" class="btn btn-secondary btn-sm view-mode">
+                            <i class="fa-solid fa-pen-to-square me-1"></i> Editar
                         </button>
-                        <button id="cancelButton" type="button" class="btn btn-outline-secondary edit-mode">
+
+                        <button type="button" class="btn btn-outline-secondary btn-sm view-mode" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                            <i class="fa-solid fa-key me-1"></i> Alterar Senha
+                        </button>
+
+                        <button id="cancelButton" type="button" class="btn btn-outline-secondary btn-sm edit-mode">
                             Cancelar
                         </button>
-                        <button id="saveButton" type="submit" class="btn btn-secondary edit-mode">
-                            <i class="fa-solid fa-check"></i> Salvar
-                        </button>
-                        <button type="button" class="btn btn-outline-danger btn-sm view-mode" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
-                            <i class="fa-solid fa-key"></i> Alterar Senha
+                        <button id="saveButton" type="submit" class="btn btn-secondary btn-sm edit-mode">
+                            <i class="fa-solid fa-check me-1"></i> Salvar
                         </button>
                     </div>
                 </div>

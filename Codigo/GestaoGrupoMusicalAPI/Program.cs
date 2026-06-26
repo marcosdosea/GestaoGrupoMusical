@@ -11,7 +11,7 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Configurações de Banco de Dados
+// 1. ConfiguraÃ§Ãµes de Banco de Dados
 var connectionString = builder.Configuration.GetConnectionString("GrupoMusicalDatabase")
                        ?? throw new InvalidOperationException("Connection string 'GrupoMusicalDatabase' not found.");
 
@@ -28,7 +28,7 @@ builder.Services.AddIdentity<UsuarioIdentity, IdentityRole>(options =>
 .AddEntityFrameworkStores<IdentityContext>()
 .AddDefaultTokenProviders();
 
-// 2. Configuração do Firebase Admin (Inicialização Única)
+// 2. ConfiguraÃ§Ã£o do Firebase Admin (InicializaÃ§Ã£o Ãšnica)
 var caminhoFirebase = Path.Combine(builder.Environment.ContentRootPath, "firebase-admin.json");
 if (File.Exists(caminhoFirebase))
 {
@@ -42,10 +42,10 @@ if (File.Exists(caminhoFirebase))
 }
 else
 {
-    Console.WriteLine($"ERRO: Arquivo de credenciais não encontrado em: {caminhoFirebase}");
+    Console.WriteLine($"ERRO: Arquivo de credenciais nÃ£o encontrado em: {caminhoFirebase}");
 }
 
-// 3. Configuração de JWT, Services e CORS
+// 3. ConfiguraÃ§Ã£o de JWT, Services e CORS
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 var secretKey = jwtSettings["ChaveSecreta"] ?? "CHAVE_PADRAO_COM_MAIS_DE_32_CARACTERES";
 var key = Encoding.ASCII.GetBytes(secretKey);
@@ -76,10 +76,9 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
 });
 
-// Registro dos Serviços
+// Registro dos ServiÃ§os
 builder.Services.AddScoped<INotificacaoAdminService, NotificacaoAdminService>();
 builder.Services.AddTransient<IDispositivoService, DispositivoService>();
-builder.Services.AddTransient<IPessoaService, PessoaService>();
 builder.Services.AddScoped<IInformativoService, InformativoService>();
 builder.Services.AddScoped<IFinanceiroService, FinanceiroService>();
 builder.Services.AddScoped<IEnsaioService, EnsaioService>();
@@ -96,7 +95,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// 4. Pipeline de Requisição
+// 4. Pipeline de RequisiÃ§Ã£o
 app.UseCors("AllowAll");
 
 if (!app.Environment.IsDevelopment())
