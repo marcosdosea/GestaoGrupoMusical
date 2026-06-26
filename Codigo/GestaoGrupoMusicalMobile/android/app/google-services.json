@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "873152550101",
+    "project_id": "batala-mobile-teste",
+    "storage_bucket": "batala-mobile-teste.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:873152550101:android:a8c258a6489794675bfe5c",
+        "android_client_info": {
+          "package_name": "com.example.batala_mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRKUfcZlQBUw6WEeC3ImMcpM6_D-cXXY0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

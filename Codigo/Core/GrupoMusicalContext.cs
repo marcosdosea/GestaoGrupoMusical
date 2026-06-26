@@ -15,7 +15,7 @@ public partial class GrupoMusicalContext : DbContext
         : base(options)
     {
     }
-
+    
     public virtual DbSet<Apresentacaotipoinstrumento> Apresentacaotipoinstrumentos { get; set; }
 
     public virtual DbSet<Aspnetrole> Aspnetroles { get; set; }
@@ -60,7 +60,7 @@ public partial class GrupoMusicalContext : DbContext
 
     public virtual DbSet<Pessoa> Pessoas { get; set; }
 
-    public virtual DbSet<DispositivoPessoa> DispositivoPessoas { get; set; }
+    public virtual DbSet<DispositivoPessoa> DispositivoPessoa { get; set; }
 
     public virtual DbSet<Receitafinanceira> Receitafinanceiras { get; set; }
 

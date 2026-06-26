@@ -12,9 +12,11 @@ namespace Service
     public class InformativoService : IInformativoService
     {
         private readonly GrupoMusicalContext _context;
-        public InformativoService(GrupoMusicalContext context)
+        private readonly IDispositivoService dispositivoService;
+        public InformativoService(GrupoMusicalContext context, IDispositivoService dispositivoService)
         {
             _context = context;
+            this.dispositivoService = dispositivoService;
         }
 
         public async Task<HttpStatusCode> Create(Informativo informativo)
@@ -23,6 +25,13 @@ namespace Service
             {
                 await _context.Informativos.AddAsync(informativo);
                 await _context.SaveChangesAsync();
+    
+                await dispositivoService.EnviarNotificacaoParaGrupoAsync(
+                    informativo.IdGrupoMusical,
+                    "Novo Informativo!",
+                    informativo.Mensagem.Length > 50 ? informativo.Mensagem.Substring(0, 47) + "..." : informativo.Mensagem
+                );
+
                 return HttpStatusCode.Created;
             }
             catch

@@ -1,10 +1,12 @@
 using Core;
-using Microsoft.EntityFrameworkCore;
 using Core.Service;
-using Service;
+using FirebaseAdmin;
+using GestaoGrupoMusicalWeb.Helpers;
+using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
-using GestaoGrupoMusicalWeb.Helpers;
+using Microsoft.EntityFrameworkCore;
+using Service;
 using System.Globalization;
 
 namespace GestaoGrupoMusicalWeb
@@ -35,6 +37,22 @@ namespace GestaoGrupoMusicalWeb
                 options.SupportedCultures = new[] { cultureInfo };
                 options.SupportedUICultures = new[] { cultureInfo };
             });
+
+            var caminhoFirebase = Path.Combine(builder.Environment.ContentRootPath, "firebase-admin.json");
+            if (File.Exists(caminhoFirebase))
+            {
+                if (FirebaseApp.DefaultInstance == null)
+                {
+                    FirebaseApp.Create(new AppOptions()
+                    {
+                        Credential = GoogleCredential.FromFile(caminhoFirebase)
+                    });
+                }
+            }
+            else
+            {
+                Console.WriteLine($"ERRO: Arquivo de credenciais não encontrado em: {caminhoFirebase}");
+            }
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
@@ -89,7 +107,8 @@ namespace GestaoGrupoMusicalWeb
                 options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
                 options.SlidingExpiration = true;
             });
-
+            builder.Services.AddScoped<INotificacaoAdminService, NotificacaoAdminService>();
+            builder.Services.AddTransient<IDispositivoService, DispositivoService>();
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             builder.Services.AddTransient<IGrupoMusicalService, GrupoMusicalService>();
             builder.Services.AddTransient<IPessoaService, PessoaService>();

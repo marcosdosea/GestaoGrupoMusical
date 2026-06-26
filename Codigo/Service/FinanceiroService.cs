@@ -4,6 +4,7 @@ using Core.DTO;
 using Core.Service;
 using Email;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Net;
 
 namespace Service
@@ -12,7 +13,7 @@ namespace Service
     {
         private readonly GrupoMusicalContext _context;
 
-        public FinanceiroService(GrupoMusicalContext context)
+        public FinanceiroService(GrupoMusicalContext context, IDispositivoService dispositivoService)
         {
             _context = context;
         }
@@ -75,12 +76,14 @@ namespace Service
                 }
 
 
-                transaction.Commit();
+                transaction.Commit();      
+
                 return FinanceiroStatus.Success;
             }
-            catch
+            catch(Exception ex)
             {
                 transaction.Rollback();
+                Console.WriteLine("ERRO DETALHADO: " + ex.InnerException?.Message);
                 return FinanceiroStatus.Error;
             }
         }

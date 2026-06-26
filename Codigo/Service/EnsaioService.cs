@@ -1,4 +1,4 @@
-﻿using Core;
+using Core;
 using Core.Datatables;
 using Core.DTO;
 using Core.Service;

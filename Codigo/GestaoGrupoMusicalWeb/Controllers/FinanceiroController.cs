@@ -18,6 +18,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         private readonly IMapper _mapper;
         private readonly IGrupoMusicalService _grupoMusicalService;
         private readonly IPessoaService _pessoaService;
+        private readonly IServiceScopeFactory _scopeFactory;
 
 
         public FinanceiroController(
@@ -25,13 +26,14 @@ namespace GestaoGrupoMusicalWeb.Controllers
             IMapper mapper, 
             IGrupoMusicalService grupoMusical,
             IPessoaService pessoaService,
-            ILogger<BaseController> logger)
+            ILogger<BaseController> logger, IServiceScopeFactory scopeFactory)
                 : base(logger)
         {
             _financeiroService = financeiroService;
             _mapper = mapper;
             _grupoMusicalService = grupoMusical;
             _pessoaService = pessoaService;
+            _scopeFactory = scopeFactory;
         }
 
 
@@ -87,6 +89,24 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         TempData["IdPagamentoCriado"] = rf.Id;
                         TempData["MostrarModal"] = true;
                         TempData.Keep();
+                        _ = Task.Run(async () =>
+                        {
+                            using (var scope = _scopeFactory.CreateScope())
+                            {
+                                var dispositivoService = scope.ServiceProvider.GetRequiredService<IDispositivoService>();
+                                try
+                                {
+                                    await dispositivoService.EnviarNotificacaoParaGrupoAsync(
+                                        idGrupoMusical,
+                                        "Novo Boleto Gerado",
+                                        "Uma nova mensalidade ou taxa foi gerada para você.");
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine($"Erro ao enviar notificação: {ex.Message}");
+                                }
+                            }
+                        });
                         return RedirectToAction(nameof(Create));
                         
                     case FinanceiroStatus.DataInicioMaiorQueDataFim:

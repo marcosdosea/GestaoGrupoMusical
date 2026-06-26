@@ -28,7 +28,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
             IMapper mapper,
             ILogger<BaseController> logger)
                 : base(logger)
-
         {
             _informativoService = informativoService;
             _pessoaService = pessoaService;
