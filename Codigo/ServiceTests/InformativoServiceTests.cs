@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Service;
 using System.Net;
+using Moq;
 
 namespace ServiceTests
 {
@@ -60,7 +61,11 @@ namespace ServiceTests
             _context.AddRange(informativos);
             _context.SaveChanges();
 
-            _informativoService = new InformativoService(_context, null);
+            // Criação do mock para fingir que o serviço de dispositivos existe
+            var mockDispositivoService = new Mock<IDispositivoService>();
+
+            // Passa o mock.Object no lugar do null
+            _informativoService = new InformativoService(_context, mockDispositivoService.Object);
         }
 
         [TestMethod]
