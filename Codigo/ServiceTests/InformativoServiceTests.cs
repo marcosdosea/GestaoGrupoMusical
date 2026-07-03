@@ -12,7 +12,7 @@ namespace ServiceTests
     public class InformativoServiceTests
     {
         private GrupoMusicalContext _context;
-        private IInformativoService _informativoService;
+        private IInformativoService? _informativoService;
 
         [TestInitialize]
         public void Initialize()
@@ -60,7 +60,7 @@ namespace ServiceTests
             _context.AddRange(informativos);
             _context.SaveChanges();
 
-            _informativoService = new InformativoService(_context);
+            _informativoService = new InformativoService(_context, null);
         }
 
         [TestMethod]
