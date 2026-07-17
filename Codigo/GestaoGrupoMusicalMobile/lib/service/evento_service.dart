@@ -131,4 +131,15 @@ class EventoService {
       return false;
     }
   }
+
+  // Novo método para forçar a limpeza do cache de eventos
+  Future<void> limparCacheListagem() async {
+    final userId = (await SessionManager.getIdPessoa())?.toString();
+    
+    try {
+      await CacheManager.clearCache(_cacheKey, userId: userId);
+    } catch (e) {
+      debugPrint('Erro ao limpar cache de eventos: $e');
+    }
+  }
 }

@@ -1,5 +1,5 @@
+import 'package:batala_mobile/config/session_manager.dart';
 import 'dart:convert';
-
 import 'package:batala_mobile/config/api_config.dart';
 import 'package:batala_mobile/config/cache_manager.dart';
 import 'package:batala_mobile/model/ensaio_model.dart';
@@ -12,11 +12,13 @@ class EnsaioService {
    static const String _cacheKey = 'ensaio_list';
 
   Future<List<EnsaioModel>> getAll() async {
+    final userId = (await SessionManager.getIdPessoa())?.toString();
+
     try {
       // Tenta recuperar do cache primeiro
-      final cachedData = await CacheManager.getCache(_cacheKey);
+      final cachedData = await CacheManager.getCache(_cacheKey, userId: userId);
       if (cachedData != null) {
-        debugPrint('Usando dados em cache para ensaios');
+        debugPrint('Usando dados em cache isolados para ensaios do usuário $userId');
         final List data = cachedData is List ? cachedData : jsonDecode(cachedData);
         return data.map((e) => EnsaioModel.fromJson(e)).toList();
       }
@@ -55,6 +57,15 @@ class EnsaioService {
         }
       } catch (_) {}
       rethrow;
+    }
+  }
+  Future<void> limparCacheListagem() async {
+    final userId = (await SessionManager.getIdPessoa())?.toString();
+    
+    try {
+      await CacheManager.clearCache(_cacheKey, userId: userId);
+    } catch (e) {
+      debugPrint('Erro ao limpar cache: $e');
     }
   }
 }
