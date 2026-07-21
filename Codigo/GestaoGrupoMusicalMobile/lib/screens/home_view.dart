@@ -1,3 +1,4 @@
+import 'package:batala_mobile/config/cache_service.dart';
 import 'package:flutter/material.dart';
 import 'package:batala_mobile/config/app_colors.dart';
 import 'package:intl/intl.dart';
@@ -6,6 +7,7 @@ import '../model/ensaio_model.dart';
 import '../model/evento_model.dart';
 import '../service/evento_service.dart';
 import '../service/ensaio_service.dart';
+
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -56,11 +58,15 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Future<void> _onRefresh() async {
+    await _eventoService.limparCacheListagem();
+    await _ensaioService.limparCacheListagem();
+
+    // 2. ATUALIZA A TELA E RECARREGA OS DADOS
     setState(() {
       _eventosLimit = 3;
       _ensaiosLimit = 3;
-      _detalhesCache.clear(); // Limpa o cache ao recarregar a tela
-      _carregarDados();
+      _detalhesCache.clear(); // Mantém a limpeza do cache de memória dos detalhes
+      _carregarDados(); // Agora sim, os services serão forçados a fazer o GET na API
     });
   }
 
