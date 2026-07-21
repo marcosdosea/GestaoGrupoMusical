@@ -161,6 +161,23 @@ table.dataTable {
 
 .previous {
     color: white !important;
+
+/* Responsive Table Styles */
+@media (max-width: 768px) {
+    #tableInformativo {
+        font-size: 0.875rem;
+    }
+
+    #tableInformativo th,
+    #tableInformativo td {
+        padding: 0.5rem !important;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
     border: 1px solid #111;
     background-color: #6c757d !important;
     opacity: 100% !important;
