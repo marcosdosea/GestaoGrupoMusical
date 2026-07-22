@@ -6,7 +6,7 @@
 }
 
 <partial name="_Notificar">
-    <div class="d-flex justify-content-between align-items-center">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
         <h5>@ViewData["Title"]</h5>
         @if (!User.IsInRole("ASSOCIADO"))
         {
@@ -14,7 +14,8 @@
                 Material de Estudo</a>
         }
     </div>
-    <table id="tableMaterialEstudo" class="table table-striped table-bordered dt-responsive nowrap ">
+    <div class="table-responsive">
+        <table id="tableMaterialEstudo" class="table table-striped table-bordered dt-responsive">
         <thead>
         <tr class="bg-danger bg-opacity-75 text-white">
             <th class="px-3">
@@ -31,8 +32,8 @@
             </th>
         </tr>
         </thead>
-    </table>
-    @*    </div>*@
+        </table>
+    </div>
 
     @section Scripts {
         <script src="~/lib/datatable/js/dataTables.min.js"></script>
@@ -48,6 +49,8 @@
                         [5, 10, 20],
                         [5, 10, 20]
                     ],
+                    "responsive": true,
+                    "scrollX": true,
                     "ajax": {
                         "url": "/MaterialEstudo/GetDataPage",
                         "type": "POST",
