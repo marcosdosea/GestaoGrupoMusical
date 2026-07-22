@@ -32,6 +32,7 @@
 </div>
 <br />
 <br />
+<div class="table-responsive">
 <table class="table">
     <thead>
         <tr class="bg-danger opacity-75">
@@ -54,9 +55,10 @@
     </thead>
 
         <Partial name="_TabelaEstoque" model="Model.TabelaEstoques" />
-    
-    
+
+
 </table>
+</div>
 @if (!(Model.TabelaEstoques != null && (Model.TabelaEstoques.Any())))
 {
     <p class="text-center mt-4 mb-0">Desculpe, nenhuma <b>Item</b> encontrada :(</p>

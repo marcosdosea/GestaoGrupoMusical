@@ -4,12 +4,13 @@
     @{
         ViewData["Title"] = "Index";
     }
-    <div class="d-flex justify-content-between align-items-center">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
         <h1 class="fs-5">Associados</h1>
         <a role="button" class="btn btn-secondary m-3" asp-action="Create">Novo Associado</a>
     </div>
 
-    <table id="tableAssociado" class="table table-striped table-bordered dt-responsive nowrap ">
+    <div class="table-responsive">
+        <table id="tableAssociado" class="table table-striped table-bordered dt-responsive">
         <thead>
         <tr class="bg-danger opacity-75">
             <th class="px-3 border-0 w-25">
@@ -27,7 +28,8 @@
         </tr>
         </thead>
 
-    </table>
+        </table>
+    </div>
 
     @section Scripts {
         <script src="~/lib/datatable/js/dataTables.min.js"></script>
@@ -43,6 +45,8 @@
                         [5, 10, 20],
                         [5, 10, 20]
                     ],
+                    "responsive": true,
+                    "scrollX": true,
                     "ajax": {
                         "url": "/Pessoa/GetDataPage",
                         "type": "POST",
