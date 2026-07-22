@@ -1,6 +1,25 @@
 ﻿@model IEnumerable<Core.DTO.ColaboradoresDTO>
 
-<tbody class="table-responsive">
+<div class="table-responsive">
+    <table class="table mt-3">
+        <thead>
+            <tr class="bg-danger bg-opacity-75 text-white">
+                <th>
+                    @Html.DisplayName("CPF")
+                </th>
+                <th>
+                    @Html.DisplayName("Nome")
+                </th>
+                <th>
+                    @Html.DisplayName("Data")
+                </th>
+                <th>
+                    @Html.DisplayName("Papel")
+                </th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
     @foreach (var item in Model)
     {
         <tr class="border-bottom border-danger border-opacity-75 p-3 align-middle">
@@ -27,6 +46,8 @@
         </tr>
     }
 </tbody>
+    </table>
+</div>
 
 <div class="modal fade" id="colaboradorModal" tabindex="-1" aria-labelledby="colaboradorLabel" aria-hidden="true">
     <div class="modal-dialog">
