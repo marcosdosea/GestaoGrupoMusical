@@ -1,14 +1,40 @@
 import 'package:batala_mobile/model/material_estudo_model.dart';
 import 'package:batala_mobile/service/material_estudo_service.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart'; // Importação do pacote
+import 'package:url_launcher/url_launcher.dart';
 
-class MaterialEstudoView extends StatelessWidget {
+class MaterialEstudoView extends StatefulWidget {
   const MaterialEstudoView({super.key});
+
+  @override
+  State<MaterialEstudoView> createState() => _MaterialEstudoViewState();
+}
+
+class _MaterialEstudoViewState extends State<MaterialEstudoView> {
+  final MaterialestudoService service = MaterialestudoService();
+  late Future<List<MaterialestudoModel>> _futureMateriais;
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarDados(forceRefresh: false);
+  }
+
+  void _carregarDados({bool forceRefresh = false}) {
+    _futureMateriais = service.getAll(forceRefresh: forceRefresh);
+  }
+
+  Future<void> _refresh() async {
+    setState(() {
+      _carregarDados(forceRefresh: true); // Força buscar direto da API ignorando o cache
+    });
+    try {
+      await _futureMateriais;
+    } catch (_) {}
+  }
 
   // Lógica completa para tratar e abrir o link
   Future<void> _abrirLink(String urlString, BuildContext context) async {
-    // Garante que o link tenha o prefixo correto, caso o usuário tenha digitado apenas "www.site.com"
     if (!urlString.startsWith('http://') && !urlString.startsWith('https://')) {
       urlString = 'https://$urlString';
     }
@@ -19,7 +45,7 @@ class MaterialEstudoView extends StatelessWidget {
       if (await canLaunchUrl(url)) {
         await launchUrl(
           url,
-          mode: LaunchMode.externalApplication, // Força a abertura fora do app (Navegador/YouTube)
+          mode: LaunchMode.externalApplication,
         );
       } else {
         throw 'Não foi possível abrir: $urlString';
@@ -35,10 +61,8 @@ class MaterialEstudoView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final service = MaterialestudoService();
-
     return FutureBuilder<List<MaterialestudoModel>>(
-      future: service.getAll(),
+      future: _futureMateriais,
       builder: (context, snapshot) {
         // 1. Tratamento de Carregamento
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -47,57 +71,77 @@ class MaterialEstudoView extends StatelessWidget {
         
         // 2. Tratamento de Erro
         else if (snapshot.hasError) {
-          return Center(child: Text("Erro ao carregar materiais: ${snapshot.error}"));
+          return RefreshIndicator(
+            onRefresh: _refresh,
+            child: CustomScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: [
+                SliverFillRemaining(
+                  child: Center(child: Text("Erro ao carregar materiais: ${snapshot.error}")),
+                ),
+              ],
+            ),
+          );
         } 
         
         // 3. Verificação de Dados
         else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
           final materiais = snapshot.data!;
 
-          return ListView.builder(
-            // Padding para não ficar colado na barra flutuante
-            padding: const EdgeInsets.only(top: 10, bottom: 100, left: 10, right: 10),
-            itemCount: materiais.length,
-            itemBuilder: (context, index) {
-              final item = materiais[index];
+          return RefreshIndicator(
+            onRefresh: _refresh,
+            child: ListView.builder(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.only(top: 10, bottom: 100, left: 10, right: 10),
+              itemCount: materiais.length,
+              itemBuilder: (context, index) {
+                final item = materiais[index];
 
-              return Card(
-                elevation: 2,
-                margin: const EdgeInsets.symmetric(vertical: 8),
-                child: ListTile(
-                  leading: const Icon(Icons.menu_book, color: Color(0xFFD64550)),
-                  title: Text(
-                    item.nome,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                return Card(
+                  elevation: 2,
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  child: ListTile(
+                    leading: const Icon(Icons.menu_book, color: Color(0xFFD64550)),
+                    title: Text(
+                      item.nome,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 4),
+                        Text(
+                          item.link,
+                          style: const TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          "Postado em: ${item.dataInicio.day.toString().padLeft(2, '0')}/${item.dataInicio.month.toString().padLeft(2, '0')}/${item.dataInicio.year} às ${item.dataInicio.hour.toString().padLeft(2, '0')}:${item.dataInicio.minute.toString().padLeft(2, '0')}",
+                          style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                        ),
+                      ],
+                    ),
+                    isThreeLine: true,
+                    onTap: () => _abrirLink(item.link, context), 
                   ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 4),
-                      Text(
-                        item.link,
-                        style: const TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
-                      ),
-                      const SizedBox(height: 4),
-                      // Formatação da data com zeros à esquerda (ex: 05/09/2026)
-                      // Formatação da data e hora (ex: 20/03/2026 21:03)
-                      Text(
-                        "Postado em: ${item.dataInicio.day.toString().padLeft(2, '0')}/${item.dataInicio.month.toString().padLeft(2, '0')}/${item.dataInicio.year} às ${item.dataInicio.hour.toString().padLeft(2, '0')}:${item.dataInicio.minute.toString().padLeft(2, '0')}",
-                        style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                      ),
-                    ],
-                  ),
-                  isThreeLine: true,
-                  // Chama a nova função passando a URL e o contexto
-                  onTap: () => _abrirLink(item.link, context), 
-                ),
-              );
-            },
+                );
+              },
+            ),
           );
         }
 
         // 4. Caso a lista esteja vazia
-        return const Center(child: Text("Nenhum material de estudo disponível."));
+        return RefreshIndicator(
+          onRefresh: _refresh,
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              SliverFillRemaining(
+                child: Center(child: const Text("Nenhum material de estudo disponível.")),
+              ),
+            ],
+          ),
+        );
       },
     );
   }

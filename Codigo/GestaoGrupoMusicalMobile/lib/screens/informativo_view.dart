@@ -80,8 +80,16 @@ class _InformativoViewState extends State<InformativoView> {
         pageSize: _pageSize,
       );
 
+      // Filtro para prevenir mensagens duplicadas caso a paginação da API sofra deslocamento
+      // Ele verifica se já existe uma mensagem idêntica (mesmo texto e mesma data) na lista.
+      final novosItens = result.items.where((novo) {
+        return !_allItems.any((existente) => 
+            existente.mensagem == novo.mensagem && 
+            existente.dataInicio == novo.dataInicio);
+      }).toList();
+
       setState(() {
-        _allItems.addAll(result.items);
+        _allItems.addAll(novosItens);
         _hasMorePages = result.hasMorePages;
         _currentPage = nextPage;
         _isLoadingMore = false;
@@ -120,7 +128,7 @@ class _InformativoViewState extends State<InformativoView> {
   Widget _buildCacheBadge() {
     if (_isFromCache) {
       return Container(
-        margin: const EdgeInsets.only(top: 8, left: 16, right: 16),
+        margin: const EdgeInsets.only(top: 8, left: 16, right: 16, bottom: 8),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
           color: Colors.blue.shade100,
@@ -153,15 +161,23 @@ class _InformativoViewState extends State<InformativoView> {
     }
 
     if (_errorMessage != null) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Erro: $_errorMessage'),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _loadFirstPage,
-              child: const Text('Tentar Novamente'),
+      return RefreshIndicator(
+        onRefresh: _refreshData,
+        child: CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            SliverFillRemaining(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Erro: $_errorMessage'),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: _loadFirstPage,
+                    child: const Text('Tentar Novamente'),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -169,21 +185,29 @@ class _InformativoViewState extends State<InformativoView> {
     }
 
     if (_allItems.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.info_outline, size: 48, color: Colors.grey.shade400),
-            const SizedBox(height: 16),
-            Text(
-              'Nenhum aviso encontrado',
-              style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton.icon(
-              onPressed: _refreshData,
-              icon: const Icon(Icons.refresh),
-              label: const Text('Atualizar'),
+      return RefreshIndicator(
+        onRefresh: _refreshData,
+        child: CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            SliverFillRemaining(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.info_outline, size: 48, color: Colors.grey.shade400),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Nenhum aviso encontrado',
+                    style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton.icon(
+                    onPressed: _refreshData,
+                    icon: const Icon(Icons.refresh),
+                    label: const Text('Atualizar'),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -194,29 +218,14 @@ class _InformativoViewState extends State<InformativoView> {
       onRefresh: _refreshData,
       child: ListView.builder(
         controller: _scrollController,
+        physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.only(top: 10, bottom: 100),
-        itemCount: _allItems.length + (_hasMorePages ? 2 : 1),
+        // Adiciona 1 na contagem total se houver mais páginas (para renderizar o loader)
+        itemCount: _allItems.length + (_hasMorePages ? 1 : 0),
         itemBuilder: (context, index) {
-          // Mostrar badge de cache no início
-          if (index == 0 && _isFromCache) {
-            return Column(
-              children: [
-                _buildCacheBadge(),
-                const SizedBox(height: 8),
-                _buildInformativoTile(_allItems[index]),
-              ],
-            );
-          }
-
-          // Se estamos no índice que tem a badge, mostrar o item normalmente
-          int itemIndex = _isFromCache ? index - 1 : index;
-
-          if (itemIndex < _allItems.length) {
-            return _buildInformativoTile(_allItems[itemIndex]);
-          }
-
-          // Mostrar indicador de carregamento se há mais páginas
-          if (_hasMorePages && index == _allItems.length + (_isFromCache ? 1 : 0)) {
+          
+          // Se chegamos no final da lista e ainda tem mais páginas, renderizamos o Loader/Botão
+          if (index == _allItems.length) {
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: _isLoadingMore
@@ -231,7 +240,20 @@ class _InformativoViewState extends State<InformativoView> {
             );
           }
 
-          return const SizedBox.shrink();
+          final informativo = _allItems[index];
+
+          // Se for o primeiro item da lista e os dados vierem do cache, mostra a badge em cima dele
+          if (index == 0 && _isFromCache) {
+            return Column(
+              children: [
+                _buildCacheBadge(),
+                _buildInformativoTile(informativo),
+              ],
+            );
+          }
+
+          // Renderização normal para os outros itens
+          return _buildInformativoTile(informativo);
         },
       ),
     );
