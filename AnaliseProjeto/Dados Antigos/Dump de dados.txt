@@ -1,0 +1,52 @@
+ASSOCIADO                          
+LOGIN: 12345678901
+SENHA: adm@123
+
+INSERT INTO aspnetroles VALUES ('4e41763d-d54c-472a-ab46-dadabb2d8859','ADMINISTRADOR SISTEMA','ADMINISTRADOR SISTEMA','fac5a197-97f3-47e9-b29e-479fa1e5ac80');
+INSERT INTO aspnetusers VALUES ('0f900e08-881c-41e0-8387-b2f8ea9c7eba','62870079079','62870079079',NULL,NULL,0,'AQAAAAEAACcQAAAAECfuURCq3/SlKumV6LoffVZ/PJ1E+pUg0ZkVLrPC8L2MTj5forpWexL8oTCEx3d1Ww==','U3ODHHNJ3VZU45UGMWA2AEOTBKWHODV3','b3896af2-a235-48ad-b81e-4feed9c28f65',NULL,0,0,NULL,1,0);
+INSERT INTO aspnetuserroles VALUES ('0f900e08-881c-41e0-8387-b2f8ea9c7eba','4e41763d-d54c-472a-ab46-dadabb2d8859');
+
+insert into papelgrupo values (1, 'ASSOCIADO'),(2,'COLABORADOR'),(3,'ADMINISTRADOR GRUPO');
+insert into papelgrupo values (5, 'REGENTE');
+
+INSERT INTO grupomusical VALUES 
+(3,'Gamma Beats', 'Gamma Beats Music Ltda', '22334455000167', '98765000', 'Rua das Flores', 'Jardim das Acácias', 'Curitiba', 'PR', 'Brasil', 'contato@gammabeats.com.br', 'youtube.com/gammabeats', 'instagram.com/gammabeats', 'facebook.com/gammabeats', '(41) 98765-4321', '(41) 98765-6789', '11987654325', '9101', '11987654326', 'gammabeats@pix.com', 'email'),
+(4,'Delta Harmony', 'Delta Harmony Ltda', '33445566000178', '87654000', 'Rua dos Pioneiros', 'Vila Nova', 'Porto Alegre', 'RS', 'Brasil', 'contato@deltaharmony.com.br', 'youtube.com/deltaharmony', 'instagram.com/deltaharmony', 'facebook.com/deltaharmony', '(51) 97654-3210', '(51) 97654-5678', '11987654327', '1121', '11987654328', 'deltaharmony@pix.com', 'email'),
+(5,'Echo Rhythm', 'Echo Rhythm Ltda', '44556677000189', '76543000', 'Avenida Central', 'Centro', 'Belo Horizonte', 'MG', 'Brasil', 'contato@echorhythm.com.br', 'youtube.com/echorhythm', 'instagram.com/echorhythm', 'facebook.com/echorhythm', '(31) 96543-2109', '(31) 96543-5678', '11987654329', '3141', '11987654330', 'echorhythm@pix.com', 'email'),
+(6,'Foxtrot Sound', 'Foxtrot Sound Ltda', '55667788000190', '65432000', 'Rua Primavera', 'Jardim Primavera', 'Florianópolis', 'SC', 'Brasil', 'contato@foxtrotsound.com.br', 'youtube.com/foxtrotsound', 'instagram.com/foxtrotsound', 'facebook.com/foxtrotsound', '(48) 95432-1098', '(48) 95432-5678', '11987654331', '5161', '11987654332', 'foxtrotsound@pix.com', 'email'),
+(7,'Golf Harmony', 'Golf Harmony Ltda', '66778899000121', '54321000', 'Rua dos Pássaros', 'Vila das Aves', 'Salvador', 'BA', 'Brasil', 'contato@golfharmony.com.br', 'youtube.com/golfharmony', 'instagram.com/golfharmony', 'facebook.com/golfharmony', '(71) 94321-0987', '(71) 94321-5678', '11987654333', '7181', '11987654334', 'golfharmony@pix.com', 'email'),
+(8,'Hotel Melody', 'Hotel Melody Ltda', '77889900100132', '43210000', 'Avenida das Américas', 'Zona Sul', 'Recife', 'PE', 'Brasil', 'contato@hotelmelody.com.br', 'youtube.com/hotelmelody', 'instagram.com/hotelmelody', 'facebook.com/hotelmelody', '(81) 93210-9876', '(81) 93210-5678', '11987654335', '9201', '11987654336', 'hotelmelody@pix.com', 'email'),
+(9,'India Tune', 'India Tune Ltda', '88990011200143', '32100000', 'Rua das Palmeiras', 'Centro', 'Fortaleza', 'CE', 'Brasil', 'contato@indiatune.com.br', 'youtube.com/indiatune', 'instagram.com/indiatune', 'facebook.com/indiatune', '(85) 92109-8765', '(85) 92109-5678', '11987654337', '1221', '11987654338', 'indiatune@pix.com', 'email'),
+(10,'Juliett Music', 'Juliett Music Ltda', '99001122300154', '21000000', 'Avenida dos Estados', 'Centro', 'Manaus', 'AM', 'Brasil', 'contato@juliettmusic.com.br', 'youtube.com/juliettmusic', 'instagram.com/juliettmusic', 'facebook.com/juliettmusic', '(92) 91098-7654', '(92) 91098-5678', '11987654339', '3241', '11987654340', 'juliettmusic@pix.com', 'email'),
+(11,'Kilo Beat', 'Kilo Beat Ltda', '10111233400165', '10900000', 'Rua do Sol', 'Centro', 'Brasília', 'DF', 'Brasil', 'contato@kilobeat.com.br', 'youtube.com/kilobeat', 'instagram.com/kilobeat', 'facebook.com/kilobeat', '(61) 90987-6543', '(61) 90987-5678', '11987654341', '5261', '11987654342', 'kilobeat@pix.com', 'email'),
+(12,'Lima Sound', 'Lima Sound Ltda', '11222344500176', '99880000', 'Avenida Oceânica', 'Zona Norte', 'Natal', 'RN', 'Brasil', 'contato@limasound.com.br', 'youtube.com/limasound', 'instagram.com/limasound', 'facebook.com/limasound', '(84) 89876-5432', '(84) 89876-5678', '11987654343', '7281', '11987654344', 'limasound@pix.com', 'email'),
+(13,'Mike Melody', 'Mike Melody Ltda', '22333455600187', '88770000', 'Rua da Harmonia', 'Vila Harmonia', 'João Pessoa', 'PB', 'Brasil', 'contato@mikemelody.com.br', 'youtube.com/mikemelody', 'instagram.com/mikemelody', 'facebook.com/mikemelody', '(83) 88765-4321', '(83) 88765-5678', '11987654345', '8301', '11987654346', 'mikemelody@pix.com', 'email'),
+(14,'November Harmony', 'November Harmony Ltda', '33444566700198', '77660000', 'Avenida Principal', 'Centro', 'Teresina', 'PI', 'Brasil', 'contato@novemberharmony.com.br', 'youtube.com/novemberharmony', 'instagram.com/novemberharmony', 'facebook.com/novemberharmony', '(86) 87654-3210', '(86) 87654-5678', '11987654347', '9321', '11987654348', 'novemberharmony@pix.com', 'email'),
+(15,'Oscar Beat', 'Oscar Beat Ltda', '44555677800209', '66550000', 'Rua do Comércio', 'Centro', 'São Luís', 'MA', 'Brasil', 'contato@oscarbeat.com.br', 'youtube.com/oscarbeat', 'instagram.com/oscarbeat', 'facebook.com/oscarbeat', '(98) 76543-2109', '(98) 76543-5678', '11987654349', '1341', '11987654350', 'oscarbeat@pix.com', 'email'),
+(16,'Papa Melody', 'Papa Melody Ltda', '55666788900210', '55440000', 'Avenida das Nações', 'Centro', 'Belém', 'PA', 'Brasil', 'contato@papamelody.com.br', 'youtube.com/papamelody', 'instagram.com/papamelody', 'facebook.com/papamelody', '(91) 65432-1098', '(91) 65432-5678', '11987654351', '2361', '11987654352', 'papamelody@pix.com', 'email');
+
+INSERT INTO MANEQUIM VALUES(9,'M','MEDIO'),(7,'G','Grande'),(5,'PP','Extra Pequeno');
+
+INSERT INTO pessoa VALUES (1, '12345678901', 'João Silva', 'M', '12345678', 'Rua das Flores', 'Centro', 'São Paulo', 'SP', '1980-05-15', '11987654321', '1187654321', 'email.tests111@gmail.com', '2020-01-01', NULL, NULL, 1, 0, 3, 1, 5),
+	(2, '10987654321', 'Maria Souza', 'F', '87654321', 'Avenida Paulista', 'Bela Vista', 'São Paulo', 'SP', '1990-03-22', '11912345678', '1134567890', 'email.tests112@gmail.com', '2020-02-15', NULL, NULL, 1, 0, 3, 1, 5);
+
+
+INSERT INTO aspnetroles VALUES ('fd597ca8-7776-430c-8bce-c4ed9c20eadd', 'ADMINISTRADOR GRUPO', 'ADMINISTRADOR GRUPO', NULL);
+INSERT INTO aspnetusers VALUES ('d9e89786-e454-48e8-a575-b419db5f83a2', '12345678901', '12345678901', 'email.tests111@gmail.com', 'EMAIL.TESTS111@GMAIL.COM', 0, 'AQAAAAEAACcQAAAAECfuURCq3/SlKumV6LoffVZ/PJ1E+pUg0ZkVLrPC8L2MTj5forpWexL8oTCEx3d1Ww==', 'OTTPXXZ57ZFC7PTV4D6APY6B3W6PBAG5', 'deefb2d7-c076-445e-a015-49f9e33c6a1b', NULL, 0, 0, NULL, 1, 0);
+INSERT INTO aspnetuserroles VALUES ('d9e89786-e454-48e8-a575-b419db5f83a2', 'fd597ca8-7776-430c-8bce-c4ed9c20eadd');
+
+INSERT INTO figurino VALUES (1, 'Vestido', '2023-05-24', 3), (2, 'Fantasia Dracula', '2023-05-24', 3);
+
+INSERT INTO ENSAIO VALUES (1,3,'FIXO', '2024-08-15 14:00:00', '2024-08-15 16:00:00', 1, 'Auditório Principal', 'Sinfonia No. 5 de Beethoven, Abertura de Egmont, Concerto para Piano No. 2 de Rachmaninoff',1),
+(2,3,'EXTRA', '2024-08-20 18:30:00', '2024-08-20 20:00:00', 0, 'Sala de Concertos', 'Noite de Jazz com John Coltrane, Miles Davis, Herbie Hancock',1),
+(3,3,'FIXO', '2024-09-01 10:00:00', '2024-09-01 12:00:00', 1, 'Teatro Municipal', 'Abertura 1812 de Tchaikovsky, Suite do Quebra-Nozes, Concerto para Violino de Mendelssohn',1),
+(4,3,'EXTRA', '2024-09-10 15:00:00', '2024-09-10 17:00:00', 0, 'Parque Central', 'Concerto ao ar livre com temas de filmes, trilha sonora de Star Wars, Indiana Jones, Harry Potter',1);
+
+INSERT INTO tipoinstrumento VALUES (1, 'Sopro'), (2, 'Corda');
+
+INSERT INTO instrumentomusical VALUES (1, '123456789', '2024-05-15', 'DISPONIVEL', 1, 3), (2, '993456789', '2024-04-16', 'DISPONIVEL', 2, 3);
+
+INSERT INTO materialestudo VALUES (1, 'Frevo','drive.com', '2024-04-15', 3, 1), (2, 'Forro','drive.com','2024-07-15', 3, 1);
+
+INSERT INTO informativo VALUES (1, 3, 1, 'Teste', '2024-03-05',0), (2, 3, 1, 'Teste', '2024-02-05',0), (3, 3, 1, 'Teste', '2024-03-21',0), (4, 3, 1, 'Teste', '2024-02-05',0);
+

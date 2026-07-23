@@ -68,7 +68,7 @@
                                     </td>
                                     <td>
                                         @{
-                                            var dataValue = Model.Associados[i].DataPagamento == DateTime.MinValue ? "" : Model.Associados[i].DataPagamento.ToString("yyyy-MM-dd");
+                                            var dataValue = Model.Associados[i].DataPagamento?.ToString("yyyy-MM-dd") ?? "";
                                         }
                                         <input type="date" name="Associados[@i].DataPagamento" value="@dataValue" class="form-control" />
                                     </td>

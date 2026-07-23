@@ -13,7 +13,7 @@ public partial class Receitafinanceirapessoa
 
     public decimal ValorPago { get; set; }
 
-    public DateTime DataPagamento { get; set; }
+    public DateTime? DataPagamento { get; set; }
 
     public string? Observacoes { get; set; }
 

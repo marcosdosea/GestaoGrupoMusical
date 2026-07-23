@@ -70,32 +70,6 @@ namespace Service
                 });
                         _context.SaveChanges();
 
-                        // INÍCIO DA CORREÇÃO: Adiciona um registro inicial para cada associado
-                        var associados = _context.Pessoas
-                                                 .Where(p => p.IdGrupoMusical == evento.IdGrupoMusical && p.IdPapelGrupo == 1) // 1 = Associado
-                                                 .AsNoTracking()
-                                                 .ToList();
-
-                        foreach (var associado in associados)
-                        {
-                            var existeInscricao = _context.Eventopessoas.Any(ep => ep.IdEvento == evento.Id && ep.IdPessoa == associado.Id);
-                            if (!existeInscricao)
-                            {
-                                _context.Eventopessoas.Add(new Eventopessoa
-                                {
-                                    IdEvento = evento.Id,
-                                    IdPessoa = associado.Id,
-                                    IdPapelGrupoPapelGrupo = 1, // Associado
-                                    Status = "DEFERIDO",
-                                    Presente = 0,
-                                    JustificativaAceita = 0,
-                                    IdTipoInstrumento = null
-                                });
-                            }
-                        }
-                        _context.SaveChanges();
-                        // FIM DA CORREÇÃO
-
                         Console.WriteLine($"Evento {evento.Id} criado com sucesso. Regentes adicionados: {string.Join(", ", idRegentes)}");
 
                         transaction.Commit();
@@ -573,11 +547,26 @@ namespace Service
 
         public async Task<HttpStatusCode> SolicitarParticipacao(int idEvento, int idPessoa, int idTipoInstrumento)
         {
+            if (idTipoInstrumento <= 0)
+            {
+                return HttpStatusCode.BadRequest;
+            }
+
             var transaction = _context.Database.BeginTransaction();
             try
             {
                 // LOG para debug
                 Console.WriteLine($"Iniciando solicitação - Pessoa: {idPessoa}, Evento: {idEvento}, Instrumento: {idTipoInstrumento}");
+
+                var instrumentoEvento = await _context.Apresentacaotipoinstrumentos
+                    .FirstOrDefaultAsync(ati => ati.IdApresentacao == idEvento &&
+                                                ati.IdTipoInstrumento == idTipoInstrumento);
+
+                if (instrumentoEvento == null)
+                {
+                    transaction.Rollback();
+                    return HttpStatusCode.BadRequest;
+                }
 
                 // Verificar se já existe alguma solicitação (qualquer status)
                 var solicitacaoExistente = await _context.Eventopessoas
@@ -634,20 +623,9 @@ namespace Service
                 }
 
                 // Atualizar quantidade solicitada do novo instrumento
-                var instrumentoEvento = await _context.Apresentacaotipoinstrumentos
-                    .FirstOrDefaultAsync(ati => ati.IdApresentacao == idEvento &&
-                                               ati.IdTipoInstrumento == idTipoInstrumento);
-
-                if (instrumentoEvento != null)
-                {
-                    instrumentoEvento.QuantidadeSolicitada++;
-                    _context.Update(instrumentoEvento);
-                    Console.WriteLine($"Quantidade solicitada do instrumento {idTipoInstrumento} incrementada para {instrumentoEvento.QuantidadeSolicitada}");
-                }
-                else
-                {
-                    Console.WriteLine($"AVISO: Instrumento {idTipoInstrumento} não encontrado na apresentação {idEvento}");
-                }
+                instrumentoEvento.QuantidadeSolicitada++;
+                _context.Update(instrumentoEvento);
+                Console.WriteLine($"Quantidade solicitada do instrumento {idTipoInstrumento} incrementada para {instrumentoEvento.QuantidadeSolicitada}");
 
                 await _context.SaveChangesAsync();
                 transaction.Commit();

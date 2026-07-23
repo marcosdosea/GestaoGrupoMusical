@@ -931,8 +931,8 @@ public partial class GrupoMusicalContext : DbContext
                 .HasMaxLength(200)
                 .HasColumnName("observacoes");
             entity.Property(e => e.Status)
-                .HasDefaultValueSql("'ABERTO'")
-                .HasColumnType("enum('ABERTO','ENVIADO','PAGO','ISENTO')")
+                .HasDefaultValueSql("'NAO_PAGOU'")
+                .HasColumnType("enum('ABERTO','ENVIADO','PAGO','ISENTO','NAO_PAGOU','PAGO_COMPROVANTE')")
                 .HasColumnName("status");
             entity.Property(e => e.Valor)
                 .HasPrecision(10)
