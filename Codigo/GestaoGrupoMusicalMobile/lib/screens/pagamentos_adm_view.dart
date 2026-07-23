@@ -25,9 +25,16 @@ class _PagamentosAdminViewState extends State<PagamentosAdminView> {
   }
 
   void _carregarCampanhas() {
+    _futureCampanhas = _financeiroService.getCampanhasAdmin();
+  }
+
+  Future<void> _refresh() async {
     setState(() {
-      _futureCampanhas = _financeiroService.getCampanhasAdmin();
+      _carregarCampanhas();
     });
+    try {
+      await _futureCampanhas;
+    } catch (_) {}
   }
 
   @override
@@ -49,70 +56,94 @@ class _PagamentosAdminViewState extends State<PagamentosAdminView> {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator(color: AppColors.primary));
               } else if (snapshot.hasError) {
-                return Center(
-                  child: Text("Erro ao carregar dados: ${snapshot.error}", textAlign: TextAlign.center),
+                return RefreshIndicator(
+                  onRefresh: _refresh,
+                  child: CustomScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    slivers: [
+                      SliverFillRemaining(
+                        child: Center(
+                          child: Text("Erro ao carregar dados: ${snapshot.error}", textAlign: TextAlign.center),
+                        ),
+                      ),
+                    ],
+                  ),
                 );
               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return const Center(child: Text("Nenhuma campanha financeira encontrada."));
+                return RefreshIndicator(
+                  onRefresh: _refresh,
+                  child: CustomScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    slivers: [
+                      SliverFillRemaining(
+                        child: Center(child: const Text("Nenhuma campanha financeira encontrada.")),
+                      ),
+                    ],
+                  ),
+                );
               }
 
               final campanhas = snapshot.data!;
 
-              return ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                itemCount: campanhas.length,
-                itemBuilder: (context, index) {
-                  final camp = campanhas[index];
-                  return Card(
-                    elevation: 3,
-                    margin: const EdgeInsets.only(bottom: 16.0),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(camp.descricao, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                          const SizedBox(height: 8),
-                          Text(
-                            "Período: ${DateFormat('dd/MM/yyyy').format(camp.inicio)} até ${DateFormat('dd/MM/yyyy').format(camp.fim)}",
-                            style: const TextStyle(color: Colors.black54, fontSize: 13),
-                          ),
-                          const Divider(height: 24),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              _buildStatColumn("Pagos", camp.pagos.toString(), Colors.green),
-                              _buildStatColumn("Atrasos", camp.atrasos.toString(), Colors.red),
-                              _buildStatColumn("Isentos", camp.isentos.toString(), Colors.grey),
-                              _buildStatColumn("Recebido", "R\$ ${camp.recebido.toStringAsFixed(2)}", AppColors.primary),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.secondary,
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                              ),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => DetalhesPagamentoAdminView(campanha: camp),
-                                  ),
-                                );
-                              },
-                              child: const Text("Detalhes do Pagamento"),
+              return RefreshIndicator(
+                onRefresh: _refresh,
+                child: ListView.builder(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  itemCount: campanhas.length,
+                  itemBuilder: (context, index) {
+                    final camp = campanhas[index];
+                    return Card(
+                      elevation: 3,
+                      margin: const EdgeInsets.only(bottom: 16.0),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(camp.descricao, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                            const SizedBox(height: 8),
+                            Text(
+                              "Período: ${DateFormat('dd/MM/yyyy').format(camp.inicio)} até ${DateFormat('dd/MM/yyyy').format(camp.fim)}",
+                              style: const TextStyle(color: Colors.black54, fontSize: 13),
                             ),
-                          )
-                        ],
+                            const Divider(height: 24),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                _buildStatColumn("Pagos", camp.pagos.toString(), Colors.green),
+                                _buildStatColumn("Atrasos", camp.atrasos.toString(), Colors.red),
+                                _buildStatColumn("Isentos", camp.isentos.toString(), Colors.grey),
+                                _buildStatColumn("Recebido", "R\$ ${camp.recebido.toStringAsFixed(2)}", AppColors.primary),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.secondary,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                ),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => DetalhesPagamentoAdminView(campanha: camp),
+                                    ),
+                                  );
+                                },
+                                child: const Text("Detalhes do Pagamento"),
+                              ),
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               );
             },
           ),
@@ -151,8 +182,20 @@ class _DetalhesPagamentoAdminViewState extends State<DetalhesPagamentoAdminView>
   @override
   void initState() {
     super.initState();
-    // Inicia a requisição passando o ID da campanha escolhida
+    _carregarAssociados();
+  }
+
+  void _carregarAssociados() {
     _futureAssociados = _financeiroService.getAssociadosDoPagamento(widget.campanha.id);
+  }
+
+  Future<void> _refresh() async {
+    setState(() {
+      _carregarAssociados();
+    });
+    try {
+      await _futureAssociados;
+    } catch (_) {}
   }
 
   @override
@@ -169,59 +212,83 @@ class _DetalhesPagamentoAdminViewState extends State<DetalhesPagamentoAdminView>
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator(color: AppColors.primary));
           } else if (snapshot.hasError) {
-            return Center(child: Text("Erro: ${snapshot.error}"));
+            return RefreshIndicator(
+              onRefresh: _refresh,
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: [
+                  SliverFillRemaining(
+                    child: Center(child: Text("Erro: ${snapshot.error}")),
+                  ),
+                ],
+              ),
+            );
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text("Nenhum associado encontrado para este pagamento."));
+            return RefreshIndicator(
+              onRefresh: _refresh,
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: [
+                  SliverFillRemaining(
+                    child: Center(child: const Text("Nenhum associado encontrado para este pagamento.")),
+                  ),
+                ],
+              ),
+            );
           }
 
           final associados = snapshot.data!;
 
-          return ListView.builder(
-            padding: const EdgeInsets.all(16.0),
-            itemCount: associados.length,
-            itemBuilder: (context, index) {
-              final assoc = associados[index];
-              return Card(
-                elevation: 2,
-                margin: const EdgeInsets.only(bottom: 12.0),
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              assoc.nomeAssociado,
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          return RefreshIndicator(
+            onRefresh: _refresh,
+            child: ListView.builder(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(16.0),
+              itemCount: associados.length,
+              itemBuilder: (context, index) {
+                final assoc = associados[index];
+                return Card(
+                  elevation: 2,
+                  margin: const EdgeInsets.only(bottom: 12.0),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                assoc.nomeAssociado,
+                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                              ),
                             ),
-                          ),
-                          _buildStatusChip(assoc.status),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Text("CPF: ${assoc.cpf}", style: const TextStyle(color: Colors.black87, fontSize: 13)),
-                      const SizedBox(height: 4),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Data: ${assoc.dataPagamento != null ? DateFormat('dd/MM/yyyy').format(assoc.dataPagamento!) : 'Pendente'}",
-                            style: const TextStyle(color: Colors.black54, fontSize: 13),
-                          ),
-                          Text(
-                            "R\$ ${assoc.valorPago.toStringAsFixed(2)}",
-                            style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
-                          ),
-                        ],
-                      ),
-                    ],
+                            _buildStatusChip(assoc.status),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text("CPF: ${assoc.cpf}", style: const TextStyle(color: Colors.black87, fontSize: 13)),
+                        const SizedBox(height: 4),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Data: ${assoc.dataPagamento != null ? DateFormat('dd/MM/yyyy').format(assoc.dataPagamento!) : 'Pendente'}",
+                              style: const TextStyle(color: Colors.black54, fontSize: 13),
+                            ),
+                            Text(
+                              "R\$ ${assoc.valorPago.toStringAsFixed(2)}",
+                              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           );
         },
       ),
