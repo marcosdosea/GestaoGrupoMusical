@@ -52,6 +52,7 @@ namespace GestaoGrupoMusicalAPI.Controllers
             var tokens = await context.DispositivoPessoa
                 .Where(d => d.Pessoa.IdGrupoMusical == idGrupo)
                 .Select(d => d.FcmToken)
+                .Distinct()
                 .ToListAsync();
 
             if (!tokens.Any())

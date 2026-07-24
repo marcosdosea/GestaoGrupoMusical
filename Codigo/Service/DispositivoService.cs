@@ -21,29 +21,39 @@ namespace Service
         {
             try
             {
-                var dispositivoExistente = await context.DispositivoPessoa
-                    .FirstOrDefaultAsync(d => d.IdPessoa == dto.IdPessoa);
+                var dispositivoExistente =
+                    await context.DispositivoPessoa
+                        .FirstOrDefaultAsync(
+                            d => d.FcmToken == dto.FcmToken);
 
                 if (dispositivoExistente != null)
                 {
-                    dispositivoExistente.FcmToken = dto.FcmToken;
+                    // O token já existe: transfere o aparelho
+                    // para a pessoa atualmente autenticada.
+                    dispositivoExistente.IdPessoa = dto.IdPessoa;
                     dispositivoExistente.DataAtualizacao = DateTime.Now;
-                    context.DispositivoPessoa.Update(dispositivoExistente);
                 }
                 else
                 {
-                    var novoDispositivo = new DispositivoPessoa
-                    {
-                        IdPessoa = dto.IdPessoa,
-                        FcmToken = dto.FcmToken,
-                        DataAtualizacao = DateTime.Now
-                    };
-                    await context.DispositivoPessoa.AddAsync(novoDispositivo);
+                    await context.DispositivoPessoa.AddAsync(
+                        new DispositivoPessoa
+                        {
+                            IdPessoa = dto.IdPessoa,
+                            FcmToken = dto.FcmToken,
+                            DataAtualizacao = DateTime.Now
+                        });
                 }
+
                 await context.SaveChangesAsync();
                 return true;
             }
-            catch { return false; }
+            catch (Exception ex)
+            {
+                Console.WriteLine(
+                    $"Erro ao registrar dispositivo: {ex.Message}");
+
+                return false;
+            }
         }
 
         public async Task EnviarNotificacaoParaGrupoAsync(int idGrupo, string titulo, string corpo)
@@ -51,6 +61,7 @@ namespace Service
             var tokens = await context.DispositivoPessoa
                 .Where(d => d.Pessoa.IdGrupoMusical == idGrupo)
                 .Select(d => d.FcmToken)
+                .Distinct()
                 .ToListAsync();
 
             foreach (var token in tokens)
