@@ -658,15 +658,29 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [Authorize(Roles = "ASSOCIADO")]
         public async Task<ActionResult> JustificarAusencia(int idEvento)
         {
-            var model = await _eventoService.GetEventoPessoaAsync(idEvento, Convert.ToInt32(User.FindFirst("Id")?.Value));
+            var idPessoa = Convert.ToInt32(User.FindFirst("Id")?.Value);
+            var model = await _eventoService.GetEventoPessoaAsync(idEvento, idPessoa);
+
+            if (model == null)
+            {
+                EventoJustificativaViewModel eventoJustificativaVazia = new()
+                {
+                    IdEvento = idEvento,
+                    Justificativa = string.Empty
+                };
+
+                return View(eventoJustificativaVazia);
+            }
 
             EventoJustificativaViewModel eventoJustificativa = new()
             {
                 IdEvento = model.IdEvento,
                 Justificativa = model.JustificativaFalta
             };
+
             return View(eventoJustificativa);
         }
+
         [Authorize(Roles = "ASSOCIADO")]
         [HttpPost]
         [ValidateAntiForgeryToken]
