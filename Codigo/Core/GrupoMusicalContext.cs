@@ -972,6 +972,9 @@ public partial class GrupoMusicalContext : DbContext
 
             entity.HasIndex(e => e.IdPessoa, "fk_DispositivoPessoa_Pessoa_idx");
 
+            entity.HasIndex(e => e.FcmToken, "uq_dispositivopessoa_fcmToken")
+                .IsUnique();
+
             entity.Property(e => e.Id)
                 .HasColumnName("id");
 
@@ -979,7 +982,7 @@ public partial class GrupoMusicalContext : DbContext
                 .HasColumnName("idPessoa");
 
             entity.Property(e => e.FcmToken)
-                .HasColumnType("text")
+                .HasMaxLength(512)
                 .HasColumnName("fcmToken");
 
             entity.Property(e => e.DataAtualizacao)
