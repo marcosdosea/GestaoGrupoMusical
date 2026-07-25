@@ -693,8 +693,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     case HttpStatusCode.OK:
                         Notificar("<b>Justificativa</b> registrada com <b>Sucesso</b>", Notifica.Sucesso);
                         return RedirectToAction(nameof(Index));
+
                     case HttpStatusCode.NotFound:
-                        Notificar("A <b>Justificativa</b> enviada é <b>Inválida</b>", Notifica.Erro);
+                        Notificar("Você <b>não possui inscrição</b> confirmada neste evento, portanto não há ausência para justificar.", Notifica.Alerta);
                         break;
                     case HttpStatusCode.Unauthorized:
                         Notificar("Desculpe, <b>Não</b> foi possível <b>Registrar</b> a <b>Justificativa</b>", Notifica.Erro);
