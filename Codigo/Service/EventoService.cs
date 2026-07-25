@@ -1006,21 +1006,30 @@ namespace Service
         {
             try
             {
-                var eventoPessoa = await GetEventoPessoaAsync(idEvento, idPessoa);
-                if (eventoPessoa == null)
+                try
                 {
-                    return HttpStatusCode.NotFound;
+                    var eventoPessoa = await GetEventoPessoaAsync(idEvento, idPessoa);
+                    if (eventoPessoa == null)
+                    {
+                        // Se o registro não existe, retornamos NotFound igualzinho no Ensaio
+                        return HttpStatusCode.NotFound;
+                    }
+
+                    eventoPessoa.JustificativaFalta = justificativa;
+                    eventoPessoa.Presente = 0;
+
+                    _context.Update(eventoPessoa);
+                    await _context.SaveChangesAsync();
+                    return HttpStatusCode.OK;
                 }
-
-                eventoPessoa.JustificativaFalta = justificativa;
-                eventoPessoa.Presente = 0;
-
-                _context.Update(eventoPessoa);
-                await _context.SaveChangesAsync();
-                return HttpStatusCode.OK;
+                catch
+                {
+                    return HttpStatusCode.InternalServerError;
+                }
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine($"Erro ao salvar justificativa: {ex.InnerException?.Message ?? ex.Message}");
                 return HttpStatusCode.InternalServerError;
             }
         }
