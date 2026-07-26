@@ -85,6 +85,9 @@ namespace Core.DTO
 
         [Display(Name = "Aprovado")]
         public InscricaoEventoPessoa AprovadoModel { get; set; }
+        public sbyte Presente { get; set; }
+        public string? JustificativaFalta { get; set; }
+        public sbyte JustificativaAceita { get; set; }
     }
 
     public class InstrumentoSolicitacaoDTO
