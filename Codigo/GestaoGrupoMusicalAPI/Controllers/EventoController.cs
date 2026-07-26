@@ -123,5 +123,48 @@ namespace GestaoGrupoMusicalAPI.Controllers
 
             return BadRequest(new { mensagem = "Não foi possível cancelar. Verifique se a solicitação já foi aprovada." });
         }
+
+        // POST: api/Evento/JustificarAusencia
+        [HttpPost("JustificarAusencia")]
+        public async Task<ActionResult> JustificarAusencia([FromBody] JustificarAusenciaEventoDTO dto)
+        {
+            var claimId = User.FindFirst("Id")?.Value;
+            if (!int.TryParse(claimId, out int idPessoa))
+            {
+                var claimIdPessoa = User.FindFirst("IdPessoa")?.Value;
+                int.TryParse(claimIdPessoa, out idPessoa);
+            }
+
+            if (idPessoa <= 0) return BadRequest(new { mensagem = "Usuário inválido." });
+
+            var resultado = await eventoService.RegistrarJustificativaAsync(dto.IdEvento, idPessoa, dto.Justificativa);
+
+            if (resultado == HttpStatusCode.OK)
+            {
+                return Ok(new { mensagem = "Justificativa enviada com sucesso!" });
+            }
+
+            return BadRequest(new { mensagem = "Não foi possível registrar a justificativa." });
+        }
+
+        // GET: api/Evento/MinhaInscricao/{idEvento}
+        [HttpGet("MinhaInscricao/{idEvento}")]
+        public async Task<ActionResult> GetMinhaInscricao(int idEvento)
+        {
+            var claimId = User.FindFirst("Id")?.Value;
+            if (!int.TryParse(claimId, out int idPessoa))
+            {
+                var claimIdPessoa = User.FindFirst("IdPessoa")?.Value;
+                int.TryParse(claimIdPessoa, out idPessoa);
+            }
+
+            if (idPessoa <= 0) return BadRequest(new { mensagem = "Usuário inválido." });
+
+            var minhaInscricao = await eventoService.GetSolicitacaoAssociado(idEvento, idPessoa);
+
+            if (minhaInscricao == null) return NotFound(new { mensagem = "Inscrição não encontrada." });
+
+            return Ok(minhaInscricao);
+        }
     }
 }
