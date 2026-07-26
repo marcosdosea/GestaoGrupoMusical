@@ -1106,20 +1106,36 @@ public EventoDetailsDTO? GetDetails(int idEvento)
         public IEnumerable<EventoAssociadoDTO>? GetEventosDeAssociado(int idPessoa, int idGrupoMusical, int PegarUltimosEventoDeAssociado)
         {
             DateTime pegarUltimosMeses = DateTime.Now.AddMonths(PegarUltimosEventoDeAssociado);
-            var query = (from evento in _context.Eventos
-                         where idGrupoMusical == evento.IdGrupoMusical && evento.DataHoraInicio.Date >= pegarUltimosMeses.Date
-                         select new EventoAssociadoDTO
-                         {
-                             Id = evento.Id,
-                             IdGrupoMusical = idGrupoMusical,
-                             Local = evento.Local,
-                             Inicio = evento.DataHoraInicio,
-                             Fim = evento.DataHoraFim,
-                             AprovadoModel = ConvertAprovadoParaEnum(
-                                 _context.Eventopessoas.
-                                 Where(ep => ep.IdEvento == evento.Id && ep.IdPessoa == idPessoa)
-                                 .Select(ep => ep.Status).AsNoTracking().FirstOrDefault()),
-                         }).AsNoTracking().ToList();
+
+            // Passo 1: Busca os dados brutos no banco (trazendo para a memória com .ToList())
+            var dadosBanco = (from evento in _context.Eventos
+                              where idGrupoMusical == evento.IdGrupoMusical && evento.DataHoraInicio.Date >= pegarUltimosMeses.Date
+
+                              let ep = _context.Eventopessoas.FirstOrDefault(e => e.IdEvento == evento.Id && e.IdPessoa == idPessoa)
+
+                              select new
+                              {
+                                  Evento = evento,
+                                  Ep = ep
+                              }).AsNoTracking().ToList();
+
+            // Passo 2: Mapeia para o seu DTO de forma segura usando apenas o C#
+            var query = dadosBanco.Select(x => new EventoAssociadoDTO
+            {
+                Id = x.Evento.Id,
+                IdGrupoMusical = idGrupoMusical,
+                Local = x.Evento.Local,
+                Inicio = x.Evento.DataHoraInicio,
+                Fim = x.Evento.DataHoraFim,
+
+                AprovadoModel = ConvertAprovadoParaEnum(x.Ep != null ? x.Ep.Status : null),
+
+                Presente = x.Ep != null ? x.Ep.Presente : (sbyte)0,
+                JustificativaFalta = x.Ep != null ? x.Ep.JustificativaFalta : null,
+                JustificativaAceita = x.Ep != null ? x.Ep.JustificativaAceita : (sbyte)0
+
+            }).ToList();
+
             return query;
         }
 
