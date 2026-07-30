@@ -19,7 +19,8 @@ class EventoService {
       final cachedData = await CacheManager.getCache(_cacheKey, userId: userId);
       if (cachedData != null) {
         debugPrint('Usando dados em cache isolados para o usuário $userId');
-        final List data = cachedData is List ? cachedData : jsonDecode(cachedData);
+        final List data =
+            cachedData is List ? cachedData : jsonDecode(cachedData);
         return data.map((e) => EventoModel.fromJson(e)).toList();
       }
     } catch (e) {
@@ -83,7 +84,8 @@ class EventoService {
           return null;
         }
       } else {
-        debugPrint("ERRO API: Status ${response.statusCode} - ${response.body}");
+        debugPrint(
+            "ERRO API: Status ${response.statusCode} - ${response.body}");
         return null;
       }
     } catch (e) {
@@ -92,8 +94,10 @@ class EventoService {
       return await CacheManager.getCache(cacheKey, userId: userId);
     }
   }
+
   // Métodos de POST (Participação e Cancelamento) permanecem iguais...
-  Future<String?> solicitarParticipacao(int idEvento, int idTipoInstrumento) async {
+  Future<String?> solicitarParticipacao(
+      int idEvento, int idTipoInstrumento) async {
     try {
       final token = await SessionManager.getToken();
       final response = await http.post(
@@ -135,11 +139,67 @@ class EventoService {
   // Novo método para forçar a limpeza do cache de eventos
   Future<void> limparCacheListagem() async {
     final userId = (await SessionManager.getIdPessoa())?.toString();
-    
+
     try {
       await CacheManager.clearCache(_cacheKey, userId: userId);
     } catch (e) {
       debugPrint('Erro ao limpar cache de eventos: $e');
     }
+  }
+
+  // POST: Enviar justificativa de ausência para o evento
+  Future<String?> justificarAusencia(int idEvento, String justificativa) async {
+    try {
+      final token = await SessionManager.getToken();
+      final response = await http.post(
+        Uri.parse('$baseUrl/api/Evento/JustificarAusencia'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'idEvento': idEvento,
+          'justificativa': justificativa,
+        }),
+      );
+
+      if (response.statusCode == 200) return null;
+      return _mensagemErro(response);
+    } catch (e) {
+      debugPrint('Erro ao enviar justificativa de evento: $e');
+      return 'Não foi possível conectar à API para enviar a justificativa.';
+    }
+  }
+
+  Future<void> limparCacheDetalhes(int idEvento) async {
+    final userId = (await SessionManager.getIdPessoa())?.toString();
+    await CacheManager.clearCache('$_detalhesCachePrefix$idEvento',
+        userId: userId);
+  }
+
+  String _mensagemErro(http.Response response) {
+    if (response.statusCode == 401) {
+      return 'Sua sessão expirou. Entre novamente.';
+    }
+
+    if (response.statusCode == 403) {
+      return 'Você não tem permissão para justificar esta ausência.';
+    }
+
+    try {
+      final data = jsonDecode(response.body) as Map<String, dynamic>;
+      final mensagem = data['mensagem'] as String?;
+      if (mensagem != null && mensagem.isNotEmpty) return mensagem;
+    } catch (_) {}
+
+    return 'Não foi possível enviar a justificativa (HTTP ${response.statusCode}).';
+  }
+
+  // GET: Consultar os detalhes/inscrição para verificar a justificativa enviada
+  Future<Map<String, dynamic>?> getMinhaInscricao(int idEvento) async {
+    // Como o seu getDetalhesEvento já busca o endpoint de detalhes do evento
+    // que retorna a propriedade 'minhaInscricao' / 'MinhaInscricao',
+    // podemos reutilizá-lo ou chamar diretamente se preferir.
+    return await getDetalhesEvento(idEvento);
   }
 }
