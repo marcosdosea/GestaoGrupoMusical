@@ -299,8 +299,8 @@ namespace Service
             try
             {
                 frequencia.AssociadosDTO = frequencia.AssociadosDTO?.Where
-                    (e => e.JustificativaAceitaModel != e.JustificativaAceita
-                    || e.PresenteModel != e.Presente).ToList();
+                    (e => e.JustificativaAceita != e.JustificativaAceita
+                    || e.Presente != e.Presente).ToList();
 
                 if(frequencia.AssociadosDTO == null || !frequencia.AssociadosDTO.Any())
                 {

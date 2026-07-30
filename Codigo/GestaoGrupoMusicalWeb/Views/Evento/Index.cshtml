@@ -88,31 +88,31 @@
                         {"data": "confirmados", "name": "Confirmados", "autoWidth": true},
                         {
                             "render": function (data, type, full, meta) {
-                            return `
-        <div class="d-flex flex-wrap gap-1 justify-content-center">
-            <a class="btn btn-secondary btn-sm" href="/Evento/Edit/${full.id}" data-bs-toggle="tooltip" title="Editar">
-                <i class="fa-solid fa-pen-to-square"></i>
-            </a>
-            <a class="btn btn-secondary btn-sm" href="/Evento/Details/${full.id}" data-bs-toggle="tooltip" title="Detalhes">
-                <i class="fa-solid fa-circle-info"></i>
-            </a>
-            <a onclick="showConfirmationModal(${full.id})" class="btn btn-secondary btn-sm" role="button" data-bs-toggle="tooltip" title="Excluir">
-                <i class="fa-solid fa-xmark"></i>
-            </a>
-            <a class="btn btn-secondary btn-sm" href="/Evento/GerenciarInstrumentoEvento/${full.id}" data-bs-toggle="tooltip" title="Instrumentos">
-                <i class="fa-solid fa-music"></i>
-            </a>
-            <a class="btn btn-secondary btn-sm" href="/Evento/GerenciarSolicitacaoEvento/${full.id}" data-bs-toggle="tooltip" title="Solicitações">
-                <i class="fa-solid fa-clipboard-list"></i>
-            </a>
-            <a class="btn btn-secondary btn-sm" href="/Evento/RegistrarFrequencia/${full.id}" data-bs-toggle="tooltip" title="Frequência">
-                <i class="fa-solid fa-user-check"></i>
-            </a>
-            <a onclick="showConfirmationModalNotificar(${full.id})" class="btn btn-secondary btn-sm" role="button" data-bs-toggle="tooltip" title="Notificar">
-                <i class="fa-solid fa-envelope"></i>
-            </a>
-        </div>
-        `;
+                                return `
+                                <div class="d-flex flex-wrap gap-1 justify-content-center">
+                                    <a class="btn btn-secondary btn-sm" href="/Evento/Edit/${full.id}" data-bs-toggle="tooltip" title="Editar">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </a>
+                                    <a class="btn btn-secondary btn-sm" href="/Evento/Details/${full.id}" data-bs-toggle="tooltip" title="Detalhes">
+                                        <i class="fa-solid fa-circle-info"></i>
+                                    </a>
+                                    <a onclick="showConfirmationModal(${full.id})" class="btn btn-secondary btn-sm" role="button" data-bs-toggle="tooltip" title="Excluir">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </a>
+                                    <a class="btn btn-secondary btn-sm" href="/Evento/GerenciarInstrumentoEvento/${full.id}" data-bs-toggle="tooltip" title="Instrumentos">
+                                        <i class="fa-solid fa-music"></i>
+                                    </a>
+                                    <a class="btn btn-secondary btn-sm" href="/Evento/GerenciarSolicitacaoEvento/${full.id}" data-bs-toggle="tooltip" title="Solicitações">
+                                        <i class="fa-solid fa-clipboard-list"></i>
+                                    </a>
+                                    <a class="btn btn-secondary btn-sm" href="/Evento/RegistrarFrequencia/${full.id}" data-bs-toggle="tooltip" title="Frequência">
+                                        <i class="fa-solid fa-user-check"></i>
+                                    </a>
+                                    <a onclick="showConfirmationModalNotificar(${full.id})" class="btn btn-secondary btn-sm" role="button" data-bs-toggle="tooltip" title="Notificar">
+                                        <i class="fa-solid fa-envelope"></i>
+                                    </a>
+                                </div>
+                                `;
                             }
 
                         },

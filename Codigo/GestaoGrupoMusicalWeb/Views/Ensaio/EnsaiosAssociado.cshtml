@@ -7,33 +7,20 @@
 
 <partial name="_Notificar">
 
+    <!-- SEÇÃO ENSAIOS -->
     <div class="container">
         <h1 class="fs-5 mb-4">@ViewData["Title"]</h1>
         <div class="table-responsive">
             <table class="table accordion mt-3">
                 <thead>
                     <tr class="bg-danger bg-opacity-75 text-white">
-                        <th class="col-md-1">
-                            <Text>Início</Text>
-                        </th>
-                        <th class="col-md-1">
-                            <Text>Fim</Text>
-                        </th>
-                        <th class="col-md-1">
-                            <Text>Local</Text>
-                        </th>
-                        <th class="col-md-1">
-                            <Text>Presente</Text>
-                        </th>
-                        <th class="col-md-2">
-                            <Text>Justificatica Ausência</Text>
-                        </th>
-                        <th class="col-md-2">
-                            <Text>Justificativa Aceita</Text>
-                        </th>
-                        <th class="col-md-2">
-                            <Text>Ações</Text>
-                        </th>
+                        <th class="col-md-1"><Text>Início</Text></th>
+                        <th class="col-md-1"><Text>Fim</Text></th>
+                        <th class="col-md-1"><Text>Local</Text></th>
+                        <th class="col-md-1"><Text>Presente</Text></th>
+                        <th class="col-md-2"><Text>Justificativa Ausência</Text></th>
+                        <th class="col-md-2"><Text>Justificativa Aceita</Text></th>
+                        <th class="col-md-2"><Text>Ações</Text></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -42,36 +29,26 @@
                         @foreach (var item in Model.Ensaios)
                         {
                             <tr class="border-bottom border-danger border-opacity-75 align-middle">
+                                <td>@item.Inicio</td>
+                                <td>@item.Fim</td>
+                                <td>@item.Local</td>
+                                <td>@(item.Presente ? "Sim" : "Não")</td>
+                                <td>@item.Justificativa</td>
+                                <td>@(item.JustificativaAceita ? "Sim" : "Não")</td>
                                 <td>
-                                    @item.Inicio
-                                </td>
-                                <td>
-                                    @item.Fim
-                                </td>
-                                <td>
-                                    @item.Local
-                                </td>
-                                <td>
-                                    @(item.Presente ? "Sim" : "Não")
-                                </td>
-                                <td>
-                                    @item.Justificativa
-                                </td>
-                                <td>
-                                    @(item.JustificativaAceita ? "Sim" : "Não")
-                                </td>
-                                <td>
-                                    <a data-bs-toggle="collapse"
-                                       data-bs-target="#accordion_@(item.Id)"
-                                       role="button"
-                                       class="btn btn-secondary btn-sm dropdown-toggle my-3">
-                                        <i class="fa-solid fa-music"></i>
-                                        Repertório
-                                    </a>
-                                    <a class="btn btn-secondary btn btn-sm" role="button" asp-controller="Ensaio" asp-action="JustificarAusencia" asp-route-idEnsaio="@item.Id">
-                                        <i class="fa-solid fa-outdent"></i>
-                                        Justificar Ausência
-                                    </a>
+                                    <div class="d-flex flex-column gap-1 my-2">
+                                        <a data-bs-toggle="collapse"
+                                           data-bs-target="#accordion_@(item.Id)"
+                                           role="button"
+                                           class="btn btn-secondary btn-sm dropdown-toggle">
+                                            <i class="fa-solid fa-music"></i>
+                                            Repertório
+                                        </a>
+                                        <a class="btn btn-secondary btn-sm" role="button" asp-controller="Ensaio" asp-action="JustificarAusencia" asp-route-idEnsaio="@item.Id">
+                                            <i class="fa-solid fa-outdent"></i>
+                                            Justificar Ausência
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                             <tr class="collapse accordion-collapse border-danger border-opacity-75" id="accordion_@(item.Id)">
@@ -83,7 +60,6 @@
                                 </td>
                             </tr>
                         }
-
                     }
                 </tbody>
             </table>
@@ -94,28 +70,21 @@
         </div>
     </div>
 
-
+    <!-- SEÇÃO EVENTOS -->
     <div class="container">
-        <h1 class="fs-5 mb-4">@ViewData["Title2"]</h1>
+        <h1 class="fs-5 mb-4 mt-5">@ViewData["Title2"]</h1>
         <div class="table-responsive">
             <table class="table accordion mt-3">
                 <thead>
                     <tr class="bg-danger bg-opacity-75 text-white">
-                        <th class="col-md-1">
-                            <Text>Início</Text>
-                        </th>
-                        <th class="col-md-1">
-                            <Text>Fim</Text>
-                        </th>
-                        <th class="col-md-1">
-                            <Text>Local</Text>
-                        </th>
-                        <th class="col-md-2">
-                            <Text>Inscrição</Text>
-                        </th>
-                        <th class="col-md-4">
-                            <Text>Ações</Text>
-                        </th>
+                        <th class="col-md-1"><Text>Início</Text></th>
+                        <th class="col-md-1"><Text>Fim</Text></th>
+                        <th class="col-md-1"><Text>Local</Text></th>
+                        <th class="col-md-1"><Text>Presente</Text></th>
+                        <th class="col-md-2"><Text>Justificativa Ausência</Text></th>
+                        <th class="col-md-2"><Text>Justificativa Aceita</Text></th>
+                        <th class="col-md-2"><Text>Inscrição</Text></th>
+                        <th class="col-md-2"><Text>Ações</Text></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -124,37 +93,48 @@
                         @foreach (var item in Model.Eventos)
                         {
                             <tr class="border-bottom border-danger border-opacity-75 align-middle">
-                                <td>
-                                    @item.Inicio
-                                </td>
-                                <td>
-                                    @item.Fim
-                                </td>
-                                <td>
-                                    @item.Local
-                                </td>
+                                <td>@item.Inicio.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>@item.Fim.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>@item.Local</td>
+                                <td>@(item.Presente == 1 ? "Sim" : "Não")</td>
+                                <td>@item.JustificativaFalta</td>
+                                <td>@(item.JustificativaAceita == 1 ? "Sim" : "Não")</td>
+
+                                <!-- Status de Inscrição com escrita fina igual a "Sim" -->
                                 <td>
                                     @if (item.AprovadoModel == Core.DTO.InscricaoEventoPessoa.NAO_SOLICITADO)
                                     {
                                         <a class="btn btn-secondary btn-sm" role="button" asp-controller="Evento" asp-action="SolicitarParticipacao" asp-route-id="@item.Id">
-                                            <i class="fa-solid fa-circle-check"></i>
-                                            Quero Participar
+                                            <i class="fa-solid fa-circle-check"></i> Quero Participar
                                         </a>
                                     }
                                     else if (item.AprovadoModel == Core.DTO.InscricaoEventoPessoa.INSCRITO)
                                     {
-                                        <div class="d-inline-flex align-items-center text-secondary fw-semibold px-2">
-                                            <i class="fa-solid fa-circle-check me-1"></i>
-                                            Realizada
-                                        </div>
+                                        @:Aguardando
+                                    }
+                                    else if (item.AprovadoModel == Core.DTO.InscricaoEventoPessoa.DEFERIDO)
+                                    {
+                                        @:Aprovado
+                                    }
+                                    else if (item.AprovadoModel == Core.DTO.InscricaoEventoPessoa.INDEFERIDO)
+                                    {
+                                        @:Recusado
                                     }
                                 </td>
 
+                                <!-- Ações -->
                                 <td>
-                                    <a class="btn btn-secondary btn-sm" role="button" asp-controller="Evento" asp-action="SolicitarParticipacao" asp-route-id="@item.Id">
-                                        <i class="fa-solid fa-circle-info"></i>
-                                        Detalhes
-                                    </a>
+                                    <div class="d-flex flex-column gap-1 my-2">
+                                        <a class="btn btn-secondary btn-sm" role="button" asp-controller="Evento" asp-action="Details" asp-route-id="@item.Id">
+                                            <i class="fa-solid fa-circle-info"></i> Detalhes
+                                        </a>
+                                        @if (item.AprovadoModel == Core.DTO.InscricaoEventoPessoa.INSCRITO || item.AprovadoModel == Core.DTO.InscricaoEventoPessoa.DEFERIDO)
+                                        {
+                                            <a class="btn btn-secondary btn-sm" asp-controller="Evento" asp-action="JustificarAusencia" asp-route-idEvento="@item.Id">
+                                                <i class="fa-solid fa-outdent"></i> Justificar Ausência
+                                            </a>
+                                        }
+                                    </div>
                                 </td>
                             </tr>
                         }
@@ -163,7 +143,7 @@
             </table>
             @if (Model != null && Model.Eventos == null)
             {
-                <p class="text-center mt-4 mb-0">Desculpe, nenhum <b>Ensaio</b> encontrado :(</p>
+                <p class="text-center mt-4 mb-0">Desculpe, nenhum <b>Evento</b> encontrado :(</p>
             }
         </div>
     </div>
