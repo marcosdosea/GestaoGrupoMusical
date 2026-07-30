@@ -1,16 +1,19 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';    
+import 'dart:io';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import '../config/api_config.dart';
 import '../config/session_manager.dart';
-// import 'package:jwt_decoder/jwt_decoder.dart';
 
 class LoginService {
+  final http.Client _client;
+
+  LoginService({http.Client? client}) : _client = client ?? http.Client();
+
   Future<bool> login(String cpf, String senha) async {
     try {
-      final response = await http.post(
+      final response = await _client.post(
         Uri.parse('${ApiConfig.baseUrl}/api/Identity/login'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'cpf': cpf, 'senha': senha}),
@@ -28,31 +31,25 @@ class LoginService {
         debugPrint("CHAVES:");
         debugPrint(data.keys.toList().toString());
 
-        // Salvando os dados de sessão no aparelho
-        // Ajustado para as chaves com 'I' maiúsculo conforme o seu log
-        // final token = data['token'];
-
-      // final claims = JwtDecoder.decode(token);
-
         await SessionManager.saveSession(
-        data['token'] ?? '',
-        int.tryParse(data['idGrupoMusical'].toString()) ?? 0,
-        int.tryParse(data['idPessoa'].toString()) ?? 0,
-      );
+          data['token'] ?? '',
+          int.tryParse(data['idGrupoMusical'].toString()) ?? 0,
+          int.tryParse(data['idPessoa'].toString()) ?? 0,
+        );
 
         return true;
       }
-      
+
       return false;
 
     } on TimeoutException catch (_) {
       debugPrint('Timeout: A API demorou mais de 10 segundos para responder.');
       throw Exception('O servidor demorou a responder. Tente novamente mais tarde.');
-      
+
     } on SocketException catch (_) {
       debugPrint('SocketException: Sem internet ou servidor desligado.');
       throw Exception('Falha de conexão. Verifique sua internet.');
-      
+
     } catch (e) {
       debugPrint('Erro no LoginService: $e');
       throw Exception('Ocorreu um erro inesperado.');
