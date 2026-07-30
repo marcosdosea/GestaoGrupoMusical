@@ -12,6 +12,9 @@ class FinanceiroService {
   static const String _cacheKeyAdmin = 'financeiro_campanhas';
   static const String _cacheKeyAssociadoPrefix = 'financeiro_associados_';
   static const int _cachePagoDurationMinutes = 1440; // 24 horas para itens PAGO
+  final http.Client _client;
+
+  FinanceiroService({http.Client? client}) : _client = client ?? http.Client();
 
   Future<List<FinanceiroModel>> getAll() async {
     try {
@@ -33,25 +36,25 @@ class FinanceiroService {
       final String? token = await SessionManager.getToken();
       final String url  = ApiConfig.baseUrl;
 
-      final response = await http.get(
+      final response = await _client.get(
         Uri.parse('$url/api/Financeiro/associado'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'Authorization': 'Bearer $token', 
+          'Authorization': 'Bearer $token',
         },
       );
 
       if (response.statusCode == 200) {
         final List<dynamic> jsonList = json.decode(response.body);
         final result = jsonList.map((json) => FinanceiroModel.fromJson(json)).toList();
-        
+
         // Salva itens PAGO separadamente com TTL maior
         await _cachePaidItems(result);
-        
+
         // Salva todos os dados no cache normal
         await CacheManager.saveCache(_cachekeyAssociado, jsonList);
-        
+
         // Mescla com items PAGO cacheados
         return _mergeWithCachedPaidItems(result);
       } else {
@@ -66,7 +69,7 @@ class FinanceiroService {
             );
           }
         } catch (_) {}
-        
+
         throw Exception("Falha ao carregar pagamentos. Status: ${response.statusCode}");
       }
     } catch (e) {
@@ -88,7 +91,7 @@ class FinanceiroService {
           'statusPagamento': item.statusPagamento,
         })
         .toList();
-    
+
     if (paidItems.isNotEmpty) {
       await CacheManager.saveCache(
         _cacheKeyAssociadoPagos,
@@ -111,10 +114,10 @@ class FinanceiroService {
 
       final List data = cachedPaidData is List ? cachedPaidData : jsonDecode(cachedPaidData);
       final cachedPaidItems = data.map((json) => FinanceiroModel.fromJson(json)).toList();
-      
+
       // Cria um mapa de IDs dos items atuais para evitar duplicatas
       final currentIds = currentItems.map((item) => item.id).toSet();
-      
+
       // Adiciona items PAGO cacheados que não estão na lista atual
       final mergedItems = [...currentItems];
       for (final cachedItem in cachedPaidItems) {
@@ -123,7 +126,7 @@ class FinanceiroService {
           debugPrint('Item PAGO recuperado do cache: ${cachedItem.descricao}');
         }
       }
-      
+
       return mergedItems;
     } catch (e) {
       debugPrint('Erro ao mesclar items PAGO cacheados: $e');
@@ -135,7 +138,7 @@ class FinanceiroService {
     final String? token = await SessionManager.getToken();
     final String url = ApiConfig.baseUrl;
 
-    final response = await http.post(
+    final response = await _client.post(
       Uri.parse('$url/api/Financeiro'),
       headers: {
         'Content-Type': 'application/json',
@@ -168,8 +171,8 @@ class FinanceiroService {
       final String? token = await SessionManager.getToken();
       final String url = ApiConfig.baseUrl;
 
-      final response = await http.get(
-        Uri.parse('$url/api/Financeiro'), 
+      final response = await _client.get(
+        Uri.parse('$url/api/Financeiro'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -180,10 +183,10 @@ class FinanceiroService {
       if (response.statusCode == 200) {
         final List<dynamic> jsonList = json.decode(response.body);
         final result = jsonList.map((json) => CampanhaPagamentoModel.fromJson(json)).toList();
-        
+
         // Salva no cache
         await CacheManager.saveCache(_cacheKeyAdmin, jsonList);
-        
+
         return result;
       } else {
         // Se falhar, tenta retornar cache mesmo que expirado
@@ -194,7 +197,7 @@ class FinanceiroService {
             return data.map((json) => CampanhaPagamentoModel.fromJson(json)).toList();
           }
         } catch (_) {}
-        
+
         throw Exception("Falha ao carregar campanhas. Status: ${response.statusCode}");
       }
     } catch (e) {
@@ -207,7 +210,7 @@ class FinanceiroService {
   Future<List<AssociadoPagamentoModel>> getAssociadosDoPagamento(int idReceita) async {
     try {
       final cacheKey = '$_cacheKeyAssociadoPrefix$idReceita';
-      
+
       // Tenta recuperar do cache primeiro
       final cachedData = await CacheManager.getCache(cacheKey);
       if (cachedData != null) {
@@ -224,8 +227,8 @@ class FinanceiroService {
       final String url = ApiConfig.baseUrl;
       final cacheKey = '$_cacheKeyAssociadoPrefix$idReceita';
 
-      final response = await http.get(
-        Uri.parse('$url/api/Financeiro/$idReceita/associados'), 
+      final response = await _client.get(
+        Uri.parse('$url/api/Financeiro/$idReceita/associados'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -236,10 +239,10 @@ class FinanceiroService {
       if (response.statusCode == 200) {
         final List<dynamic> jsonList = json.decode(response.body);
         final result = jsonList.map((json) => AssociadoPagamentoModel.fromJson(json)).toList();
-        
+
         // Salva no cache
         await CacheManager.saveCache(cacheKey, jsonList);
-        
+
         return result;
       } else {
         // Se falhar, tenta retornar cache mesmo que expirado
@@ -250,7 +253,7 @@ class FinanceiroService {
             return data.map((json) => AssociadoPagamentoModel.fromJson(json)).toList();
           }
         } catch (_) {}
-        
+
         throw Exception("Falha ao carregar detalhes. Status: ${response.statusCode}");
       }
     } catch (e) {
