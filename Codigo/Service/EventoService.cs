@@ -725,7 +725,8 @@ namespace Service
                                             ? ep.IdTipoInstrumentoNavigation.Nome
                                             : null,
                             Status = ep.Status,
-                            StatusEnum = ConvertAprovadoParaEnum(ep.Status)
+                            StatusEnum = ConvertAprovadoParaEnum(ep.Status),
+                            Justificativa = ep.JustificativaFalta
                         };
 
             return await query.AsNoTracking().FirstOrDefaultAsync();
@@ -1010,6 +1011,11 @@ namespace Service
                 if (eventoPessoa == null)
                 {
                     return HttpStatusCode.NotFound;
+                }
+
+                if (eventoPessoa.Status != InscricaoEventoPessoa.DEFERIDO.ToString())
+                {
+                    return HttpStatusCode.BadRequest;
                 }
 
                 eventoPessoa.JustificativaFalta = justificativa;
