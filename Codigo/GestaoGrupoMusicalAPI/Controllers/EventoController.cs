@@ -32,15 +32,11 @@ namespace GestaoGrupoMusicalAPI.Controllers
 
         // GET: api/Evento/Detalhes/5
         // Retorna tudo o que a tela de "Aceitar" do Mobile precisa
-        [AllowAnonymous]
+        [Authorize]
         [HttpGet("Detalhes/{id}")]
         public async Task<ActionResult> GetDetalhesSolicitacao(int id)
         {
-            // 1. Pega o valor do Token
-            var claimId = User.FindFirst("Id")?.Value;
-
-            // 2. Tenta converter. Se for GUID, idPessoa será 0
-            int.TryParse(claimId, out int idPessoa);
+            var idPessoa = ObterIdPessoaLogada();
 
             // 3. Busca o evento
             var evento = eventoService.Get(id);
@@ -48,7 +44,6 @@ namespace GestaoGrupoMusicalAPI.Controllers
 
             var instrumentos = await eventoService.GetInstrumentosDisponiveisAsync(id);
 
-            // 4. Busca a inscrição apenas se o ID for válido (> 0)
             var minhaInscricao = idPessoa > 0
                 ? await eventoService.GetSolicitacaoAssociado(id, idPessoa)
                 : null;
@@ -62,24 +57,43 @@ namespace GestaoGrupoMusicalAPI.Controllers
                 repertorio = evento.Repertorio,
                 local = evento.Local,
                 instrumentosDisponiveis = instrumentos,
-                inscricao = minhaInscricao
+                inscricao = minhaInscricao,
+                minhaInscricao
             });
         }
 
+        [Authorize]
+        [HttpPost("JustificarAusencia")]
+        public async Task<ActionResult> JustificarAusencia([FromBody] JustificativaAusenciaDTO dto)
+        {
+            if (!ModelState.IsValid || dto.IdEvento <= 0)
+                return BadRequest(new { mensagem = "Informe um evento e uma justificativa válida." });
+
+            var idPessoa = ObterIdPessoaLogada();
+            if (idPessoa <= 0)
+                return Unauthorized(new { mensagem = "Não foi possível identificar o associado autenticado." });
+
+            var resultado = await eventoService.RegistrarJustificativaAsync(
+                dto.IdEvento,
+                idPessoa,
+                dto.Justificativa!.Trim());
+
+            return resultado switch
+            {
+                HttpStatusCode.OK => Ok(new { mensagem = "Justificativa registrada com sucesso." }),
+                HttpStatusCode.NotFound => NotFound(new { mensagem = "Você não está vinculado a este evento." }),
+                HttpStatusCode.BadRequest => BadRequest(new { mensagem = "A justificativa só pode ser enviada após a aprovação da participação." }),
+                _ => StatusCode(StatusCodes.Status500InternalServerError,
+                    new { mensagem = "Não foi possível registrar a justificativa." })
+            };
+        }
+
         // POST: api/Evento/ResponderPresenca
+        [Authorize]
         [HttpPost("ResponderPresenca")]
         public async Task<ActionResult> ResponderPresenca([FromBody] SolicitarParticipacaoDTO dto)
         {
-            // 1. Pega o valor do Token (que está vindo como GUID)
-            var claimId = User.FindFirst("Id")?.Value;
-
-            // 2. Tenta converter. Se falhar, tenta usar a claim "IdPessoa" (caso você tenha configurado)
-            if (!int.TryParse(claimId, out int idPessoa))
-            {
-                // Fallback: se o "Id" for GUID, talvez você tenha o ID numérico em outra claim
-                var claimIdPessoa = User.FindFirst("IdPessoa")?.Value;
-                int.TryParse(claimIdPessoa, out idPessoa);
-            }
+            var idPessoa = ObterIdPessoaLogada();
 
             // 3. Se ainda assim for 0, o sistema não pode prosseguir
             if (idPessoa <= 0)
@@ -108,11 +122,11 @@ namespace GestaoGrupoMusicalAPI.Controllers
         }
 
         // POST: api/Evento/CancelarPresenca
+        [Authorize]
         [HttpPost("CancelarPresenca/{idEvento}")]
         public async Task<ActionResult> CancelarPresenca(int idEvento)
         {
-            var claimId = User.FindFirst("Id")?.Value;
-            int.TryParse(claimId, out int idPessoa);
+            var idPessoa = ObterIdPessoaLogada();
 
             if (idPessoa <= 0) return BadRequest(new { mensagem = "Usuário inválido." });
 
@@ -124,47 +138,9 @@ namespace GestaoGrupoMusicalAPI.Controllers
             return BadRequest(new { mensagem = "Não foi possível cancelar. Verifique se a solicitação já foi aprovada." });
         }
 
-        // POST: api/Evento/JustificarAusencia
-        [HttpPost("JustificarAusencia")]
-        public async Task<ActionResult> JustificarAusencia([FromBody] JustificarAusenciaEventoDTO dto)
+        private int ObterIdPessoaLogada()
         {
-            var claimId = User.FindFirst("Id")?.Value;
-            if (!int.TryParse(claimId, out int idPessoa))
-            {
-                var claimIdPessoa = User.FindFirst("IdPessoa")?.Value;
-                int.TryParse(claimIdPessoa, out idPessoa);
-            }
-
-            if (idPessoa <= 0) return BadRequest(new { mensagem = "Usuário inválido." });
-
-            var resultado = await eventoService.RegistrarJustificativaAsync(dto.IdEvento, idPessoa, dto.Justificativa);
-
-            if (resultado == HttpStatusCode.OK)
-            {
-                return Ok(new { mensagem = "Justificativa enviada com sucesso!" });
-            }
-
-            return BadRequest(new { mensagem = "Não foi possível registrar a justificativa." });
-        }
-
-        // GET: api/Evento/MinhaInscricao/{idEvento}
-        [HttpGet("MinhaInscricao/{idEvento}")]
-        public async Task<ActionResult> GetMinhaInscricao(int idEvento)
-        {
-            var claimId = User.FindFirst("Id")?.Value;
-            if (!int.TryParse(claimId, out int idPessoa))
-            {
-                var claimIdPessoa = User.FindFirst("IdPessoa")?.Value;
-                int.TryParse(claimIdPessoa, out idPessoa);
-            }
-
-            if (idPessoa <= 0) return BadRequest(new { mensagem = "Usuário inválido." });
-
-            var minhaInscricao = await eventoService.GetSolicitacaoAssociado(idEvento, idPessoa);
-
-            if (minhaInscricao == null) return NotFound(new { mensagem = "Inscrição não encontrada." });
-
-            return Ok(minhaInscricao);
+            return int.TryParse(User.FindFirst("IdPessoa")?.Value, out var idPessoa) ? idPessoa : 0;
         }
     }
 }
