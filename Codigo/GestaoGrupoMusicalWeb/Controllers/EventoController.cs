@@ -658,15 +658,29 @@ namespace GestaoGrupoMusicalWeb.Controllers
         [Authorize(Roles = "ASSOCIADO")]
         public async Task<ActionResult> JustificarAusencia(int idEvento)
         {
-            var model = await _eventoService.GetEventoPessoaAsync(idEvento, Convert.ToInt32(User.FindFirst("Id")?.Value));
+            var idPessoa = Convert.ToInt32(User.FindFirst("Id")?.Value);
+            var model = await _eventoService.GetEventoPessoaAsync(idEvento, idPessoa);
+
+            if (model == null)
+            {
+                EventoJustificativaViewModel eventoJustificativaVazia = new()
+                {
+                    IdEvento = idEvento,
+                    Justificativa = string.Empty
+                };
+
+                return View(eventoJustificativaVazia);
+            }
 
             EventoJustificativaViewModel eventoJustificativa = new()
             {
                 IdEvento = model.IdEvento,
                 Justificativa = model.JustificativaFalta
             };
+
             return View(eventoJustificativa);
         }
+
         [Authorize(Roles = "ASSOCIADO")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -679,8 +693,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     case HttpStatusCode.OK:
                         Notificar("<b>Justificativa</b> registrada com <b>Sucesso</b>", Notifica.Sucesso);
                         return RedirectToAction(nameof(Index));
+
                     case HttpStatusCode.NotFound:
-                        Notificar("A <b>Justificativa</b> enviada é <b>Inválida</b>", Notifica.Erro);
+                        Notificar("Você <b>não possui inscrição</b> confirmada neste evento, portanto não há ausência para justificar.", Notifica.Alerta);
                         break;
                     case HttpStatusCode.Unauthorized:
                         Notificar("Desculpe, <b>Não</b> foi possível <b>Registrar</b> a <b>Justificativa</b>", Notifica.Erro);
