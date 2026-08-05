@@ -108,6 +108,7 @@ namespace Core.DTO
         public string? NomeInstrumento { get; set; }
         public string Status { get; set; } = null!;
         public InscricaoEventoPessoa StatusEnum { get; set; }
+        public string? Justificativa { get; set; }
     }
 
     public class SolicitarParticipacaoDTO
