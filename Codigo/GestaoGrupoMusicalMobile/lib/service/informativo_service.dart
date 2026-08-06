@@ -27,6 +27,9 @@ class PaginatedInformativeResult {
 class InformativoService {
   static const String _cacheKey = 'informativo_list';
   static const int _defaultPageSize = 10;
+  final http.Client _client;
+
+  InformativoService({http.Client? client}) : _client = client ?? http.Client();
 
   /// Busca todos os informativos (sem paginação - para cache/sincronização)
   Future<List<InformativoModel>> getAll() async {
@@ -46,7 +49,7 @@ class InformativoService {
 
     try {
       final String? token = await SessionManager.getToken();
-      final response = await http.get(
+      final response = await _client.get(
         Uri.parse('${ApiConfig.baseUrl}/api/Informativo/Grupo'),
         headers: {
           'Content-Type': 'application/json',

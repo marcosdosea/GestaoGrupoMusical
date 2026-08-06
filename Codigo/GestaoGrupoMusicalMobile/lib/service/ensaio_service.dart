@@ -9,6 +9,9 @@ import 'package:http/http.dart' as http;
 class EnsaioService {
   final String baseUrl = ApiConfig.baseUrl;
   static const String _cacheKey = 'ensaio_list';
+  final http.Client _client;
+
+  EnsaioService({http.Client? client}) : _client = client ?? http.Client();
 
   Future<List<EnsaioModel>> getAll() async {
     final userId = (await SessionManager.getIdPessoa())?.toString();
@@ -28,7 +31,7 @@ class EnsaioService {
 
     try {
       final token = await SessionManager.getToken();
-      final response = await http.get(
+      final response = await _client.get(
         Uri.parse('$baseUrl/api/Ensaio'),
         headers: {
           'Accept': 'application/json',
@@ -63,7 +66,7 @@ class EnsaioService {
   Future<Map<String, dynamic>?> getMinhaFrequencia(int idEnsaio) async {
     final token = await SessionManager.getToken();
     try {
-      final response = await http.get(
+      final response = await _client.get(
         Uri.parse('$baseUrl/api/Ensaio/DetalhesSolicitacao/$idEnsaio'),
         headers: {
           'Accept': 'application/json',
@@ -85,7 +88,7 @@ class EnsaioService {
   Future<String?> justificarAusencia(int idEnsaio, String justificativa) async {
     final token = await SessionManager.getToken();
     try {
-      final response = await http.post(
+      final response = await _client.post(
         Uri.parse('$baseUrl/api/Ensaio/JustificarAusencia'),
         headers: {
           'Content-Type': 'application/json',

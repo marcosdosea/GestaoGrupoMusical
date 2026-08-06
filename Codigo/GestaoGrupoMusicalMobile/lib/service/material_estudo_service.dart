@@ -7,9 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class MaterialestudoService {
+  final String baseUrl = ApiConfig.baseUrl;
+  static const String _cacheKey = 'material_estudo_list';
+  final http.Client _client;
 
-   final String baseUrl = ApiConfig.baseUrl;
-   static const String _cacheKey = 'material_estudo_list';
+  MaterialestudoService({http.Client? client}) : _client = client ?? http.Client();
 
   Future<List<MaterialestudoModel>> getAll({bool forceRefresh = false}) async {
     // Se não for para forçar a atualização, tenta recuperar do cache primeiro
@@ -29,22 +31,22 @@ class MaterialestudoService {
     try {
       final String? token = await SessionManager.getToken();
 
-      final response = await http.get(
+      final response = await _client.get(
         Uri.parse('${ApiConfig.baseUrl}/api/MaterialEstudo'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'Authorization': 'Bearer $token', 
+          'Authorization': 'Bearer $token',
         },
       );
 
       if (response.statusCode == 200) {
         final List data = jsonDecode(response.body);
         final materiais = data.map((e) => MaterialestudoModel.fromJson(e)).toList();
-        
+
         // Salva os dados novos no cache
         await CacheManager.saveCache(_cacheKey, data);
-        
+
         return materiais;
       } else {
         // Se falhar, tenta retornar cache mesmo que expirado
@@ -55,7 +57,7 @@ class MaterialestudoService {
             return data.map((e) => MaterialestudoModel.fromJson(e)).toList();
           }
         } catch (_) {}
-        
+
         throw Exception('Erro: ${response.statusCode}');
       }
     } catch (e) {

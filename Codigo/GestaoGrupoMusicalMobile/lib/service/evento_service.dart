@@ -10,6 +10,9 @@ class EventoService {
   final String baseUrl = ApiConfig.baseUrl;
   static const String _cacheKey = 'evento_list';
   static const String _detalhesCachePrefix = 'detalhes_evento_';
+  final http.Client _client;
+
+  EventoService({http.Client? client}) : _client = client ?? http.Client();
 
   Future<List<EventoModel>> getAll() async {
     // Usamos o ID da pessoa para o cache ser persistente mesmo se o token mudar
@@ -29,7 +32,7 @@ class EventoService {
 
     try {
       final token = await SessionManager.getToken();
-      final response = await http.get(
+      final response = await _client.get(
         Uri.parse('$baseUrl/api/Evento'),
         headers: {
           'Accept': 'application/json',
@@ -61,16 +64,15 @@ class EventoService {
     final String cacheKey = '$_detalhesCachePrefix$idEvento';
 
     try {
-      final response = await http.get(
+      final response = await _client.get(
         Uri.parse('$baseUrl/api/Evento/Detalhes/$idEvento'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
         },
-      ).timeout(const Duration(seconds: 10));
+      );
 
       if (response.statusCode == 200) {
-        // ESSA LINHA É A CHAVE: Imprime o JSON real para você ver as chaves
         debugPrint("JSON RECEBIDO DA API: ${response.body}");
 
         final Map<String, dynamic> data = jsonDecode(response.body);
@@ -95,12 +97,12 @@ class EventoService {
     }
   }
 
-  // Métodos de POST (Participação e Cancelamento) permanecem iguais...
+  // Métodos de POST (Participação e Cancelamento)
   Future<String?> solicitarParticipacao(
       int idEvento, int idTipoInstrumento) async {
     try {
       final token = await SessionManager.getToken();
-      final response = await http.post(
+      final response = await _client.post(
         Uri.parse('${ApiConfig.baseUrl}/api/Evento/ResponderPresenca'),
         headers: {
           'Content-Type': 'application/json',
@@ -123,7 +125,7 @@ class EventoService {
   Future<bool> cancelarSolicitacao(int idEvento) async {
     try {
       final token = await SessionManager.getToken();
-      final response = await http.post(
+      final response = await _client.post(
         Uri.parse('${ApiConfig.baseUrl}/api/Evento/CancelarPresenca/$idEvento'),
         headers: {
           'Content-Type': 'application/json',
@@ -151,7 +153,7 @@ class EventoService {
   Future<String?> justificarAusencia(int idEvento, String justificativa) async {
     try {
       final token = await SessionManager.getToken();
-      final response = await http.post(
+      final response = await _client.post(
         Uri.parse('$baseUrl/api/Evento/JustificarAusencia'),
         headers: {
           'Content-Type': 'application/json',
@@ -197,9 +199,6 @@ class EventoService {
 
   // GET: Consultar os detalhes/inscrição para verificar a justificativa enviada
   Future<Map<String, dynamic>?> getMinhaInscricao(int idEvento) async {
-    // Como o seu getDetalhesEvento já busca o endpoint de detalhes do evento
-    // que retorna a propriedade 'minhaInscricao' / 'MinhaInscricao',
-    // podemos reutilizá-lo ou chamar diretamente se preferir.
     return await getDetalhesEvento(idEvento);
   }
 }
