@@ -217,13 +217,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
             switch (await _grupoMusical.Delete(id))
             {
                 case HttpStatusCode.OK:
-                    Notificar("Grupo <b> Excluido </b> com <b> Sucesso </b> ", Notifica.Sucesso);
-                    return RedirectToAction(nameof(Index));
+                    Notificar("Grupo <b> Excluido </b> com <b> Sucesso </b> ", Notifica.Sucesso);                  
                     break;
                 case HttpStatusCode.InternalServerError:
-                    Notificar("<b>Erro</b> ! Desculpe, ocorreu um erro durante a <b>Exclusão</b> do Gruppo Musical.", Notifica.Erro);
-                    return RedirectToAction(nameof(Index));
-                    break;
+                    Notificar("<b>Erro</b> ! Desculpe, ocorreu um erro durante a <b>Exclusão</b> do Gruppo Musical.", Notifica.Erro);                 
+                   break;
             }
 
             return RedirectToAction(nameof(Index));

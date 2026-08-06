@@ -26,54 +26,84 @@
                         @Html.DisplayFor(modelItem => item.Cpf)
                     </td>
                     <td class="py-3 border-0 d-flex flex-column flex-lg-row gap-3">
-                        <form id="@(item.Id + "_confirmar")" asp-controller="AdministradorGrupoMusical" asp-action="Delete" asp-route-id="@item.Id" method="post">
-                            <a class="btn btn-sm btn-secondary" role="button" onclick="showModal('@(item.Id + "_confirmar")', 'admModalNotificar')" data-bs-toggle="modal" data-bs-target="#admModalNotificar">
-                                <i class="fa-solid fa-envelope"></i>
-                                Notificar
-                            </a>
 
-                            <a onclick="showModal('@(item.Id + "_confirmar")', 'admModalExcluir')" class="btn btn-sm btn-secondary" role="button" data-bs-toggle="modal" data-bs-target="#admModalExcluir">
-                                <i class="fa-solid fa-xmark"> </i>
-                                Excluir
-                            </a>
-                        </form>
+                        <!-- BOTÃO NOTIFICAR (Passa o ID usando data-id) -->
+                        <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#admModalNotificar" data-id="@item.Id">
+                            <i class="fa-solid fa-envelope"></i> Notificar
+                        </button>
+
+                        <!-- BOTÃO EXCLUIR (Passa o ID usando data-id) -->
+                        <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#admModalExcluir" data-id="@item.Id">
+                            <i class="fa-solid fa-xmark"> </i> Excluir
+                        </button>
+
                     </td>
                 </tr>
             }
         </tbody>
     </table>
 </div>
-<div class="modal fade" id="admModalExcluir" tabindex="-1" aria-labelledby="admLabel" aria-hidden="true">
+
+<!-- Modal de Excluir -->
+<div class="modal fade" id="admModalExcluir" tabindex="-1" aria-labelledby="admLabelExcluir" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="admLabel">Confirmar Remorção de Cargo de Administrador</h5>
+                <h5 class="modal-title" id="admLabelExcluir">Confirmar Remoção de Cargo de Administrador</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 Deseja <b>Remover</b> o cargo de <b>Administrador</b>?
             </div>
-            <form method="post" class="modal-footer">
+            <!-- FORMULÁRIO DE EXCLUSÃO CORRIGIDO -->
+            <form method="post" asp-controller="AdministradorGrupoMusical" asp-action="Delete" class="modal-footer">
+                <input type="hidden" name="id" id="inputExcluirId" value="" />
                 <button type="button" class="btn btn-outline-secondary col-3 me-4" data-bs-dismiss="modal">Não</button>
                 <button type="submit" class="btn btn-secondary col-3">Sim</button>
             </form>
         </div>
     </div>
 </div>
-<div class="modal fade" id="admModalNotificar" tabindex="-1" aria-labelledby="admLabel" aria-hidden="true">
+
+<!-- Modal de Notificar -->
+<div class="modal fade" id="admModalNotificar" tabindex="-1" aria-labelledby="admLabelNotificar" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="admLabel">Confirmar Notificação de Cargo de Administrador</h5>
+                <h5 class="modal-title" id="admLabelNotificar">Confirmar Notificação de Cargo de Administrador</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 Deseja <b>Notificar</b> o cargo de <b>Administrador</b>?
             </div>
-            <form method="post" class="modal-footer">
+            <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary col-3 me-4" data-bs-dismiss="modal">Não</button>
-                <button type="submit" class="btn btn-secondary col-3">Sim</button>
-            </form>
+                <!-- O controller Notificar é GET, então usamos um link <a> no lugar de um formulário POST -->
+                <a id="btnConfirmarNotificar" href="#" class="btn btn-secondary col-3">Sim</a>
+            </div>
         </div>
     </div>
 </div>
+
+<!-- SCRIPT QUE PASSA OS IDs CORRETOS DA TABELA PARA OS MODAIS -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        // Configura o modal de Exclusão
+        var modalExcluir = document.getElementById('admModalExcluir');
+        modalExcluir.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var id = button.getAttribute('data-id'); // Pega o ID que clicamos
+            document.getElementById('inputExcluirId').value = id; // Joga no formulário
+        });
+
+        // Configura o modal de Notificação
+        var modalNotificar = document.getElementById('admModalNotificar');
+        modalNotificar.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        var id = button.getAttribute('data-id');
+        document.getElementById('btnConfirmarNotificar').href = '@Url.Action("NotificarEmail", "AdministradorGrupoMusical")/' + id;
+    });
+
+    });
+</script>
