@@ -98,7 +98,7 @@ namespace GestaoGrupoMusicalWeb.Models
         [StringLength(100)]
         public string? ChavePix { get; set; } = "Sem chave pix";
 
-        [Display(Name = " Tipo da cave Pix")]
+        [Display(Name = " Tipo da chave Pix")]
         [StringLength(15)]
         public string? ChavePixtipo { get; set; } = "sem chave pix definida";
 
