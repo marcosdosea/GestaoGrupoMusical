@@ -14,3 +14,133 @@
 .gray-login {
     background-color: var(--bs-gray-200);
 }
+
+/* Sidebar como overlay fixo, fechada por padrão em qualquer resolução */
+#wrapper {
+    overflow-x: hidden;
+    position: relative;
+}
+
+#sidebar-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 15rem;
+    max-width: 85vw;
+    height: 100vh;
+    z-index: 1035;
+    margin-left: 0 !important;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out, visibility 0s linear 0.3s;
+    visibility: hidden;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+body.sb-sidenav-toggled #sidebar-wrapper {
+    transform: translateX(0);
+    visibility: visible;
+    transition: transform 0.3s ease-in-out, visibility 0s linear 0s;
+}
+
+/* Bloqueia o scroll do conteúdo por trás enquanto a sidebar está aberta */
+body.sb-sidenav-toggled {
+    overflow: hidden;
+}
+
+/* Backdrop atrás da sidebar e acima do conteúdo da página */
+#sidebarBackdrop {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1020;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out, visibility 0s linear 0.3s;
+}
+
+body.sb-sidenav-toggled #sidebarBackdrop {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.3s ease-in-out, visibility 0s linear 0s;
+}
+
+#page-content-wrapper {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+}
+
+/* Navbar top com z-index maior que a sidebar e o backdrop */
+#page-content-wrapper .navbar {
+    position: relative;
+    z-index: 1050;
+}
+
+/* Botão toggle (abrir) sempre visível e interativo */
+#sidebarToggle {
+    position: relative;
+    z-index: 1051;
+    color: white !important;
+    border: none;
+    background-color: inherit;
+}
+
+#sidebarToggle:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+/* Botão fechar no header da sidebar */
+#sidebarHeaderCloseBtn {
+    position: relative;
+    z-index: 1051;
+    color: white !important;
+    background-color: transparent !important;
+    border: none !important;
+    padding: 0.5rem 0.75rem !important;
+    transition: all 0.2s ease-in-out;
+}
+
+#sidebarHeaderCloseBtn:hover {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    border-radius: 4px;
+    transform: scale(1.1);
+}
+
+#sidebarHeaderCloseBtn:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* Botão fechar na navbar - visível apenas com a sidebar aberta, em qualquer resolução */
+#sidebarCloseBtn {
+    position: relative;
+    z-index: 1051;
+    display: none;
+    color: white !important;
+    border: none;
+    background-color: inherit;
+}
+
+#sidebarCloseBtn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+body.sb-sidenav-toggled #sidebarToggle {
+    display: none;
+}
+
+body.sb-sidenav-toggled #sidebarCloseBtn {
+    display: inline-block;
+}
+
+/* Telas muito pequenas: cabeçalho da sidebar mais compacto */
+@media (max-width: 359.98px) {
+    .posDivLogo {
+        font-size: 0.95rem;
+    }
+}
+
