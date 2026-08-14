@@ -83,7 +83,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 {
                     mensagem = "<b>Alerta!</b> Email já está em uso";
                     Notificar(mensagem, Notifica.Alerta);
-
                     return RedirectToAction(nameof(Index));
                 }
 
@@ -108,6 +107,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
                     case HttpStatusCode.OK:
                         mensagem = "<b>Sucesso</b>! Associado promovido a <b>Administrador do Grupo Musical</b>.";
                         Notificar(mensagem, Notifica.Sucesso);
+                        // Dispara o e-mail quando o usuário já existe e é promovido!
+                        await _pessoaService.NotificarCadastroAdmGrupoAsync(pessoa);
                         break;
 
                     case HttpStatusCode.NotAcceptable:
@@ -129,7 +130,6 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         Notificar(mensagem, Notifica.Erro);
                         break;
                 }
-
             }
             return RedirectToAction(nameof(Index), new { id = admViewModel.IdGrupoMusical });
         }
@@ -187,14 +187,31 @@ namespace GestaoGrupoMusicalWeb.Controllers
             return RedirectToAction(nameof(Index), new { id = idGrupoMusical });
         }
 
-        public async Task<ActionResult> Notificar(int id)
+        public async Task<ActionResult> NotificarEmail(int id)
         {
             var pessoa = _pessoaService.Get(id);
-            if (pessoa.IdPapelGrupo == 3)
+
+            if (pessoa != null)
             {
-                await _pessoaService.NotificarCadastroAdmGrupoAsync(pessoa);
+                if (pessoa.IdPapelGrupo == 3)
+                {
+                    await _pessoaService.NotificarCadastroAdmGrupoAsync(pessoa);
+
+                    // ADICIONE ESTA LINHA: Chama a faixa verde de sucesso na tela
+                    Notificar("<b>Sucesso</b>! E-mail de notificação enviado para o administrador.", Notifica.Sucesso);
+                }
+                else
+                {
+                    // Opcional: Avisa se por acaso o usuário não for do papel correto
+                    Notificar("<b>Alerta</b>! O usuário não possui o cargo de administrador.", Notifica.Alerta);
+                }
+
+                return RedirectToAction(nameof(Index), new { id = pessoa.IdGrupoMusical });
             }
-            return RedirectToAction(nameof(Index), new { id = pessoa.IdGrupoMusical });
+
+            // Opcional: Avisa se a pessoa não for encontrada no banco
+            Notificar("<b>Erro</b>! Administrador não encontrado.", Notifica.Erro);
+            return RedirectToAction(nameof(Index), "GrupoMusical");
         }
     }
 }
