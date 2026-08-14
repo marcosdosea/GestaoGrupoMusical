@@ -49,3 +49,55 @@ if(toggleSenhaAtual != null){
         }
     });
 }
+
+// Sidebar: overlay fechado por padrão, aberto somente por interação do usuário.
+// O estado não é persistido (sem localStorage) para garantir que toda página
+// carregue sempre com a sidebar fechada, conforme exigido.
+document.addEventListener('DOMContentLoaded', function () {
+    const body = document.body;
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
+    const sidebarHeaderCloseBtn = document.getElementById('sidebarHeaderCloseBtn');
+    const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+
+    function openSidebar() {
+        body.classList.add('sb-sidenav-toggled');
+    }
+
+    function closeSidebar() {
+        body.classList.remove('sb-sidenav-toggled');
+    }
+
+    function toggleSidebar(event) {
+        event.preventDefault();
+        body.classList.toggle('sb-sidenav-toggled');
+    }
+
+    if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', toggleSidebar);
+    }
+
+    [sidebarCloseBtn, sidebarHeaderCloseBtn].forEach(function (btn) {
+        if (btn) {
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                closeSidebar();
+            });
+        }
+    });
+
+    if (sidebarBackdrop) {
+        sidebarBackdrop.addEventListener('click', closeSidebar);
+    }
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && body.classList.contains('sb-sidenav-toggled')) {
+            closeSidebar();
+        }
+    });
+});
+
+
+
+
+

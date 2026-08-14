@@ -16,15 +16,19 @@
 </head>
 <body>
     <div class="d-flex" id="wrapper">
+        <!-- Backdrop -->
+        <div id="sidebarBackdrop"></div>
         <!-- Sidebar-->
         <div class="border-end-0 bg-white border-danger" id="sidebar-wrapper">
 
-            <div class="sidebar-heading border-bottom bg-dark tamDivHeader border-bottom border-danger border-opacity-75">
+            <div class="sidebar-heading border-bottom bg-dark tamDivHeader border-bottom border-danger border-opacity-75 d-flex justify-content-between align-items-center">
                 <a class="text-decoration-none" asp-controller="Home" asp-action="Index">
                     <img class="posLogo" src="https://i.imgur.com/xRzPBmL.png" alt="Logo Batalá" width="56.57px" height="57px">
                 </a>
                 <span class="text-light posDivLogo">Batalá Sergipe</span>
-
+                <button class="btn btn-dark fs-5 ms-auto" id="sidebarHeaderCloseBtn" title="Fechar menu" style="border: none; padding: 0.5rem;">
+                    <i class="fa-solid fa-times"></i>
+                </button>
             </div>
 
             <div class="list-group list-group-flush">
@@ -51,6 +55,9 @@
                 <div class="container-fluid">
                     <button class="btn btn-dark fs-5" id="sidebarToggle">
                         <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <button class="btn btn-dark fs-5" id="sidebarCloseBtn" title="Fechar menu">
+                        <i class="fa-solid fa-times"></i>
                     </button>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -100,7 +107,6 @@
     <script src="~/lib/jquery-mask/jquery.inputmask.js"></script>
     <script src="~/js/Mascara.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/lib/simple-sidebar/dist/js/scripts.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/BuscaCep.js"></script>
     <script src="~/js/modal.js" asp-append-version="true"></script>
