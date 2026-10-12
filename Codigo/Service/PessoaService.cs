@@ -37,57 +37,57 @@ namespace Service
         public async Task<HttpStatusCode> Create(Pessoa pessoa)
         {
 
-                try
+            try
+            {
+                pessoa.Cpf = pessoa.Cpf.Replace("-", string.Empty).Replace(".", string.Empty);
+                pessoa.Cep = pessoa.Cep.Replace("-", string.Empty);
+
+                await _context.Pessoas.AddAsync(pessoa);
+
+                if (pessoa.DataEntrada == null && pessoa.DataNascimento == null)
+                {//Mensagem de sucesso
+                    await _context.SaveChangesAsync();
+                    return HttpStatusCode.Created;
+                }
+                else if (pessoa.DataNascimento != null)
                 {
-                    pessoa.Cpf = pessoa.Cpf.Replace("-", string.Empty).Replace(".", string.Empty);
-                    pessoa.Cep = pessoa.Cep.Replace("-", string.Empty);
-
-                    await _context.Pessoas.AddAsync(pessoa);
-
-                    if (pessoa.DataEntrada == null && pessoa.DataNascimento == null)
-                    {//Mensagem de sucesso
-                        await _context.SaveChangesAsync();
-                        return HttpStatusCode.Created;
-                    }
-                    else if (pessoa.DataNascimento != null)
+                    int idade = Math.Abs(pessoa.DataNascimento.Value.Year - DateTime.Now.Year);
+                    if (pessoa.DataNascimento <= DateTime.Today && idade < 120)
                     {
-                        int idade = Math.Abs(pessoa.DataNascimento.Value.Year - DateTime.Now.Year);
-                        if (pessoa.DataNascimento <= DateTime.Today && idade < 120)
-                        {
-                            if (pessoa.DataEntrada != null)
-                            {//mensagem de sucesso
-                               
-                                await _context.SaveChangesAsync();
-                                return HttpStatusCode.Created;
-                            }
-                            else
-                            {
-                                // erro 400, data de entrada fora do escopo
-                                return HttpStatusCode.BadRequest;
-                            }
+                        if (pessoa.DataEntrada != null)
+                        {//mensagem de sucesso
+
+                            await _context.SaveChangesAsync();
+                            return HttpStatusCode.Created;
                         }
                         else
                         {
-                            // erro 401, data de nascimento está fora do escopo
-                            return HttpStatusCode.NotAcceptable;
+                            // erro 400, data de entrada fora do escopo
+                            return HttpStatusCode.BadRequest;
                         }
-                    }
-                    else if (pessoa.DataEntrada != null)
-                    {
-                        await _context.SaveChangesAsync();
-                        return HttpStatusCode.Created;
                     }
                     else
                     {
-                        // erro 400, data de entrada fora do escopo
-                        return HttpStatusCode.BadRequest;
+                        // erro 401, data de nascimento está fora do escopo
+                        return HttpStatusCode.NotAcceptable;
                     }
                 }
-                catch (Exception ex)
+                else if (pessoa.DataEntrada != null)
                 {
-                    //Aconteceu algum erro do servidor ou interno
-                    return HttpStatusCode.InternalServerError;
+                    await _context.SaveChangesAsync();
+                    return HttpStatusCode.Created;
                 }
+                else
+                {
+                    // erro 400, data de entrada fora do escopo
+                    return HttpStatusCode.BadRequest;
+                }
+            }
+            catch (Exception ex)
+            {
+                //Aconteceu algum erro do servidor ou interno
+                return HttpStatusCode.InternalServerError;
+            }
 
         }
 
@@ -213,7 +213,7 @@ namespace Service
                     pessoa.IsentoPagamento = 1;
                     pessoa.Telefone1 = "";
 
-                    if(await Create(pessoa) != HttpStatusCode.Created)
+                    if (await Create(pessoa) != HttpStatusCode.Created)
                     {
                         await transaction.RollbackAsync();
                         return HttpStatusCode.NotAcceptable;//nao foi possivel criar a pessoa
@@ -287,7 +287,7 @@ namespace Service
                         _context.Pessoas.Update(pessoaF);
                         await _context.SaveChangesAsync();
                     }
-                    catch 
+                    catch
                     {
                         await transaction.RollbackAsync();
                         return HttpStatusCode.NotAcceptable;//o usuario já possui cadastro em um grupo musical, não foi possivel alterar ele para adm grupo musical
@@ -295,7 +295,7 @@ namespace Service
 
                     sucesso = HttpStatusCode.OK; //usuario promovido a administrador de grupo musical
                 }
-               
+
                 else if (pessoaF.IdGrupoMusical == pessoa.IdGrupoMusical && pessoaF.IdPapelGrupo == 3)
                 {
                     return HttpStatusCode.BadRequest; // usuario já é administrador de grupo musical
@@ -341,7 +341,8 @@ namespace Service
             var pessoa = await _context.Pessoas.FindAsync(id);
             var lista = await GetAllAdmGroup(pessoa.IdGrupoMusical);
             int count = lista.Count();
-            if(count > 1) {
+            if (count > 1)
+            {
                 try
                 {
 
@@ -533,7 +534,7 @@ namespace Service
             pessoaAssociada.Ativo = 0;
             pessoaAssociada.DataSaida = DateTime.Now;
             return await Edit(pessoaAssociada);
-            
+
 
         }
 
@@ -555,11 +556,12 @@ namespace Service
 
                 email.To.Add(pessoa.Email);
 
-                await EmailService.Enviar(email);
-                return true;
+                return await EmailService.Enviar(email);
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine("Erro ao notificar cadastro do administrador de grupo:");
+                Console.WriteLine(ex.ToString());
                 return false;
             }
         }
@@ -582,11 +584,12 @@ namespace Service
 
                 email.To.Add(pessoa.Email);
 
-                await EmailService.Enviar(email);
-                return true;
+                return await EmailService.Enviar(email);
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine("Erro ao notificar cadastro do associado:");
+                Console.WriteLine(ex.ToString());
                 return false;
             }
         }
@@ -619,16 +622,16 @@ namespace Service
         public async Task<UserDTO?> GetByCpf(string? cpf)
         {
             var query = (from pessoa in _context.Pessoas
-                        where pessoa.Cpf == cpf
-                        select new UserDTO
-                        {
-                           Id = pessoa.Id,
-                           Nome = pessoa.Nome,
-                           Papel = pessoa.IdPapelGrupoNavigation.Nome,
-                           Ativo = Convert.ToBoolean(pessoa.Ativo),
-                           IdGrupoMusical = pessoa.IdGrupoMusical,
-                           IdPapelGrupo = pessoa.IdPapelGrupo
-                        }
+                         where pessoa.Cpf == cpf
+                         select new UserDTO
+                         {
+                             Id = pessoa.Id,
+                             Nome = pessoa.Nome,
+                             Papel = pessoa.IdPapelGrupoNavigation.Nome,
+                             Ativo = Convert.ToBoolean(pessoa.Ativo),
+                             IdGrupoMusical = pessoa.IdGrupoMusical,
+                             IdPapelGrupo = pessoa.IdPapelGrupo
+                         }
                         ).FirstOrDefaultAsync();
 
             return await query;
@@ -741,8 +744,8 @@ namespace Service
         public async Task<string> GetNomeAssociadoByEmail(string email)
         {
             var pessoaF = await (from pessoa in _context.Pessoas
-                         where pessoa.Email == email
-                         select pessoa).FirstOrDefaultAsync();
+                                 where pessoa.Email == email
+                                 select pessoa).FirstOrDefaultAsync();
 
             return pessoaF?.Nome;
         }
@@ -759,7 +762,7 @@ namespace Service
             {
                 return false;
             }
-               
+
         }
 
         public async Task<HttpStatusCode> AtivarAssociado(string cpf)
@@ -769,7 +772,7 @@ namespace Service
                 var pessoa = await _context.Pessoas.Where(p => p.Cpf == cpf).AsNoTracking().SingleOrDefaultAsync();
 
                 //verificar se existe o associado
-                if(pessoa != null)
+                if (pessoa != null)
                 {
                     //se o associado não foi desativado por algum adm de grupo
                     if (String.IsNullOrEmpty(pessoa.DataSaida.ToString()) && String.IsNullOrEmpty(pessoa.MotivoSaida))
@@ -786,7 +789,7 @@ namespace Service
                     else
                     {
                         return HttpStatusCode.Unauthorized;
-                    }  
+                    }
                     //===========================================================//
                 }
                 else
@@ -801,7 +804,7 @@ namespace Service
             }
         }
 
-        public IEnumerable <AutoCompleteRegenteDTO> GetRegentesForAutoComplete(int idGrupoMusical)
+        public IEnumerable<AutoCompleteRegenteDTO> GetRegentesForAutoComplete(int idGrupoMusical)
         {
             var query = _context.Pessoas
                         .Where(p => p.IdGrupoMusical == idGrupoMusical && p.IdPapelGrupo == 5 && p.Ativo == 1)
@@ -810,13 +813,14 @@ namespace Service
             return query.AsNoTracking().ToList();
         }
 
-       public List<AssociadoDTO> GetAssociadoAtivos(int idGrupoMusical) { 
+        public List<AssociadoDTO> GetAssociadoAtivos(int idGrupoMusical)
+        {
             var query = _context.Pessoas
                 .Where(p => p.IdGrupoMusical == idGrupoMusical && p.Ativo == 1 && p.IdPapelGrupo == 1)
                 .Select(p => new AssociadoDTO { Id = p.Id, Nome = p.Nome, Cpf = p.Cpf });
 
             return query.AsNoTracking().ToList();
-        } 
+        }
 
         public IEnumerable<AutoCompleteRegenteDTO> GetNomesRegentes(int idEnsaio)
         {
@@ -908,12 +912,12 @@ namespace Service
                 //Confirmação de alteração
                 await transaction.CommitAsync();
                 return HttpStatusCode.OK;
-            } 
+            }
             catch (Exception)
             {
                 await transaction.RollbackAsync();
                 return HttpStatusCode.InternalServerError;
-            }   
+            }
         }
 
         public async Task<HttpStatusCode> UpdateUAdmSistema(string? login, string? currentPassword, string? newPassword)
@@ -945,28 +949,28 @@ namespace Service
             var totalRecords = listaAssociado.Count();
 
             //verificando filtro
-            if(request.Search != null && request.Search.GetValueOrDefault("value")  != null)
+            if (request.Search != null && request.Search.GetValueOrDefault("value") != null)
             {
-                listaAssociado = listaAssociado.Where( g => g.Id.ToString().Contains(request.Search.GetValueOrDefault("value"), StringComparison.OrdinalIgnoreCase)
+                listaAssociado = listaAssociado.Where(g => g.Id.ToString().Contains(request.Search.GetValueOrDefault("value"), StringComparison.OrdinalIgnoreCase)
                                                        || g.Ativo.ToString().Contains(request.Search.GetValueOrDefault("value"), StringComparison.OrdinalIgnoreCase)
                                                        || g.Nome.ToString().Contains(request.Search.GetValueOrDefault("value"), StringComparison.OrdinalIgnoreCase));
             }
             //ordenar por:
-            if(request.Order != null && request.Order[0].GetValueOrDefault("column").Equals("0"))
+            if (request.Order != null && request.Order[0].GetValueOrDefault("column").Equals("0"))
             {
                 if (request.Order[0].GetValueOrDefault("dir").Equals("asc"))
                     listaAssociado = listaAssociado.OrderBy(g => g.Id);
                 else
                     listaAssociado = listaAssociado.OrderByDescending(g => g.Id);
             }
-            else if(request.Order != null && request.Order[0].GetValueOrDefault("column").Equals("1"))
+            else if (request.Order != null && request.Order[0].GetValueOrDefault("column").Equals("1"))
             {
                 if (request.Order[0].GetValueOrDefault("dir").Equals("asc"))
                     listaAssociado = listaAssociado.OrderBy(g => g.Nome);
                 else
                     listaAssociado = listaAssociado.OrderByDescending(g => g.Nome);
             }
-            else if(request.Order != null && request.Order[0].GetValueOrDefault("column").Equals("2"))
+            else if (request.Order != null && request.Order[0].GetValueOrDefault("column").Equals("2"))
             {
                 if (request.Order[0].GetValueOrDefault("dir").Equals("asc"))
                     listaAssociado = listaAssociado.OrderBy(g => g.Ativo);
