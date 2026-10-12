@@ -2,15 +2,15 @@
 {
     public class EmailModel
     {
-        public string From { get; set; } = "sistemabatala@gmail.com";
+        public string From { get; set; } = string.Empty;
         public string Assunto { get; set; } = string.Empty;
         public List<string> To { get; set; } = new();
         public string Subject { get; set; } = "Gestão Grupo Musical";
         public string AddresseeName { get; set; } = string.Empty;
         public string Body { get; set; } = string.Empty;
-        public string Host { get; set; } = "smtp.gmail.com";
-        public string UserName { get; set; } = "sistemabatala@gmail.com";
-        public string Password { get; set; } = "dltxbkwrcuqrsvmb";
-        public int Port { get; set; } = 587;
+        public string Host { get; set; } = string.Empty;
+        public string UserName { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+        public int Port { get; set; } = 0;
     }
 }
