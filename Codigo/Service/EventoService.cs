@@ -20,10 +20,38 @@ namespace Service
     {
         private readonly GrupoMusicalContext _context;
 
+        // Tipo de instrumento usado para quem participa do evento sem instrumento (ex.: regentes),
+        // pois a coluna eventopessoa.idTipoInstrumento não aceita nulo no banco.
+        public const string NOME_INSTRUMENTO_NAO_DEFINIDO = "NAO-DEFINIDO";
+
 
         public EventoService(GrupoMusicalContext context)
         {
             _context = context;
+        }
+
+        /// <summary>
+        /// Retorna o id do tipo de instrumento "NAO-DEFINIDO", criando-o caso ainda não exista
+        /// </summary>
+        private int GetIdInstrumentoNaoDefinido()
+        {
+            var tipoInstrumento = _context.Tipoinstrumentos
+                .FirstOrDefault(t => t.Nome == NOME_INSTRUMENTO_NAO_DEFINIDO);
+
+            if (tipoInstrumento == null)
+            {
+                // O id é calculado aqui porque em algumas bases tipoinstrumento.id não é AUTO_INCREMENT
+                int proximoId = (_context.Tipoinstrumentos.Max(t => (int?)t.Id) ?? 0) + 1;
+                tipoInstrumento = new Tipoinstrumento
+                {
+                    Id = proximoId,
+                    Nome = NOME_INSTRUMENTO_NAO_DEFINIDO
+                };
+                _context.Tipoinstrumentos.Add(tipoInstrumento);
+                _context.SaveChanges();
+            }
+
+            return tipoInstrumento.Id;
         }
 
         /// <summary>
@@ -46,6 +74,7 @@ namespace Service
                         _context.SaveChanges();
 
                         // Adicionar regentes
+                        int idInstrumentoNaoDefinido = GetIdInstrumentoNaoDefinido();
                         List<Eventopessoa> p = new();
                         foreach (int id in idRegentes)
                         {
@@ -53,6 +82,7 @@ namespace Service
                             {
                                 IdEvento = evento.Id,
                                 IdPessoa = id,
+                                IdTipoInstrumento = idInstrumentoNaoDefinido,
                                 IdPapelGrupoPapelGrupo = 5, // Regente
                                 Status = "INSCRITO",
                                 Presente = 0,
@@ -204,12 +234,14 @@ namespace Service
                 _context.SaveChanges();
 
                 // 2. Adicionar novos regentes
+                int idInstrumentoNaoDefinido = GetIdInstrumentoNaoDefinido();
                 foreach (var idRegente in idRegentes)
                 {
                     var novoRegente = new Eventopessoa
                     {
                         IdEvento = evento.Id,
                         IdPessoa = idRegente,
+                        IdTipoInstrumento = idInstrumentoNaoDefinido,
                         IdPapelGrupoPapelGrupo = 5, // Papel de Regente
                         Status = "INSCRITO"
                     };
@@ -591,29 +623,52 @@ namespace Service
                         var instrumentoAnterior = await _context.Apresentacaotipoinstrumentos
                             .FirstOrDefaultAsync(ati => ati.IdApresentacao == idEvento &&
                                                        ati.IdTipoInstrumento == solicitacaoExistente.IdTipoInstrumento);
-                        if (instrumentoAnterior != null && instrumentoAnterior.QuantidadeSolicitada > 0)
+                        if (instrumentoAnterior != null)
                         {
-                            instrumentoAnterior.QuantidadeSolicitada--;
+                            if (instrumentoAnterior.QuantidadeSolicitada > 0)
+                            {
+                                instrumentoAnterior.QuantidadeSolicitada--;
+                            }
+                            // Libera a vaga confirmada do instrumento anterior
+                            if (solicitacaoExistente.Status == InscricaoEventoPessoa.DEFERIDO.ToString() &&
+                                instrumentoAnterior.QuantidadeConfirmada > 0)
+                            {
+                                instrumentoAnterior.QuantidadeConfirmada--;
+                            }
                             _context.Update(instrumentoAnterior);
                         }
                     }
 
+                    if (instrumentoEvento.QuantidadeConfirmada >= instrumentoEvento.QuantidadePlanejada)
+                    {
+                        Console.WriteLine($"Sem vagas para o instrumento {idTipoInstrumento} no evento {idEvento}");
+                        transaction.Rollback();
+                        return HttpStatusCode.BadRequest;
+                    }
+
                     solicitacaoExistente.IdTipoInstrumento = idTipoInstrumento;
-                    solicitacaoExistente.Status = InscricaoEventoPessoa.INSCRITO.ToString();
+                    solicitacaoExistente.Status = InscricaoEventoPessoa.DEFERIDO.ToString();
                     _context.Update(solicitacaoExistente);
 
                     Console.WriteLine($"Solicitação atualizada - Novo instrumento: {idTipoInstrumento}");
                 }
                 else
                 {
-                    // Criar nova solicitação
+                    if (instrumentoEvento.QuantidadeConfirmada >= instrumentoEvento.QuantidadePlanejada)
+                    {
+                        Console.WriteLine($"Sem vagas para o instrumento {idTipoInstrumento} no evento {idEvento}");
+                        transaction.Rollback();
+                        return HttpStatusCode.BadRequest;
+                    }
+
+                    // Criar nova solicitação já deferida
                     var novaInscricao = new Eventopessoa
                     {
                         IdEvento = idEvento,
                         IdPessoa = idPessoa,
                         IdTipoInstrumento = idTipoInstrumento,
                         IdPapelGrupoPapelGrupo = 1, // ASSOCIADO
-                        Status = InscricaoEventoPessoa.INSCRITO.ToString(),
+                        Status = InscricaoEventoPessoa.DEFERIDO.ToString(),
                         Presente = 0,
                         JustificativaAceita = 0
                     };
@@ -622,8 +677,9 @@ namespace Service
                     Console.WriteLine($"Nova solicitação criada para pessoa {idPessoa} no evento {idEvento}");
                 }
 
-                // Atualizar quantidade solicitada do novo instrumento
+                // Atualizar quantidade solicitada e confirmada do novo instrumento
                 instrumentoEvento.QuantidadeSolicitada++;
+                instrumentoEvento.QuantidadeConfirmada++;
                 _context.Update(instrumentoEvento);
                 Console.WriteLine($"Quantidade solicitada do instrumento {idTipoInstrumento} incrementada para {instrumentoEvento.QuantidadeSolicitada}");
 
@@ -652,7 +708,7 @@ namespace Service
 
                 if (eventoPessoa == null) return HttpStatusCode.NotFound;
 
-                if (eventoPessoa.Status == "DEFERIDO") return HttpStatusCode.BadRequest;
+                if (eventoPessoa.Status == InscricaoEventoPessoa.INDEFERIDO.ToString()) return HttpStatusCode.BadRequest;
 
                 if (eventoPessoa.IdTipoInstrumento > 0)
                 {
@@ -660,9 +716,18 @@ namespace Service
                         (ati => ati.IdApresentacao == idEvento &&
                                 ati.IdTipoInstrumento == eventoPessoa.IdTipoInstrumento);
 
-                    if (vaga != null && vaga.QuantidadeSolicitada > 0)
+                    if (vaga != null)
                     {
-                        vaga.QuantidadeSolicitada--;
+                        if (vaga.QuantidadeSolicitada > 0)
+                        {
+                            vaga.QuantidadeSolicitada--;
+                        }
+                        // Libera a vaga confirmada ao cancelar uma inscrição deferida
+                        if (eventoPessoa.Status == InscricaoEventoPessoa.DEFERIDO.ToString() &&
+                            vaga.QuantidadeConfirmada > 0)
+                        {
+                            vaga.QuantidadeConfirmada--;
+                        }
                         _context.Update(vaga);
                     }
                 }
