@@ -199,13 +199,23 @@ class _HomeViewState extends State<HomeView> {
             final status = (inscricao?['status'] as String? ?? '').toUpperCase();
 
             if (status == 'DEFERIDO') {
-              return _ActionIconButton(
-                icon: Icons.calendar_month_outlined,
-                tooltip: 'Justificar ausência',
-                onPressed: () => _abrirModalJustificativa(
-                  id: item.id,
-                  isEnsaio: false,
-                ),
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _ActionIconButton(
+                    icon: Icons.calendar_month_outlined,
+                    tooltip: 'Justificar ausência',
+                    onPressed: () => _abrirModalJustificativa(
+                      id: item.id,
+                      isEnsaio: false,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  EventToggleButton(
+                    isAccepted: true,
+                    onPressed: () => _confirmarCancelamento(item.id, service),
+                  ),
+                ],
               );
             }
 
@@ -554,12 +564,12 @@ class _HomeViewState extends State<HomeView> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const Text(
-                  'Solicitação Enviada!',
+                  'Participação Confirmada!',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  'Sua participação com o instrumento $nomeInst foi solicitada com sucesso. Agora é só aguardar a aprovação do regente!',
+                  'Sua participação com o instrumento $nomeInst foi confirmada com sucesso.',
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -589,6 +599,52 @@ class _HomeViewState extends State<HomeView> {
         ),
       );
     }
+  }
+
+  Future<void> _confirmarCancelamento(int eventoId, EventoService service) async {
+    final confirmado = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Cancelar participação'),
+        content: const Text(
+          'Tem certeza que deseja cancelar sua participação neste evento?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Voltar'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('Cancelar participação'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmado != true || !mounted) return;
+
+    _showLoading();
+    final sucesso = await service.cancelarSolicitacao(eventoId);
+
+    if (!mounted) return;
+    Navigator.of(context, rootNavigator: true).pop();
+
+    if (sucesso) {
+      await _atualizarEstadoEvento(eventoId);
+    }
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          sucesso
+              ? 'Participação cancelada com sucesso.'
+              : 'Não foi possível cancelar sua participação.',
+        ),
+        backgroundColor: sucesso ? Colors.green : Colors.red,
+      ),
+    );
   }
 
   Widget _infoRow(IconData icon, String label, String value) {
