@@ -958,7 +958,10 @@ public partial class GrupoMusicalContext : DbContext
 
             entity.ToTable("tipoinstrumento");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            // tipoinstrumento.id não é AUTO_INCREMENT no banco, então o valor é sempre informado pela aplicação
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("id");
             entity.Property(e => e.Nome)
                 .HasMaxLength(100)
                 .HasColumnName("nome");
