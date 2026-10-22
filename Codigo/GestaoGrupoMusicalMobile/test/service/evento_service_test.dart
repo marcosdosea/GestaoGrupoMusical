@@ -166,7 +166,38 @@ void main() {
       final service = EventoService(client: client);
       final result = await service.solicitarParticipacao(1, 3);
 
-      expect(result, isNull);
+      expect(result.erro, isNull);
+      expect(result.aguardandoAprovacao, isFalse);
+    });
+
+    test('deve indicar participação confirmada quando API retorna status DEFERIDO', () async {
+      final client = MockClient((_) async {
+        return http.Response(
+          jsonEncode({'mensagem': 'Participação confirmada com sucesso!', 'status': 'DEFERIDO'}),
+          200,
+        );
+      });
+
+      final service = EventoService(client: client);
+      final result = await service.solicitarParticipacao(1, 3);
+
+      expect(result.erro, isNull);
+      expect(result.aguardandoAprovacao, isFalse);
+    });
+
+    test('deve indicar aguardando aprovação quando API retorna status INSCRITO', () async {
+      final client = MockClient((_) async {
+        return http.Response(
+          jsonEncode({'mensagem': 'Solicitação enviada!', 'status': 'INSCRITO'}),
+          200,
+        );
+      });
+
+      final service = EventoService(client: client);
+      final result = await service.solicitarParticipacao(1, 3);
+
+      expect(result.erro, isNull);
+      expect(result.aguardandoAprovacao, isTrue);
     });
 
     test('deve retornar mensagem de erro da API quando falha', () async {
@@ -180,7 +211,8 @@ void main() {
       final service = EventoService(client: client);
       final result = await service.solicitarParticipacao(1, 3);
 
-      expect(result, equals('Vagas esgotadas para este instrumento.'));
+      expect(result.erro, equals('Vagas esgotadas para este instrumento.'));
+      expect(result.aguardandoAprovacao, isFalse);
     });
 
     test('deve retornar "Erro de conexão." quando há exceção', () async {
@@ -191,7 +223,8 @@ void main() {
       final service = EventoService(client: client);
       final result = await service.solicitarParticipacao(1, 3);
 
-      expect(result, equals('Erro de conexão.'));
+      expect(result.erro, equals('Erro de conexão.'));
+      expect(result.aguardandoAprovacao, isFalse);
     });
   });
 

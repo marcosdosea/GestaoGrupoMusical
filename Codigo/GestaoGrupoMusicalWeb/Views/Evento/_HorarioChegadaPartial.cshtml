@@ -1,0 +1,110 @@
+@model GestaoGrupoMusicalWeb.Models.EventoCreateViewlModel
+
+@* Seção opcional com o horário em que os integrantes devem chegar ao evento.
+   Usada nas telas de cadastro e edição de evento. *@
+<div class="container mt-3">
+    <fieldset class="border rounded p-3">
+        <legend class="float-none w-auto px-2 mb-0 fs-6 fw-semibold">
+            <i class="fa-regular fa-clock text-danger me-1" aria-hidden="true"></i>
+            Chegada dos integrantes
+            <span class="fw-normal text-muted small">(opcional)</span>
+        </legend>
+        <p class="text-muted small mb-3">
+            Informe quando os integrantes devem chegar, por exemplo para aquecimento, afinação ou troca de figurino.
+        </p>
+
+        <div class="row g-3">
+            <div class="form-group col-xxl-4">
+                <label asp-for="DataHoraChegadaEvento" class="control-label"></label>
+                <input asp-for="DataHoraChegadaEvento" max="9999-12-31T23:59" class="form-control"
+                       aria-describedby="ajudaChegada validacaoChegada" />
+                <div class="d-flex flex-wrap gap-1 mt-2" role="group" aria-label="Preencher horário de chegada">
+                    <button type="button" class="btn btn-outline-secondary btn-sm btn-chegada-rapida" data-minutos="30" disabled>30 min antes</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm btn-chegada-rapida" data-minutos="60" disabled>1 h antes</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm btn-chegada-rapida" data-minutos="120" disabled>2 h antes</button>
+                </div>
+                <small id="ajudaChegada" class="form-text text-muted d-block">
+                    Deve ser antes do início do evento. Preencha o início para usar os atalhos.
+                </small>
+                <span id="validacaoChegada" class="text-danger d-none" role="alert">
+                    O horário de chegada deve ser antes do início do evento.
+                </span>
+                <span asp-validation-for="DataHoraChegadaEvento" class="text-danger"></span>
+            </div>
+
+            <div class="form-group col-xxl-8">
+                <label asp-for="ObservacaoHoraChegada" class="control-label"></label>
+                <textarea asp-for="ObservacaoHoraChegada" class="form-control" rows="3" maxlength="1000"
+                          id="textAreaObservacaoChegada" oninput="updateCharacterCountObservacaoChegada()"
+                          placeholder="Ex.: Chegar com o figurino completo. Ponto de encontro no portão 2 para aquecimento."></textarea>
+                <span asp-validation-for="ObservacaoHoraChegada" class="text-danger"></span>
+                <small id="characterCountObservacaoChegada" class="text-muted">0/1000</small>
+            </div>
+        </div>
+    </fieldset>
+</div>
+
+<script>
+    (function () {
+        const inputInicio = document.getElementById('DataHoraInicio');
+        const inputChegada = document.getElementById('DataHoraChegadaEvento');
+        const erroChegada = document.getElementById('validacaoChegada');
+        const botoesRapidos = document.querySelectorAll('.btn-chegada-rapida');
+
+        // Converte uma data para o formato aceito pelo input datetime-local (yyyy-MM-ddTHH:mm)
+        function paraInputLocal(data) {
+            const doisDigitos = n => String(n).padStart(2, '0');
+            return `${data.getFullYear()}-${doisDigitos(data.getMonth() + 1)}-${doisDigitos(data.getDate())}` +
+                `T${doisDigitos(data.getHours())}:${doisDigitos(data.getMinutes())}`;
+        }
+
+        function chegadaValida() {
+            if (!inputChegada.value || !inputInicio.value) return true;
+            return new Date(inputChegada.value) <= new Date(inputInicio.value);
+        }
+
+        function validarChegada() {
+            const valida = chegadaValida();
+            erroChegada.classList.toggle('d-none', valida);
+            inputChegada.classList.toggle('is-invalid', !valida);
+            inputChegada.setAttribute('aria-invalid', String(!valida));
+            return valida;
+        }
+
+        function atualizarInicio() {
+            const temInicio = Boolean(inputInicio.value);
+            botoesRapidos.forEach(botao => botao.disabled = !temInicio);
+            inputChegada.max = temInicio ? inputInicio.value.substring(0, 16) : '9999-12-31T23:59';
+            validarChegada();
+        }
+
+        botoesRapidos.forEach(botao => botao.addEventListener('click', function () {
+            const chegada = new Date(inputInicio.value);
+            chegada.setMinutes(chegada.getMinutes() - Number(botao.dataset.minutos));
+            inputChegada.value = paraInputLocal(chegada);
+            validarChegada();
+            inputChegada.focus();
+        }));
+
+        inputInicio.addEventListener('change', atualizarInicio);
+        inputChegada.addEventListener('change', validarChegada);
+
+        inputChegada.form.addEventListener('submit', function (e) {
+            if (!validarChegada()) {
+                e.preventDefault();
+                inputChegada.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                inputChegada.focus();
+            }
+        });
+
+        window.updateCharacterCountObservacaoChegada = function () {
+            const textArea = document.getElementById('textAreaObservacaoChegada');
+            document.getElementById('characterCountObservacaoChegada').innerText = textArea.value.length + '/' + textArea.maxLength;
+        };
+
+        document.addEventListener('DOMContentLoaded', function () {
+            atualizarInicio();
+            updateCharacterCountObservacaoChegada();
+        });
+    })();
+</script>

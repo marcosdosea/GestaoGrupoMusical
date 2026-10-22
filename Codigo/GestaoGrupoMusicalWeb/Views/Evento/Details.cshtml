@@ -45,6 +45,23 @@
                                 <p class="form-control-plaintext fw-bold">@Model.DataHoraFim.ToString("dd/MM/yyyy HH:mm")</p>
                             </div>
                             <div class="mb-3">
+                                <label class="form-label text-muted">@Html.DisplayNameFor(model => model.DataHoraChegadaEvento)</label>
+                                @if (Model.DataHoraChegadaEvento.HasValue)
+                                {
+                                    <p class="form-control-plaintext fw-bold">@Model.DataHoraChegadaEvento.Value.ToString("dd/MM/yyyy HH:mm")</p>
+                                }
+                                else
+                                {
+                                    <p class="form-control-plaintext fw-bold fst-italic">Não informado.</p>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(Model.ObservacaoHoraChegada))
+                                {
+                                    <p class="text-muted small mb-0" style="white-space: pre-line;">
+                                        <i class="fa-regular fa-comment me-1" aria-hidden="true"></i>@Model.ObservacaoHoraChegada
+                                    </p>
+                                }
+                            </div>
+                            <div class="mb-3">
                                 <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Local)</label>
                                 <p class="form-control-plaintext fw-bold">@Html.DisplayFor(model => model.Local)</p>
                             </div>

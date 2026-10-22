@@ -75,5 +75,5 @@ public partial class Pessoa
 
     public virtual ICollection<Receitafinanceirapessoa> Receitafinanceirapessoas { get; set; } = new List<Receitafinanceirapessoa>();
 
-    public virtual ICollection<Tipoinstrumento> IdTipoInstrumentos { get; set; } = new List<Tipoinstrumento>();
+    public virtual ICollection<Pessoatipoinstrumento> Pessoatipoinstrumentos { get; set; } = new List<Pessoatipoinstrumento>();
 }

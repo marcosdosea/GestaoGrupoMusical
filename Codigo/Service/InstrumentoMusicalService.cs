@@ -121,7 +121,10 @@ namespace Service
 
         public async Task<IEnumerable<Tipoinstrumento>> GetAllTipoInstrumento()
         {
-            return await _context.Tipoinstrumentos.AsNoTracking().ToListAsync();
+            // O tipo "NAO-DEFINIDO" é de uso interno (participantes sem instrumento) e não deve ser selecionável
+            return await _context.Tipoinstrumentos
+                .Where(t => t.Nome != EventoService.NOME_INSTRUMENTO_NAO_DEFINIDO)
+                .AsNoTracking().ToListAsync();
         }
 
         public async Task<string> GetNomeInstrumento(int id)
