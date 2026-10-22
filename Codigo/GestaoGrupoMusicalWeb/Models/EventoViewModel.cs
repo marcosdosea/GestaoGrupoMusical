@@ -21,13 +21,20 @@ namespace GestaoGrupoMusicalWeb.Models
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public DateTime DataHoraFim { get; set; }
 
+        [Display(Name = "Horário de chegada")]
+        public DateTime? DataHoraChegadaEvento { get; set; }
+
+        [Display(Name = "Observação sobre a chegada")]
+        public string? ObservacaoHoraChegada { get; set; }
+
         [Display(Name = "Local")]
-        public string? Local { get; set; } 
-        
+        public string? Local { get; set; }
+
         [Display(Name = "Figurino")]
         public string? FigurinoApresentacao { get; set; }
 
-        [Display(Name = "Repetório")]
+        [Display(Name = "Repertório")]
+        [StringLength(5000, ErrorMessage = "O {0} deve ter no máximo {1} caracteres")]
         public string? Repertorio { get; set; }
         [Display(Name = "Colaborador Reponsável")]
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
@@ -67,6 +74,13 @@ namespace GestaoGrupoMusicalWeb.Models
         [Required(ErrorMessage = "A data final é obrigatório")]
         public DateTime? DataHoraFim { get; set; }
 
+        [Display(Name = "Horário de chegada")]
+        public DateTime? DataHoraChegadaEvento { get; set; }
+
+        [Display(Name = "Observação sobre a chegada")]
+        [StringLength(1000, ErrorMessage = "A {0} deve ter no máximo {1} caracteres")]
+        public string? ObservacaoHoraChegada { get; set; }
+
         public SelectList? FigurinoList { get; set; }
 
         [Display(Name = "Figurino")]
@@ -78,7 +92,11 @@ namespace GestaoGrupoMusicalWeb.Models
 
 
         [Display(Name = "Repertório")]
+        [StringLength(5000, ErrorMessage = "O {0} deve ter no máximo {1} caracteres")]
         public string? Repertorio { get; set; }
+
+        [Display(Name = "Inscrições precisam ser confirmadas pelo administrador")]
+        public bool PrecisaConfirmarParticipacao { get; set; }
 
         [Display(Name = "Regentes")]
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
