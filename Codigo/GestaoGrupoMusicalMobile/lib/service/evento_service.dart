@@ -98,7 +98,9 @@ class EventoService {
   }
 
   // Métodos de POST (Participação e Cancelamento)
-  Future<String?> solicitarParticipacao(
+  // Retorna a mensagem de erro (null em caso de sucesso) e se a inscrição ficou
+  // aguardando a aprovação do administrador (evento que precisa de confirmação)
+  Future<({String? erro, bool aguardandoAprovacao})> solicitarParticipacao(
       int idEvento, int idTipoInstrumento) async {
     try {
       final token = await SessionManager.getToken();
@@ -114,11 +116,20 @@ class EventoService {
         }),
       );
 
-      if (response.statusCode == 200) return null;
+      if (response.statusCode == 200) {
+        String? status;
+        try {
+          status = (jsonDecode(response.body)['status'] as String?)?.toUpperCase();
+        } catch (_) {}
+        return (erro: null, aguardandoAprovacao: status == 'INSCRITO');
+      }
       final data = jsonDecode(response.body);
-      return data['mensagem'] ?? "Erro ao se inscrever.";
+      return (
+        erro: (data['mensagem'] as String?) ?? "Erro ao se inscrever.",
+        aguardandoAprovacao: false,
+      );
     } catch (e) {
-      return "Erro de conexão.";
+      return (erro: "Erro de conexão.", aguardandoAprovacao: false);
     }
   }
 
