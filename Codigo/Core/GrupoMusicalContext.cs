@@ -60,6 +60,8 @@ public partial class GrupoMusicalContext : DbContext
 
     public virtual DbSet<Pessoa> Pessoas { get; set; }
 
+    public virtual DbSet<Pessoatipoinstrumento> Pessoatipoinstrumentos { get; set; }
+
     public virtual DbSet<DispositivoPessoa> DispositivoPessoa { get; set; }
 
     public virtual DbSet<Receitafinanceira> Receitafinanceiras { get; set; }
@@ -313,6 +315,9 @@ public partial class GrupoMusicalContext : DbContext
             entity.HasIndex(e => e.IdColaboradorResponsavel, "fk_Ensaio_Pessoa1_idx");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.DataHoraChegadaEvento)
+                .HasColumnType("datetime")
+                .HasColumnName("dataHoraChegadaEvento");
             entity.Property(e => e.DataHoraFim)
                 .HasColumnType("datetime")
                 .HasColumnName("dataHoraFim");
@@ -324,8 +329,12 @@ public partial class GrupoMusicalContext : DbContext
             entity.Property(e => e.Local)
                 .HasMaxLength(100)
                 .HasColumnName("local");
-            entity.Property(e => e.Repertorio)
+            entity.Property(e => e.ObservacaoHoraChegada)
                 .HasMaxLength(1000)
+                .HasColumnName("observacaoHoraChegada");
+            entity.Property(e => e.PrecisaConfirmarParticipacao).HasColumnName("precisaConfirmarParticipacao");
+            entity.Property(e => e.Repertorio)
+                .HasMaxLength(5000)
                 .HasColumnName("repertorio");
 
             entity.HasOne(d => d.IdColaboradorResponsavelNavigation).WithMany(p => p.Eventos)
@@ -860,27 +869,33 @@ public partial class GrupoMusicalContext : DbContext
                 .HasForeignKey(d => d.IdPapelGrupo)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_Pessoa_PapelGrupoMusical1");
+        });
 
-            entity.HasMany(d => d.IdTipoInstrumentos).WithMany(p => p.IdPessoas)
-                .UsingEntity<Dictionary<string, object>>(
-                    "Pessoatipoinstrumento",
-                    r => r.HasOne<Tipoinstrumento>().WithMany()
-                        .HasForeignKey("IdTipoInstrumento")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("fk_Pessoa_has_TipoInstrumento_TipoInstrumento1"),
-                    l => l.HasOne<Pessoa>().WithMany()
-                        .HasForeignKey("IdPessoa")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("fk_Pessoa_has_TipoInstrumento_Pessoa"),
-                    j =>
-                    {
-                        j.HasKey("IdPessoa", "IdTipoInstrumento").HasName("PRIMARY");
-                        j.ToTable("pessoatipoinstrumento");
-                        j.HasIndex(new[] { "IdPessoa" }, "fk_Pessoa_has_TipoInstrumento_Pessoa_idx");
-                        j.HasIndex(new[] { "IdTipoInstrumento" }, "fk_Pessoa_has_TipoInstrumento_TipoInstrumento1_idx");
-                        j.IndexerProperty<int>("IdPessoa").HasColumnName("idPessoa");
-                        j.IndexerProperty<int>("IdTipoInstrumento").HasColumnName("idTipoInstrumento");
-                    });
+        modelBuilder.Entity<Pessoatipoinstrumento>(entity =>
+        {
+            entity.HasKey(e => new { e.IdPessoa, e.IdTipoInstrumento }).HasName("PRIMARY");
+
+            entity.ToTable("pessoatipoinstrumento");
+
+            entity.HasIndex(e => e.IdPessoa, "fk_Pessoa_has_TipoInstrumento_Pessoa_idx");
+
+            entity.HasIndex(e => e.IdTipoInstrumento, "fk_Pessoa_has_TipoInstrumento_TipoInstrumento1_idx");
+
+            entity.Property(e => e.IdPessoa).HasColumnName("idPessoa");
+            entity.Property(e => e.IdTipoInstrumento).HasColumnName("idTipoInstrumento");
+            entity.Property(e => e.PrioridadeEscolha)
+                .HasDefaultValueSql("'1'")
+                .HasColumnName("prioridadeEscolha");
+
+            entity.HasOne(d => d.IdPessoaNavigation).WithMany(p => p.Pessoatipoinstrumentos)
+                .HasForeignKey(d => d.IdPessoa)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_Pessoa_has_TipoInstrumento_Pessoa");
+
+            entity.HasOne(d => d.IdTipoInstrumentoNavigation).WithMany(p => p.Pessoatipoinstrumentos)
+                .HasForeignKey(d => d.IdTipoInstrumento)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_Pessoa_has_TipoInstrumento_TipoInstrumento1");
         });
 
         modelBuilder.Entity<Receitafinanceira>(entity =>
