@@ -41,6 +41,8 @@
                     </div>
                 </div>
             </div>
+
+            <partial name="_HorarioChegadaPartial" />
             <div class="container">
                 <div class="row">
                     <div class="form-group col-xl">
@@ -96,10 +98,20 @@
             <div class="container">
                 <div class="form-group col-md-12">
                     <label asp-for="Repertorio" class="control-label"></label>
-                    <textarea asp-for="Repertorio" class="form-control" maxlength="100" id="linkTextAreaRepertorio" oninput="updateCharacterCountRepertorio()"></textarea>
+                    <textarea asp-for="Repertorio" class="form-control" rows="5" maxlength="5000" id="linkTextAreaRepertorio" oninput="updateCharacterCountRepertorio()"></textarea>
                     <span asp-validation-for="Repertorio" class="text-danger"></span>
-                    <small id="characterCountRepertorio">0/100</small>
+                    <small id="characterCountRepertorio">0/5000</small>
                 </div>
+            </div>
+            <div class="container mt-3">
+                <div class="form-check">
+                    <input asp-for="PrecisaConfirmarParticipacao" class="form-check-input" />
+                    <label asp-for="PrecisaConfirmarParticipacao" class="form-check-label"></label>
+                </div>
+                <small class="form-text text-muted d-block">
+                    Marcado: a inscrição do associado fica como <b>Inscrito</b> até o administrador alterá-la para <b>Deferido</b>.
+                    Desmarcado: o associado já é adicionado ao evento como <b>Deferido</b>.
+                </small>
             </div>
             <br />
             <br />
