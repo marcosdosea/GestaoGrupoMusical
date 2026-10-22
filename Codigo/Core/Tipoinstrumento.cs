@@ -15,5 +15,5 @@ public partial class Tipoinstrumento
 
     public virtual ICollection<Instrumentomusical> Instrumentomusicals { get; set; } = new List<Instrumentomusical>();
 
-    public virtual ICollection<Pessoa> IdPessoas { get; set; } = new List<Pessoa>();
+    public virtual ICollection<Pessoatipoinstrumento> Pessoatipoinstrumentos { get; set; } = new List<Pessoatipoinstrumento>();
 }
