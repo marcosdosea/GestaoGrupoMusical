@@ -66,6 +66,13 @@ namespace Service
 
             try
             {
+                // O horário de chegada (opcional) não pode ser depois do início do evento
+                if (evento.DataHoraChegadaEvento > evento.DataHoraInicio)
+                {
+                    transaction.Rollback();
+                    return HttpStatusCode.UnprocessableEntity;
+                }
+
                 if (evento.DataHoraFim > evento.DataHoraInicio)
                 {
                     if (evento.DataHoraInicio >= DateTime.Now)
@@ -225,6 +232,13 @@ namespace Service
                 {
                     transaction.Rollback();
                     return HttpStatusCode.BadRequest;
+                }
+
+                // O horário de chegada (opcional) não pode ser depois do início do evento
+                if (evento.DataHoraChegadaEvento > evento.DataHoraInicio)
+                {
+                    transaction.Rollback();
+                    return HttpStatusCode.UnprocessableEntity;
                 }
 
                 // 1. Remover regentes antigos
@@ -600,6 +614,16 @@ namespace Service
                     return HttpStatusCode.BadRequest;
                 }
 
+                // Se o evento precisa de confirmação, a inscrição aguarda o administrador alterar para DEFERIDO;
+                // caso contrário, o associado já entra deferido e ocupa uma vaga confirmada
+                bool precisaConfirmarParticipacao = await _context.Eventos
+                    .Where(e => e.Id == idEvento)
+                    .Select(e => e.PrecisaConfirmarParticipacao == 1)
+                    .FirstOrDefaultAsync();
+                string statusInscricao = precisaConfirmarParticipacao
+                    ? InscricaoEventoPessoa.INSCRITO.ToString()
+                    : InscricaoEventoPessoa.DEFERIDO.ToString();
+
                 // Verificar se já existe alguma solicitação (qualquer status)
                 var solicitacaoExistente = await _context.Eventopessoas
                     .FirstOrDefaultAsync(ep => ep.IdEvento == idEvento && ep.IdPessoa == idPessoa);
@@ -639,7 +663,8 @@ namespace Service
                         }
                     }
 
-                    if (instrumentoEvento.QuantidadeConfirmada >= instrumentoEvento.QuantidadePlanejada)
+                    if (!precisaConfirmarParticipacao &&
+                        instrumentoEvento.QuantidadeConfirmada >= instrumentoEvento.QuantidadePlanejada)
                     {
                         Console.WriteLine($"Sem vagas para o instrumento {idTipoInstrumento} no evento {idEvento}");
                         transaction.Rollback();
@@ -647,28 +672,29 @@ namespace Service
                     }
 
                     solicitacaoExistente.IdTipoInstrumento = idTipoInstrumento;
-                    solicitacaoExistente.Status = InscricaoEventoPessoa.DEFERIDO.ToString();
+                    solicitacaoExistente.Status = statusInscricao;
                     _context.Update(solicitacaoExistente);
 
                     Console.WriteLine($"Solicitação atualizada - Novo instrumento: {idTipoInstrumento}");
                 }
                 else
                 {
-                    if (instrumentoEvento.QuantidadeConfirmada >= instrumentoEvento.QuantidadePlanejada)
+                    if (!precisaConfirmarParticipacao &&
+                        instrumentoEvento.QuantidadeConfirmada >= instrumentoEvento.QuantidadePlanejada)
                     {
                         Console.WriteLine($"Sem vagas para o instrumento {idTipoInstrumento} no evento {idEvento}");
                         transaction.Rollback();
                         return HttpStatusCode.BadRequest;
                     }
 
-                    // Criar nova solicitação já deferida
+                    // Criar nova solicitação (INSCRITO ou DEFERIDO, conforme o evento)
                     var novaInscricao = new Eventopessoa
                     {
                         IdEvento = idEvento,
                         IdPessoa = idPessoa,
                         IdTipoInstrumento = idTipoInstrumento,
                         IdPapelGrupoPapelGrupo = 1, // ASSOCIADO
-                        Status = InscricaoEventoPessoa.DEFERIDO.ToString(),
+                        Status = statusInscricao,
                         Presente = 0,
                         JustificativaAceita = 0
                     };
@@ -677,9 +703,12 @@ namespace Service
                     Console.WriteLine($"Nova solicitação criada para pessoa {idPessoa} no evento {idEvento}");
                 }
 
-                // Atualizar quantidade solicitada e confirmada do novo instrumento
+                // Atualizar quantidade solicitada do novo instrumento; a confirmada só sobe quando a inscrição já entra deferida
                 instrumentoEvento.QuantidadeSolicitada++;
-                instrumentoEvento.QuantidadeConfirmada++;
+                if (!precisaConfirmarParticipacao)
+                {
+                    instrumentoEvento.QuantidadeConfirmada++;
+                }
                 _context.Update(instrumentoEvento);
                 Console.WriteLine($"Quantidade solicitada do instrumento {idTipoInstrumento} incrementada para {instrumentoEvento.QuantidadeSolicitada}");
 
@@ -1122,9 +1151,11 @@ public EventoDetailsDTO? GetDetails(int idEvento)
                     Id = evento.Id,
                     DataHoraInicio = evento.DataHoraInicio,
                     DataHoraFim = evento.DataHoraFim,
+                    DataHoraChegadaEvento = evento.DataHoraChegadaEvento,
+                    ObservacaoHoraChegada = evento.ObservacaoHoraChegada,
                     Local = evento.Local,
                     Repertorio = evento.Repertorio,
-                    Regentes = (from eventopessoa in _context.Eventopessoas
+                    Regentes =(from eventopessoa in _context.Eventopessoas
                                 join pessoa in _context.Pessoas on eventopessoa.IdPessoa equals pessoa.Id
                                 where eventopessoa.IdEvento == idEvento && eventopessoa.IdPapelGrupoPapelGrupo == 5
                                 select pessoa.Nome).ToList()
