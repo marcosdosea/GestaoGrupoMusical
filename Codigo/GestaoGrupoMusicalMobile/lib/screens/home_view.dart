@@ -220,10 +220,22 @@ class _HomeViewState extends State<HomeView> {
             }
 
             if (status == 'INSCRITO') {
-              return const _StatusParticipacao(
-                texto: 'AGUARDANDO',
-                icone: Icons.hourglass_top,
-                cor: Colors.orange,
+              // Evento que precisa de confirmação: aguarda o administrador deferir,
+              // mas o associado ainda pode desistir da solicitação
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const _StatusParticipacao(
+                    texto: 'AGUARDANDO',
+                    icone: Icons.hourglass_top,
+                    cor: Colors.orange,
+                  ),
+                  const SizedBox(width: 8),
+                  EventToggleButton(
+                    isAccepted: true,
+                    onPressed: () => _confirmarCancelamento(item.id, service),
+                  ),
+                ],
               );
             }
 
@@ -401,6 +413,8 @@ class _HomeViewState extends State<HomeView> {
 
     final inicio = parseDate(data['dataHoraInicio'] ?? data['dataInicio']);
     final fim = parseDate(data['dataHoraFim'] ?? data['dataFim']);
+    final chegada = parseDate(data['dataHoraChegadaEvento']);
+    final observacaoChegada = (data['observacaoHoraChegada'] as String?)?.trim() ?? '';
 
     showModalBottomSheet(
       context: context,
@@ -441,6 +455,27 @@ class _HomeViewState extends State<HomeView> {
               'Fim',
               fim != null ? df.format(fim) : 'N/A',
             ),
+            if (chegada != null)
+              _infoRow(Icons.schedule, 'Chegada', df.format(chegada)),
+            if (observacaoChegada.isNotEmpty)
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.only(top: 8),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.orange.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Icon(Icons.info_outline, color: Colors.orange, size: 20),
+                    const SizedBox(width: 8),
+                    Expanded(child: Text(observacaoChegada)),
+                  ],
+                ),
+              ),
             const SizedBox(height: 20),
           ],
         ),
@@ -471,6 +506,7 @@ class _HomeViewState extends State<HomeView> {
 
   void _mostrarModalInscricao(Map<String, dynamic> data, EventoService service) {
     final instrumentos = data['instrumentosDisponiveis'] ?? [];
+    final precisaConfirmar = data['precisaConfirmarParticipacao'] == true;
 
     showModalBottomSheet(
       context: context,
@@ -512,6 +548,22 @@ class _HomeViewState extends State<HomeView> {
                 ),
               )
             else ...[
+              if (precisaConfirmar)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.info_outline, color: Colors.orange, size: 20),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Este evento precisa de aprovação do administrador. Sua participação será confirmada após a análise.',
+                          style: TextStyle(color: Colors.grey[700], fontSize: 13),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               const Text('Selecione o instrumento que você irá tocar:'),
               const Divider(height: 30),
               ...instrumentos.map(
@@ -548,28 +600,36 @@ class _HomeViewState extends State<HomeView> {
     _showLoading();
 
     try {
-      final erro = await service.solicitarParticipacao(eventoId, instId);
+      final (:erro, :aguardandoAprovacao) =
+          await service.solicitarParticipacao(eventoId, instId);
 
       if (!mounted) return;
       Navigator.of(context, rootNavigator: true).pop();
 
       if (erro == null) {
         await _atualizarEstadoEvento(eventoId);
+        if (!mounted) return;
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            title: const Icon(Icons.check_circle, color: Colors.green, size: 60),
+            title: aguardandoAprovacao
+                ? const Icon(Icons.hourglass_top, color: Colors.orange, size: 60)
+                : const Icon(Icons.check_circle, color: Colors.green, size: 60),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  'Participação Confirmada!',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                Text(
+                  aguardandoAprovacao
+                      ? 'Solicitação Enviada!'
+                      : 'Participação Confirmada!',
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  'Sua participação com o instrumento $nomeInst foi confirmada com sucesso.',
+                  aguardandoAprovacao
+                      ? 'Sua participação com o instrumento $nomeInst foi solicitada com sucesso. Agora é só aguardar a aprovação do administrador!'
+                      : 'Sua participação com o instrumento $nomeInst foi confirmada com sucesso.',
                   textAlign: TextAlign.center,
                 ),
               ],
