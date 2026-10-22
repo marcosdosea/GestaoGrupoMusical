@@ -13,6 +13,12 @@ namespace Core.DTO
         [Display(Name = "Data e Hora de Fim")]
         public DateTime DataHoraFim { get; set; }
 
+        [Display(Name = "Horário de Chegada")]
+        public DateTime? DataHoraChegadaEvento { get; set; }
+
+        [Display(Name = "Observação sobre a Chegada")]
+        public string? ObservacaoHoraChegada { get; set; }
+
         [Display(Name = "Local")]
         public string? Local { get; set; }
 
