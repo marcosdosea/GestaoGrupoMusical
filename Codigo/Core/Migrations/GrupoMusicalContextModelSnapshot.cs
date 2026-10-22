@@ -270,7 +270,8 @@ namespace Core.Migrations
 
                     b.Property<string>("FcmToken")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(512)
+                        .HasColumnType("varchar(512)")
                         .HasColumnName("fcmToken");
 
                     b.Property<int>("IdPessoa")
@@ -281,6 +282,9 @@ namespace Core.Migrations
                         .HasName("PRIMARY");
 
                     b.HasIndex(new[] { "IdPessoa" }, "fk_DispositivoPessoa_Pessoa_idx");
+
+                    b.HasIndex(new[] { "FcmToken" }, "uq_dispositivopessoa_fcmToken")
+                        .IsUnique();
 
                     b.ToTable("dispositivopessoa", (string)null);
                 });
@@ -385,6 +389,10 @@ namespace Core.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
+                    b.Property<DateTime?>("DataHoraChegadaEvento")
+                        .HasColumnType("datetime")
+                        .HasColumnName("dataHoraChegadaEvento");
+
                     b.Property<DateTime>("DataHoraFim")
                         .HasColumnType("datetime")
                         .HasColumnName("dataHoraFim");
@@ -406,9 +414,18 @@ namespace Core.Migrations
                         .HasColumnType("varchar(100)")
                         .HasColumnName("local");
 
-                    b.Property<string>("Repertorio")
+                    b.Property<string>("ObservacaoHoraChegada")
                         .HasMaxLength(1000)
                         .HasColumnType("varchar(1000)")
+                        .HasColumnName("observacaoHoraChegada");
+
+                    b.Property<sbyte>("PrecisaConfirmarParticipacao")
+                        .HasColumnType("tinyint")
+                        .HasColumnName("precisaConfirmarParticipacao");
+
+                    b.Property<string>("Repertorio")
+                        .HasMaxLength(5000)
+                        .HasColumnType("varchar(5000)")
                         .HasColumnName("repertorio");
 
                     b.HasKey("Id")
@@ -1059,6 +1076,32 @@ namespace Core.Migrations
                     b.ToTable("pessoa", (string)null);
                 });
 
+            modelBuilder.Entity("Core.Pessoatipoinstrumento", b =>
+                {
+                    b.Property<int>("IdPessoa")
+                        .HasColumnType("int")
+                        .HasColumnName("idPessoa");
+
+                    b.Property<int>("IdTipoInstrumento")
+                        .HasColumnType("int")
+                        .HasColumnName("idTipoInstrumento");
+
+                    b.Property<int>("PrioridadeEscolha")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("prioridadeEscolha")
+                        .HasDefaultValueSql("'1'");
+
+                    b.HasKey("IdPessoa", "IdTipoInstrumento")
+                        .HasName("PRIMARY");
+
+                    b.HasIndex(new[] { "IdPessoa" }, "fk_Pessoa_has_TipoInstrumento_Pessoa_idx");
+
+                    b.HasIndex(new[] { "IdTipoInstrumento" }, "fk_Pessoa_has_TipoInstrumento_TipoInstrumento1_idx");
+
+                    b.ToTable("pessoatipoinstrumento", (string)null);
+                });
+
             modelBuilder.Entity("Core.Receitafinanceira", b =>
                 {
                     b.Property<int>("Id")
@@ -1107,7 +1150,7 @@ namespace Core.Migrations
                         .HasColumnType("int")
                         .HasColumnName("idPessoa");
 
-                    b.Property<DateTime>("DataPagamento")
+                    b.Property<DateTime?>("DataPagamento")
                         .HasColumnType("datetime")
                         .HasColumnName("dataPagamento");
 
@@ -1119,9 +1162,9 @@ namespace Core.Migrations
                     b.Property<string>("Status")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("enum('ABERTO','ENVIADO','PAGO','ISENTO')")
+                        .HasColumnType("enum('ABERTO','ENVIADO','PAGO','ISENTO','NAO_PAGOU','PAGO_COMPROVANTE')")
                         .HasColumnName("status")
-                        .HasDefaultValueSql("'ABERTO'");
+                        .HasDefaultValueSql("'NAO_PAGOU'");
 
                     b.Property<decimal>("Valor")
                         .HasPrecision(10)
@@ -1146,7 +1189,6 @@ namespace Core.Migrations
             modelBuilder.Entity("Core.Tipoinstrumento", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("id");
 
@@ -1200,26 +1242,6 @@ namespace Core.Migrations
                     b.HasIndex(new[] { "IdFigurino" }, "fk_FigurinoEnsaio_Figurino1_idx");
 
                     b.ToTable("figurinoensaio", (string)null);
-                });
-
-            modelBuilder.Entity("Pessoatipoinstrumento", b =>
-                {
-                    b.Property<int>("IdPessoa")
-                        .HasColumnType("int")
-                        .HasColumnName("idPessoa");
-
-                    b.Property<int>("IdTipoInstrumento")
-                        .HasColumnType("int")
-                        .HasColumnName("idTipoInstrumento");
-
-                    b.HasKey("IdPessoa", "IdTipoInstrumento")
-                        .HasName("PRIMARY");
-
-                    b.HasIndex(new[] { "IdPessoa" }, "fk_Pessoa_has_TipoInstrumento_Pessoa_idx");
-
-                    b.HasIndex(new[] { "IdTipoInstrumento" }, "fk_Pessoa_has_TipoInstrumento_TipoInstrumento1_idx");
-
-                    b.ToTable("pessoatipoinstrumento", (string)null);
                 });
 
             modelBuilder.Entity("Aspnetuserrole", b =>
@@ -1592,6 +1614,25 @@ namespace Core.Migrations
                     b.Navigation("IdPapelGrupoNavigation");
                 });
 
+            modelBuilder.Entity("Core.Pessoatipoinstrumento", b =>
+                {
+                    b.HasOne("Core.Pessoa", "IdPessoaNavigation")
+                        .WithMany("Pessoatipoinstrumentos")
+                        .HasForeignKey("IdPessoa")
+                        .IsRequired()
+                        .HasConstraintName("fk_Pessoa_has_TipoInstrumento_Pessoa");
+
+                    b.HasOne("Core.Tipoinstrumento", "IdTipoInstrumentoNavigation")
+                        .WithMany("Pessoatipoinstrumentos")
+                        .HasForeignKey("IdTipoInstrumento")
+                        .IsRequired()
+                        .HasConstraintName("fk_Pessoa_has_TipoInstrumento_TipoInstrumento1");
+
+                    b.Navigation("IdPessoaNavigation");
+
+                    b.Navigation("IdTipoInstrumentoNavigation");
+                });
+
             modelBuilder.Entity("Core.Receitafinanceira", b =>
                 {
                     b.HasOne("Core.Grupomusical", "IdGrupoMusicalNavigation")
@@ -1650,21 +1691,6 @@ namespace Core.Migrations
                         .HasForeignKey("IdFigurino")
                         .IsRequired()
                         .HasConstraintName("fk_FigurinoEnsaio_Figurino1");
-                });
-
-            modelBuilder.Entity("Pessoatipoinstrumento", b =>
-                {
-                    b.HasOne("Core.Pessoa", null)
-                        .WithMany()
-                        .HasForeignKey("IdPessoa")
-                        .IsRequired()
-                        .HasConstraintName("fk_Pessoa_has_TipoInstrumento_Pessoa");
-
-                    b.HasOne("Core.Tipoinstrumento", null)
-                        .WithMany()
-                        .HasForeignKey("IdTipoInstrumento")
-                        .IsRequired()
-                        .HasConstraintName("fk_Pessoa_has_TipoInstrumento_TipoInstrumento1");
                 });
 
             modelBuilder.Entity("Core.Aspnetrole", b =>
@@ -1764,6 +1790,8 @@ namespace Core.Migrations
 
                     b.Navigation("MovimentacaoinstrumentoIdColaboradorNavigations");
 
+                    b.Navigation("Pessoatipoinstrumentos");
+
                     b.Navigation("Receitafinanceirapessoas");
                 });
 
@@ -1779,6 +1807,8 @@ namespace Core.Migrations
                     b.Navigation("Eventopessoas");
 
                     b.Navigation("Instrumentomusicals");
+
+                    b.Navigation("Pessoatipoinstrumentos");
                 });
 #pragma warning restore 612, 618
         }
