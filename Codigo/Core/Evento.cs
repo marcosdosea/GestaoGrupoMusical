@@ -13,9 +13,15 @@ public partial class Evento
 
     public DateTime DataHoraFim { get; set; }
 
+    public DateTime? DataHoraChegadaEvento { get; set; }
+
+    public string? ObservacaoHoraChegada { get; set; }
+
     public string? Local { get; set; }
 
     public string? Repertorio { get; set; }
+
+    public sbyte PrecisaConfirmarParticipacao { get; set; }
 
     public int IdColaboradorResponsavel { get; set; }
 
