@@ -427,7 +427,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 InstrumentosDisponiveis = instrumentosDisponiveis,
                 MinhaInscricao = minhaInscricao,
                 PodeInscrever = minhaInscricao == null || minhaInscricao.StatusEnum == InscricaoEventoPessoa.NAO_SOLICITADO,
-                PodeCancelar = minhaInscricao?.StatusEnum == InscricaoEventoPessoa.INSCRITO
+                PodeCancelar = minhaInscricao?.StatusEnum == InscricaoEventoPessoa.INSCRITO ||
+                               minhaInscricao?.StatusEnum == InscricaoEventoPessoa.DEFERIDO
             };
 
             return View(model);
