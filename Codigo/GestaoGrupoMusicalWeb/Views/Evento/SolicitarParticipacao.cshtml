@@ -24,6 +24,23 @@
                 <dt class="col-sm-3">Fim</dt>
                 <dd class="col-sm-9">@Model.DataHoraFim.ToString("dd/MM/yyyy HH:mm")</dd>
 
+                @if (Model.DataHoraChegadaEvento.HasValue)
+                {
+                    <dt class="col-sm-3">Chegada</dt>
+                    <dd class="col-sm-9">
+                        <span class="fw-bold">@Model.DataHoraChegadaEvento.Value.ToString("dd/MM/yyyy HH:mm")</span>
+                        @if (!string.IsNullOrWhiteSpace(Model.ObservacaoHoraChegada))
+                        {
+                            <div class="text-muted small" style="white-space: pre-line;">@Model.ObservacaoHoraChegada</div>
+                        }
+                    </dd>
+                }
+                else if (!string.IsNullOrWhiteSpace(Model.ObservacaoHoraChegada))
+                {
+                    <dt class="col-sm-3">Chegada</dt>
+                    <dd class="col-sm-9 text-muted small" style="white-space: pre-line;">@Model.ObservacaoHoraChegada</dd>
+                }
+
                 <dt class="col-sm-3">Local</dt>
                 <dd class="col-sm-9">@Model.Local</dd>
 
@@ -44,10 +61,26 @@
                 <strong>Status:</strong> @Model.MinhaInscricao.Status<br />
                 @if (!string.IsNullOrEmpty(Model.MinhaInscricao.NomeInstrumento))
                 {
-                    <strong>Instrumento:</strong> 
+                    <strong>Instrumento:</strong>
                     @Model.MinhaInscricao.NomeInstrumento
                 }
             </p>
+            @if (Model.MinhaInscricao.StatusEnum == InscricaoEventoPessoa.INSCRITO)
+            {
+                <hr />
+                <p class="mb-0 small">
+                    <i class="fa-solid fa-hourglass-half me-1" aria-hidden="true"></i>
+                    Sua solicitação está <b>aguardando a aprovação</b> do administrador.
+                </p>
+            }
+            else if (Model.MinhaInscricao.StatusEnum == InscricaoEventoPessoa.DEFERIDO)
+            {
+                <hr />
+                <p class="mb-0 small">
+                    <i class="fa-solid fa-circle-check me-1" aria-hidden="true"></i>
+                    Sua participação está <b>confirmada</b>.
+                </p>
+            }
         </div>
 
         <div class="d-flex justify-content-end gap-2 mt-4">
@@ -67,6 +100,20 @@
         <div class="card border-light shadow-sm">
             <div class="card-body">
                 <h3 class="fs-5 mb-3">Escolha seu instrumento</h3>
+                @if (Model.PrecisaConfirmarParticipacao)
+                {
+                    <div class="alert alert-warning d-flex align-items-start gap-2 py-2" role="note">
+                        <i class="fa-solid fa-circle-info mt-1" aria-hidden="true"></i>
+                        <span>Este evento precisa de <b>aprovação do administrador</b>. Sua participação será confirmada após a análise da solicitação.</span>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-success d-flex align-items-start gap-2 py-2" role="note">
+                        <i class="fa-solid fa-circle-check mt-1" aria-hidden="true"></i>
+                        <span>Ao confirmar, sua participação já fica <b>garantida</b>, enquanto houver vagas para o instrumento.</span>
+                    </div>
+                }
                 <form asp-action="ConfirmarSolicitacao" method="post">
                     <input type="hidden" name="IdEvento" value="@Model.Id" />
 

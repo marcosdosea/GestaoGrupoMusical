@@ -54,8 +54,11 @@ namespace GestaoGrupoMusicalAPI.Controllers
                 id = evento.Id,
                 dataHoraInicio = evento.DataHoraInicio,
                 dataHoraFim = evento.DataHoraFim,
+                dataHoraChegadaEvento = evento.DataHoraChegadaEvento,
+                observacaoHoraChegada = evento.ObservacaoHoraChegada,
                 repertorio = evento.Repertorio,
                 local = evento.Local,
+                precisaConfirmarParticipacao = evento.PrecisaConfirmarParticipacao == 1,
                 instrumentosDisponiveis = instrumentos,
                 inscricao = minhaInscricao,
                 minhaInscricao
@@ -113,10 +116,24 @@ namespace GestaoGrupoMusicalAPI.Controllers
             );
 
             if (resultado == HttpStatusCode.OK)
-                return Ok(new { mensagem = "Solicitação enviada com sucesso!" });
+            {
+                // O status depende do evento: INSCRITO quando precisa de confirmação do administrador, DEFERIDO caso contrário
+                var inscricao = await eventoService.GetSolicitacaoAssociado(dto.IdEvento, idPessoa);
+                bool aguardandoAprovacao = inscricao?.StatusEnum == InscricaoEventoPessoa.INSCRITO;
+                return Ok(new
+                {
+                    mensagem = aguardandoAprovacao
+                        ? "Solicitação enviada! Aguarde a aprovação do administrador."
+                        : "Participação confirmada com sucesso!",
+                    status = inscricao?.Status
+                });
+            }
 
             if (resultado == HttpStatusCode.Conflict)
                 return Conflict(new { mensagem = "Você já possui uma solicitação para este evento." });
+
+            if (resultado == HttpStatusCode.BadRequest)
+                return BadRequest(new { mensagem = "Não há mais vagas disponíveis para este instrumento." });
 
             return StatusCode(500, new { mensagem = "Erro interno ao processar solicitação." });
         }
@@ -135,7 +152,7 @@ namespace GestaoGrupoMusicalAPI.Controllers
             if (resultado == HttpStatusCode.OK)
                 return Ok(new { mensagem = "Solicitação cancelada." });
 
-            return BadRequest(new { mensagem = "Não foi possível cancelar. Verifique se a solicitação já foi aprovada." });
+            return BadRequest(new { mensagem = "Não foi possível cancelar. Verifique se a solicitação não foi indeferida." });
         }
 
         private int ObterIdPessoaLogada()

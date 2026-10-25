@@ -154,6 +154,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
                             mensagem = "Alerta! A data de <b>início</b> deve ser menor que a data <b>fim</b> " + DateTime.Now;
                             Notificar(mensagem, Notifica.Alerta);
                             break;
+                        case HttpStatusCode.UnprocessableEntity:
+                            Notificar("Alerta! O <b>horário de chegada</b> deve ser antes do <b>início</b> do evento", Notifica.Alerta);
+                            break;
                         default:
                             mensagem = "<b>Erro</b>! Desculpe, ocorreu um erro durante o <b>Cadastro</b> do evento.";
                             Notificar(mensagem, Notifica.Erro);
@@ -196,8 +199,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 IdGrupoMusical = evento.IdGrupoMusical,
                 DataHoraInicio = evento.DataHoraInicio,
                 DataHoraFim = evento.DataHoraFim,
+                DataHoraChegadaEvento = evento.DataHoraChegadaEvento,
+                ObservacaoHoraChegada = evento.ObservacaoHoraChegada,
                 Local = evento.Local,
                 Repertorio = evento.Repertorio,
+                PrecisaConfirmarParticipacao = evento.PrecisaConfirmarParticipacao == 1,
                 IdRegentes = await _eventoService.GetIdRegentesEventoAsync(evento.Id),
                 ListaPessoa = new SelectList(listaPessoasAutoComplete, "Id", "Nome"),
                 FigurinoList = new SelectList(figurinosDropdown, "Id", "Nome")
@@ -236,6 +242,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
                         break;
                     case HttpStatusCode.PreconditionFailed:
                         Notificar("Alerta! A data de <b>início</b> deve ser menor que a data <b>fim</b> ", Notifica.Alerta);
+                        break;
+                    case HttpStatusCode.UnprocessableEntity:
+                        Notificar("Alerta! O <b>horário de chegada</b> deve ser antes do <b>início</b> do evento", Notifica.Alerta);
                         break;
                     default:
                         Notificar("<b>Erro</b>! Desculpe, ocorreu um erro durante a <b>Edição</b> do evento.", Notifica.Erro);
@@ -422,8 +431,11 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 Id = evento.Id,
                 DataHoraInicio = evento.DataHoraInicio,
                 DataHoraFim = evento.DataHoraFim,
+                DataHoraChegadaEvento = evento.DataHoraChegadaEvento,
+                ObservacaoHoraChegada = evento.ObservacaoHoraChegada,
                 Local = evento.Local,
                 Repertorio = evento.Repertorio,
+                PrecisaConfirmarParticipacao = evento.PrecisaConfirmarParticipacao == 1,
                 InstrumentosDisponiveis = instrumentosDisponiveis,
                 MinhaInscricao = minhaInscricao,
                 PodeInscrever = minhaInscricao == null || minhaInscricao.StatusEnum == InscricaoEventoPessoa.NAO_SOLICITADO,
@@ -456,13 +468,18 @@ namespace GestaoGrupoMusicalWeb.Controllers
             switch (resultado)
             {
                 case HttpStatusCode.OK:
-                    Notificar("Solicitação de participação enviada com <b>sucesso</b>!", Notifica.Sucesso);
+                    // INSCRITO quando o evento precisa de confirmação do administrador, DEFERIDO caso contrário
+                    var inscricao = await _eventoService.GetSolicitacaoAssociado(solicitacao.IdEvento, idPessoa);
+                    if (inscricao?.StatusEnum == InscricaoEventoPessoa.INSCRITO)
+                        Notificar("Solicitação enviada com <b>sucesso</b>! Aguarde a <b>aprovação</b> do administrador.", Notifica.Sucesso);
+                    else
+                        Notificar("Participação <b>confirmada</b> com <b>sucesso</b>!", Notifica.Sucesso);
                     break;
                 case HttpStatusCode.Conflict:
                     Notificar("Você já solicitou participação com este instrumento.", Notifica.Alerta);
                     break;
                 case HttpStatusCode.BadRequest:
-                    Notificar("Não é possível solicitar participação neste momento.", Notifica.Alerta);
+                    Notificar("Não é possível solicitar participação: <b>não há vagas</b> disponíveis para este instrumento.", Notifica.Alerta);
                     break;
                 default:
                     Notificar("Erro ao processar sua solicitação. Tente novamente.", Notifica.Erro);

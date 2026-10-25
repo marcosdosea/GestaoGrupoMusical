@@ -123,8 +123,11 @@ namespace Core.DTO
         public int Id { get; set; }
         public DateTime DataHoraInicio { get; set; }
         public DateTime DataHoraFim { get; set; }
+        public DateTime? DataHoraChegadaEvento { get; set; }
+        public string? ObservacaoHoraChegada { get; set; }
         public string? Local { get; set; }
         public string? Repertorio { get; set; }
+        public bool PrecisaConfirmarParticipacao { get; set; }
         public IEnumerable<InstrumentoSolicitacaoDTO> InstrumentosDisponiveis { get; set; } = [];
         public EventoPessoaSolicitacaoDTO? MinhaInscricao { get; set; }
         public bool PodeInscrever { get; set; }
