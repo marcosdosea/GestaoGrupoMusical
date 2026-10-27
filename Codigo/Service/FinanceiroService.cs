@@ -150,7 +150,7 @@ namespace Service
                              Atrasos = financeiro.Receitafinanceirapessoas.
                                  Where(rfp => rfp.IdReceitaFinanceira == financeiro.Id &&
                                              ((rfp.Status == StatusPagamento.PAGO || rfp.Status == StatusPagamento.PAGO_COMPROVANTE) && rfp.DataPagamento > financeiro.DataFim) ||
-                                             (rfp.Status == StatusPagamento.NAO_PAGOU && financeiro.DataFim < DateTime.Now.Date)
+                                             (rfp.Status != StatusPagamento.PAGO && rfp.Status != StatusPagamento.PAGO_COMPROVANTE && rfp.Status != StatusPagamento.ISENTO && financeiro.DataFim < DateTime.Now.Date)
                                  ).Count(),
 
                              Recebido = financeiro.Receitafinanceirapessoas
@@ -163,7 +163,7 @@ namespace Service
         }
 
 
-        public async Task<IEnumerable<AssociadoPagamentoDTO>> GetAssociadosPagamento(int idReceita)
+        public async Task<IEnumerable<AssociadoPagamentoDTO>> GetAssociadosPagamento(int idReceita, SituacaoPagamentoFiltro filtro = SituacaoPagamentoFiltro.Todos)
         {
             // Busca a receita para obter o Id do Grupo Musical
             var receita = await _context.Receitafinanceiras.FindAsync(idReceita);
@@ -221,7 +221,14 @@ namespace Service
                 result.Add(dto);
             }
 
-            return result;
+            // Filtra em memória, pois a classificação depende da regra de isenção
+            return result.Where(dto => filtro switch
+            {
+                SituacaoPagamentoFiltro.Pagos => StatusPagamento.EstaPago(dto.Status),
+                SituacaoPagamentoFiltro.Pendentes => StatusPagamento.EstaPendente(dto.Status),
+                SituacaoPagamentoFiltro.Isentos => StatusPagamento.EstaIsento(dto.Status),
+                _ => true
+            });
         }
 
 
