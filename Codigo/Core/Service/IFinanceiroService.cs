@@ -17,7 +17,7 @@ namespace Core.Service
         DatatableResponse<FinanceiroIndexDataPage> GetDataPage(DatatableRequest request, IEnumerable<FinanceiroIndexDataPage> materialEstudoIndexDTO);
         HttpStatusCode NotificarFinanceiroViaEmail(IEnumerable<PessoaEnviarEmailDTO> pessoas, int idFinanceiro);
 
-        Task<IEnumerable<AssociadoPagamentoDTO>> GetAssociadosPagamento(int idReceita);
+        Task<IEnumerable<AssociadoPagamentoDTO>> GetAssociadosPagamento(int idReceita, SituacaoPagamentoFiltro filtro = SituacaoPagamentoFiltro.Todos);
         Task SalvarPagamentos(int idReceita, IEnumerable<AssociadoPagamentoDTO> associados);
 
         Task<IEnumerable<FinanceiroMobileDTO>> GetPagamentosDoAssociadoAsync(int idAssociado);
@@ -38,5 +38,13 @@ namespace Core.Service
         ABERTO,
         PAGO,
         ISENTO,
+    }
+
+    public enum SituacaoPagamentoFiltro
+    {
+        Todos,
+        Pagos,
+        Pendentes,
+        Isentos
     }
 }
