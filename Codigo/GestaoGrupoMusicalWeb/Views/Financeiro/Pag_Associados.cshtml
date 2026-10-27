@@ -10,7 +10,6 @@
         new SelectListItem { Value = "ABERTO", Text = "Aberto" },
         new SelectListItem { Value = "ENVIADO", Text = "Enviado" },
         new SelectListItem { Value = "PAGO", Text = "Pago" },
-        new SelectListItem { Value = "PAGO_COMPROVANTE", Text = "Pago (comprovante)" },
         new SelectListItem { Value = "ISENTO", Text = "Isento" }
     };
 
@@ -89,7 +88,16 @@
                                         <textarea asp-for="Associados[i].Observacoes" class="form-control" rows="1"></textarea>
                                     </td>
                                     <td>
-                                        <select asp-for="Associados[i].Status" asp-items="@(new SelectList(statusList, "Value", "Text", Model.Associados[i].Status))" class="form-select"></select>
+                                        @{
+                                            // PAGO_COMPROVANTE é exibido como Pago e NAO_PAGOU como Aberto
+                                            var statusExibido = Model.Associados[i].Status switch
+                                            {
+                                                "PAGO_COMPROVANTE" => "PAGO",
+                                                "NAO_PAGOU" => "ABERTO",
+                                                var status => status
+                                            };
+                                        }
+                                        <select asp-for="Associados[i].Status" asp-items="@(new SelectList(statusList, "Value", "Text", statusExibido))" class="form-select"></select>
                                     </td>
                                 </tr>
                             }
