@@ -27,18 +27,18 @@
             <small id="descricaoCount">0/100</small>
         </div>
         <div class="row mb-4">
-            <div class="form-group " style="width: 250px;">
+            <div class="form-group " style="width: 250px; max-width: 100%;">
                 <label asp-for="DataInicio" style="width: 150px;" class="control-label"></label>
                 <input asp-for="DataInicio" type = "date" class="form-control" readonly />
                 <span asp-validation-for="DataInicio" class="text-danger"></span>
             </div>
-            <div class="form-group " style="width: 250px;">
+            <div class="form-group " style="width: 250px; max-width: 100%;">
                 <label asp-for="DataFim" class="control-label"></label>
                 <input asp-for="DataFim" type="date" max="9999-12-31" class="form-control" />
                 <span asp-validation-for="DataFim" class="text-danger"></span>
             </div>
         </div>
-        <div class="form-group mb-5" style="width: 200px;">
+        <div class="form-group mb-5" style="width: 200px; max-width: 100%;">
             <label asp-for="Valor" class="control-label"></label>
             <input asp-for="Valor" type="text" inputmode="decimal" class="form-control" id="valorPagamento" />
             <span asp-validation-for="Valor" class="text-danger"></span>
