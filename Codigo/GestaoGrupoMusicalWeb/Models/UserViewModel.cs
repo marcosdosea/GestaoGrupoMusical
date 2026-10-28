@@ -26,6 +26,14 @@ namespace GestaoGrupoMusicalWeb.Models
         [Display(Name = "Rua", Prompt = "Rua")]
         public string? Rua { get; set; }
 
+        [StringLength(10)]
+        [Display(Name = "Número", Prompt = "Número")]
+        public string? Numero { get; set; }
+
+        [StringLength(70)]
+        [Display(Name = "Complemento", Prompt = "Complemento")]
+        public string? Complemento { get; set; }
+
         [StringLength(70)]
         [Display(Name = "Bairro", Prompt = "Rua")]
         public string? Bairro { get; set; }
