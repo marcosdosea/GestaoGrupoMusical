@@ -550,6 +550,12 @@ public partial class GrupoMusicalContext : DbContext
             entity.Property(e => e.RazaoSocial)
                 .HasMaxLength(100)
                 .HasColumnName("razaoSocial");
+            entity.Property(e => e.Numero)
+                .HasMaxLength(10)
+                .HasColumnName("numero");
+            entity.Property(e => e.Complemento)
+                .HasMaxLength(100)
+                .HasColumnName("complemento");
             entity.Property(e => e.Rua)
                 .HasMaxLength(100)
                 .HasColumnName("rua");
@@ -841,6 +847,12 @@ public partial class GrupoMusicalContext : DbContext
             entity.Property(e => e.Nome)
                 .HasMaxLength(100)
                 .HasColumnName("nome");
+            entity.Property(e => e.Numero)
+                .HasMaxLength(10)
+                .HasColumnName("numero");
+            entity.Property(e => e.Complemento)
+                .HasMaxLength(100)
+                .HasColumnName("complemento");
             entity.Property(e => e.Rua)
                 .HasMaxLength(100)
                 .HasColumnName("rua");

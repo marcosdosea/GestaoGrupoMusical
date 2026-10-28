@@ -38,6 +38,14 @@ namespace GestaoGrupoMusicalWeb.Models
         [StringLength(100, MinimumLength = 5, ErrorMessage = "O campo rua deve ter entre 5 a 100 caracteres")]
         public string? Rua { get; set; }
 
+        [Display(Name = "Número", Prompt = "Número")]
+        [StringLength(10, ErrorMessage = "O campo Número deve ter no máximo 10 caracteres")]
+        public string? Numero { get; set; }
+
+        [Display(Name = "Complemento", Prompt = "Complemento")]
+        [StringLength(100, ErrorMessage = "O campo Complemento deve ter no máximo 100 caracteres")]
+        public string? Complemento { get; set; }
+
         [Display(Name = "Bairro", Prompt = "Bairro")]
         [StringLength(100, MinimumLength = 5, ErrorMessage = "O campo Bairro deve ter entre 5 a 100 caracteres")]
         public string? Bairro { get; set; }
