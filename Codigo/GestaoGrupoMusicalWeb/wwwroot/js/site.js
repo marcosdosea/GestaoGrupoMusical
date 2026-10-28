@@ -3,6 +3,48 @@
 
 // Write your JavaScript code.
 
+// Sidebar no celular: abre por cima do conteúdo, fecha ao tocar no fundo
+// e não altera a preferência (aberta/fechada) salva para o desktop
+const sidebarToggle = document.querySelector('#sidebarToggle');
+const sidebarBackdrop = document.querySelector('#sidebarBackdrop');
+const telaCelular = window.matchMedia('(max-width: 767.98px)');
+const chaveSidebar = 'sb|sidebar-toggle';
+
+if (sidebarToggle != null) {
+    let preferenciaDesktop = localStorage.getItem(chaveSidebar);
+
+    const aplicarEstadoSidebar = function () {
+        if (telaCelular.matches) {
+            document.body.classList.remove('sb-sidenav-toggled');
+        } else {
+            document.body.classList.toggle('sb-sidenav-toggled', preferenciaDesktop === 'true');
+        }
+    };
+
+    window.addEventListener('DOMContentLoaded', function () {
+        aplicarEstadoSidebar();
+        sidebarToggle.addEventListener('click', function () {
+            if (telaCelular.matches) {
+                if (preferenciaDesktop === null) {
+                    localStorage.removeItem(chaveSidebar);
+                } else {
+                    localStorage.setItem(chaveSidebar, preferenciaDesktop);
+                }
+            } else {
+                preferenciaDesktop = localStorage.getItem(chaveSidebar);
+            }
+        });
+    });
+
+    telaCelular.addEventListener('change', aplicarEstadoSidebar);
+
+    if (sidebarBackdrop != null) {
+        sidebarBackdrop.addEventListener('click', function () {
+            document.body.classList.remove('sb-sidenav-toggled');
+        });
+    }
+}
+
 const toggleSenha = document.querySelector('#toggleSenha');
 const toggleConfirmSenha = document.querySelector('#toggleSenha2');
 const toggleSenhaAtual = document.querySelector('#toggleSenha3');
