@@ -25,6 +25,12 @@
             $("#spanChavePix").text("");
             $("#chavePix").attr("placeholder", "000.000.000-00");
             $("#chavePix").inputmask("999.999.999-99");
+        } else if (valorSelecionado == "cnpj") {
+            $('#spanChavePix').text("");
+            $('#chavePix').off('change');
+            limparCampo("#chavePix");
+            $("#chavePix").attr("placeholder", "00.000.000/0000-00");
+            $("#chavePix").inputmask("99.999.999/9999-99");
         } else if (valorSelecionado == "celular") {
             $('#spanChavePix').text("");
             $('#chavePix').off('change');
