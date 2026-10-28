@@ -47,7 +47,7 @@
                             <th>CPF</th>
                             <th style="width: 170px;">Data Pagamento</th>
                             <th style="width: 160px;">Valor Pago (R$)</th>
-                            <th>Observações</th>
+                            <th style="min-width: 180px;">Observações</th>
                             <th style="width: 260px;">Status</th>
                         </tr>
                     </thead>
@@ -63,7 +63,7 @@
                                         <input type="hidden" asp-for="Associados[i].NomeAssociado" />
                                         <input type="hidden" asp-for="Associados[i].Cpf" />
                                     </td>
-                                    <td>
+                                    <td class="text-nowrap">
                                         @Model.Associados[i].Cpf
                                     </td>
                                     <td>
