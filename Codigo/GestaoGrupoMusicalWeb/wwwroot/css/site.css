@@ -161,23 +161,6 @@ table.dataTable {
 
 .previous {
     color: white !important;
-
-/* Responsive Table Styles */
-@media (max-width: 768px) {
-    #tableInformativo {
-        font-size: 0.875rem;
-    }
-
-    #tableInformativo th,
-    #tableInformativo td {
-        padding: 0.5rem !important;
-    }
-
-    .table-responsive {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-}
     border: 1px solid #111;
     background-color: #6c757d !important;
     opacity: 100% !important;
@@ -203,4 +186,59 @@ table.dataTable {
     opacity: 100% !important;
     border: none !important;
     background: transparent !important;
+}
+
+/* Responsividade em telas pequenas */
+img {
+    max-width: 100%;
+}
+
+/* Cards de login centralizados: em telas pequenas ou baixas deixam de ser
+   absolutos para não cortar o topo e permitir rolagem */
+@media (max-width: 767.98px), (max-height: 600px) {
+    .card-login.position-absolute {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        transform: none !important;
+        margin: 1.5rem auto;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter,
+    .dataTables_wrapper .dataTables_info,
+    .dataTables_wrapper .dataTables_paginate {
+        float: none;
+        text-align: left;
+        padding: 0.5rem 0 !important;
+    }
+
+    .dataTables_wrapper .dataTables_filter label {
+        display: block;
+    }
+
+    .dataTables_wrapper .dataTables_filter input {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 0.25rem;
+    }
+
+    .dataTables_wrapper .dataTables_paginate {
+        text-align: center;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        padding: 0.3em 0.6em;
+    }
+
+    .table > :not(caption) > * > * {
+        padding: 0.5rem;
+    }
+
+    .table td,
+    .table th {
+        font-size: 0.875rem;
+    }
 }
