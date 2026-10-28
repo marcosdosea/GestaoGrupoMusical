@@ -1,4 +1,5 @@
-﻿@model GestaoGrupoMusicalWeb.Models.PagamentoAssociadoViewModel
+﻿@using Core.Service
+@model GestaoGrupoMusicalWeb.Models.PagamentoAssociadoViewModel
 
 @{
     ViewData["Title"] = "Pagamentos dos Associados";
@@ -40,15 +41,42 @@
             <input type="hidden" asp-for="IdReceita" />
 
             <div class="table-responsive">
-                <table class="table table-striped table-hover">
-                    <thead class="bg-secondary text-white">
-                        <tr>
-                            <th>Associado</th>
-                            <th>CPF</th>
-                            <th style="width: 170px;">Data Pagamento</th>
-                            <th style="width: 160px;">Valor Pago (R$)</th>
-                            <th>Observações</th>
-                            <th style="width: 260px;">Status</th>
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr class="bg-danger bg-opacity-75 text-white">
+                            <th class="px-3">Associado</th>
+                            <th class="px-3">CPF</th>
+                            <th class="px-3" style="width: 170px;">Data Pagamento</th>
+                            <th class="px-3" style="width: 160px;">Valor Pago (R$)</th>
+                            <th class="px-3">Observações</th>
+                            <th class="px-3" style="width: 260px;">
+                                <div class="d-flex align-items-center justify-content-center gap-2">
+                                    <span>Status</span>
+                                    <div class="dropdown">
+                                        <span role="button" tabindex="0" class="text-white" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" title="Filtrar por status">
+                                            <i class="fa-solid fa-filter"></i>
+                                        </span>
+                                        <ul class="dropdown-menu p-2 text-dark">
+                                            <li>
+                                                <label class="dropdown-item d-flex align-items-center gap-2 m-0">
+                                                    <input type="checkbox" id="filtroTodos" class="form-check-input m-0" checked />
+                                                    Todos
+                                                </label>
+                                            </li>
+                                            <li><hr class="dropdown-divider" /></li>
+                                            @foreach (var opcao in statusList)
+                                            {
+                                                <li>
+                                                    <label class="dropdown-item d-flex align-items-center gap-2 m-0">
+                                                        <input type="checkbox" class="form-check-input m-0 filtro-status" value="@opcao.Value" checked />
+                                                        @opcao.Text
+                                                    </label>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -56,7 +84,15 @@
                         {
                             for (int i = 0; i < Model.Associados.Count; i++)
                             {
-                                <tr class="align-middle">
+                                // PAGO_COMPROVANTE é exibido como Pago e NAO_PAGOU como Aberto
+                                var statusExibido = Model.Associados[i].Status switch
+                                {
+                                    "PAGO_COMPROVANTE" => "PAGO",
+                                    "NAO_PAGOU" => "ABERTO",
+                                    var status => status
+                                };
+
+                                <tr class="align-middle" data-status="@statusExibido">
                                     <td>
                                         @Model.Associados[i].NomeAssociado
                                         <input type="hidden" asp-for="Associados[i].IdAssociado" />
@@ -79,7 +115,7 @@
                                         <textarea asp-for="Associados[i].Observacoes" class="form-control" rows="1"></textarea>
                                     </td>
                                     <td>
-                                        <select asp-for="Associados[i].Status" asp-items="@(new SelectList(statusList, "Value", "Text", Model.Associados[i].Status))" class="form-select"></select>
+                                        <select asp-for="Associados[i].Status" asp-items="@(new SelectList(statusList, "Value", "Text", statusExibido))" class="form-select"></select>
                                     </td>
                                 </tr>
                             }
@@ -90,6 +126,9 @@
                                 <td colspan="6" class="text-center">Nenhum associado ativo encontrado.</td>
                             </tr>
                         }
+                        <tr id="semResultadoStatus" hidden>
+                            <td colspan="6" class="text-center">Nenhum associado encontrado para a situação selecionada.</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -110,3 +149,34 @@
         </form>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        // Filtra as linhas por status apenas ocultando-as: nenhuma linha sai do DOM, então o formulário continua enviando todos os associados
+        document.getElementById('filtroTodos').addEventListener('change', function () {
+            var marcado = this.checked;
+            document.querySelectorAll('.filtro-status').forEach(function (c) { c.checked = marcado; });
+            aplicarFiltroStatus();
+        });
+
+        document.querySelectorAll('.filtro-status').forEach(function (checkbox) {
+            checkbox.addEventListener('change', function () {
+                var todos = Array.from(document.querySelectorAll('.filtro-status'));
+                document.getElementById('filtroTodos').checked = todos.every(function (c) { return c.checked; });
+                aplicarFiltroStatus();
+            });
+        });
+
+        function aplicarFiltroStatus() {
+            var marcados = Array.from(document.querySelectorAll('.filtro-status:checked')).map(function (c) { return c.value; });
+            var linhas = document.querySelectorAll('tbody tr[data-status]');
+
+            linhas.forEach(function (tr) {
+                tr.hidden = !marcados.includes(tr.dataset.status);
+            });
+
+            var todasOcultas = Array.from(linhas).every(function (tr) { return tr.hidden; });
+            document.getElementById('semResultadoStatus').hidden = !todasOcultas;
+        }
+    </script>
+}

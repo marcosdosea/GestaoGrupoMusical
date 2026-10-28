@@ -12,5 +12,12 @@ namespace Core
         public const string PAGO = "PAGO";
         public const string PAGO_COMPROVANTE = "PAGO_COMPROVANTE";
         public const string ISENTO = "ISENTO";
+
+        public static bool EstaPago(string? status) => status == PAGO || status == PAGO_COMPROVANTE;
+
+        public static bool EstaIsento(string? status) => status == ISENTO;
+
+        // Isento não é pendente: só é pendente quem não pagou e não é isento
+        public static bool EstaPendente(string? status) => !EstaPago(status) && !EstaIsento(status);
     }
 }
