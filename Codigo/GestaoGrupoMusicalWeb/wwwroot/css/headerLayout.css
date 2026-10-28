@@ -14,3 +14,60 @@
 .gray-login {
     background-color: var(--bs-gray-200);
 }
+
+.sidebar-backdrop {
+    display: none;
+}
+
+/* Celular: header mais baixo e sidebar abrindo por cima do conteúdo */
+@media (max-width: 767.98px) {
+    .tamDivHeader {
+        height: auto;
+        min-height: 64px;
+    }
+
+    #sidebar-wrapper {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1045;
+        overflow-y: auto;
+    }
+
+    body.sb-sidenav-toggled #sidebar-wrapper {
+        box-shadow: 0 0 1rem rgba(0, 0, 0, 0.5);
+    }
+
+    #sidebar-wrapper .sidebar-heading {
+        height: 81px;
+    }
+
+    #page-content-wrapper {
+        min-width: 0;
+        width: 100%;
+    }
+
+    body.sb-sidenav-toggled .sidebar-backdrop {
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: 1040;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .nav-usuario {
+        padding: 0.5rem 0.25rem;
+        max-width: 60vw;
+    }
+
+    .nav-usuario .card-title {
+        font-size: 1rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .nav-usuario .card-subtitle {
+        font-size: 0.8rem;
+        margin-bottom: 0 !important;
+    }
+}
