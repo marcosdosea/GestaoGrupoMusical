@@ -59,7 +59,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             switch (resul)
             {
                 case HttpStatusCode.Created:
-                    Notificar("<b>Sucesso</b>! Associado promovido.", Notifica.Sucesso);
+                    Notificar("<b>Sucesso</b>! Papel do associado alterado.", Notifica.Sucesso);
                     break;
                 case HttpStatusCode.NotFound:
                     Notificar("<b>Erro</b>! Associado não encontrado.", Notifica.Erro);

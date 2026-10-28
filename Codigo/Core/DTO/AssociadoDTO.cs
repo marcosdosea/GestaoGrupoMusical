@@ -31,5 +31,7 @@ namespace Core.DTO
         public string? Data { get; set; }
 
         public string? Papel { get; set; }
+
+        public int IdPapelGrupo { get; set; }
     }
 }

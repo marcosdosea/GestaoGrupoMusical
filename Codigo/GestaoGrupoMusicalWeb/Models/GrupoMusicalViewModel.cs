@@ -115,6 +115,7 @@ namespace GestaoGrupoMusicalWeb.Models
             { "Selecionar", "sem chave pix" },
             { "Chave aleatória", "chave aleatoria"},
             { "CPF", "cpf"},
+            { "CNPJ", "cnpj"},
             { "Celular", "celular" },
             { "E-mail", "email" }
         };
@@ -125,8 +126,6 @@ namespace GestaoGrupoMusicalWeb.Models
     {
         public GrupoMusicalViewModel GrupoMusicalViewModel { get; set; }
         public IEnumerable<ColaboradoresDTO>? ListaColaboradores { get; set; }
-
-        public CreateColaboradorViewModel ListaAssociados { get; set; }
     }
 
     public class CreateColaboradorViewModel
