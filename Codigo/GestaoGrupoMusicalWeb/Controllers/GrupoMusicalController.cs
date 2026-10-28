@@ -46,26 +46,19 @@ namespace GestaoGrupoMusicalWeb.Controllers
             var idGrupoMusical = await _grupoMusical.GetIdGrupo(User.Identity.Name);
 
             GrupoMusicalAdmGrupoViewModel grupoMusicalViewModel = new();
-            CreateColaboradorViewModel associadosToAdd = new();
 
             GrupoMusicalViewModel grupoMusical = _mapper.Map<GrupoMusicalViewModel>(await _grupoMusical.Get(idGrupoMusical));
 
             //
             grupoMusicalViewModel.GrupoMusicalViewModel = grupoMusical;
 
-            //
-            var associados = _pessoaService.GetAllPessoasOrder(idGrupoMusical);
-            SelectList listAssociados = new SelectList(associados, "Id", "Nome");
-            associadosToAdd.ListaAssociados = listAssociados;
-
-            //
-            var papel = await _grupoMusical.GetPapeis();
-            SelectList listaPapeis = new SelectList(papel, "IdPapelGrupo", "Nome");
-            associadosToAdd.ListaPapeis = listaPapeis;
+            // Papéis disponíveis no select de cada linha da tabela
+            var papeisAlteracao = _pessoaService.GetAllPapelGrupo()
+                .Where(p => new[] { "ASSOCIADO", "COLABORADOR", "REGENTE" }.Contains(p.Nome.ToUpper()));
+            ViewData["ListaPapeisAlteracao"] = new SelectList(papeisAlteracao, "IdPapelGrupo", "Nome");
 
             //
             grupoMusicalViewModel.ListaColaboradores = await _grupoMusical.GetAllColaboradores(idGrupoMusical);
-            grupoMusicalViewModel.ListaAssociados = associadosToAdd;
 
             return View(grupoMusicalViewModel);
         }
