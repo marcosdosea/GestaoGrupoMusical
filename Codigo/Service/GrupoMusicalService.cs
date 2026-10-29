@@ -132,28 +132,21 @@ namespace Service
 
         public async Task<IEnumerable<ColaboradoresDTO>> GetAllColaboradores(int idGrupo)
         {
-            int idColaborador = (await _context.Papelgrupos
-                                .Where(p => p.Nome.ToUpper() == "COLABORADOR")
-                                .AsNoTracking()
-                                .FirstOrDefaultAsync())
-                                ?.IdPapelGrupo ?? 0;
-
-            int idRegente = (await _context.Papelgrupos
-                            .Where(p => p.Nome.ToUpper() == "REGENTE")
-                            .AsNoTracking()
-                            .FirstOrDefaultAsync())
-                            ?.IdPapelGrupo ?? 0;
+            // Papéis que podem ser atribuídos pela tela de administração do grupo
+            var papeisGerenciaveis = new[] { "ASSOCIADO", "COLABORADOR", "REGENTE" };
 
             var query = await ( from pessoa in _context.Pessoas
                           where pessoa.IdGrupoMusical == idGrupo &&
-                                (pessoa.IdPapelGrupo == idRegente || pessoa.IdPapelGrupo == idColaborador)
+                                pessoa.Ativo == 1 &&
+                                papeisGerenciaveis.Contains(pessoa.IdPapelGrupoNavigation.Nome.ToUpper())
                           select new ColaboradoresDTO
                           {
                               Id = pessoa.Id,
                               Cpf = pessoa.Cpf,
                               Nome = pessoa.Nome,
-                              Data = pessoa.DataEntrada.Value.ToString("dd/MM/yyyy"),
-                              Papel = pessoa.IdPapelGrupoNavigation.Nome
+                              Data = pessoa.DataEntrada.HasValue ? pessoa.DataEntrada.Value.ToString("dd/MM/yyyy") : "",
+                              Papel = pessoa.IdPapelGrupoNavigation.Nome,
+                              IdPapelGrupo = pessoa.IdPapelGrupo
                           }
                 ).AsNoTracking().ToListAsync();
 

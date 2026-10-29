@@ -20,8 +20,6 @@
 
     <partial name="_EditAdmGrupo" model="Model.GrupoMusicalViewModel"/>
 
-    <partial name="_AddColaborador" model="Model.ListaAssociados"/>
-
     <div class="table-responsive">
         <table class="table">
             <thead>
@@ -44,11 +42,12 @@
                 </th>
             </tr>
             </thead>
-
-            <Partial name="_TabelaColaboradores" model="Model.ListaColaboradores"/>
-
+            <tbody>
+                <partial name="_TabelaColaboradores" model="Model.ListaColaboradores"/>
+            </tbody>
         </table>
     </div>
+
 
     @section Scripts {
         @{

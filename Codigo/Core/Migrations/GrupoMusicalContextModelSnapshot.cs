@@ -604,6 +604,11 @@ namespace Core.Migrations
                         .HasColumnType("varchar(14)")
                         .HasColumnName("cnpj");
 
+                    b.Property<string>("Complemento")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("complemento");
+
                     b.Property<string>("Email")
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)")
@@ -633,6 +638,11 @@ namespace Core.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)")
                         .HasColumnName("nome");
+
+                    b.Property<string>("Numero")
+                        .HasMaxLength(10)
+                        .HasColumnType("varchar(10)")
+                        .HasColumnName("numero");
 
                     b.Property<string>("NumeroContaBanco")
                         .HasMaxLength(15)
@@ -978,6 +988,11 @@ namespace Core.Migrations
                         .HasColumnType("varchar(100)")
                         .HasColumnName("cidade");
 
+                    b.Property<string>("Complemento")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("complemento");
+
                     b.Property<string>("Cpf")
                         .IsRequired()
                         .HasMaxLength(11)
@@ -1037,6 +1052,11 @@ namespace Core.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)")
                         .HasColumnName("nome");
+
+                    b.Property<string>("Numero")
+                        .HasMaxLength(10)
+                        .HasColumnType("varchar(10)")
+                        .HasColumnName("numero");
 
                     b.Property<string>("Rua")
                         .HasMaxLength(100)

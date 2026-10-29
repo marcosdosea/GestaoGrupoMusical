@@ -51,6 +51,16 @@
                         <span asp-validation-for="Rua" class="text-danger"></span>
                     </div>
                     <div class="form-group col-xl">
+                        <label asp-for="Numero" class="control-label"></label>
+                        <input asp-for="Numero" id="campoNumero" class="form-control" />
+                        <span asp-validation-for="Numero" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-xl">
+                        <label asp-for="Complemento" class="control-label"></label>
+                        <input asp-for="Complemento" id="campoComplemento" class="form-control" />
+                        <span asp-validation-for="Complemento" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-xl">
                         <label asp-for="Bairro" class="control-label"></label>
                         <input asp-for="Bairro" id="campoBairro" class="form-control" />
                         <span asp-validation-for="Bairro" class="text-danger"></span>
@@ -114,15 +124,15 @@
                     <h2 class="fs-5">Informações Bancárias</h2>
                     <hr />
                     <br />
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
                     <div class="form-group col-xl">
                         <label asp-for="Banco" class="control-label"></label>
                         <input asp-for="Banco" class="form-control" />
                         <span asp-validation-for="Banco" class="text-danger"></span>
                     </div>
-                </div>
-            </div>
-            <div class="container">
-                <div class="row">
                     <div class="form-group col-xl">
                         <label asp-for="NumeroContaBanco" class="control-label"></label>
                         <input asp-for="NumeroContaBanco" class="form-control" />
@@ -151,12 +161,11 @@
                 </div>
             </div>
 
-            <br/>
-            <br/>
-            <div class="container">
-                <div class="row d-flex justify-content-end">
-                    <div class="col-5 d-none d-sm-block w-75"></div>
-                    <input type="submit" value="Salvar" class="btn btn-secondary d-grid gap-2 col-sm " />
+            <div class="container my-5">
+                <div class="row justify-content-center">
+                    <div class="col-auto">
+                        <input type="submit" value="Salvar" class="btn btn-secondary px-5" />
+                    </div>
                 </div>
             </div>
         </form>

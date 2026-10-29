@@ -886,6 +886,8 @@ namespace Service
                 pessoaParaAtualizar.IdManequim = userInfos.IdManequim;
                 pessoaParaAtualizar.Cep = userInfos.Cep.Replace("-", "");
                 pessoaParaAtualizar.Rua = userInfos.Rua;
+                pessoaParaAtualizar.Numero = userInfos.Numero;
+                pessoaParaAtualizar.Complemento = userInfos.Complemento;
                 pessoaParaAtualizar.Bairro = userInfos.Bairro;
                 pessoaParaAtualizar.Cidade = userInfos.Cidade;
                 pessoaParaAtualizar.Estado = userInfos.Estado;

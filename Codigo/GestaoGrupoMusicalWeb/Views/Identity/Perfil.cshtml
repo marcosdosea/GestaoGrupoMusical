@@ -114,6 +114,16 @@
                                         <input asp-for="Rua" class="form-control edit-mode" />
                                     </div>
                                     <div class="mb-2">
+                                        <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Numero)</label>
+                                        <p class="form-control-plaintext fw-bold view-mode">@Html.DisplayFor(model => model.Numero)</p>
+                                        <input asp-for="Numero" class="form-control edit-mode" />
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Complemento)</label>
+                                        <p class="form-control-plaintext fw-bold view-mode">@Html.DisplayFor(model => model.Complemento)</p>
+                                        <input asp-for="Complemento" class="form-control edit-mode" />
+                                    </div>
+                                    <div class="mb-2">
                                         <label class="form-label text-muted">@Html.DisplayNameFor(model => model.Bairro)</label>
                                         <p class="form-control-plaintext fw-bold view-mode">@Html.DisplayFor(model => model.Bairro)</p>
                                         <input asp-for="Bairro" class="form-control edit-mode" />

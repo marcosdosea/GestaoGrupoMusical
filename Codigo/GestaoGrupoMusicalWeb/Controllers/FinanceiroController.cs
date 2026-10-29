@@ -240,7 +240,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
         }
         [Authorize(Roles = "ADMINISTRADOR GRUPO, ADM_SISTEMA, COLABORADOR")]
         // GET: FinanceiroController/Pag_Associados/5
-        public async Task<ActionResult> Pag_Associados(int id)
+        public async Task<ActionResult> Pag_Associados(int id, SituacaoPagamentoFiltro situacao = SituacaoPagamentoFiltro.Todos)
         {
             var financeiro = _financeiroService.Get(id);
             if (financeiro == null)
@@ -249,15 +249,16 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            
-            var associados = await _financeiroService.GetAssociadosPagamento(id);
+
+            var associados = await _financeiroService.GetAssociadosPagamento(id, situacao);
 
             // Monta o ViewModel que a View espera
             PagamentoAssociadoViewModel model = new()
             {
                 IdReceita = financeiro.Id,
                 Financeiro = _mapper.Map<FinanceiroCreateViewModel>(financeiro),
-                Associados = associados.ToList()
+                Associados = associados.ToList(),
+                SituacaoFiltro = situacao
             };
 
             return View(model);
