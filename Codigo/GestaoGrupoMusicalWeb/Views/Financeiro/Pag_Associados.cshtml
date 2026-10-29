@@ -41,14 +41,15 @@
             <input type="hidden" asp-for="IdReceita" />
 
             <div class="table-responsive">
-                <table class="table table-striped table-bordered">
+<<<<<<< HEAD
+                <table class="table table-striped table-hover table-bordered">
                     <thead>
                         <tr class="bg-danger bg-opacity-75 text-white">
                             <th class="px-3">Associado</th>
                             <th class="px-3">CPF</th>
                             <th class="px-3" style="width: 170px;">Data Pagamento</th>
                             <th class="px-3" style="width: 160px;">Valor Pago (R$)</th>
-                            <th class="px-3">Observações</th>
+                            <th class="px-3" style="min-width: 180px;">Observações</th>
                             <th class="px-3" style="width: 260px;">
                                 <div class="d-flex align-items-center justify-content-center gap-2">
                                     <span>Status</span>
@@ -99,7 +100,7 @@
                                         <input type="hidden" asp-for="Associados[i].NomeAssociado" />
                                         <input type="hidden" asp-for="Associados[i].Cpf" />
                                     </td>
-                                    <td>
+                                    <td class="text-nowrap">
                                         @Model.Associados[i].Cpf
                                     </td>
                                     <td>

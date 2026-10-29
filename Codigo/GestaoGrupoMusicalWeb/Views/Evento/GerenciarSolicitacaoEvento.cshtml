@@ -24,12 +24,12 @@
             <input asp-for="Id" readonly class="form-control" />
         </div>
         <div class="row mb-4">
-            <div class="form-group " style="width: 250px;">
+            <div class="form-group " style="width: 250px; max-width: 100%;">
                 <label asp-for="DataHoraInicio" style="width: 150px;" class="control-label"></label>
                 <input asp-for="DataHoraInicio" class="form-control" />
                 <span asp-validation-for="DataHoraInicio" class="text-danger"></span>
             </div>
-            <div class="form-group " style="width: 250px;">
+            <div class="form-group " style="width: 250px; max-width: 100%;">
                 <label asp-for="DataHoraFim" class="control-label"></label>
                 <input asp-for="DataHoraFim" class="form-control" />
                 <span asp-validation-for="DataHoraFim" class="text-danger"></span>
@@ -45,6 +45,7 @@
             </button>
         </div>
 
+        <div class="table-responsive">
         <table class="table">
             <thead>
                 <tr class="bg-danger bg-opacity-75 text-white">
@@ -110,6 +111,7 @@
                 }
             </tbody>
         </table>
+        </div>
         <br /> <br />
         <div class="container">
             <div class="row d-flex flex-column-reverse d-grig gap-2 mx-auto d-flex flex-sm-column-reverse flex-xl-row">
