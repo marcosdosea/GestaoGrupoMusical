@@ -55,7 +55,9 @@ namespace GestaoGrupoMusicalWeb.Controllers
             // Papéis disponíveis no select de cada linha da tabela
             var papeisAlteracao = _pessoaService.GetAllPapelGrupo()
                 .Where(p => new[] { "ASSOCIADO", "COLABORADOR", "REGENTE" }.Contains(p.Nome.ToUpper()));
-            ViewData["ListaPapeisAlteracao"] = new SelectList(papeisAlteracao, "IdPapelGrupo", "Nome");
+            ViewData["ListaPapeisAlteracao"] = new SelectList(
+                papeisAlteracao.Select(p => new { p.IdPapelGrupo, Nome = Core.Service.PapelGrupoDisplay.Nome(p.Nome) }),
+                "IdPapelGrupo", "Nome");
 
             //
             grupoMusicalViewModel.ListaColaboradores = await _grupoMusical.GetAllColaboradores(idGrupoMusical);
