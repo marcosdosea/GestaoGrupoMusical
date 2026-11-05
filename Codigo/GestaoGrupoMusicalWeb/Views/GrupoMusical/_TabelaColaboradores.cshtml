@@ -18,7 +18,7 @@
             @Html.DisplayFor(modelItem => item.Data)
         </td>
         <td class="p-3">
-            @Html.DisplayFor(modelItem => item.Papel)
+            @Core.Service.PapelGrupoDisplay.Nome(item.Papel)
         </td>
         <td class="p-3">
             <form asp-action="Create" asp-controller="Colaborador" method="post" class="d-flex flex-wrap align-items-center gap-2">
