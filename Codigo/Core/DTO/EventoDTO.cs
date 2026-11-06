@@ -81,6 +81,8 @@ namespace Core.DTO
         public DateTime Fim { get; set; }
         [Display(Name = "Local")]
         public string? Local { get; set; }
+        [Display(Name = "Instrumento")]
+        public string? Instrumentos { get; set; }
 
 
         [Display(Name = "Aprovado")]
