@@ -14,13 +14,13 @@
             <table class="table accordion mt-3">
                 <thead>
                     <tr class="bg-danger bg-opacity-75 text-white">
-                        <th class="col-md-1"><Text>Início</Text></th>
-                        <th class="col-md-1"><Text>Fim</Text></th>
-                        <th class="col-md-1"><Text>Local</Text></th>
-                        <th class="col-md-1"><Text>Presente</Text></th>
-                        <th class="col-md-2"><Text>Justificativa Ausência</Text></th>
-                        <th class="col-md-2"><Text>Justificativa Aceita</Text></th>
-                        <th class="col-md-2"><Text>Ações</Text></th>
+                        <th class="col-md-1">Início</th>
+                        <th class="col-md-1">Fim</th>
+                        <th class="col-md-1">Local</th>
+                        <th class="col-md-1">Presente</th>
+                        <th class="col-md-2">Justificativa Ausência</th>
+                        <th class="col-md-2">Justificativa Aceita</th>
+                        <th class="col-md-2">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -52,9 +52,9 @@
                                 </td>
                             </tr>
                             <tr class="collapse accordion-collapse border-danger border-opacity-75" id="accordion_@(item.Id)">
-                                <td colspan="12">
+                                <td colspan="7">
                                     <div>
-                                        <p>Repertório</p>
+                                        <p class="fw-bold mb-1">Repertório</p>
                                         @item.Repertorio
                                     </div>
                                 </td>
@@ -63,7 +63,7 @@
                     }
                 </tbody>
             </table>
-            @if (Model != null && Model.Ensaios == null)
+            @if (Model == null || Model.Ensaios == null || !Model.Ensaios.Any())
             {
                 <p class="text-center mt-4 mb-0">Desculpe, nenhum <b>Ensaio</b> encontrado :(</p>
             }
@@ -77,14 +77,15 @@
             <table class="table accordion mt-3">
                 <thead>
                     <tr class="bg-danger bg-opacity-75 text-white">
-                        <th class="col-md-1"><Text>Início</Text></th>
-                        <th class="col-md-1"><Text>Fim</Text></th>
-                        <th class="col-md-1"><Text>Local</Text></th>
-                        <th class="col-md-1"><Text>Presente</Text></th>
-                        <th class="col-md-2"><Text>Justificativa Ausência</Text></th>
-                        <th class="col-md-2"><Text>Justificativa Aceita</Text></th>
-                        <th class="col-md-2"><Text>Inscrição</Text></th>
-                        <th class="col-md-2"><Text>Ações</Text></th>
+                        <th class="col-md-1">Início</th>
+                        <th class="col-md-1">Fim</th>
+                        <th class="col-md-1">Local</th>
+                        <th class="col-md-1">Presente</th>
+                        <th class="col-md-2">Justificativa Ausência</th>
+                        <th class="col-md-2">Justificativa Aceita</th>
+                        <th class="col-md-2">Instrumento</th>
+                        <th class="col-md-2">Inscrição</th>
+                        <th class="col-md-2">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -100,7 +101,10 @@
                                 <td>@item.JustificativaFalta</td>
                                 <td>@(item.JustificativaAceita == 1 ? "Sim" : "Não")</td>
 
-                                <!-- Status de Inscrição com escrita fina igual a "Sim" -->
+                                <!-- Instrumento (agora na coluna correta correspondente ao th) -->
+                                <td>@item.Instrumentos</td>
+
+                                <!-- Status de Inscrição -->
                                 <td>
                                     @if (item.AprovadoModel == Core.DTO.InscricaoEventoPessoa.NAO_SOLICITADO)
                                     {
@@ -141,7 +145,7 @@
                     }
                 </tbody>
             </table>
-            @if (Model != null && Model.Eventos == null)
+            @if (Model == null || Model.Eventos == null || !Model.Eventos.Any())
             {
                 <p class="text-center mt-4 mb-0">Desculpe, nenhum <b>Evento</b> encontrado :(</p>
             }
