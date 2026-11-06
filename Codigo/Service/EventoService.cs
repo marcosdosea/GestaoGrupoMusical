@@ -1209,19 +1209,21 @@ public EventoDetailsDTO? GetDetails(int idEvento)
         {
             DateTime pegarUltimosMeses = DateTime.Now.AddMonths(PegarUltimosEventoDeAssociado);
 
-            // Passo 1: Busca os dados brutos no banco (trazendo para a memória com .ToList())
+            // Passo 1: Busca os dados brutos no banco incluindo a relação com o instrumento
             var dadosBanco = (from evento in _context.Eventos
                               where idGrupoMusical == evento.IdGrupoMusical && evento.DataHoraInicio.Date >= pegarUltimosMeses.Date
-
                               let ep = _context.Eventopessoas.FirstOrDefault(e => e.IdEvento == evento.Id && e.IdPessoa == idPessoa)
-
+                              let instrumento = ep != null && ep.IdTipoInstrumento != null
+                                  ? _context.Tipoinstrumentos.FirstOrDefault(t => t.Id == ep.IdTipoInstrumento).Nome
+                                  : null
                               select new
                               {
                                   Evento = evento,
-                                  Ep = ep
+                                  Ep = ep,
+                                  NomeInstrumento = instrumento
                               }).AsNoTracking().ToList();
 
-            // Passo 2: Mapeia para o seu DTO de forma segura usando apenas o C#
+            // Passo 2: Mapeia para o DTO de forma segura
             var query = dadosBanco.Select(x => new EventoAssociadoDTO
             {
                 Id = x.Evento.Id,
@@ -1234,8 +1236,8 @@ public EventoDetailsDTO? GetDetails(int idEvento)
 
                 Presente = x.Ep != null ? x.Ep.Presente : (sbyte)0,
                 JustificativaFalta = x.Ep != null ? x.Ep.JustificativaFalta : null,
-                JustificativaAceita = x.Ep != null ? x.Ep.JustificativaAceita : (sbyte)0
-
+                JustificativaAceita = x.Ep != null ? x.Ep.JustificativaAceita : (sbyte)0,                
+                Instrumentos = x.NomeInstrumento
             }).ToList();
 
             return query;
@@ -1244,8 +1246,6 @@ public EventoDetailsDTO? GetDetails(int idEvento)
         /// <summary>
         /// Converte o status string para o enum InscricaoEventoPessoa
         /// </summary>
-        /// <param name="status">Status como string vindo do banco</param>
-        /// <returns>Enum correspondente</returns>
         private static InscricaoEventoPessoa ConvertAprovadoParaEnum(string? status)
         {
             if (string.IsNullOrEmpty(status))
