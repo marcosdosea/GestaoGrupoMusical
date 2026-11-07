@@ -1209,21 +1209,40 @@ public EventoDetailsDTO? GetDetails(int idEvento)
         {
             DateTime pegarUltimosMeses = DateTime.Now.AddMonths(PegarUltimosEventoDeAssociado);
 
-            // Passo 1: Busca os dados brutos no banco incluindo a relação com o instrumento
+            // Figurinos que o associado retirou e ainda não devolveu
+            // (ENTREGUE/RECEBIDO contam como retirada; DEVOLVIDO/DANIFICADO como devolução)
+            var idsFigurinosComAssociado = _context.Movimentacaofigurinos
+                .Where(mov => mov.IdAssociado == idPessoa)
+                .GroupBy(mov => mov.IdFigurino)
+                .Select(g => new
+                {
+                    IdFigurino = g.Key,
+                    Saldo = g.Count(m => m.Status == "ENTREGUE" || m.Status == "RECEBIDO")
+                          - g.Count(m => m.Status == "DEVOLVIDO" || m.Status == "DANIFICADO")
+                })
+                .Where(x => x.Saldo > 0)
+                .Select(x => x.IdFigurino)
+                .ToList();
+
+            var nomesFigurinosComAssociado = _context.Figurinos
+                .Where(f => idsFigurinosComAssociado.Contains(f.Id))
+                .Select(f => f.Nome)
+                .AsNoTracking()
+                .ToList();
+
+            string figurinosAssociado = nomesFigurinosComAssociado.Any()
+                ? string.Join(", ", nomesFigurinosComAssociado)
+                : "Nenhum";
+
             var dadosBanco = (from evento in _context.Eventos
                               where idGrupoMusical == evento.IdGrupoMusical && evento.DataHoraInicio.Date >= pegarUltimosMeses.Date
                               let ep = _context.Eventopessoas.FirstOrDefault(e => e.IdEvento == evento.Id && e.IdPessoa == idPessoa)
-                              let instrumento = ep != null && ep.IdTipoInstrumento != null
-                                  ? _context.Tipoinstrumentos.FirstOrDefault(t => t.Id == ep.IdTipoInstrumento).Nome
-                                  : null
                               select new
                               {
                                   Evento = evento,
-                                  Ep = ep,
-                                  NomeInstrumento = instrumento
+                                  Ep = ep
                               }).AsNoTracking().ToList();
 
-            // Passo 2: Mapeia para o DTO de forma segura
             var query = dadosBanco.Select(x => new EventoAssociadoDTO
             {
                 Id = x.Evento.Id,
@@ -1236,13 +1255,14 @@ public EventoDetailsDTO? GetDetails(int idEvento)
 
                 Presente = x.Ep != null ? x.Ep.Presente : (sbyte)0,
                 JustificativaFalta = x.Ep != null ? x.Ep.JustificativaFalta : null,
-                JustificativaAceita = x.Ep != null ? x.Ep.JustificativaAceita : (sbyte)0,                
-                Instrumentos = x.NomeInstrumento
+                JustificativaAceita = x.Ep != null ? x.Ep.JustificativaAceita : (sbyte)0,
+
+                // Figurinos retirados pelo associado (e não devolvidos), ou "Nenhum"
+                Figurino = figurinosAssociado
             }).ToList();
 
             return query;
         }
-
         /// <summary>
         /// Converte o status string para o enum InscricaoEventoPessoa
         /// </summary>
