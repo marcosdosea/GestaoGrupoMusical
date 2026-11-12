@@ -60,6 +60,7 @@ namespace Core.Service
         Task<IEnumerable<EnsaioIndexDTO>> GetAllIndexDTO(int idGrupo);
         EnsaioDetailsDTO? GetDetails(int idEnsaio);
         Task<IEnumerable<int>> GetIdRegentesEnsaioAsync(int idEnsaio);
+        Task<IEnumerable<string>> GetRepertoriosUtilizadosAsync(int idGrupoMusical);
         IEnumerable<EnsaioAssociadoDTO>? GetEnsaiosEventosByIdPessoa(int idPessoa);
         Task<Ensaiopessoa?> GetEnsaioPessoaAsync(int idEnsaio, int idPessoa);
 
