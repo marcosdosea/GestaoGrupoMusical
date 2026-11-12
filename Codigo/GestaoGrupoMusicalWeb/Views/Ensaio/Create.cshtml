@@ -3,6 +3,7 @@
     ViewData["Title"] = "Novo Ensaio";
     ViewData["Ensaio"] = "Ensaio";
     ViewData["Create"] = "Cadastro";
+    var repertoriosExistentes = Model.ListaRepertorios.ToList();
 }
 <partial name="_Notificar">
 
@@ -105,7 +106,23 @@
                     <div class="row">
                         <div class="form-group">
                             <label asp-for="Repertorio" class="control-label"></label>
-                            <textarea asp-for="Repertorio" class="form-control"></textarea>
+                            <div class="border rounded p-2 mb-2" style="max-height: 180px; overflow-y: auto;">
+                                @if (!repertoriosExistentes.Any())
+                                {
+                                    <small class="text-muted">Nenhum repertório cadastrado ainda. Digite abaixo.</small>
+                                }
+                                @for (int i = 0; i < repertoriosExistentes.Count; i++)
+                                {
+                                    var tooltip = repertoriosExistentes[i].Replace("\n", " / ");
+                                    var rotulo = tooltip.Length > 80 ? tooltip.Substring(0, 80) + "..." : tooltip;
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="repertorio-@i" data-indice="@i" onchange="alternarRepertorio(this)" />
+                                        <label class="form-check-label" for="repertorio-@i" title="@tooltip">@rotulo</label>
+                                    </div>
+                                }
+                            </div>
+                            <small class="text-muted d-block mb-1">Marque um ou mais repertórios para adicioná-los ao campo abaixo.</small>
+                            <textarea asp-for="Repertorio" class="form-control" rows="3" maxlength="1000" id="linkTextAreaRepertorio"></textarea>
                             <span asp-validation-for="Repertorio" class="text-danger"></span>
                         </div>
                     </div>
@@ -176,6 +193,28 @@
 
             if (checkboxesChecked.length > 0 && spanErro) {
                 spanErro.style.display = 'none';
+            }
+        }
+
+        const repertoriosExistentes = @Html.Raw(Json.Serialize(repertoriosExistentes));
+
+        function alternarRepertorio(checkbox) {
+            const textArea = document.getElementById('linkTextAreaRepertorio');
+            const texto = repertoriosExistentes[parseInt(checkbox.dataset.indice, 10)];
+            const atual = textArea.value.replace(/\r\n/g, '\n');
+
+            if (checkbox.checked) {
+                if (atual.includes(texto)) return;
+                const base = atual.replace(/[\s;]+$/, '');
+                const novo = base === '' ? texto : base + '; ' + texto;
+                if (novo.length > textArea.maxLength) {
+                    checkbox.checked = false;
+                    alert('O repertório selecionado ultrapassa o limite de ' + textArea.maxLength + ' caracteres.');
+                    return;
+                }
+                textArea.value = novo;
+            } else {
+                textArea.value = atual.replace('; ' + texto, '').replace(texto + '; ', '').replace(texto, '').trim();
             }
         }
 
