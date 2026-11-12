@@ -1141,6 +1141,25 @@ namespace Service
                          .ToListAsync();
 }
 
+        /// <summary>
+        /// Retorna os repertórios já informados nos eventos do grupo, sem repetição.
+        /// Usado para permitir reaproveitar um repertório no cadastro/edição de eventos.
+        /// </summary>
+        public async Task<IEnumerable<string>> GetRepertoriosUtilizadosAsync(int idGrupoMusical)
+        {
+            var repertorios = await _context.Eventos
+                .Where(e => e.IdGrupoMusical == idGrupoMusical && e.Repertorio != null)
+                .Select(e => e.Repertorio!)
+                .ToListAsync();
+
+            return repertorios
+                .Select(r => r.Replace("\r\n", "\n").Trim())
+                .Where(r => r.Length > 0)
+                .Distinct()
+                .OrderBy(r => r)
+                .ToList();
+        }
+
 // Adicione este novo método
 public EventoDetailsDTO? GetDetails(int idEvento)
 {
