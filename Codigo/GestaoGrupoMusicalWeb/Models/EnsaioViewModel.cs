@@ -9,6 +9,9 @@ namespace GestaoGrupoMusicalWeb.Models
         public int Id { get; set; }
         public int IdGrupoMusical { get; set; }
 
+        // Repertórios já utilizados em ensaios do grupo, para reaproveitamento no formulário
+        public IEnumerable<string> ListaRepertorios { get; set; } = new List<string>();
+
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public Tipo Tipo { get; set; }
 
