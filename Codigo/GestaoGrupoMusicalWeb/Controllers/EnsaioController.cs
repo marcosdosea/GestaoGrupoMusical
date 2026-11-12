@@ -108,7 +108,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
             EnsaioViewModel ensaioModel = new()
             {
                 ListaPessoa = new SelectList(listaRegentes, "Id", "Nome"),
-                ListaFigurino = new SelectList(figurino, "Id", "Nome")
+                ListaFigurino = new SelectList(figurino, "Id", "Nome"),
+                ListaRepertorios = await _ensaioService.GetRepertoriosUtilizadosAsync(Convert.ToInt32(User.FindFirst("IdGrupoMusical")?.Value))
             };
 
             ViewData["exemploRegente"] = listaRegentes.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
@@ -188,6 +189,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
 
             ensaioModel.ListaPessoa = new SelectList(listaRegentes, "Id", "Nome");
             ensaioModel.ListaFigurino = new SelectList(listaFigurinos, "Id", "Nome");
+            ensaioModel.ListaRepertorios = await _ensaioService.GetRepertoriosUtilizadosAsync(ensaio.IdGrupoMusical);
 
             ViewData["exemploRegente"] = listaRegentes.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
             ViewData["jsonIdRegentes"] = (await _ensaioService.GetIdRegentesEnsaioAsync(id)).ToJson();
