@@ -387,6 +387,24 @@ namespace Service
                                  .ToListAsync();
         }
 
+        /// <summary>
+        /// Retorna os repertórios já informados nos ensaios do grupo, sem repetição.
+        /// </summary>
+        public async Task<IEnumerable<string>> GetRepertoriosUtilizadosAsync(int idGrupoMusical)
+        {
+            var repertorios = await _context.Ensaios
+                .Where(e => e.IdGrupoMusical == idGrupoMusical && e.Repertorio != null)
+                .Select(e => e.Repertorio!)
+                .ToListAsync();
+
+            return repertorios
+                .Select(r => r.Replace("\r\n", "\n").Trim())
+                .Where(r => r.Length > 0)
+                .Distinct()
+                .OrderBy(r => r)
+                .ToList();
+        }
+
         public List<AssociadoDTO> GetAssociadoAtivos(int idEnsaio)
         {
             var query = _context.Ensaiopessoas
