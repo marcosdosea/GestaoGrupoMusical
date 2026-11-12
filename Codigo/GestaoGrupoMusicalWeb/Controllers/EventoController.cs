@@ -97,7 +97,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
             EventoCreateViewlModel eventoModelCreate = new()
             {
                 ListaPessoa = new SelectList(listaPessoasAutoComplete, "Id", "Nome"),
-                FigurinoList = new SelectList(figurinosDropdown, "Id", "Nome")
+                FigurinoList = new SelectList(figurinosDropdown, "Id", "Nome"),
+                ListaRepertorios = await _eventoService.GetRepertoriosUtilizadosAsync(idGrupoMusical)
             };
 
             ViewData["exemploRegente"] = listaPessoasAutoComplete.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
@@ -206,7 +207,8 @@ namespace GestaoGrupoMusicalWeb.Controllers
                 PrecisaConfirmarParticipacao = evento.PrecisaConfirmarParticipacao == 1,
                 IdRegentes = await _eventoService.GetIdRegentesEventoAsync(evento.Id),
                 ListaPessoa = new SelectList(listaPessoasAutoComplete, "Id", "Nome"),
-                FigurinoList = new SelectList(figurinosDropdown, "Id", "Nome")
+                FigurinoList = new SelectList(figurinosDropdown, "Id", "Nome"),
+                ListaRepertorios = await _eventoService.GetRepertoriosUtilizadosAsync(evento.IdGrupoMusical)
             };
 
             ViewData["exemploRegente"] = listaPessoasAutoComplete.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
@@ -269,6 +271,7 @@ namespace GestaoGrupoMusicalWeb.Controllers
             eventoModel.ListaPessoa = new SelectList(listaPessoasAutoComplete, "Id", "Nome");
             eventoModel.FigurinoList = new SelectList(figurinosDropdown, "Id", "Nome", eventoModel.IdFigurinoSelecionado);
             eventoModel.JsonLista = listaPessoasAutoComplete.ToJson();
+            eventoModel.ListaRepertorios = await _eventoService.GetRepertoriosUtilizadosAsync(eventoModel.IdGrupoMusical);
             ViewData["exemploRegente"] = listaPessoasAutoComplete.Select(p => p.Nome).FirstOrDefault()?.Split(" ")[0];
 
             return View(eventoModel);
