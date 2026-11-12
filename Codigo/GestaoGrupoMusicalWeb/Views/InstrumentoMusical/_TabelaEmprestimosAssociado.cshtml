@@ -1,4 +1,8 @@
 ﻿@model IEnumerable<Core.DTO.InstrumentoAssociadoDTO.MovimentacaoAssociado>
+@{
+    // A coluna Ações só aparece quando há movimentação aguardando confirmação
+    var temPendente = Model.Any(i => !i.Status);
+}
 
 <div class="table-responsive">
     <table class="table mt-3">
@@ -13,7 +17,10 @@
                 <th class="col-md-3">
                     @Html.DisplayNameFor(model => model.Status)
                 </th>
-                <th class="col-md-3">Ações</th>
+                @if (temPendente)
+                {
+                    <th class="col-md-3">Ações</th>
+                }
             </tr>
         </thead>
         <tbody>
@@ -41,6 +48,10 @@
                                 </a>
                             </form>
                         </td>
+                    }
+                    else if (temPendente)
+                    {
+                        <td></td>
                     }
                 </tr>
             }
