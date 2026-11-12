@@ -105,6 +105,9 @@ namespace GestaoGrupoMusicalWeb.Models
 
         public SelectList? ListaPessoa { get; set; }
 
+        // Repertórios já utilizados em eventos do grupo, para reaproveitamento no formulário
+        public IEnumerable<string> ListaRepertorios { get; set; } = new List<string>();
+
     }
     public class GerenciarInstrumentoEventoViewModel
     {
